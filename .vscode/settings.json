@@ -1,3 +1,4 @@
 {
-    "python.defaultInterpreterPath": "/Users/anthonykatwan/opt/anaconda3"
+    "python.defaultInterpreterPath": "/Users/anthonykatwan/opt/anaconda3",
+    "notebook.output.textLineLimit": 1000
 }
