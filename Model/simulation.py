@@ -28,4 +28,4 @@ simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
 result = simulation.run()
 df = pd.DataFrame(result)
 
-investor_df = extract_investors(df)
+#investor_df = extract_investors(df)

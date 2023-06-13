@@ -1,8 +1,3 @@
-
-
-
-
-
 def initial_investor_allocation(initial_investors,token_economy):
     initial_token_supply = token_economy['initial_token_supply']
     external_equity = token_economy['external_equity']
