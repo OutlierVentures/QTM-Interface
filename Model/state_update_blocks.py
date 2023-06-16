@@ -1,6 +1,5 @@
-from  policies import *
-
-
+from  parts.environment import *
+from  parts.agents import *
 
 
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):

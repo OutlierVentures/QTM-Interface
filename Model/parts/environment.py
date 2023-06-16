@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     
     investors = prev_state['investors']
@@ -66,7 +59,3 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     updated_token_economy = token_economy
 
     return {'updated_investors': updated_investors,'updated_token_economy': updated_token_economy}
-
-
-
-
