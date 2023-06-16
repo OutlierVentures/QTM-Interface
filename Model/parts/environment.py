@@ -3,10 +3,6 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     investors = prev_state['investors']
     token_economy = prev_state['token_economy']
 
-    
-
-
-
     for i, investor in investors.items():
         # Get all invesotor info
         percentage_allocation = investor['percentage_allocation']
