@@ -7,8 +7,9 @@ from typing import *
 # Helper Functions
 def calculate_raised_capital(sys_param):
     """
-    Calculate the overall raised capital from the initial investors
+    Calculate the overall raised capital from the initial investors.
     """
+
     raised_capital = 0
     for key, value in sys_param:
         if "_raised" in key:
@@ -21,8 +22,9 @@ def new_agent(stakeholder_type: str, usd_funds: int,
               tokens: int, action_list: list, action_weights: Tuple,
               current_action: str) -> dict:
     """
-    Function to create a new agent aka stakeholder for the token ecosystem
+    Function to create a new agent aka stakeholder for the token ecosystem.
     """
+
     agent = {'type': stakeholder_type,
              'usd_funds': usd_funds,
              'tokens': tokens,
@@ -36,8 +38,9 @@ def new_agent(stakeholder_type: str, usd_funds: int,
 
 def generate_agents(initial_value):
     """
-    Initialize all token ecosystem agents aka stakeholders
+    Initialize all token ecosystem agents aka stakeholders.
     """
+
     agents_dict = initial_value["initial_agent_values"]
     initial_agents = {}
     for a in agents_dict:
@@ -53,8 +56,9 @@ def generate_agents(initial_value):
 
 def create_parameter_list(parameter_name, not_iterable_parameters, init_value, min, max, intervals):
     """
-    Create list of parameters for parameter sweep based on the QTM input tab 'cadCAD_inputs'
+    Create list of parameters for parameter sweep based on the QTM input tab 'cadCAD_inputs'.
     """
+
     if parameter_name in not_iterable_parameters:
         return [init_value.replace(",","").replace("%","")]
     else:
@@ -81,8 +85,9 @@ def create_parameter_list(parameter_name, not_iterable_parameters, init_value, m
 
 def compose_initial_parameters(QTM_inputs, not_iterable_parameters):
     """
-    Compose all initial parameter sets from the Quantitative Token Model inputs tab 'cadCAD_inputs'
+    Compose all initial parameter sets from the Quantitative Token Model inputs tab 'cadCAD_inputs'.
     """
+
     initial_parameters = {}
     for index, row in QTM_inputs.iterrows():
         parameter_name = row['Parameter Name'].lower().replace(' ', '_').replace('/', '').replace('(', '').replace(')', '')
@@ -91,8 +96,9 @@ def compose_initial_parameters(QTM_inputs, not_iterable_parameters):
 
 def calculate_investor_allocation(sys_param, stakeholder_name):
     """
-    Calculate the initial token allocation of a specific stakeholder considering bonus amounts
+    Calculate the initial token allocation of a specific stakeholder considering bonus amounts.
     """
+
     token_launch_price = sys_param["public_sale_valuation"] / sys_param["initial_total_supply"]
     effective_token_price = np.min([token_launch_price / (1+sys_param[stakeholder_name+"_bonus"]/100), sys_param[stakeholder_name+"_valuation"] / sys_param["initial_total_supply"]])
     tokens = sys_param[stakeholder_name+"_raised"] / effective_token_price
@@ -102,7 +108,7 @@ def calculate_investor_allocation(sys_param, stakeholder_name):
 
 def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     """
-    Calculate the amount of tokens initially allocated to the DEX liquidity pool
+    Calculate the amount of tokens initially allocated to the DEX liquidity pool.
     """
 
     allocation_sum = 0
@@ -117,7 +123,7 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
 
 def seed_dex_liquidity(agent_token_allocations, initial_stakeholders, funding_bucket_name, sys_param):
     """
-    Calculate the initial token amounts in the liquidity pool
+    Calculate the initial token amounts in the liquidity pool.
     """
 
     public_sale_valuation = sys_param['public_sale_valuation']
@@ -131,7 +137,7 @@ def seed_dex_liquidity(agent_token_allocations, initial_stakeholders, funding_bu
     if required_usdc > sum_of_raised_capital:
         raise ValueError('The required funds to seed the DEX liquidity are '+str(required_usdc)+' and higher than the sum of raised capital '+str(sum_of_raised_capital)+'!')
     else:
-        # subtract the required funds from the funding bucket
+        # subtract the required funds from the funding bucket.
         found_stakeholder = False
         for stakeholder in initial_stakeholders:
             if initial_stakeholders[stakeholder]['type'] == funding_bucket_name:
@@ -154,7 +160,7 @@ def seed_dex_liquidity(agent_token_allocations, initial_stakeholders, funding_bu
 
 def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param):
     """
-    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked
+    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
     """
 
     initial_circulating_tokens = 0
