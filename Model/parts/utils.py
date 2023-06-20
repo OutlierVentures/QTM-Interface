@@ -35,6 +35,9 @@ def new_agent(stakeholder_type: str, usd_funds: int,
 
 
 def generate_agents(initial_value):
+    """
+    Initialize all token ecosystem agents aka stakeholders
+    """
     agents_dict = initial_value["initial_agent_values"]
     initial_agents = {}
     for a in agents_dict:
@@ -49,6 +52,9 @@ def generate_agents(initial_value):
     return initial_agents
 
 def create_parameter_list(parameter_name, not_iterable_parameters, init_value, min, max, intervals):
+    """
+    Create list of parameters for parameter sweep based on the QTM input tab 'cadCAD_inputs'
+    """
     if parameter_name in not_iterable_parameters:
         return [init_value.replace(",","").replace("%","")]
     else:
@@ -74,6 +80,9 @@ def create_parameter_list(parameter_name, not_iterable_parameters, init_value, m
                 return list(np.linspace(min, max, int(intervals)))
 
 def compose_initial_parameters(QTM_inputs, not_iterable_parameters):
+    """
+    Compose all initial parameter sets from the Quantitative Token Model inputs tab 'cadCAD_inputs'
+    """
     initial_parameters = {}
     for index, row in QTM_inputs.iterrows():
         parameter_name = row['Parameter Name'].lower().replace(' ', '_').replace('/', '').replace('(', '').replace(')', '')
@@ -81,28 +90,15 @@ def compose_initial_parameters(QTM_inputs, not_iterable_parameters):
     return initial_parameters
 
 def calculate_investor_allocation(sys_param, stakeholder_name):
-
+    """
+    Calculate the initial token allocation of a specific stakeholder considering bonus amounts
+    """
     token_launch_price = sys_param["public_sale_valuation"] / sys_param["initial_total_supply"]
     effective_token_price = np.min([token_launch_price / (1+sys_param[stakeholder_name+"_bonus"]/100), sys_param[stakeholder_name+"_valuation"] / sys_param["initial_total_supply"]])
     tokens = sys_param[stakeholder_name+"_raised"] / effective_token_price
     allocation = tokens / sys_param['initial_total_supply']
     
     return allocation
-
-def create_liquidity_pool(initial_stakeholder_values,initial_token_supply):
-    percentage_allocation = 0
-    percentage_allocation = 1-sum([investor['percentage_allocation'] for i, investor in initial_stakeholder_values.items()])
-    
-
-
-    initial_stakeholder_values['Liquidity Pool']['percentage_allocation'] = percentage_allocation
-    total_token_amount = percentage_allocation * initial_token_supply
-    
-    initial_vesting = initial_stakeholder_values['Liquidity Pool']['initial_vesting']
-    initial_stakeholder_values['Liquidity Pool']['current_allocation']= initial_vesting * total_token_amount
-    initial_stakeholder_values['Liquidity Pool']['total_token_amount']= total_token_amount
-
-    return initial_stakeholder_values
 
 def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     """
