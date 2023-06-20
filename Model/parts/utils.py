@@ -18,7 +18,11 @@ def calculate_raised_capital(sys_param):
 
 # Initialization
 def new_agent(stakeholder_type: str, usd_funds: int,
-              tokens: int, action_list: list, action_weights: Tuple) -> dict:
+              tokens: int, action_list: list, action_weights: Tuple,
+              current_action: str) -> dict:
+    """
+    Function to create a new agent aka stakeholder for the token ecosystem
+    """
     agent = {'type': stakeholder_type,
              'usd_funds': usd_funds,
              'tokens': tokens,
@@ -26,11 +30,12 @@ def new_agent(stakeholder_type: str, usd_funds: int,
              'tokens_locked': 0,
              'action_list': action_list,
              'action_weights': action_weights,
-             'current_action': 'hold'}
+             'current_action': current_action}
     return agent
 
 
-def generate_agent(agents_dict):
+def generate_agents(initial_value):
+    agents_dict = initial_value["initial_agent_values"]
     initial_agents = {}
     for a in agents_dict:
         initial_agents[a] = new_agent(a['type'],
@@ -43,7 +48,6 @@ def generate_agent(agents_dict):
                                     a['current_action'])
     return initial_agents
 
-# chatGPT solution
 def create_parameter_list(parameter_name, not_iterable_parameters, init_value, min, max, intervals):
     if parameter_name in not_iterable_parameters:
         return [init_value.replace(",","").replace("%","")]
@@ -76,92 +80,14 @@ def compose_initial_parameters(QTM_inputs, not_iterable_parameters):
         initial_parameters[parameter_name] = create_parameter_list(parameter_name, not_iterable_parameters, row['Initial Value'], row['Min'], row['Max'], row['Interval Steps'])
     return initial_parameters
 
+def calculate_investor_allocation(sys_param, stakeholder_name):
 
-def initial_investor_allocation(initial_stakeholder_values, token_economy):
-    initial_token_supply = token_economy['initial_token_supply']
-    external_equity = token_economy['external_equity']
-
-    initial_stakeholder_values = fund_raising(initial_stakeholder_values,initial_token_supply,external_equity)
-
-    for i, investor in initial_stakeholder_values.items():
-
-        if investor['percentage_allocation'] == 0 and investor['effective_token_price'] != 0:
-            investor['percentage_allocation'] = (investor['capital_raise']/investor['effective_token_price'])/initial_token_supply
-        #Need to figure this out
-
-
-        percentage_allocation = investor['percentage_allocation']
+    token_launch_price = sys_param["public_sale_valuation"] / sys_param["initial_total_supply"]
+    effective_token_price = np.min([token_launch_price / (1+sys_param[stakeholder_name+"_bonus"]/100), sys_param[stakeholder_name+"_valuation"] / sys_param["initial_total_supply"]])
+    tokens = sys_param[stakeholder_name+"_raised"] / effective_token_price
+    allocation = tokens / sys_param['initial_total_supply']
     
-        total_token_amount = percentage_allocation * initial_token_supply
-        initial_vesting = investor['initial_vesting']
-        investor['current_allocation'] = initial_vesting * total_token_amount
-
-
-    initial_stakeholder_values = create_liquidity_pool(initial_stakeholder_values,initial_token_supply)
-
-    token_economy['current_circulating_supply'] = sum([investor['current_allocation'] for i, investor in initial_stakeholder_values.items()])
-
-    token_economy['sum_of_raised_capital'] = sum([investor['capital_raise'] for i, investor in initial_stakeholder_values.items()])
-
-    return initial_stakeholder_values, token_economy
-
-
-
-
-
-
-
-def fund_raising(initial_stakeholder_values,initial_token_supply,external_equity):
-
-
-    #need a public sale investor to be intiialized no matter what
-    initial_stakeholder_values['Public Sale']['effective_token_price'] =  initial_stakeholder_values['Public Sale']['valuation_cap']/initial_token_supply
-    initial_stakeholder_values['Public Sale']['token_discount_perc'] = 0
-    public_token_price = initial_stakeholder_values['Public Sale']['effective_token_price']
-
-
-
-    #Go through the rest of the investors that are not public sale
-    for i, investor in initial_stakeholder_values.items():
-        
-
-        #Check if its an investor with a fundraise
-        investor_type = investor['type']
-        investor_subtype = investor['subtype']
-
-
-        if investor_type == "Investor" and investor_subtype != "Public Sale":
-
-
-            #deal with angels
-
-            if investor['subtype'] == "Angel":
-                investor['percentage_allocation'] = external_equity*(initial_stakeholder_values['Founders']['percentage_allocation']/(1-external_equity))
-                percentage_allocation = investor['percentage_allocation']
-                                
-                investor['valuation_cap'] = (investor['capital_raise'] / (percentage_allocation*initial_token_supply)) * initial_token_supply
-                valuation_cap = investor['valuation_cap']
-                
-                investor['bonus_amount'] = investor['valuation_cap']/initial_token_supply
-
-                investor['effective_token_price'] = min(public_token_price / investor['bonus_amount'], investor['valuation_cap'] / initial_token_supply)
-            else:
-                valuation_cap = investor['valuation_cap']
-                bonus_amount = investor['bonus_amount']
-                #Change other variables
-                if bonus_amount !=0:
-                    investor['effective_token_price'] = min(public_token_price / bonus_amount, valuation_cap / initial_token_supply)
-                else:
-                    investor['effective_token_price'] = valuation_cap / initial_token_supply
-                
-                
-            investor['token_discount_perc'] = investor['effective_token_price']/public_token_price
-
-
-
-    return initial_stakeholder_values
-
-
+    return allocation
 
 def create_liquidity_pool(initial_stakeholder_values,initial_token_supply):
     percentage_allocation = 0
@@ -178,46 +104,80 @@ def create_liquidity_pool(initial_stakeholder_values,initial_token_supply):
 
     return initial_stakeholder_values
 
+def calc_initial_lp_tokens(agent_token_allocations, sys_param):
+    """
+    Calculate the amount of tokens initially allocated to the DEX liquidity pool
+    """
+
+    allocation_sum = 0
+
+    for agent, allocation in agent_token_allocations.items():
+        allocation_sum += allocation
+    
+    lp_token_allocation = (100-allocation_sum) * sys_param['initial_total_supply']
+
+    return lp_token_allocation
 
 
-def liquidity_pool_module(initial_stakeholder_values,token_economy,liquidity_pool):
+def seed_dex_liquidity(agent_token_allocations, initial_stakeholders, funding_bucket_name, sys_param):
+    """
+    Calculate the initial token amounts in the liquidity pool
+    """
 
+    public_sale_valuation = sys_param['public_sale_valuation']
+    initial_token_supply = sys_param['initial_total_supply']
+    sum_of_raised_capital = calculate_raised_capital(sys_param)
+    initial_token_price = public_sale_valuation / initial_token_supply
+    lp_token_allocation = calc_initial_lp_tokens(agent_token_allocations, sys_param)
 
-    public_sale_valuation = token_economy['public_sale_valuation']
-    initial_token_supply = token_economy['initial_token_supply']
-    sum_of_raised_capital = token_economy['sum_of_raised_capital']
-    current_circulating_supply = token_economy['current_circulating_supply']
-    lp_paring_token_price = liquidity_pool['lp_paring_token_price']
-    token_lp_weighting = liquidity_pool['token_lp_weighting']
+    required_usdc = lp_token_allocation * initial_token_price
 
-
-
-
-    token_launch_price = public_sale_valuation / initial_token_supply
-
-    liquidity_pool_fund_allocation = token_launch_price*initial_stakeholder_values['Liquidity Pool']['total_token_amount']*100
-
-    allocation_by_raised_amount = liquidity_pool_fund_allocation/sum_of_raised_capital
-
-    initial_token_MC_price = token_launch_price*current_circulating_supply
-
-    initial_token_FDV_price = initial_token_supply*token_launch_price
-
-    initial_pairing_amount = liquidity_pool_fund_allocation/lp_paring_token_price
-
-    token_pair_weighting = 1-token_lp_weighting
-
-
-    liquidity_pool_module_data = {
-        'token_launch_price': token_launch_price,
-        'liquidity_pool_fund_allocation': liquidity_pool_fund_allocation,
-        'allocation_by_raised_amount': allocation_by_raised_amount,
-        'initial_token_MC_price': initial_token_MC_price,
-        'initial_token_FDV_price': initial_token_FDV_price,
-        'initial_pairing_amount': initial_pairing_amount,
-        'token_pair_weighting': token_pair_weighting
+    if required_usdc > sum_of_raised_capital:
+        raise ValueError('The required funds to seed the DEX liquidity are '+str(required_usdc)+' and higher than the sum of raised capital '+str(sum_of_raised_capital)+'!')
+    else:
+        # subtract the required funds from the funding bucket
+        found_stakeholder = False
+        for stakeholder in initial_stakeholders:
+            if initial_stakeholders[stakeholder]['type'] == funding_bucket_name:
+                initial_stakeholders[stakeholder]['initial_usd_funds'] -= required_usdc
+                if initial_stakeholders[stakeholder]['initial_usd_funds'] < 0:
+                    raise ValueError("The stakeholder "+funding_bucket_name+" has only $"+str(initial_stakeholders[stakeholder]['initial_usd_funds']+required_usdc)+" funds, but $"+str(required_usdc)+" are required for seeding the DEX liquidity pool!")
+                found_stakeholder = True
+        
+        if not found_stakeholder:
+            raise ValueError("The DEX liquidity couldn't be funded as there is no stakeholder with name: "+funding_bucket_name)
+    
+    liquidity_pool = {
+        'tokens' : lp_token_allocation,
+        'usdc' : required_usdc,
+        'constant_product' : lp_token_allocation * required_usdc,
+        'token_price' : required_usdc / lp_token_allocation
     }
 
+    return liquidity_pool
 
+def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param):
+    """
+    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked
+    """
 
-    return liquidity_pool_module_data
+    initial_circulating_tokens = 0
+    initial_locked_tokens = 0
+
+    for stakeholder in initial_stakeholders:
+        initial_circulating_tokens += initial_stakeholders[stakeholder]['tokens']
+        initial_locked_tokens += initial_stakeholders[stakeholder]['tokens_locked']
+    
+    initial_MC = initial_liquidity_pool['token_price'] * initial_circulating_tokens
+    initial_FDV_MC = initial_liquidity_pool['token_price'] * sys_param['initial_total_supply']
+
+    token_economy = {
+        'total_supply' : sys_param['initial_total_supply'],
+        'circulating_supply' : initial_circulating_tokens,
+        'MC' : initial_MC,
+        'FDV_MC' : initial_FDV_MC,
+        'tokens_locked' : initial_locked_tokens
+    }
+
+    return token_economy
+
