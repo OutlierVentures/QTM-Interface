@@ -5,6 +5,12 @@ import random
 from typing import *
 
 # Helper Functions
+# function that transforms the single values in a dictionary into list elements of the same value within the same dictionary
+def transform_dict_signle_values_into_list_elements(dictionary):
+    for key, value in dictionary.items():
+        dictionary[key] = [value]
+    return dictionary
+
 def calculate_raised_capital(sys_param):
     """
     Calculate the overall raised capital from the initial investors.
@@ -34,7 +40,6 @@ def new_agent(stakeholder_type: str, usd_funds: int,
              'action_weights': action_weights,
              'current_action': current_action}
     return agent
-
 
 def generate_agents(initial_value):
     """
