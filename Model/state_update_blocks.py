@@ -1,34 +1,24 @@
-from  parts.environment import *
-from  parts.agents import *
-
-
-def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
-    # Function to update the vested tokens for each investor based on some criteria
-    updated_economy = policy_input['updated_token_economy']
-    return ('token_economy', updated_economy)
-
-
-def update_investor_tokens(params, substep, state_history, prev_state, policy_input, **kwargs):
-    # Function to update the vested tokens for each investor based on some criteria
-    # ...
-    updated_investors = policy_input['updated_investors']
-
-    return ('investors', updated_investors)
-
-
-
+from  parts.vesting import *
+from parts.agent_behavior import *
 
 state_update_block = [
-    
-    
     {
-        # agents.py
+        # vesting.py
         'policies': {
             'vest_tokens': vest_tokens
         },
         'variables': { 
-            'investors': update_investor_tokens,
+            'agents': update_agent_vested_tokens,
             'token_economy': update_token_economy
-        }
+        },
+    },
+    {
+        # agent_behavior.py
+        'policies': {
+            'agent_behaviour': generate_agent_behavior,
+        },
+        'variables': {
+            'agents': update_agent_behavior,
+        },
     }
 ]
