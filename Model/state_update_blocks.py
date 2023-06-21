@@ -2,12 +2,12 @@ from  parts.mechanisms import *
 
 state_update_block = [
     {
-        # agents.py
+        # mechanisms.py
         'policies': {
             'vest_tokens': vest_tokens
         },
         'variables': { 
-            'investors': update_investor_tokens,
+            'agents': update_agent_vested_tokens,
             'token_economy': update_token_economy
         }
     }

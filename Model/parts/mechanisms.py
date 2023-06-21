@@ -1,10 +1,14 @@
 # POLICIY FUNCTIONS
-
 def vest_tokens(params, substep, state_history, prev_state, **kwargs):
+    """
+    Policy function to vest tokens for each stakeholder.
+    """
     
     agents = prev_state['agents']
     token_economy = prev_state['token_economy']
 
+    tokens_vested_in_timestep = 0
+    agent_token_vesting_dict = {}
     for key, agent in agents.items():
         # Get all invesotor info
         agent_type = agent['type']
@@ -17,55 +21,51 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         #Create vesting variables
         current_month = prev_state['timestep']
 
-        vesting_period_token_amount = agent_token_allocation - (agent_initial_vesting_perc / 100 * params['total_token_supply'])
-        
-        if total_months != 0:
-            current_vesting_percent = (current_month-cliff_in_months)/total_months
-
-        # (4-3)/10 = 1/10 then vest 10%
-        # (4 - 10) / 9 = then - num, cant vest yet
-        # (10-6) / 3 = % greater than 1, vest the whole thing
-
-
-
-            
-        if current_vesting_percent <= 0:
-            # Investor gets their initial amount vested
-            tokens_to_vest = initial_vesting_tokens
-
-
-        elif current_vesting_percent < 1:
-            # Investor is eligible to receive a portion of their vested tokens based on the vesting schedule
-            tokens_to_vest = (current_vesting_percent* vesting_period_token_amount) + initial_vesting_tokens
-
+        # Parameter integrity checks
+        if agent_vesting_duration <= 0 and agent_initial_vesting_perc <= 0:
+            vesting_period_token_amount = 0
+        elif agent_vesting_duration <= 0 and agent_initial_vesting_perc != 100:
+            print("ERROR: agent "+str(agent_type)+" vesting duration is 0 but initial vesting percentage is not 100%! It is "+str(agent_initial_vesting_perc)+"%. Setting vesting amount to 0.")
+            vesting_period_token_amount = 0
+        elif agent_vesting_duration <= 0:
+            agent_vesting_duration = 0
         else:
-            # Investor is fully vested
-            tokens_to_vest = total_token_amount
-
-        # Update the investor's current allocation
-        investor['current_allocation'] = tokens_to_vest
-
+            vesting_period_token_amount = (agent_token_allocation - (agent_initial_vesting_perc / 100 * params['total_token_supply'])) / agent_vesting_duration
+        
+        if (current_month >= agent_cliff_months + agent_vesting_duration) or current_month < agent_cliff_months:
+            vesting_period_token_amount = 0
 
 
+        tokens_vested_in_timestep += vesting_period_token_amount
 
-    token_economy['current_circulating_supply'] = sum([investor['current_allocation'] for i, investor in investors.items()])
+        agent_token_vesting_dict[key] = vesting_period_token_amount
 
-
-    # Update the state variables
-    updated_investors = investors
-    updated_token_economy = token_economy
-
-    return {'updated_investors': updated_investors,'updated_token_economy': updated_token_economy}
+    return {'tokens_vested_in_timestep': tokens_vested_in_timestep,'agent_token_vesting_dict': agent_token_vesting_dict}
 
 # STATE UPDATE FUNCTIONS
-def update_investor_tokens(params, substep, state_history, prev_state, policy_input, **kwargs):
-    # Function to update the vested tokens for each investor based on some criteria
-    # ...
-    updated_investors = policy_input['updated_investors']
+def update_agent_vested_tokens(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the vested tokens for each investor based on some criteria
+    """
+    updated_agents = prev_state['agents']
+    agent_token_vesting_dict = policy_input['agent_token_vesting_dict']
 
-    return ('investors', updated_investors)
+    for key, value in agent_token_vesting_dict.items():
+        updated_agents[key]['tokens'] += value
+        updated_agents[key]['tokens_vested'] += value
+
+
+    return ('agents', updated_agents)
 
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
-    # Function to update the vested tokens for each investor based on some criteria
-    updated_economy = policy_input['updated_token_economy']
+    """
+    Function to update the token economy based on the vested tokens.
+    """
+
+    updated_economy = prev_state['token_economy']
+    tokens_vested_in_timestep = policy_input['tokens_vested_in_timestep']
+    
+    updated_economy['circulating_supply'] += tokens_vested_in_timestep
+    updated_economy['market_cap'] = updated_economy['circulating_supply'] * updated_economy['token_price']
+
     return ('token_economy', updated_economy)

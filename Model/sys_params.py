@@ -94,31 +94,31 @@ agent_behavior_dict = {
 }
 
 # calculating the token allocations for different agents
-agent_token_allocations = transform_single_values_into_list({
-    'angle_token_allocations': (sys_param['equity_external_shareholders_perc']/100 * (sys_param['team_allocation']/100 / (1 - sys_param['equity_external_shareholders_perc']/100))),
-    'seed_token_allocations' : calculate_investor_allocation(sys_param, "seed"),
-    'presale_1_token_allocations' : calculate_investor_allocation(sys_param, "presale_1"),
-    'presale_2_token_allocations' : calculate_investor_allocation(sys_param, "presale_2"),
-    'public_sale_token_allocations' : ((sys_param['public_sale_supply_perc'] / 100) * sys_param['initial_total_supply']),
-    'team_token_allocations' : (sys_param['team_allocation']/100),
-    'reserve_token_allocations' : (sys_param['reserve_allocation']/100),
-    'community_token_allocations' : (sys_param['community_allocation']/100),
-    'foundation_token_allocations' : (sys_param['foundation_allocation']/100),
-    'placeholder_1_token_allocations' : (sys_param['placeholder_1_allocation']/100),
-    'placeholder_2_token_allocations' : (sys_param['placeholder_2_allocation']/100),
-    'market_investors_token_allocations' : 0
+agent_token_allocation = transform_dict_signle_values_into_list_elements({
+    'angle_token_allocation': (sys_param['equity_external_shareholders_perc']/100 * (sys_param['team_allocation']/100 / (1 - sys_param['equity_external_shareholders_perc']/100))),
+    'seed_token_allocation' : calculate_investor_allocation(sys_param, "seed"),
+    'presale_1_token_allocation' : calculate_investor_allocation(sys_param, "presale_1"),
+    'presale_2_token_allocation' : calculate_investor_allocation(sys_param, "presale_2"),
+    'public_sale_token_allocation' : ((sys_param['public_sale_supply_perc'] / 100) * sys_param['initial_total_supply']),
+    'team_token_allocation' : (sys_param['team_allocation']/100),
+    'reserve_token_allocation' : (sys_param['reserve_allocation']/100),
+    'community_token_allocation' : (sys_param['community_allocation']/100),
+    'foundation_token_allocation' : (sys_param['foundation_allocation']/100),
+    'placeholder_1_token_allocation' : (sys_param['placeholder_1_allocation']/100),
+    'placeholder_2_token_allocation' : (sys_param['placeholder_2_allocation']/100),
+    'market_investors_token_allocation' : 0
 })
 
-# adding the agent_token_allocations dictionary to the sys_param dictionary
-sys_param.update(agent_token_allocations)
+# adding the agent_token_allocation dictionary to the sys_param dictionary
+sys_param.update(agent_token_allocation)
 
 initial_values = {
     "initial_agent_values" : {
         uuid.uuid4(): {
             'type': 'angle',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['angle_initial_vesting']/100) * agent_token_allocations["angle_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['angle_initial_vesting']/100) * agent_token_allocations["angle_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['angle_initial_vesting']/100) * agent_token_allocation["angle_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['angle_initial_vesting']/100) * agent_token_allocation["angle_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['angle'].keys()),
             'action_weights': tuple(agent_behavior_dict['angle'].values()),
@@ -127,8 +127,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'seed',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['seed_initial_vesting']/100) * agent_token_allocations["seed_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['seed_initial_vesting']/100) * agent_token_allocations["seed_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['seed_initial_vesting']/100) * agent_token_allocation["seed_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['seed_initial_vesting']/100) * agent_token_allocation["seed_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['seed'].keys()),
             'action_weights': tuple(agent_behavior_dict['seed'].values()),
@@ -137,8 +137,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'presale_1',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['presale_1_initial_vesting']/100) * agent_token_allocations["presale_1_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['presale_1_initial_vesting']/100) * agent_token_allocations["presale_1_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['presale_1_initial_vesting']/100) * agent_token_allocation["presale_1_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['presale_1_initial_vesting']/100) * agent_token_allocation["presale_1_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['presale_1'].keys()),
             'action_weights': tuple(agent_behavior_dict['presale_1'].values()),
@@ -147,8 +147,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'presale_2',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['presale_2_initial_vesting']/100) * agent_token_allocations["presale_2_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['presale_2_initial_vesting']/100) * agent_token_allocations["presale_2_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['presale_2_initial_vesting']/100) * agent_token_allocation["presale_2_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['presale_2_initial_vesting']/100) * agent_token_allocation["presale_2_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['presale_2'].keys()),
             'action_weights': tuple(agent_behavior_dict['presale_2'].values()),
@@ -157,8 +157,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'public_sale',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['public_sale_initial_vesting']/100) * agent_token_allocations["public_sale_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['public_sale_initial_vesting']/100) * agent_token_allocations["public_sale_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['public_sale_initial_vesting']/100) * agent_token_allocation["public_sale_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['public_sale_initial_vesting']/100) * agent_token_allocation["public_sale_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['public_sale'].keys()),
             'action_weights': tuple(agent_behavior_dict['public_sale'].values()),
@@ -167,8 +167,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'team',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['team_initial_vesting']/100) * agent_token_allocations["team_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['team_initial_vesting']/100) * agent_token_allocations["team_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['team_initial_vesting']/100) * agent_token_allocation["team_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['team_initial_vesting']/100) * agent_token_allocation["team_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['team'].keys()),
             'action_weights': tuple(agent_behavior_dict['team'].values()),
@@ -177,8 +177,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'reserve',
             'initial_usd_funds': calculate_raised_capital(sys_param),
-            'initial_tokens': (sys_param['reserve_initial_vesting']/100) * agent_token_allocations["reserve_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['reserve_initial_vesting']/100) * agent_token_allocations["reserve_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['reserve_initial_vesting']/100) * agent_token_allocation["reserve_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['reserve_initial_vesting']/100) * agent_token_allocation["reserve_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['reserve'].keys()),
             'action_weights': tuple(agent_behavior_dict['reserve'].values()),
@@ -187,8 +187,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'community',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['community_initial_vesting']/100) * agent_token_allocations["community_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['community_initial_vesting']/100) * agent_token_allocations["community_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['community_initial_vesting']/100) * agent_token_allocation["community_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['community_initial_vesting']/100) * agent_token_allocation["community_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['community'].keys()),
             'action_weights': tuple(agent_behavior_dict['community'].values()),
@@ -197,8 +197,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'foundation',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['foundation_initial_vesting']/100) * agent_token_allocations["foundation_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['foundation_initial_vesting']/100) * agent_token_allocations["foundation_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['foundation_initial_vesting']/100) * agent_token_allocation["foundation_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['foundation_initial_vesting']/100) * agent_token_allocation["foundation_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['foundation'].keys()),
             'action_weights': tuple(agent_behavior_dict['foundation'].values()),
@@ -207,8 +207,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'placeholder_1',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['placeholder_1_initial_vesting']/100) * agent_token_allocations["placeholder_1_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['placeholder_1_initial_vesting']/100) * agent_token_allocations["placeholder_1_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['placeholder_1_initial_vesting']/100) * agent_token_allocation["placeholder_1_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['placeholder_1_initial_vesting']/100) * agent_token_allocation["placeholder_1_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['placeholder_1'].keys()),
             'action_weights': tuple(agent_behavior_dict['placeholder_1'].values()),
@@ -217,8 +217,8 @@ initial_values = {
         uuid.uuid4(): {
             'type': 'placeholder_2',
             'initial_usd_funds': 0,
-            'initial_tokens': (sys_param['placeholder_2_initial_vesting']/100) * agent_token_allocations["placeholder_2_token_allocations"] * sys_param['initial_total_supply'],
-            'initial_tokens_vested': (sys_param['placeholder_2_initial_vesting']/100) * agent_token_allocations["placeholder_2_token_allocations"] * sys_param['initial_total_supply'],
+            'initial_tokens': (sys_param['placeholder_2_initial_vesting']/100) * agent_token_allocation["placeholder_2_token_allocation"] * sys_param['initial_total_supply'],
+            'initial_tokens_vested': (sys_param['placeholder_2_initial_vesting']/100) * agent_token_allocation["placeholder_2_token_allocation"] * sys_param['initial_total_supply'],
             'initial_tokens_locked': 0,
             'action_list': list(agent_behavior_dict['placeholder_2'].keys()),
             'action_weights': tuple(agent_behavior_dict['placeholder_2'].values()),
@@ -230,8 +230,8 @@ initial_values = {
             'initial_tokens': 0,
             'initial_tokens_vested': 0,
             'initial_tokens_locked': 0,
-            'action_list': list(agent_behavior_dict['market_investors_token_allocations'].keys()),
-            'action_weights': tuple(agent_behavior_dict['market_investors_token_allocations'].values()),
+            'action_list': list(agent_behavior_dict['market_investors_token_allocation'].keys()),
+            'action_weights': tuple(agent_behavior_dict['market_investors_token_allocation'].values()),
             'current_action': 'hold'
         }
     },
