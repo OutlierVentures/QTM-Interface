@@ -41,11 +41,29 @@ def new_agent(stakeholder_type: str, usd_funds: int,
              'current_action': current_action}
     return agent
 
+def initialize_agent_parameters(stakeholder_names):
+    """
+    Initialize all token ecosystem agent parameters.
+    """
+    initial_stakeholder_values = {}
+    for stakeholder in stakeholder_names:
+        initial_stakeholder_values[uuid.uuid4()] = {
+            'type': stakeholder,
+            'initial_usd_funds': 0,
+            'initial_tokens': 0,
+            'initial_tokens_vested': 0,
+            'initial_tokens_locked': 0,
+            'action_list': [],
+            'action_weights': [],
+            'current_action': 'hold'
+        }
+    
+    return initial_stakeholder_values
+
 def generate_agents(initial_value):
     """
     Initialize all token ecosystem agents aka stakeholders.
     """
-
     agents_dict = initial_value["initial_agent_values"]
     initial_agents = {}
     for a in agents_dict:
@@ -103,11 +121,10 @@ def calculate_investor_allocation(sys_param, stakeholder_name):
     """
     Calculate the initial token allocation of a specific stakeholder considering bonus amounts.
     """
-
-    token_launch_price = sys_param["public_sale_valuation"] / sys_param["initial_total_supply"]
-    effective_token_price = np.min([token_launch_price / (1+sys_param[stakeholder_name+"_bonus"]/100), sys_param[stakeholder_name+"_valuation"] / sys_param["initial_total_supply"]])
-    tokens = sys_param[stakeholder_name+"_raised"] / effective_token_price
-    allocation = tokens / sys_param['initial_total_supply']
+    token_launch_price = [x / y for x in sys_param["public_sale_valuation"] for y in sys_param["initial_total_supply"]]
+    effective_token_price = [np.min([x / (1+y/100), z / a]) for x in token_launch_price for y in sys_param[stakeholder_name+"_bonus"] for z in sys_param[stakeholder_name+"_valuation"] for a in sys_param["initial_total_supply"] for a in sys_param["initial_total_supply"]]
+    tokens = [x / y for x in sys_param[stakeholder_name+"_raised"] for y in effective_token_price]
+    allocation = [x / y for x in tokens for y in sys_param['initial_total_supply']]
     
     return allocation
 

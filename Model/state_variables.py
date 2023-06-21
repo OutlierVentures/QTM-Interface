@@ -1,7 +1,7 @@
 from sys_params import *
 from parts.utils import *
 
-initial_stakeholders = generate_agents(initial_values)
+initial_stakeholders = generate_agents(initial_stakeholder_values)
 
 initial_liquidity_pool = seed_dex_liquidity(agent_token_allocation, initial_stakeholders, 'reserve', sys_param)
 
