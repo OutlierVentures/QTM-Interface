@@ -3,7 +3,7 @@ from parts.utils import *
 
 initial_stakeholders = generate_agents(initial_values)
 
-initial_liquidity_pool = seed_dex_liquidity(agent_token_allocations, initial_stakeholders, 'reserve', sys_param)
+initial_liquidity_pool = seed_dex_liquidity(agent_token_allocation, initial_stakeholders, 'reserve', sys_param)
 
 initial_token_economy = generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param)
 
