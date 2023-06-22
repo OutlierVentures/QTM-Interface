@@ -6,6 +6,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     
     agents = prev_state['agents']
     token_economy = prev_state['token_economy']
+    total_token_supply = params['initial_total_supply']
 
     tokens_vested_in_timestep = 0
     agent_token_vesting_dict = {}
@@ -20,6 +21,13 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         
         #Create vesting variables
         current_month = prev_state['timestep']
+
+        # initial vesting
+        if current_month == 0:
+            initial_agent_tokens_vested = (agent_initial_vesting_perc / 100) * (agent_token_allocation * total_token_supply)
+            agent_token_vesting_dict[key] = initial_agent_tokens_vested
+            tokens_vested_in_timestep += initial_agent_tokens_vested
+            continue
 
         # Parameter integrity checks
         if agent_vesting_duration <= 0 and agent_initial_vesting_perc <= 0:
@@ -38,7 +46,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
 
         tokens_vested_in_timestep += vesting_period_token_amount
 
-        agent_token_vesting_dict[key] = vesting_period_token_amount
+        agent_token_vesting_dict[key] += vesting_period_token_amount
 
     return {'tokens_vested_in_timestep': tokens_vested_in_timestep,'agent_token_vesting_dict': agent_token_vesting_dict}
 
