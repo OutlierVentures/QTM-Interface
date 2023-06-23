@@ -12,7 +12,7 @@ The [Quantitative Token Model (QTM)](https://outlierventures.io/quantitative-tok
 
 ## Motivation for the radCAD Extension
 
-The goal of the QTM radCAD integration is to extend and to improve the static high-level approach of the QTM spreadsheet model, developed by Outlier Ventures.
+The goal of the QTM radCAD integration is to extend and to improve the static high-level approach of the QTM spreadsheet model to a more flexible and dynamic one. With the radCad integration one should be able to perform parameter sweeps and optimizations. Furthermore it opens up the capabilities for more dynamic agent behaviors, Monte Carlo runs, and Markov decision trees, which reflect a more realistic approximation of a highly non-linear web3 token ecosystem.
 
 ## Development Roadmap
 
