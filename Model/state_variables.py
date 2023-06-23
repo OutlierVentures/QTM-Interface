@@ -1,12 +1,16 @@
 from sys_params import *
 from parts.utils import *
 
+# initialize the initial stakeholders
 initial_stakeholders = generate_agents(initial_stakeholder_values)
 
-initial_liquidity_pool = seed_dex_liquidity(agent_token_allocation, initial_stakeholders, 'reserve', sys_param)
+# initialize the initial liquidity pool
+initial_liquidity_pool = initialize_dex_liquidity()
 
-initial_token_economy = generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param)
+# initialize the initial token economy
+initial_token_economy = generate_initial_token_economy_metrics()
 
+# compose the initial state
 initial_state = {
     'agents': initial_stakeholders,
     'liquidity_pool': initial_liquidity_pool,

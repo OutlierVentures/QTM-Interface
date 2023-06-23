@@ -1,5 +1,9 @@
 # POLICY FUNCTIONS
 def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs):
+    """
+    Define the agent behavior for each agent type
+    """
+
     agent_behavior_dict = {
         'angle': {
             'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
@@ -65,7 +69,7 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
             'remove_locked_tokens': 0,
             'incentivise': 0
         },
-        'placeholder_1': {
+        'placeholder_2': {
             'trade': 0,
             'hold': 100,
             'utility': 0,

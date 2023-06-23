@@ -18,14 +18,16 @@ importlib.reload(sys_params)
 
 import traceback
 
-## Still need to fully build this out
-MONTE_CARLO_RUNS = 1
-TIMESTEPS = 30
+if __name__ == '__main__':
+    MONTE_CARLO_RUNS = 1
+    TIMESTEPS = 30
 
-model = Model(initial_state=state_variables.initial_state, params=sys_params.sys_param, state_update_blocks=state_update_blocks.state_update_block)
-simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
+    model = Model(initial_state=state_variables.initial_state, params=sys_params.sys_param, state_update_blocks=state_update_blocks.state_update_block)
+    simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
 
-result = simulation.run()
-df = pd.DataFrame(result)
+    result = simulation.run()
+    df = pd.DataFrame(result)
 
-#investor_df = extract_investors(df)
+    print(df['token_economy'].head(10))
+
+    #investor_df = extract_investors(df)
