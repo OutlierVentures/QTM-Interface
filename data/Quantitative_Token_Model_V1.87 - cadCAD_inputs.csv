@@ -14,7 +14,6 @@ Early Backers / Angels Valuation,angle_valuation,"9,000,000",,,,,
 Seed Valuation,seed_valuation,"30,000,000",,,,,
 Pre-Sale 1 Valuation,presale_1_valuation,"40,000,000",,,,,
 Pre-Sale 2 Valuation,presale_2_valuation,"50,000,000",,,,,
-Public Sale Valuation,public_sale_valuation,"60,000,000",,,,,
 Early Backers / Angels Bonus Amount / %,angle_bonus,91.00%,,,,,
 Seed Bonus Amount / %,seed_bonus,50.00%,,,,,
 Pre-Sale 1 Bonus Amount / %,presale_1_bonus,25.00%,,,,,
@@ -143,3 +142,4 @@ token incentivisation exponent,token_incentivisation_exponent,2,,,,-,exponent on
 team vesting weight,team_vesting_weight,0.1,,,,share of vested tokens / 100%,the priority with which the team gets their tokens vested through the AAV controller
 foundation vesting weight,foundation_vesting_weight,0.6,,,,share of vested tokens / 100%,the priority with which the foundation gets their tokens vested through the AAV controller
 investor vesting weight,investor_vesting_weight,0.3,,,,share of vested tokens / 100%,the priority with which the investors get their tokens vested through the AAV controller
+stakeholder that owns all business funds,business_fund_holder,reserve,,,,-,stakeholder that gets all the raised funds and also seeds the liquidity
