@@ -1,6 +1,6 @@
 # Quantitative Token Model radCAD Integration
 
-! This repository is work in progress !
+! This repository is a work in progress !
 
 ## Background
 
