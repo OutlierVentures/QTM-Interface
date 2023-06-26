@@ -2,8 +2,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-
-
 def plot_stacked_area_graph(df):
     # pivot the dataframe to create a multi-level index with Investor_Name and timestep
 
@@ -48,12 +46,6 @@ def effective_token_price_plot(df):
     plt.ylabel('Effective Token Price')
     plt.show()
 
-
-
-
-
-
-
 def extract_allocation(df):
     investors_df = pd.DataFrame(columns=['Investor_Name', 'current_allocation', 'timestep'])
     for index, row in df.iterrows():
@@ -73,8 +65,6 @@ def extract_allocation(df):
     return investors_df
 
 
-
-
 def initial_allocation_pie(df):
     sum = 0
     percentages = []
@@ -90,3 +80,50 @@ def initial_allocation_pie(df):
 
     plt.pie(percentages, labels=labels, normalize=True)
     plt.show()
+
+
+def aggregate_runs(df,aggregate_dimension):
+    '''
+    Function to aggregate the monte carlo runs along a single dimension.
+
+    Parameters:
+    df: dataframe name
+    aggregate_dimension: the dimension you would like to aggregate on, the standard one is timestep.
+
+    Example run:
+    mean_df,median_df,std_df,min_df = aggregate_runs(df,'timestep')
+    '''
+
+    mean_df = df.groupby(aggregate_dimension).mean().reset_index()
+    median_df = df.groupby(aggregate_dimension).median().reset_index()
+    std_df = df.groupby(aggregate_dimension).std().reset_index()
+    min_df = df.groupby(aggregate_dimension).min().reset_index()
+
+    return mean_df,median_df,std_df,min_df
+
+def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
+    '''
+    A function that generates timeseries plot of Monte Carlo runs.
+
+    Parameters:
+    df: dataframe name
+    aggregate_dimension: the dimension you would like to aggregate on, the standard one is timestep.
+    x = x axis variable for plotting
+    y = y axis variable for plotting
+    run_count = the number of monte carlo simulations
+
+    Example run:
+    monte_carlo_plot(df,'timestep','timestep','revenue',run_count=100)
+    '''
+    mean_df,median_df,std_df,min_df = aggregate_runs(df,aggregate_dimension)
+
+    plt.figure(figsize=(10,6))
+    for r in range(1,runs+1):
+        legend_name = 'Run ' + str(r)
+        plt.plot(df[df.run==r].timestep, df[df.run==r][y], label = legend_name )
+    plt.plot(mean_df[x], mean_df[y], label = 'Mean', color = 'black')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.xlabel(x)
+    plt.ylabel(y)
+    title_text = 'Performance of ' + y + ' over ' + str(runs) + ' Monte Carlo Runs'
+    plt.title(title_text)
