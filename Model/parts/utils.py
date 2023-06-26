@@ -5,21 +5,14 @@ import random
 from typing import *
 
 # Helper Functions
-# function that transforms the single values in a dictionary into list elements of the same value within the same dictionary
-def transform_dict_signle_values_into_list_elements(dictionary):
-    for key, value in dictionary.items():
-        dictionary[key] = [value]
-    return dictionary
-
-def calculate_raised_capital(sys_param):
+def calculate_raised_capital(param):
     """
     Calculate the overall raised capital from the initial investors.
     """
 
     raised_capital = 0
-    for key, value in sys_param:
-        if "_raised" in key:
-            raised_capital += value
+    # calculate the raised capital for all investors in sys_param where "_raised" is in the key
+    raised_capital = sum([param[key] if ("_raised" in key) else 0 for key in param])
 
     return raised_capital
 
@@ -60,21 +53,18 @@ def initialize_agent_parameters(stakeholder_names):
     
     return initial_stakeholder_values
 
-def generate_agents(initial_value):
+def generate_agents(initial_stakeholder_values):
     """
     Initialize all token ecosystem agents aka stakeholders.
     """
-    agents_dict = initial_value["initial_agent_values"]
     initial_agents = {}
-    for a in agents_dict:
-        initial_agents[a] = new_agent(a['type'],
-                                    a['initial_usd_funds'],
-                                    a['initial_tokens'],
-                                    a['initial_tokens_vested'],
-                                    a['initial_tokens_locked'],
-                                    a['action_list'],
-                                    a['action_weights'],
-                                    a['current_action'])
+    for a in initial_stakeholder_values:
+        initial_agents[a] = new_agent(initial_stakeholder_values[a]['type'],
+                                    initial_stakeholder_values[a]['initial_usd_funds'],
+                                    initial_stakeholder_values[a]['initial_tokens'],
+                                    initial_stakeholder_values[a]['action_list'],
+                                    initial_stakeholder_values[a]['action_weights'],
+                                    initial_stakeholder_values[a]['current_action'])
     return initial_agents
 
 def create_parameter_list(parameter_name, not_iterable_parameters, init_value, min, max, intervals):
@@ -133,74 +123,41 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     Calculate the amount of tokens initially allocated to the DEX liquidity pool.
     """
 
-    allocation_sum = 0
-
-    for agent, allocation in agent_token_allocations.items():
-        allocation_sum += allocation
+    allocation_sum = []
+    # get max length of possible raised_capital parameters
+    max_length = max([len(agent_token_allocations[key]) for key in agent_token_allocations])
+    # calculate the raised capital for all possible parameter list combinations in sys_param where "_raised" is in the key
+    for i in range(max_length):
+        allocation_sum.append(sum([agent_token_allocations[key][i] if (i < len(agent_token_allocations[key])) else agent_token_allocations[key][-1] for key in agent_token_allocations]))
     
-    lp_token_allocation = (100-allocation_sum) * sys_param['initial_total_supply']
+    lp_token_allocation = [(1 - x) * y for x in allocation_sum for y in sys_param['initial_total_supply']]
 
     return lp_token_allocation
 
 
-def seed_dex_liquidity(agent_token_allocations, initial_stakeholders, funding_bucket_name, sys_param):
+def initialize_dex_liquidity():
     """
-    Calculate the initial token amounts in the liquidity pool.
+    Initialize the DEX liquidity pool.
     """
-
-    public_sale_valuation = sys_param['public_sale_valuation']
-    initial_token_supply = sys_param['initial_total_supply']
-    sum_of_raised_capital = calculate_raised_capital(sys_param)
-    initial_token_price = public_sale_valuation / initial_token_supply
-    lp_token_allocation = calc_initial_lp_tokens(agent_token_allocations, sys_param)
-
-    required_usdc = lp_token_allocation * initial_token_price
-
-    if required_usdc > sum_of_raised_capital:
-        raise ValueError('The required funds to seed the DEX liquidity are '+str(required_usdc)+' and higher than the sum of raised capital '+str(sum_of_raised_capital)+'!')
-    else:
-        # subtract the required funds from the funding bucket.
-        found_stakeholder = False
-        for stakeholder in initial_stakeholders:
-            if initial_stakeholders[stakeholder]['type'] == funding_bucket_name:
-                initial_stakeholders[stakeholder]['initial_usd_funds'] -= required_usdc
-                if initial_stakeholders[stakeholder]['initial_usd_funds'] < 0:
-                    raise ValueError("The stakeholder "+funding_bucket_name+" has only $"+str(initial_stakeholders[stakeholder]['initial_usd_funds']+required_usdc)+" funds, but $"+str(required_usdc)+" are required for seeding the DEX liquidity pool!")
-                found_stakeholder = True
-        
-        if not found_stakeholder:
-            raise ValueError("The DEX liquidity couldn't be funded as there is no stakeholder with name: "+funding_bucket_name)
-    
     liquidity_pool = {
-        'tokens' : lp_token_allocation,
-        'usdc' : required_usdc,
-        'constant_product' : lp_token_allocation * required_usdc,
-        'token_price' : required_usdc / lp_token_allocation
+        'tokens' : 0,
+        'usdc' : 0,
+        'constant_product' : 0,
+        'token_price' : 0
     }
 
     return liquidity_pool
 
-def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param):
+def generate_initial_token_economy_metrics():
     """
-    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
+    Set the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
     """
-
-    initial_circulating_tokens = 0
-    initial_locked_tokens = 0
-
-    for stakeholder in initial_stakeholders:
-        initial_circulating_tokens += initial_stakeholders[stakeholder]['tokens']
-        initial_locked_tokens += initial_stakeholders[stakeholder]['tokens_locked']
-    
-    initial_MC = initial_liquidity_pool['token_price'] * initial_circulating_tokens
-    initial_FDV_MC = initial_liquidity_pool['token_price'] * sys_param['initial_total_supply']
-
     token_economy = {
-        'total_supply' : sys_param['initial_total_supply'],
-        'circulating_supply' : initial_circulating_tokens,
-        'MC' : initial_MC,
-        'FDV_MC' : initial_FDV_MC,
-        'tokens_locked' : initial_locked_tokens
+        'total_supply' : 0,
+        'circulating_supply' : 0,
+        'MC' : 0,
+        'FDV_MC' : 0,
+        'tokens_locked' : 0
     }
 
     return token_economy
