@@ -1,2 +1,4 @@
 venv
 __pycache__
+./Model/__pycache__
+./Model/parts/__pycache__
