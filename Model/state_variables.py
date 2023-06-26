@@ -1,17 +1,18 @@
 from sys_params import *
-from utils import *
+from parts.utils import *
 
+# initialize the initial stakeholders
+initial_stakeholders = generate_agents(initial_stakeholder_values)
 
+# initialize the initial liquidity pool
+initial_liquidity_pool = initialize_dex_liquidity()
 
-initial_investors, token_economy  = initial_investor_allocation(sys_param['initial_investors'],sys_param['token_economy'])
+# initialize the initial token economy
+initial_token_economy = generate_initial_token_economy_metrics()
 
-liquidity_pool = liquidity_pool_module(initial_investors,token_economy,sys_param['liquidity_pool'])
-
-print(liquidity_pool)
-
+# compose the initial state
 initial_state = {
-    'investors': initial_investors,
-    'token_economy': token_economy,
-    'liquidity_pool': liquidity_pool
-
+    'agents': initial_stakeholders,
+    'liquidity_pool': initial_liquidity_pool,
+    'token_economy': initial_token_economy
 }
