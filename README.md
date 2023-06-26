@@ -8,7 +8,7 @@ The [Quantitative Token Model (QTM)](https://outlierventures.io/quantitative-tok
 
 ## QTM Structure
 
-![Quantitative Token Model](https://github.com/achimstruve/QTM-Interface/blob/restructuring_branch/images/Quantitative_Token_Model_Abstraction.jpeg?raw=true)
+![Quantitative Token Model](https://github.com/BlockBoy32/QTM-Interface/blob/main/images/Quantitative_Token_Model_Abstraction.jpeg?raw=true)
 
 ## Motivation for the radCAD Extension
 
