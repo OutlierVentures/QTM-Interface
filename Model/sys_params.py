@@ -38,7 +38,7 @@ agent_token_allocation = {
     'foundation_token_allocation' : [x / 100 for x in sys_param['foundation_allocation']],
     'placeholder_1_token_allocation' : [x / 100 for x in sys_param['placeholder_1_allocation']],
     'placeholder_2_token_allocation' : [x / 100 for x in sys_param['placeholder_2_allocation']],
-    'market_investors_token_allocation' : [0]
+    'market_token_allocation' : [0]
 }
 
 sys_param.update(agent_token_allocation)
@@ -52,19 +52,18 @@ liquidity_pool_initial_values = {
 sys_param.update(liquidity_pool_initial_values)
 
 
-# calculating the initial values for the different agents
-stakeholder_names = [
-    'angle',
-    'seed',
-    'presale_1',
-    'presale_2',
-    'public_sale',
-    'team',
-    'reserve',
-    'community',
-    'foundation',
-    'placeholder_1',
-    'placeholder_2',
-    'market_investors'
-]
-initial_stakeholder_values = initialize_agent_parameters(stakeholder_names)
+# defining the mapping between the stakeholder names and their type categories
+stakeholder_name_mapping = {
+    'angle': 'early_investor',
+    'seed': 'early_investor',
+    'presale_1': 'early_investor',
+    'presale_2': 'early_investor',
+    'public_sale': 'early_investor',
+    'team': 'team',
+    'reserve': 'protocol_bucket',
+    'community': 'protocol_bucket',
+    'foundation': 'protocol_bucket',
+    'placeholder_1': 'protocol_bucket',
+    'placeholder_2': 'protocol_bucket',
+    'market': 'market_investors',
+}
