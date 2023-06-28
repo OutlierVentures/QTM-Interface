@@ -208,3 +208,25 @@ def update_agent_behavior(params, substep, state_history, prev_state, policy_inp
         updated_agents[key]['action_weights'] += tuple(agent_behavior_dict[updated_agents[key]['type']].values())
 
     return ('agents', updated_agents)
+
+def update_agent_token_allocations(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the agent token allocations
+    """
+    updated_agents = prev_state['agents'].copy()
+    agent_allocations = policy_input['agent_allocations']
+
+    for key, value in updated_agents.items():
+        # check if agent has enough tokens for meta bucket allocations
+        if updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['selling'] + agent_allocations[key]['removed'] < 0:
+            raise ValueError('Agent ', updated_agents[key]['type'], ' has less tokens: ', updated_agents[key]['tokens'], ' than planned selling allocation ', agent_allocations[key]['selling'],
+                             ' and utility allocation ', agent_allocations[key]['utility'], ' plus removing allocation ', agent_allocations[key]['removed'], ' combined!')
+        
+        # update agent token allocations
+        updated_agents[key]['tokens'] = updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['utility'] + agent_allocations[key]['removed']
+        updated_agents[key]['tokens_locked'] = updated_agents[key]['tokens_locked'] + agent_allocations[key]['locking']
+        updated_agents[key]['tokens_liquidity_provisioning'] = updated_agents[key]['tokens_liquidity_provisioning'] + agent_allocations[key]['liquidity']
+        updated_agents[key]['tokens_transferred'] = updated_agents[key]['tokens_transferred'] + agent_allocations[key]['transfer']
+        updated_agents[key]['tokens_burned'] = updated_agents[key]['tokens_burned'] + agent_allocations[key]['burn']
+
+    return ('agents', updated_agents)

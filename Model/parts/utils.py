@@ -150,7 +150,9 @@ def generate_initial_token_economy_metrics():
         'circulating_supply' : 0,
         'MC' : 0,
         'FDV_MC' : 0,
-        'tokens_locked' : 0
+        'tokens_locked' : 0,
+        'tokens_vested': 0,
+        'tokens_burned': 0
     }
 
     return token_economy

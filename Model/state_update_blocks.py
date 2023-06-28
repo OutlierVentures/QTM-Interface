@@ -33,6 +33,15 @@ state_update_block = [
         },
     },
     {
+        # agent_behavior.py
+        'policies': {
+            'agent_token_allocations': agent_token_allocations,
+        },
+        'variables': {
+            'agents': update_agent_token_allocations,
+        },
+    },
+    {
         # token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
