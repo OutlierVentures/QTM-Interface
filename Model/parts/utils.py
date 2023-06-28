@@ -17,8 +17,9 @@ def calculate_raised_capital(param):
     return raised_capital
 
 # Initialization
-def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: int,
-              tokens: int, action_list: list, action_weights: Tuple,
+def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
+              tokens: float, tokens_vested: float, tokens_locked: float, tokens_liquidity: float,
+              tokens_transferred: float, tokens_burned: float, action_list: list, action_weights: Tuple,
               current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
@@ -28,8 +29,11 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: int,
              'type': stakeholder_type,
              'usd_funds': usd_funds,
              'tokens': tokens,
-             'tokens_vested': 0,
-             'tokens_locked': 0,
+             'tokens_vested': tokens_vested,
+             'tokens_locked': tokens_locked,
+             'tokens_liquidity_provisioning': tokens_liquidity,
+             'tokens_transferred': tokens_transferred,
+             'tokens_burned': tokens_burned,
              'action_list': action_list,
              'action_weights': action_weights,
              'current_action': current_action}
@@ -39,7 +43,7 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
     """
     Initialize all token ecosystem agents aka stakeholders.
     """
-    
+
     initial_agents = {}
     for stakeholder_name, stakeholder_type in stakeholder_name_mapping.items():
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
@@ -48,6 +52,9 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens = 0,
                                     tokens_vested = 0,
                                     tokens_locked = 0,
+                                    tokens_liquidity_provisioning = 0,
+                                    tokens_transferred = 0,
+                                    tokens_burned = 0,
                                     action_list = [],
                                     action_weights = [],
                                     current_action = 'hold')

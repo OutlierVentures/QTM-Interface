@@ -93,7 +93,7 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
         """
         Define the agent behavior for each agent type for the static 1:1 QTM behavior
         """
-        agents = prev_state['agents']
+        agents = prev_state['agents'].copy()
         
         # initialize agent behavior dictionary
         agent_behavior_dict = {}
@@ -110,6 +110,45 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
 
     return {'agent_behavior_dict': agent_behavior_dict}
 
+def meta_bucket_token_allocations(params, substep, state_history, prev_state, **kwargs):
+    """
+    Define the meta bucket token allocations of all agents with respect to 'sell' 'hold' and 'utility'
+    """
+    updated_agents = prev_state['agents'].copy()
+
+    # initialize meta bucket token allocations
+    meta_bucket_allocations= {
+        'selling': 0,
+        'holding': 0,
+        'utility': 0,
+        'removed': 0
+    }
+
+    # update agent token allocations and update the meta bucket allocations w.r.t. each agents contribution
+    # note that protocol buckets are not used for meta bucket allocations
+    for agent in updated_agents:
+        if updated_agents[agent]['type'] != 'protocol_bucket':
+            
+            # get agent static behavior indices for behavior list
+            behavior_lst_sell_index = updated_agents[agent]['action_list'].index('trade')
+            behavior_lst_utility_index = updated_agents[agent]['action_list'].index('utility')
+            behavior_lst_remove_index = updated_agents[agent]['action_list'].index('remove_locked_tokens')
+
+            # get agent static behavior percentages
+            selling_perc = updated_agents[agent]['action_weights'][behavior_lst_sell_index]
+            utility_perc = updated_agents[agent]['action_weights'][behavior_lst_utility_index]
+            remove_perc = updated_agents[agent]['action_weights'][behavior_lst_remove_index]
+
+            # calculate corresponding absolute token amounts for meta buckets
+            sold_tokens = updated_agents[agent]['tokens'] * selling_perc/100
+            utility_tokens = updated_agents[agent]['tokens'] * utility_perc/100
+            removed_tokens = updated_agents[agent]['tokens'] * utility_perc/100
+            
+            updated_agents[agent]['tokens'] -= (sold_tokens + utility_tokens)
+
+        
+
+    return {'meta_bucket_token_allocations': meta_bucket_token_allocations}
 
 
 # STATE UPDATE FUNCTIONS
