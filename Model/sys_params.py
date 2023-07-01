@@ -13,13 +13,11 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
-print(parent_dir)
+
 # Now you can import modules from the desired path
 from data.not_iterable_variables import *
 
-
-
-QTM_inputs = pd.read_csv('data/Quantitative_Token_Model_V1.87 - cadCAD_inputs.csv')
+QTM_inputs = pd.read_csv(parent_dir+'\data\Quantitative_Token_Model_V1.87 - cadCAD_inputs.csv')
 
 # System parameters
 sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
@@ -40,7 +38,7 @@ agent_token_allocation = {
     'foundation_token_allocation' : [x / 100 for x in sys_param['foundation_allocation']],
     'placeholder_1_token_allocation' : [x / 100 for x in sys_param['placeholder_1_allocation']],
     'placeholder_2_token_allocation' : [x / 100 for x in sys_param['placeholder_2_allocation']],
-    'market_investors_token_allocation' : [0]
+    'market_token_allocation' : [0]
 }
 
 sys_param.update(agent_token_allocation)
@@ -71,7 +69,21 @@ stakeholder_names = [
 ]
 initial_stakeholder_values = initialize_agent_parameters(stakeholder_names)
 
-
+# defining the mapping between the stakeholder names and their type categories
+stakeholder_name_mapping = {
+    'angle': 'early_investor',
+    'seed': 'early_investor',
+    'presale_1': 'early_investor',
+    'presale_2': 'early_investor',
+    'public_sale': 'early_investor',
+    'team': 'team',
+    'reserve': 'protocol_bucket',
+    'community': 'protocol_bucket',
+    'foundation': 'protocol_bucket',
+    'placeholder_1': 'protocol_bucket',
+    'placeholder_2': 'protocol_bucket',
+    'market': 'market_investors',
+}
 
 user_adoption_initial_values = {
     'initial_product_users' : [x for x in sys_param['initial_product_users']],

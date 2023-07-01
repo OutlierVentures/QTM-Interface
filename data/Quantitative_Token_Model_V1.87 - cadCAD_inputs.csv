@@ -130,7 +130,7 @@ Multiplier Cap,multiplier_cap,5.0,,,,,
 Bucket to use for the conversion to token,conversion_bucket,Reserve,,,,,
 cadCAD specific parameters,none,-,,,,,
 implied FDV MC multiple after 3 years,implied_fdv_after_3y,2,,,,-,Prescribed multiple of the public sale token valuation after 3 years assuming a linear valuation change
-speculation factor,speculation_factor,0.5,,,,-,"0 = pure value investing according to the implied FDV MC, 1 = pure speculation including random noise"
+speculation factor,speculation_factor,0.5,,,,-,0 = pure value investing according to the implied FDV MC; 1 = pure speculation including random noise
 AAV exponent,aav_exponent,4,,,,-,Exponent that determines the influence of the AAV price divergence with respect to the supply rate change
 max vesting rate,max_vesting_rate,0.005,,,,share of total supply / 100%,maximum allowed vesting rate for the AAV controller
 min vesting rate,min_vesting_rate,0.0001,,,,share of total supply / 100%,minimum allowed vesting rate for the AAV controller
@@ -143,3 +143,4 @@ team vesting weight,team_vesting_weight,0.1,,,,share of vested tokens / 100%,the
 foundation vesting weight,foundation_vesting_weight,0.6,,,,share of vested tokens / 100%,the priority with which the foundation gets their tokens vested through the AAV controller
 investor vesting weight,investor_vesting_weight,0.3,,,,share of vested tokens / 100%,the priority with which the investors get their tokens vested through the AAV controller
 stakeholder that owns all business funds,business_fund_holder,reserve,,,,-,stakeholder that gets all the raised funds and also seeds the liquidity
+agent behavior,agent_behavior,static,,,,,static = replica of the spreadsheet QTM; stochastic = actions based on probabilities; dynamic = actions based on optimization goals

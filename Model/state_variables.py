@@ -2,7 +2,7 @@ from sys_params import *
 from parts.utils import *
 
 # initialize the initial stakeholders
-initial_stakeholders = generate_agents(initial_stakeholder_values)
+initial_stakeholders = generate_agents(stakeholder_name_mapping)
 
 # initialize the initial liquidity pool
 initial_liquidity_pool = initialize_dex_liquidity()
