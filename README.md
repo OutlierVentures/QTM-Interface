@@ -24,6 +24,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - Build the business policies
 - Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - Add all remaining plot functionallities
+- Web based UI for outputs
 - Develop risk analysis procedures
 - Test and improve the robustness of all functions -> unit tests
 - Staging tests of the whole model

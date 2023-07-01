@@ -157,3 +157,19 @@ def generate_initial_token_economy_metrics():
 
     return token_economy
 
+
+
+def initialize_user_adoption():
+    """
+    Initialize the user adoption metrics.
+    """
+    user_adoption = {
+    'product_users': 0,
+    'token_holders': 0
+    }
+
+    return user_adoption
+
+
+
+
