@@ -70,3 +70,25 @@ stakeholder_names = [
     'market_investors'
 ]
 initial_stakeholder_values = initialize_agent_parameters(stakeholder_names)
+
+
+
+user_adoption_initial_values = {
+    'initial_product_users' : [x for x in sys_param['initial_product_users']],
+    'product_users_after_10y' : [x for x in sys_param['product_users_after_10y']],
+    'product_adoption_velocity' : [x for x in sys_param['product_adoption_velocity']],
+    'one_time_product_revenue_per_user' : [x for x in sys_param['one_time_product_revenue_per_user']],
+    'regular_product_revenue_per_user' : [x for x in sys_param['regular_product_revenue_per_user']],
+    'initial_token_holders' : [x for x in sys_param['initial_token_holders']],
+    'token_holders_after_10y' : [x for x in sys_param['token_holders_after_10y']],
+    'token_adoption_velocity' : [x for x in sys_param['token_adoption_velocity']],
+    'one_time_token_buy_per_user' : [x for x in sys_param['one_time_token_buy_per_user']],
+    'regular_token_buy_per_user' : [x for x in sys_param['regular_token_buy_per_user']],
+    'avg_token_utility_allocation' : [x / 100 for x in sys_param['avg_token_utility_allocation']],
+    'avg_token_holding_allocation' : [x / 100 for x in sys_param['avg_token_holding_allocation']],
+    'avg_token_selling_allocation' : [x / 100 for x in sys_param['avg_token_selling_allocation']],
+    'avg_token_utility_removal' : [x / 100 for x in sys_param['avg_token_utility_removal']]
+
+}
+
+sys_param.update(user_adoption_initial_values)

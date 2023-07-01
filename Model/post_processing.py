@@ -15,6 +15,7 @@ def postprocessing(df):
     agent_ds = df.agents
     liquidity_pool_ds = df.liquidity_pool
     token_economy_ds = df.token_economy
+    user_adoption_ds = df.user_adoption
 
     """ token_price_ds = df.token_price
     dex_lp_tokens_ds = df.dex_lp_tokens
@@ -67,6 +68,15 @@ def postprocessing(df):
                                                for agent 
                                                in s.values() if agent['type'] == 'foundation']))
 
+
+
+
+    product_users = user_adoption_ds.map(lambda s: s['product_users'])
+
+    token_holders = user_adoption_ds.map(lambda s: s['token_holders'])
+
+
+
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
                           'run': df.run,
@@ -91,7 +101,10 @@ def postprocessing(df):
                           'foundation_tokens_vested': foundation_tokens_vested,
                           'agents': agent_ds,
                           'liquidity_pool': liquidity_pool_ds,
-                          'token_economy': token_economy_ds})
+                          'token_economy': token_economy_ds,
+                          'product_users': product_users,
+                          'token_holders': token_holders
+                          })
            )
     
     return data

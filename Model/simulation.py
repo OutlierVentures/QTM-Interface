@@ -29,13 +29,15 @@ if __name__ == '__main__':
     result = simulation.run()
     df = pd.DataFrame(result)
 
+
+
+
     # post processing
     data = postprocessing(df)
 
-    print(data['team_tokens'])
+    print(data['product_users'])
+    print(data['token_holders'])
+   # monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
 
-    monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
+#    plt.show()
 
-    plt.show()
-
-    #investor_df = extract_investors(df)

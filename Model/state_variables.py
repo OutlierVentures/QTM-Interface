@@ -10,9 +10,14 @@ initial_liquidity_pool = initialize_dex_liquidity()
 # initialize the initial token economy
 initial_token_economy = generate_initial_token_economy_metrics()
 
+# initialize the initial liquidity pool
+initial_user_adoption = initialize_user_adoption()
+
+
 # compose the initial state
 initial_state = {
     'agents': initial_stakeholders,
     'liquidity_pool': initial_liquidity_pool,
-    'token_economy': initial_token_economy
+    'token_economy': initial_token_economy,
+    'user_adoption': initial_user_adoption
 }

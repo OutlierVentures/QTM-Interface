@@ -2,6 +2,7 @@ from  parts.vesting import *
 from parts.agent_behavior import *
 from parts.liquidity_pool import *
 from parts.token_economy import *
+from parts.user_adoption import *
 
 state_update_block = [
     {
@@ -39,6 +40,15 @@ state_update_block = [
         },
         'variables': {
             'token_economy': update_token_economy,
+        },
+    },
+     {
+        # user_adoption.py
+        'policies': {
+            'user_adoption_metrics': user_adoption_metrics,
+        },
+        'variables': {
+            'user_adoption': update_user_adoption,
         },
     }
 ]
