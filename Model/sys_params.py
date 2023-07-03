@@ -67,7 +67,7 @@ stakeholder_names = [
     'placeholder_2',
     'market_investors'
 ]
-initial_stakeholder_values = initialize_agent_parameters(stakeholder_names)
+initial_stakeholder_values = generate_agents(stakeholder_names)
 
 # defining the mapping between the stakeholder names and their type categories
 stakeholder_name_mapping = {
