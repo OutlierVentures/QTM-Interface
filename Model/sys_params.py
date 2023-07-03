@@ -17,7 +17,7 @@ sys.path.append(parent_dir)
 # Now you can import modules from the desired path
 from data.not_iterable_variables import *
 
-QTM_inputs = pd.read_csv(parent_dir+'\data\Quantitative_Token_Model_V1.87 - cadCAD_inputs.csv')
+QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.87 - cadCAD_inputs.csv')
 
 # System parameters
 sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
@@ -67,7 +67,7 @@ stakeholder_names = [
     'placeholder_2',
     'market_investors'
 ]
-initial_stakeholder_values = generate_agents(stakeholder_names)
+#initial_stakeholder_values = generate_agents(stakeholder_names)
 
 # defining the mapping between the stakeholder names and their type categories
 stakeholder_name_mapping = {
@@ -84,6 +84,10 @@ stakeholder_name_mapping = {
     'placeholder_2': 'protocol_bucket',
     'market': 'market_investors',
 }
+
+initial_stakeholder_values = generate_agents(stakeholder_name_mapping)
+
+
 
 user_adoption_initial_values = {
     'initial_product_users' : [x for x in sys_param['initial_product_users']],

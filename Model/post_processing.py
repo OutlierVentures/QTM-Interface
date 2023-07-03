@@ -75,6 +75,7 @@ def postprocessing(df):
 
     token_holders = user_adoption_ds.map(lambda s: s['token_holders'])
 
+    product_revenue = user_adoption_ds.map(lambda s: s['product_revenue'])
 
 
     # Create an analysis dataset
@@ -103,7 +104,8 @@ def postprocessing(df):
                           'liquidity_pool': liquidity_pool_ds,
                           'token_economy': token_economy_ds,
                           'product_users': product_users,
-                          'token_holders': token_holders
+                          'token_holders': token_holders,
+                          'product_revenue': product_revenue
                           })
            )
     
