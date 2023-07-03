@@ -35,8 +35,7 @@ if __name__ == '__main__':
     # post processing
     data = postprocessing(df)
 
-    print(data['product_users'])
-    print(data['token_holders'])
+    print(data['product_revenue'])
    # monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
 
 #    plt.show()

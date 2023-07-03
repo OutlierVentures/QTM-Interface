@@ -18,7 +18,7 @@ def calculate_raised_capital(param):
 
 # Initialization
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
-              tokens: float, tokens_vested: float, tokens_locked: float, tokens_liquidity: float,
+              tokens: float, tokens_vested: float, tokens_locked: float, tokens_liquidity_provisioning: float,
               tokens_transferred: float, tokens_burned: float, action_list: list, action_weights: Tuple,
               current_action: str) -> dict:
     """
@@ -31,7 +31,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'tokens': tokens,
              'tokens_vested': tokens_vested,
              'tokens_locked': tokens_locked,
-             'tokens_liquidity_provisioning': tokens_liquidity,
+             'tokens_liquidity_provisioning': tokens_liquidity_provisioning,
              'tokens_transferred': tokens_transferred,
              'tokens_burned': tokens_burned,
              'action_list': action_list,
@@ -165,7 +165,8 @@ def initialize_user_adoption():
     """
     user_adoption = {
     'product_users': 0,
-    'token_holders': 0
+    'token_holders': 0,
+    'product_revenue':0
     }
 
     return user_adoption

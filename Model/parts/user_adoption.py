@@ -41,10 +41,8 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_day = current_month*30 #need to adjust it to being months
     total_days = 3653 # THis is what is shown in the model as a constant
                         
-    
-    
 
-
+    ## Product user adoption
     initial_product_users = params['initial_product_users']
     product_users_after_10y = params['product_users_after_10y']
     product_adoption_velocity = params['product_adoption_velocity']
@@ -53,16 +51,19 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
 
-
+    ## Token holder adoption
     initial_token_holders = params['initial_token_holders']
     token_holders_after_10y = params['token_holders_after_10y']
     token_adoption_velocity = params['token_adoption_velocity']
     one_time_token_buy_per_user = params['one_time_token_buy_per_user']
     regular_token_buy_per_user = params['regular_token_buy_per_user']
 
-
     token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
 
+    ## Product Revenue
+
+    prev_product_users = prev_state['user_adoption']['product_users']
+    product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
 
 
 
@@ -72,7 +73,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     avg_token_utility_removal = params['avg_token_utility_removal']
 
 
-    return {'product_users': product_users, 'token_holders': token_holders}
+    return {'product_users': product_users, 'token_holders': token_holders,'product_revenue': product_revenue}
 
 
 
@@ -84,11 +85,13 @@ def update_user_adoption(params, substep, state_history, prev_state, policy_inpu
 
     product_users = policy_input['product_users']
     token_holders  = policy_input['token_holders']
+    product_revenue = policy_input['product_revenue']
 
     
     updated_user_adoption = {
         'product_users': product_users,
-        'token_holders': token_holders
+        'token_holders': token_holders,
+        'product_revenue': product_revenue
     }
 
     return ('user_adoption', updated_user_adoption)
