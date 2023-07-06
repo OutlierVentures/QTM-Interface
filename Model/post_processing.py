@@ -77,6 +77,7 @@ def postprocessing(df):
 
     product_revenue = user_adoption_ds.map(lambda s: s['product_revenue'])
 
+    token_buys = user_adoption_ds.map(lambda s: s['token_buys'])
 
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
@@ -105,7 +106,8 @@ def postprocessing(df):
                           'token_economy': token_economy_ds,
                           'product_users': product_users,
                           'token_holders': token_holders,
-                          'product_revenue': product_revenue
+                          'product_revenue': product_revenue,
+                          'token_buys': token_buys
                           })
            )
     

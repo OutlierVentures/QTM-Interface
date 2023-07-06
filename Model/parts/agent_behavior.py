@@ -181,16 +181,16 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             utility_bucket_allocations['burn'] += burn_tokens
 
             # update agent token allocations
-            agent_allocations[agent] = {
-                'selling': sold_tokens,
-                'holding': agents[agent]['tokens'] - sold_tokens - utility_tokens + removed_tokens,
-                'utility': utility_tokens,
-                'removed': removed_tokens,
-                'locking': locked_tokens,
-                'liquidity': liquidity_tokens,
-                'transfer': transfer_tokens,
-                'burn': burn_tokens
-            }
+        agent_allocations[agent] = {
+            'selling': sold_tokens,
+            'holding': agents[agent]['tokens'] - sold_tokens - utility_tokens + removed_tokens,
+            'utility': utility_tokens,
+            'removed': removed_tokens,
+            'locking': locked_tokens,
+            'liquidity': liquidity_tokens,
+            'transfer': transfer_tokens,
+            'burn': burn_tokens
+        }
 
     return {'meta_bucket_allocations': meta_bucket_allocations, 'utility_bucket_allocations': utility_bucket_allocations, 'agent_allocations': agent_allocations}
 
@@ -218,6 +218,7 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
 
     for key, value in updated_agents.items():
         # check if agent has enough tokens for meta bucket allocations
+
         if updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['selling'] + agent_allocations[key]['removed'] < 0:
             raise ValueError('Agent ', updated_agents[key]['type'], ' has less tokens: ', updated_agents[key]['tokens'], ' than planned selling allocation ', agent_allocations[key]['selling'],
                              ' and utility allocation ', agent_allocations[key]['utility'], ' plus removing allocation ', agent_allocations[key]['removed'], ' combined!')

@@ -60,12 +60,15 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
 
-    ## Product Revenue
 
+    ## Product Revenue
     prev_product_users = prev_state['user_adoption']['product_users']
     product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
 
 
+    ## Calculating Token Buys
+    prev_token_holders = prev_state['user_adoption']['token_holders']
+    token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
 
     avg_token_utility_allocation = params['avg_token_utility_allocation']
     avg_token_holding_allocation = params['avg_token_holding_allocation']
@@ -73,7 +76,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     avg_token_utility_removal = params['avg_token_utility_removal']
 
 
-    return {'product_users': product_users, 'token_holders': token_holders,'product_revenue': product_revenue}
+    return {'product_users': product_users, 'token_holders': token_holders,'product_revenue': product_revenue,'token_buys':token_buys}
 
 
 
@@ -86,12 +89,14 @@ def update_user_adoption(params, substep, state_history, prev_state, policy_inpu
     product_users = policy_input['product_users']
     token_holders  = policy_input['token_holders']
     product_revenue = policy_input['product_revenue']
+    token_buys = policy_input['token_buys']
 
     
     updated_user_adoption = {
         'product_users': product_users,
         'token_holders': token_holders,
-        'product_revenue': product_revenue
+        'product_revenue': product_revenue,
+        'token_buys': token_buys
     }
 
     return ('user_adoption', updated_user_adoption)
