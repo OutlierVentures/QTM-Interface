@@ -35,8 +35,13 @@ if __name__ == '__main__':
     # post processing
     data = postprocessing(df)
 
-    print(data['product_revenue'])
-    print(data['token_buys'])
+
+
+    ##---User adoption Plots---#
+    #plot_line_chart(data,'timestep',['token_holders','product_users'])
+    #plot_line_chart(data,'timestep',['product_revenue'])
+    #plot_line_chart(data,'timestep',['token_buys'])
+
    # monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
 
 #    plt.show()
