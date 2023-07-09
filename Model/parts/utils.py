@@ -174,3 +174,16 @@ def initialize_user_adoption():
 
 
 
+def initialize_business_assumptions():
+    """
+    Initialize the business assumptions metrics.
+    """
+    business_assumptions = {
+    'cash_balance': 0,
+    }
+
+    return business_assumptions
+
+
+
+
