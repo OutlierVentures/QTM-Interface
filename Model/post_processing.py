@@ -71,13 +71,6 @@ def postprocessing(df):
 
 
 
-    product_users = user_adoption_ds.map(lambda s: s['product_users'])
-
-    token_holders = user_adoption_ds.map(lambda s: s['token_holders'])
-
-    product_revenue = user_adoption_ds.map(lambda s: s['product_revenue'])
-
-    token_buys = user_adoption_ds.map(lambda s: s['token_buys'])
 
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
@@ -104,11 +97,17 @@ def postprocessing(df):
                           'agents': agent_ds,
                           'liquidity_pool': liquidity_pool_ds,
                           'token_economy': token_economy_ds,
-                          'product_users': product_users,
-                          'token_holders': token_holders,
-                          'product_revenue': product_revenue,
-                          'token_buys': token_buys
+                          'user_adoption_ds':user_adoption_ds
                           })
            )
+    
+    
+
+    for key in user_adoption_ds[0].keys():
+        key_values = user_adoption_ds.apply(lambda s: s.get(key))
+        data[key] = key_values
+
+
+
     
     return data

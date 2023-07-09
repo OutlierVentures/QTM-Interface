@@ -82,6 +82,11 @@ def initial_allocation_pie(df):
     plt.show()
 
 
+
+
+
+
+
 def aggregate_runs(df,aggregate_dimension):
     '''
     Function to aggregate the monte carlo runs along a single dimension.
@@ -127,3 +132,30 @@ def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
     plt.ylabel(y)
     title_text = 'Performance of ' + y + ' over ' + str(runs) + ' Monte Carlo Runs'
     plt.title(title_text)
+
+
+
+
+
+def plot_line_chart(dataframe, x_column, y_columns, title=''):
+    """
+    Plots a simple line chart using the specified columns from a dataframe.
+
+    Args:
+        dataframe (pd.DataFrame): The input dataframe.
+        x_column (str): The column name for the x-axis values.
+        y_columns (list): The list of column names for the y-axis values.
+        title (str, optional): The title for the chart (default is empty string).
+    """
+    x_values = dataframe[x_column]
+    
+    for column in y_columns:
+        y_values = dataframe[column]
+        plt.plot(x_values, y_values, label=column)
+    
+    plt.xlabel(x_column)
+    plt.ylabel('Y-axis')
+    plt.title(title)
+    plt.grid(True)
+    plt.legend()
+    plt.show()

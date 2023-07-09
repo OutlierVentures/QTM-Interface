@@ -108,3 +108,34 @@ user_adoption_initial_values = {
 }
 
 sys_param.update(user_adoption_initial_values)
+
+
+
+
+
+business_assumptions_initial_values = {
+    'product_income_per_month': [x for x in sys_param['product_income_per_month']],
+    'royalty_income_per_month': [x for x in sys_param['royalty_income_per_month']],
+    'other_income_per_month': [x for x in sys_param['other_income_per_month']],
+    'treasury_income_per_month': [x for x in sys_param['treasury_income_per_month']],
+    'regular_income_sum': [x for x in sys_param['regular_income_sum']],
+    'one_time_payments_1': [x for x in sys_param['one_time_payments_1']],
+    'one_time_payments_2': [x for x in sys_param['one_time_payments_2']],
+    'salaries_per_month': [x for x in sys_param['salaries_per_month']],
+    'license_costs_per_month': [x for x in sys_param['license_costs_per_month']],
+    'other_monthly_costs': [x for x in sys_param['other_monthly_costs']],
+    'buyback_type': [x for x in sys_param['buyback_type']],
+    'buyback_perc_per_month': [x for x in sys_param['buyback_perc_per_month']],
+    'buyback_fixed_per_month': [x for x in sys_param['buyback_fixed_per_month']],
+    'buyback_bucket': [x for x in sys_param['buyback_bucket']],
+    'buyback_start': [x for x in sys_param['buyback_start']],
+    'buyback_end': [x for x in sys_param['buyback_end']],
+    'burn_per_month': [x for x in sys_param['burn_per_month']],
+    'burn_start': [x for x in sys_param['burn_start']],
+    'burn_end': [x for x in sys_param['burn_end']],
+    'burn_project_bucket': [x for x in sys_param['burn_project_bucket']]
+}
+
+
+
+sys_param.update(business_assumptions_initial_values)
