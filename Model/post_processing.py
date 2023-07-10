@@ -9,13 +9,15 @@ def postprocessing(df):
     df: simulation dataframe
     '''
     # subset to last substep
-    df = df[df['substep'] == df.substep.max()]
+    df = df[df['substep'] == df.substep.max()] 
 
     # Get the ABM results
     agent_ds = df.agents
     liquidity_pool_ds = df.liquidity_pool
     token_economy_ds = df.token_economy
     user_adoption_ds = df.user_adoption
+    business_assumptions_ds = df.business_assumptions
+
 
     """ token_price_ds = df.token_price
     dex_lp_tokens_ds = df.dex_lp_tokens
@@ -103,11 +105,13 @@ def postprocessing(df):
     
     
 
-    for key in user_adoption_ds[0].keys():
+    for key in user_adoption_ds[user_adoption_ds.keys()[0]]:
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
         data[key] = key_values
 
-
-
+    print(business_assumptions_ds)
+    cash_balance = business_assumptions_ds.apply(lambda s: s.get('cash_balance'))
+    data['cash_balance'] = cash_balance
+    print(cash_balance)
     
     return data

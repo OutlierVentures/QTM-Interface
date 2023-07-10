@@ -166,7 +166,8 @@ def initialize_user_adoption():
     user_adoption = {
     'product_users': 0,
     'token_holders': 0,
-    'product_revenue':0
+    'product_revenue':0,
+    'token_buys': 0
     }
 
     return user_adoption

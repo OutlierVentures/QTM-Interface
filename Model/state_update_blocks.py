@@ -3,6 +3,8 @@ from parts.agent_behavior import *
 from parts.liquidity_pool import *
 from parts.token_economy import *
 from parts.user_adoption import *
+from parts.business_assumptions import *
+
 
 state_update_block = [
     {
@@ -58,6 +60,15 @@ state_update_block = [
         },
         'variables': {
             'user_adoption': update_user_adoption,
+        },
+    },
+    {
+        # business_assumptions.py
+        'policies': {
+            'business_assumption_metrics': business_assumption_metrics,
+        },
+        'variables': {
+            'business_assumptions': update_business_assumptions,
         },
     }
 ]
