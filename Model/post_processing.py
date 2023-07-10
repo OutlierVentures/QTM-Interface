@@ -9,7 +9,7 @@ def postprocessing(df):
     df: simulation dataframe
     '''
     # subset to last substep
-    df = df[df['substep'] == df.substep.max()]
+    df = df[df['substep'] == df.substep.max()] 
 
     # Get the ABM results
     agent_ds = df.agents
@@ -102,8 +102,9 @@ def postprocessing(df):
            )
     
     
+    print(user_adoption_ds[user_adoption_ds.keys()[0]])
 
-    for key in user_adoption_ds[0].keys():
+    for key in user_adoption_ds[user_adoption_ds.keys()[0]]:
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
         data[key] = key_values
 
