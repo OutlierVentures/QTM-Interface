@@ -101,7 +101,7 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
 
         # populate agent behavior dictionary
         for agent in agents:
-            agent_behavior_dict[agents[agent]['type']] = {
+            agent_behavior_dict[agents[agent]['name']] = {
                 'trade': params['avg_token_selling_allocation'],
                 'hold': params['avg_token_holding_allocation'],
                 'utility': params['avg_token_utility_allocation'],
@@ -204,8 +204,8 @@ def update_agent_behavior(params, substep, state_history, prev_state, policy_inp
     agent_behavior_dict = policy_input['agent_behavior_dict']
 
     for key, value in updated_agents.items():
-        updated_agents[key]['action_list'] = list(agent_behavior_dict[updated_agents[key]['type']].keys())
-        updated_agents[key]['action_weights'] += tuple(agent_behavior_dict[updated_agents[key]['type']].values())
+        updated_agents[key]['action_list'] = list(agent_behavior_dict[updated_agents[key]['name']].keys())
+        updated_agents[key]['action_weights'] += tuple(agent_behavior_dict[updated_agents[key]['name']].values())
 
     return ('agents', updated_agents)
 
@@ -220,7 +220,7 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
         # check if agent has enough tokens for meta bucket allocations
 
         if updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['selling'] + agent_allocations[key]['removed'] < 0:
-            raise ValueError('Agent ', updated_agents[key]['type'], ' has less tokens: ', updated_agents[key]['tokens'], ' than planned selling allocation ', agent_allocations[key]['selling'],
+            raise ValueError('Agent ', updated_agents[key]['name'], ' has less tokens: ', updated_agents[key]['tokens'], ' than planned selling allocation ', agent_allocations[key]['selling'],
                              ' and utility allocation ', agent_allocations[key]['utility'], ' plus removing allocation ', agent_allocations[key]['removed'], ' combined!')
         
         # update agent token allocations

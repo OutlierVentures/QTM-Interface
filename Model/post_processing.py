@@ -32,41 +32,41 @@ def postprocessing(df):
     # Get metrics
 
     ## Agent quantity
-    team_count = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['type'] == 'team']))
-    foundation_count = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['type'] == 'foundation']))
+    team_count = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['name'] == 'team']))
+    foundation_count = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['name'] == 'foundation']))
 
 
     ## agents tokens quantitiy
     team_tokens = agent_ds.map(lambda s: sum([agent['tokens'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'team']))
+                                               in s.values() if agent['name'] == 'team']))
     foundation_tokens = agent_ds.map(lambda s: sum([agent['tokens'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'foundation']))
+                                               in s.values() if agent['name'] == 'foundation']))
     
     ## agents usd_funds quantitiy
     team_usd_funds = agent_ds.map(lambda s: sum([agent['usd_funds'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'team']))
+                                               in s.values() if agent['name'] == 'team']))
     foundation_usd_funds = agent_ds.map(lambda s: sum([agent['usd_funds'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'foundation']))
+                                               in s.values() if agent['name'] == 'foundation']))
 
     ## agents tokens locked quantity
     team_tokens_locked = agent_ds.map(lambda s: sum([agent['tokens_locked'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'team']))
+                                               in s.values() if agent['name'] == 'team']))
     foundation_tokens_locked = agent_ds.map(lambda s: sum([agent['tokens_locked'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'foundation']))
+                                               in s.values() if agent['name'] == 'foundation']))
 
     ## agents tokens vested quantity
     team_tokens_vested = agent_ds.map(lambda s: sum([agent['tokens_vested'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'team']))
+                                               in s.values() if agent['name'] == 'team']))
     foundation_tokens_vested = agent_ds.map(lambda s: sum([agent['tokens_vested'] 
                                                for agent 
-                                               in s.values() if agent['type'] == 'foundation']))
+                                               in s.values() if agent['name'] == 'foundation']))
 
 
 
@@ -101,13 +101,9 @@ def postprocessing(df):
                           })
            )
     
-    
 
-    for key in user_adoption_ds[0].keys():
+    """ for key in user_adoption_ds[0].keys():
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
-        data[key] = key_values
-
-
-
+        data[key] = key_values """
     
     return data

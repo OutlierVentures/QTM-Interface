@@ -12,7 +12,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     agent_token_vesting_dict = {}
     for key, agent in agents.items():
         # Get all invesotor info
-        agent_type = agent['type']
+        agent_type = agent['name']
         agent_tokens_vested = agent['tokens_vested']
         agent_token_allocation = [params[agent_type+"_token_allocation"] if agent_type+"_token_allocation" in params else 0][0]
         agent_initial_vesting_perc = [params[agent_type+"_initial_vesting"] if agent_type+"_initial_vesting" in params else 0][0]
