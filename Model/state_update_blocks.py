@@ -1,4 +1,4 @@
-from  parts.vesting import *
+from parts.vesting import *
 from parts.agent_behavior import *
 from parts.liquidity_pool import *
 from parts.token_economy import *

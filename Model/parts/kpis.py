@@ -7,7 +7,11 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
     """
 
     old_date = prev_state['date']
-    new_date = pd.to_datetime(old_date)+pd.DateOffset(months=1)
+    old_timestep = prev_state['timestep']
+    if old_timestep > 1:
+        new_date = pd.to_datetime(old_date)+pd.DateOffset(months=1)
+    else:
+        new_date = pd.to_datetime(old_date)
     return {'new_date': new_date}
 
 

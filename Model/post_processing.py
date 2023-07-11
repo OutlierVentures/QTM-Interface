@@ -30,6 +30,7 @@ def postprocessing(df):
     vesting_rate_ds = df.vesting_rate """
 
     timesteps = df.timestep
+    date = df.date
     
     # Get metrics
 
@@ -76,6 +77,7 @@ def postprocessing(df):
 
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
+                          'date': date,
                           'run': df.run,
                           """ 'token_price': token_price_ds,
                           'dex_lp_tokens': dex_lp_tokens_ds,
