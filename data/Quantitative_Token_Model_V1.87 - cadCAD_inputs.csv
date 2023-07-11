@@ -1,6 +1,7 @@
 Parameter,Parameter Name,Initial Value,Min,Max,Interval Steps,Unit,Comment
 Supply Type,supply_type,Fixed,,,,,
 Initial Total Supply of Tokens,initial_total_supply,"100,000,000",,,,,
+Launch Date / dd.mm.yyyy,launch_date,1/1/2024,,,,,
 % Public Sale of Supply (up to),public_sale_supply_perc,3.50%,,,,,
 Public Sale Valuation / $,public_sale_valuation,"60,000,000",,,,,
 Equity Owned by External Shareholders,equity_external_shareholders_perc,10.00%,,,,,

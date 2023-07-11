@@ -1,5 +1,6 @@
 parameter_list = [
     "supply_type",
+    "launch_date",
     "raised_capital_sum",
     "angle_valuation",
     "angle_bonus",

@@ -110,9 +110,6 @@ user_adoption_initial_values = {
 sys_param.update(user_adoption_initial_values)
 
 
-
-
-
 business_assumptions_initial_values = {
     'product_income_per_month': [x for x in sys_param['product_income_per_month']],
     'royalty_income_per_month': [x for x in sys_param['royalty_income_per_month']],
