@@ -31,12 +31,11 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     current_month = prev_state['timestep']
 
-    if current_month == 0:
+    if current_month == 1:
 
         liquidity_pool_fund_allocation = params['initial_token_price']/params['initial_lp_token_allocation']
 
         sum_of_raised_capital = calculate_raised_capital(params) #Should this be a state variable? It is beign referenced twice
-
 
         cash_balance = (sum_of_raised_capital - liquidity_pool_fund_allocation - one_time_payments_1
                                 - one_time_payments_2 - salaries_per_month - license_costs_per_month
