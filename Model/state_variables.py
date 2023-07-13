@@ -26,5 +26,5 @@ initial_state = {
     'token_economy': initial_token_economy,
     'user_adoption': initial_user_adoption,
     'business_assumptions': business_assumptions,
-    'date': datetime.strptime(sys_param['launch_date'][0],'%d/%m/%Y'),
+    'date': convert_date(sys_param),
 }

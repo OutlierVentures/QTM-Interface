@@ -77,7 +77,7 @@ stakeholder_name_mapping = {
     'presale_2': 'early_investor',
     'public_sale': 'early_investor',
     'team': 'team',
-    'reserve': 'reserve',
+    'reserve': 'protocol_bucket',
     'community': 'protocol_bucket',
     'foundation': 'protocol_bucket',
     'placeholder_1': 'protocol_bucket',

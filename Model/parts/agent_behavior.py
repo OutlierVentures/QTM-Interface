@@ -180,7 +180,17 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             utility_bucket_allocations['transfer'] += transfer_tokens
             utility_bucket_allocations['burn'] += burn_tokens
 
-            # update agent token allocations
+        else:
+            # calculate corresponding absolute token amounts for meta buckets
+            sold_tokens = 0
+            utility_tokens = 0
+            removed_tokens = 0
+            locked_tokens = 0
+            liquidity_tokens = 0
+            transfer_tokens = 0
+            burn_tokens = 0
+        
+        # update agent token allocations
         agent_allocations[agent] = {
             'selling': sold_tokens,
             'holding': agents[agent]['tokens'] - sold_tokens - utility_tokens + removed_tokens,
