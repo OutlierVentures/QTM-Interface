@@ -111,6 +111,7 @@ def postprocessing(df):
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
         data[key] = key_values
 
+
     cash_balance = business_assumptions_ds.apply(lambda s: s.get('cash_balance'))
     data['cash_balance'] = cash_balance
     

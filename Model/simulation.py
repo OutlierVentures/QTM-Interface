@@ -34,19 +34,24 @@ if __name__ == '__main__':
 
     # post processing
     data = postprocessing(df)
-    print(data['date'].head(10))
 
-
+    
+    #print(data['product_users'])
+    #print(data['token_holders'])
+    #print(data['token_buys'])
+    #print(data['product_revenue'])
 
     ##---User adoption Plots---#
     #plot_line_chart(data,'timestep',['token_holders','product_users'])
     #plot_line_chart(data,'timestep',['product_revenue'])
     #plot_line_chart(data,'timestep',['token_buys'])
+    #print(data['product_revenue'])
 
 
     ##---Business Assumptions Plots---#
 
-    plot_line_chart(data,'timestep',['cash_balance'])
+    #-------print(data['cash_balance'])
+    #plot_line_chart(data,'timestep',['cash_balance'])
 
     ##---KPI Plots---#
     #plot_line_chart(data,'date',['timestep'])

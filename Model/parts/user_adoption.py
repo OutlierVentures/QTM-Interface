@@ -1,4 +1,5 @@
 import math
+from parts.utils import *
 
 
 
@@ -16,12 +17,15 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
     
     """
 
+    
+
     term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825) / velocity))) * final_users + initial_users
     term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825) / velocity))) * final_users
     term3 = initial_users * (timestamp / total_days)
     term4 = final_users - (term1 - term2 - term3)
     result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
     
+
     return result
 
 
@@ -37,6 +41,16 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     """
 
     current_month = prev_state['timestep']
+    current_date = prev_state['date']
+    #launchDate = [item.get('date') for item in state_history[0] if 'date' in item]
+
+    print(get_days(state_history,current_date))
+
+
+
+    #current_day = get_days(launchDate,current_date)
+    #print(current_day)
+
 
     current_day = current_month*30.437 #need to adjust it to being months
     total_days = 3653 # THis is what is shown in the model as a constant
