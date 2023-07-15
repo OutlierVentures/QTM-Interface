@@ -38,9 +38,9 @@ if __name__ == '__main__':
 
 
     ##---User adoption Plots---#
-    plot_line_chart(data,'timestep',['token_holders','product_users'])
-    plot_line_chart(data,'timestep',['product_revenue'])
-    plot_line_chart(data,'timestep',['token_buys'])
+    #plot_line_chart(data,'timestep',['token_holders','product_users'])
+    #plot_line_chart(data,'timestep',['product_revenue'])
+    #plot_line_chart(data,'timestep',['token_buys'])
 
 
     ##---Business Assumptions Plots---#
