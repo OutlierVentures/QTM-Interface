@@ -38,7 +38,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     current_month = prev_state['timestep']
 
-    current_day = current_month*30 #need to adjust it to being months
+    current_day = current_month*30.437 #need to adjust it to being months
     total_days = 3653 # THis is what is shown in the model as a constant
                         
 

@@ -2,9 +2,16 @@ import numpy as np
 import math
 import uuid
 import random
+from datetime import datetime
 from typing import *
 
 # Helper Functions
+def convert_date(sys_param):
+    if "." in sys_param['launch_date'][0]:
+        return datetime.strptime(sys_param['launch_date'][0],'%d.%m.%y')
+    elif "/" in sys_param:
+        return datetime.strptime(sys_param['launch_date'][0],'%d/%m/%Y')
+
 def calculate_raised_capital(param):
     """
     Calculate the overall raised capital from the initial investors.

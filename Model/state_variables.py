@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sys_params import *
 from parts.utils import *
 
@@ -23,5 +25,6 @@ initial_state = {
     'liquidity_pool': initial_liquidity_pool,
     'token_economy': initial_token_economy,
     'user_adoption': initial_user_adoption,
-    'business_assumptions': business_assumptions
+    'business_assumptions': business_assumptions,
+    'date': convert_date(sys_param),
 }

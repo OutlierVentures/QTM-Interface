@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     # post processing
     data = postprocessing(df)
+    print(data['date'].head(10))
 
 
 
@@ -46,6 +47,9 @@ if __name__ == '__main__':
     ##---Business Assumptions Plots---#
 
     plot_line_chart(data,'timestep',['cash_balance'])
+
+    ##---KPI Plots---#
+    #plot_line_chart(data,'date',['timestep'])
 
    # monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
 

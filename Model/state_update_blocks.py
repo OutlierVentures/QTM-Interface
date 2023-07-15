@@ -1,9 +1,10 @@
-from  parts.vesting import *
+from parts.vesting import *
 from parts.agent_behavior import *
 from parts.liquidity_pool import *
 from parts.token_economy import *
 from parts.user_adoption import *
 from parts.business_assumptions import *
+from parts.kpis import *
 
 
 state_update_block = [
@@ -15,6 +16,15 @@ state_update_block = [
         'variables': { 
             'agents': update_agents_after_lp_seeding,
             'liquidity_pool': update_lp_after_lp_seeding
+        },
+    },
+    {
+        # kpis.py
+        'policies': {
+            'generate_date': generate_date
+        },
+        'variables': { 
+            'date': update_date
         },
     },
     {

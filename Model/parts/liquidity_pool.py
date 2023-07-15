@@ -34,8 +34,9 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
         else:
             # subtract the required funds from the funding bucket.
             found_stakeholder = False
+
             for stakeholder in agents:
-                if agents[stakeholder]['type'] == business_fund_holder:
+                if agents[stakeholder]['name'] == business_fund_holder:
                     
                     # add all raised funds to the business fund holder
                     agents[stakeholder]['usd_funds'] = sum_of_raised_capital
@@ -43,7 +44,7 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
                     # subtract the required funds to seed the liquidity pool from the business fund holder
                     agents[stakeholder]['usd_funds'] -= required_usdc
                     if agents[stakeholder]['usd_funds'] < 0:
-                        raise ValueError("The stakeholder "+agents[stakeholder]['type']+" has only $"+str(agents[stakeholder]['usd_funds']+required_usdc)+" funds, but $"+str(required_usdc)+" are required for seeding the DEX liquidity pool!")
+                        raise ValueError("The stakeholder "+agents[stakeholder]['name']+" has only $"+str(agents[stakeholder]['usd_funds']+required_usdc)+" funds, but $"+str(required_usdc)+" are required for seeding the DEX liquidity pool!")
                     found_stakeholder = True
             
             if not found_stakeholder:
