@@ -52,6 +52,7 @@ state_update_block = [
         },
         'variables': {
             'agents': update_agent_token_allocations,
+            'meta_bucket_allocations':update_meta_bucket_allocations,
         },
     },
     {

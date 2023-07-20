@@ -18,6 +18,7 @@ initial_user_adoption = initialize_user_adoption()
 # initialize the initial business assumptions
 business_assumptions = initialize_business_assumptions()
 
+meta_bucket_allocations = initalize_meta_bucket_allocations()
 
 # compose the initial state
 initial_state = {
@@ -27,4 +28,5 @@ initial_state = {
     'user_adoption': initial_user_adoption,
     'business_assumptions': business_assumptions,
     'date': convert_date(sys_param),
+    'meta_bucket_allocations':meta_bucket_allocations
 }

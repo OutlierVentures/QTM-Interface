@@ -19,7 +19,7 @@ importlib.reload(sys_params)
 
 import traceback
 
-if __name__ == '__main__':
+if __name__ == '__main__'   :
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10
 
@@ -36,21 +36,22 @@ if __name__ == '__main__':
     data = postprocessing(df)
 
     
-    #print(data['product_users'])
-    #print(data['token_holders'])
-    #print(data['token_buys'])
-    #print(data['product_revenue'])
 
-    ##---User adoption Plots---#
+    ##---User Adoption Data and Plots---#
+    #print(data['product_users']) ##Verified Correct, need to skip first row
+    #print(data['token_holders']) ##Verified Correct, need to skip first row
+    #print(data['token_buys'])   ##Verified Correct, need to skip first row
+    #print(data['product_revenue']) ##Verified Correct, need to skip first row
+
     #plot_line_chart(data,'timestep',['token_holders','product_users'])
     #plot_line_chart(data,'timestep',['product_revenue'])
     #plot_line_chart(data,'timestep',['token_buys'])
     #print(data['product_revenue'])
 
 
-    ##---Business Assumptions Plots---#
+    ##---Business Assumption Data and Plots---#
 
-    #-------print(data['cash_balance'])
+    #print(data['cash_balance']) ##Data verified but need to set up buy backs properly, later problem
     #plot_line_chart(data,'timestep',['cash_balance'])
 
     ##---KPI Plots---#
