@@ -136,3 +136,28 @@ business_assumptions_initial_values = {
 
 
 sys_param.update(business_assumptions_initial_values)
+
+
+
+
+utility_initial_values = {
+    'lock_share': [x for x in sys_param['lock_share']],
+    'lock_buyback_distribute_share': [x for x in sys_param['lock_buyback_distribute_share']],
+    'liquidity_mining_share': [x for x in sys_param['liquidity_mining_share']],
+    'burning_share': [x for x in sys_param['burning_share']],
+    'holding_share': [x for x in sys_param['holding_share']],
+    'transfer_share': [x for x in sys_param['transfer_share']],
+    'lock_apr': [x for x in sys_param['lock_apr']],
+    'lock_payout_source': [x for x in sys_param['lock_payout_source']],
+    'lock_buyback_from_revenue_share': [x for x in sys_param['lock_buyback_from_revenue_share']],
+    'liquidity_mining_apr': [x for x in sys_param['liquidity_mining_apr']],
+    'liquidity_mining_payout_source': [x for x in sys_param['liquidity_mining_payout_source']],
+    'holding_apr': [x for x in sys_param['holding_apr']],
+    'holding_payout_source': [x for x in sys_param['holding_payout_source']],
+    'transfer_destination': [x for x in sys_param['transfer_destination']],
+    'mint_incentivisation': [x for x in sys_param['mint_incentivisation']],
+    'incentivisation_payout_source': [x for x in sys_param['incentivisation_payout_source']]
+}
+
+
+sys_param.update(utility_initial_values)

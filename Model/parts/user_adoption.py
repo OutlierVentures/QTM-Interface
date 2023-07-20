@@ -44,15 +44,10 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_date = prev_state['date']
     #launchDate = [item.get('date') for item in state_history[0] if 'date' in item]
 
-    print(get_days(state_history,current_date))
+    current_day = get_days(state_history,current_date)
+    #current_day = current_month*30.437 #need to adjust it to being months
 
 
-
-    #current_day = get_days(launchDate,current_date)
-    #print(current_day)
-
-
-    current_day = current_month*30.437 #need to adjust it to being months
     total_days = 3653 # THis is what is shown in the model as a constant
                         
 
@@ -65,6 +60,17 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
 
+    ## Product Revenue
+    
+    prev_product_users = prev_state['user_adoption']['product_users']
+    if current_month == 2:
+        product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
+    else:
+        product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
+
+
+
+
     ## Token holder adoption
     initial_token_holders = params['initial_token_holders']
     token_holders_after_10y = params['token_holders_after_10y']
@@ -75,14 +81,12 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
 
 
-    ## Product Revenue
-    prev_product_users = prev_state['user_adoption']['product_users']
-    product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
-
-
     ## Calculating Token Buys
     prev_token_holders = prev_state['user_adoption']['token_holders']
-    token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
+    if current_month == 2:
+        token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+    else:
+        token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
 
     # Calculate token_2_in_lp *WAITING FOR PAIRING TOKEN DATA*
     #token_2_in_lp = token_buys/prev_state['']

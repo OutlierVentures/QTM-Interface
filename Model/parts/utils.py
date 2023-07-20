@@ -200,5 +200,27 @@ def initialize_business_assumptions():
     return business_assumptions
 
 
+def initialize_staking_base_apr():
+    """
+    Initialize the staking base apr metrics.
+    """
+    staking_base_apr = {
+    'staking_base_apr_cum':0,
+    }
+
+    return staking_base_apr
 
 
+
+
+def initalize_meta_bucket_allocations():
+    """
+    Initialize the business assumptions metrics.
+    """
+    meta_bucket_allocations = {
+        'selling': 0,
+        'holding': 0,
+        'utility': 0,
+        'removed': 0
+    }
+    return meta_bucket_allocations

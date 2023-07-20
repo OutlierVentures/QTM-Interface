@@ -60,7 +60,6 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     elif current_month == 2:
         #cash_balance = (sum_of_raised_capital -liquidity_pool_fund_allocation - (Expenditures+one_time_payments_1 + one_time_payments_2) + Revenue_Streams)+product_revenue-buybacks
         buybacks = 13094
-        print(product_revenue)
         cash_balance = prev_cash_balance-buybacks + product_revenue
 
     else:
