@@ -241,3 +241,14 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
         updated_agents[key]['tokens_burned'] = updated_agents[key]['tokens_burned'] + agent_allocations[key]['burn']
 
     return ('agents', updated_agents)
+
+
+
+
+def update_meta_bucket_allocations(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the meta bucket allocations
+    """
+    updated_meta_bucket_allocations = prev_state['meta_bucket_allocations']
+    print(prev_state['meta_bucket_allocations'])
+    return ('meta_bucket_allocations',updated_meta_bucket_allocations)

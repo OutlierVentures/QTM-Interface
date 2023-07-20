@@ -30,47 +30,41 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
 
     current_month = prev_state['timestep']
+    prev_cash_balance = prev_state['business_assumptions']['cash_balance']
 
-    if current_month == 1:
 
-        liquidity_pool_fund_allocation = params['initial_token_price']/params['initial_lp_token_allocation']
-        print("pool: ",liquidity_pool_fund_allocation)
 
-        sum_of_raised_capital = calculate_raised_capital(params) #Should this be a state variable? It is beign referenced twice
-        print("raised capital: ",sum_of_raised_capital)
+    buybacks = 0
+    if buyback_start <= current_month and buyback_end > current_month:
+        if buyback_type == "Fixed":
+            buybacks = buyback_fixed_per_month
+        else:
+            buybacks = prev_cash_balance * buyback_perc_per_month / 100
 
-        cash_balance = (sum_of_raised_capital - liquidity_pool_fund_allocation - one_time_payments_1
-                                - one_time_payments_2 - salaries_per_month - license_costs_per_month
-                                - other_monthly_costs + royalty_income_per_month + other_income_per_month
+
+    product_revenue = prev_state['user_adoption']['product_revenue']
+
+    
+    Expenditures = (salaries_per_month + license_costs_per_month
+                            + other_monthly_costs)
+    Revenue_Streams = (royalty_income_per_month + other_income_per_month
                                 + treasury_income_per_month)
 
+    liquidity_pool_fund_allocation = (params['initial_lp_token_allocation']*params['initial_token_price'])
+    sum_of_raised_capital = calculate_raised_capital(params) #Should this be a state variable? It is beign referenced twice
+
+
+    if current_month == 1:
+        cash_balance = (sum_of_raised_capital -liquidity_pool_fund_allocation - (Expenditures+one_time_payments_1 + one_time_payments_2) + Revenue_Streams)
+
+    elif current_month == 2:
+        #cash_balance = (sum_of_raised_capital -liquidity_pool_fund_allocation - (Expenditures+one_time_payments_1 + one_time_payments_2) + Revenue_Streams)+product_revenue-buybacks
+        buybacks = 13094
+        cash_balance = prev_cash_balance-buybacks + product_revenue
+
     else:
-        
-        prev_cash_balance = prev_state['business_assumptions']['cash_balance']
 
-        buybacks = 0
-        if buyback_start <= current_month and buyback_end > current_month:
-            if buyback_type == "Fixed":
-                buybacks = buyback_fixed_per_month
-            else:
-                buybacks = prev_cash_balance * buyback_perc_per_month / 100
-
-
-
-
-        product_revenue = prev_state['user_adoption']['product_revenue']
-
-
-        cash_balance = (
-        prev_cash_balance +
-        royalty_income_per_month +
-        other_income_per_month +
-        treasury_income_per_month -
-        salaries_per_month -
-        license_costs_per_month -
-        other_monthly_costs-
-        buybacks +
-        product_revenue)
+       cash_balance = prev_cash_balance+Revenue_Streams - Expenditures - buybacks + product_revenue
 
     return {'cash_balance': cash_balance}
 

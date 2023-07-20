@@ -4,6 +4,7 @@ import uuid
 import random
 from datetime import datetime
 from typing import *
+import pandas as pd
 
 # Helper Functions
 def convert_date(sys_param):
@@ -11,6 +12,12 @@ def convert_date(sys_param):
         return datetime.strptime(sys_param['launch_date'][0],'%d.%m.%y')
     elif "/" in sys_param:
         return datetime.strptime(sys_param['launch_date'][0],'%d/%m/%Y')
+    
+def get_days(state_history,currentDate):
+    startDate = pd.to_datetime([item.get('date') for item in state_history[0] if 'date' in item])
+    duration = currentDate - startDate
+    days = duration.days
+    return days.item()
 
 def calculate_raised_capital(param):
     """
@@ -193,5 +200,27 @@ def initialize_business_assumptions():
     return business_assumptions
 
 
+def initialize_staking_base_apr():
+    """
+    Initialize the staking base apr metrics.
+    """
+    staking_base_apr = {
+    'staking_base_apr_cum':0,
+    }
+
+    return staking_base_apr
 
 
+
+
+def initalize_meta_bucket_allocations():
+    """
+    Initialize the business assumptions metrics.
+    """
+    meta_bucket_allocations = {
+        'selling': 0,
+        'holding': 0,
+        'utility': 0,
+        'removed': 0
+    }
+    return meta_bucket_allocations
