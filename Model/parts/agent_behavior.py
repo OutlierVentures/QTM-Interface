@@ -250,5 +250,4 @@ def update_meta_bucket_allocations(params, substep, state_history, prev_state, p
     Function to update the meta bucket allocations
     """
     updated_meta_bucket_allocations = prev_state['meta_bucket_allocations']
-    print(prev_state['meta_bucket_allocations'])
     return ('meta_bucket_allocations',updated_meta_bucket_allocations)
