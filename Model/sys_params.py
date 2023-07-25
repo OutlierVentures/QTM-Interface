@@ -14,10 +14,9 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-# Now you can import modules from the desired path
 from data.not_iterable_variables import *
 
-QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88 - cadCAD_inputs.csv')
+QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - radCAD_inputs.csv')
 
 # System parameters
 sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
@@ -60,6 +59,9 @@ stakeholder_names = [
     'presale_2',
     'public_sale',
     'team',
+    'ov',
+    'advisor',
+    'strategic_partners',
     'reserve',
     'community',
     'foundation',
@@ -77,6 +79,9 @@ stakeholder_name_mapping = {
     'presale_2': 'early_investor',
     'public_sale': 'early_investor',
     'team': 'team',
+    'ov': 'early_investor',
+    'advisor': 'early_investor',
+    'strategic_partners': 'early_investor',
     'reserve': 'protocol_bucket',
     'community': 'protocol_bucket',
     'foundation': 'protocol_bucket',

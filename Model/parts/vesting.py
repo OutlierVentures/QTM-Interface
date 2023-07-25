@@ -23,7 +23,6 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         if current_month == 1:
             initial_agent_tokens_vested = (agent_initial_vesting_perc / 100) * (agent_token_allocation * total_token_supply)
             agent_token_vesting_dict[key] = initial_agent_tokens_vested
-            continue
 
         # Parameter integrity checks
         if agent_vesting_duration <= 0 and agent_initial_vesting_perc <= 0:
@@ -36,7 +35,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         else:
             vesting_period_token_amount = (agent_token_allocation * total_token_supply - (agent_initial_vesting_perc / 100 * agent_token_allocation* total_token_supply)) / agent_vesting_duration
         
-        if (current_month >= agent_cliff_months + agent_vesting_duration) or current_month <= agent_cliff_months:
+        if (current_month > agent_cliff_months + agent_vesting_duration) or current_month <= agent_cliff_months:
             vesting_period_token_amount = 0
 
         agent_token_vesting_dict[key] = [vesting_period_token_amount + agent_token_vesting_dict[key] if key in agent_token_vesting_dict else vesting_period_token_amount][0]

@@ -224,3 +224,22 @@ def initalize_meta_bucket_allocations():
         'removed': 0
     }
     return meta_bucket_allocations
+
+
+### TEST FUNCTIONS ###
+def test_timeseries(data, data_key, QTM_data_tables, QTM_row, relative_tolerance=0.001):
+    print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+")...")
+    for i in range(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])):
+        # get testing values
+        QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
+        radCAD_value = float(data[data_key].values[i])
+
+        # assert the values
+        error_message = ("radCad simulation value "+data_key+" = "+ str(radCAD_value)
+        + " at timestep "+str(i+1)+" is not equal to the QTM data table value "+ str(QTM_data_table_value)+" at row "+str(QTM_row)
+        +" and date "+str(QTM_data_tables.iloc[3].values[2:-1][i])+". The difference is "+str(radCAD_value - QTM_data_table_value)+" or "
+        +str([radCAD_value/QTM_data_table_value * 100 if QTM_data_table_value!= 0 else "NaN"][0])+"%.")
+
+        np.testing.assert_allclose(radCAD_value, QTM_data_table_value, rtol=relative_tolerance, err_msg=error_message)
+    print(u'\u2713'+" Test passed!")
+    print("------------------------------------")
