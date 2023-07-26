@@ -34,7 +34,7 @@ def postprocessing(df):
                           })
            )
 
-    ## Token Economy
+    ## Token Economy ##
     data['circulating_supply'] = token_economy_ds.map(lambda s: s["circulating_supply"])
     data['selling_perc'] = token_economy_ds.map(lambda s: s["selling_perc"])
     data['utility_perc'] = token_economy_ds.map(lambda s: s["utility_perc"])
@@ -44,6 +44,15 @@ def postprocessing(df):
     data['incentivised_tokens_usd'] = token_economy_ds.map(lambda s: s["incentivised_tokens_usd"])
     data['incentivised_tokens_cum'] = token_economy_ds.map(lambda s: s["incentivised_tokens_cum"])
     
+    
+    ## Liquidity Pool ##
+    data['tokens'] = liquidity_pool_ds.map(lambda s: s["tokens"])
+    data['usdc'] = liquidity_pool_ds.map(lambda s: s["usdc"])
+    data['constant_product'] = liquidity_pool_ds.map(lambda s: s["constant_product"])
+    data['token_price'] = liquidity_pool_ds.map(lambda s: s["token_price"])
+
+    
+    ## AGENTS ##
     ## Agent quantity
     for key in agent_ds[agent_ds.keys()[0]]:
         data[agent_ds[agent_ds.keys()[0]][key]['name']+'_agents'] = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
@@ -73,7 +82,7 @@ def postprocessing(df):
             data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_vested_cum'] = agent_ds.map(lambda s: sum([agent['tokens_vested_cum'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
 
 
-    ## user adoption
+    ## USER ADOPTION ##
     for key in user_adoption_ds[user_adoption_ds.keys()[0]]:
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
         data[key] = key_values

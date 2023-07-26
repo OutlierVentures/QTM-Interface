@@ -11,6 +11,7 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
     agents = prev_state['agents']
 
     if current_month == 0:
+        print('Initializing the liquidity pool...')
         required_usdc = params['initial_required_usdc']
         required_tokens = params['initial_lp_token_allocation']
         constant_product = required_usdc * required_tokens
