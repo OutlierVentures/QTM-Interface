@@ -32,6 +32,10 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     """
     Function to update the agents based on the changes in business funds to seed the liquidity pool.
     """
+    # get state variables
+    updated_token_economy = prev_state['token_economy'].copy()
+
+    # policy inputs
     total_token_supply = policy_input['total_token_supply']
     selling_perc = policy_input['selling_perc']
     utility_perc = policy_input['utility_perc']
@@ -42,16 +46,14 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     tokens_apr_locked = policy_input['tokens_apr_locked']
     tokens_buyback_locked = policy_input['tokens_buyback_locked']
 
-    updated_token_economy = {
-        'total_supply' : total_token_supply,
-        'circulating_supply' : circulating_supply,
-        'MC' : MC,
-        'FDV_MC' : FDV_MC,
-        'tokens_apr_locked' : tokens_apr_locked,
-        'tokens_buyback_locked' : tokens_buyback_locked,
-        'selling_perc' : selling_perc,
-        'utility_perc' : utility_perc,
-        'holding_perc' : holding_perc
-    }
+    updated_token_economy['total_supply'] = total_token_supply
+    updated_token_economy['circulating_supply'] = circulating_supply
+    updated_token_economy['MC'] = MC
+    updated_token_economy['FDV_MC'] = FDV_MC
+    updated_token_economy['tokens_apr_locked'] = tokens_apr_locked
+    updated_token_economy['tokens_buyback_locked'] = tokens_buyback_locked
+    updated_token_economy['selling_perc'] = selling_perc
+    updated_token_economy['utility_perc'] = utility_perc
+    updated_token_economy['holding_perc'] = holding_perc
 
     return ('token_economy', updated_token_economy)

@@ -39,6 +39,10 @@ def postprocessing(df):
     data['selling_perc'] = token_economy_ds.map(lambda s: s["selling_perc"])
     data['utility_perc'] = token_economy_ds.map(lambda s: s["utility_perc"])
     data['holding_perc'] = token_economy_ds.map(lambda s: s["holding_perc"])
+    data['minted_tokens'] = token_economy_ds.map(lambda s: s["minted_tokens"])
+    data['incentivised_tokens'] = token_economy_ds.map(lambda s: s["incentivised_tokens"])
+    data['incentivised_tokens_usd'] = token_economy_ds.map(lambda s: s["incentivised_tokens_usd"])
+    data['incentivised_tokens_cum'] = token_economy_ds.map(lambda s: s["incentivised_tokens_cum"])
     
     ## Agent quantity
     for key in agent_ds[agent_ds.keys()[0]]:

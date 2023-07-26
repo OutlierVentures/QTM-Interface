@@ -35,8 +35,8 @@ agent_token_allocation = {
     'reserve_token_allocation' : [x / 100 for x in sys_param['reserve_allocation']],
     'community_token_allocation' : [x / 100 for x in sys_param['community_allocation']],
     'foundation_token_allocation' : [x / 100 for x in sys_param['foundation_allocation']],
-    'placeholder_1_token_allocation' : [x / 100 for x in sys_param['placeholder_1_allocation']],
-    'placeholder_2_token_allocation' : [x / 100 for x in sys_param['placeholder_2_allocation']],
+    'incentivisation_token_allocation' : [x / 100 for x in sys_param['incentivisation_allocation']],
+    'placeholder_token_allocation' : [x / 100 for x in sys_param['placeholder_allocation']],
     'market_token_allocation' : [0]
 }
 
@@ -65,8 +65,8 @@ stakeholder_names = [
     'reserve',
     'community',
     'foundation',
-    'placeholder_1',
-    'placeholder_2',
+    'incentivisation',
+    'placeholder',
     'market_investors'
 ]
 #initial_stakeholder_values = generate_agents(stakeholder_names)
@@ -85,8 +85,8 @@ stakeholder_name_mapping = {
     'reserve': 'protocol_bucket',
     'community': 'protocol_bucket',
     'foundation': 'protocol_bucket',
-    'placeholder_1': 'protocol_bucket',
-    'placeholder_2': 'protocol_bucket',
+    'incentivisation': 'protocol_bucket',
+    'placeholder': 'protocol_bucket',
     'market': 'market_investors',
 }
 

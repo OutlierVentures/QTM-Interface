@@ -66,14 +66,14 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
                 'remove_locked_tokens': 0,
                 'incentivise': 0
             },
-            'placeholder_1': {
+            'incentivisation': {
                 'trade': 0,
                 'hold': 100,
                 'utility': 0,
                 'remove_locked_tokens': 0,
                 'incentivise': 0
             },
-            'placeholder_2': {
+            'placeholder': {
                 'trade': 0,
                 'hold': 100,
                 'utility': 0,

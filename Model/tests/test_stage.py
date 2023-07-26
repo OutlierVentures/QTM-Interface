@@ -81,6 +81,15 @@ if __name__ == '__main__'   :
     test_timeseries(data=data, data_key="utility_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=46, relative_tolerance=0.001)
     test_timeseries(data=data, data_key="holding_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=47, relative_tolerance=0.001)
 
+
+    ## TEST INCENTIVISATION ##
+    print("\n---------------------------------------## TEST INCENTIVISATION ##--------------------------------------")
+    print("Testing incentivisation of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="minted_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=50, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="incentivised_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="incentivised_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
+
+
     """ ## TEST CIRCULATING SUPPLY ##
     print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
     print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")

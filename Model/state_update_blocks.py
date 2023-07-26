@@ -5,6 +5,7 @@ from parts.token_economy import *
 from parts.user_adoption import *
 from parts.business_assumptions import *
 from parts.kpis import *
+from parts.incentivisation import *
 
 
 state_update_block = [
@@ -34,6 +35,16 @@ state_update_block = [
         },
         'variables': { 
             'agents': update_agent_vested_tokens,
+        },
+    },
+    {
+        # incentivisation.py
+        'policies': {
+            'incentivisation': incentivisation
+        },
+        'variables': { 
+            'agents': update_agents_after_incentivisation,
+            'token_economy': update_token_economy_after_incentivisation,
         },
     },
     {

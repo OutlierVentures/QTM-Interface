@@ -12,12 +12,6 @@ def convert_date(sys_param):
         return datetime.strptime(sys_param['launch_date'][0],'%d.%m.%y')
     elif "/" in sys_param:
         return datetime.strptime(sys_param['launch_date'][0],'%d/%m/%Y')
-    
-def get_days(state_history,currentDate):
-    startDate = pd.to_datetime([item.get('date') for item in state_history[0] if 'date' in item])
-    duration = currentDate - startDate
-    days = duration.days
-    return days.item()
 
 def calculate_raised_capital(param):
     """
@@ -39,7 +33,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
 
-    agent = {'name': stakeholder_name, # 'placeholder_1', 'placeholder_2', 'market_investors
+    agent = {'name': stakeholder_name, # 'incentivisation', 'placeholder', 'market_investors
              'type': stakeholder_type,
              'usd_funds': usd_funds,
              'tokens': tokens,
@@ -174,7 +168,11 @@ def generate_initial_token_economy_metrics():
         'tokens_apr_locked' : 0,
         'tokens_buyback_locked' : 0,
         'tokens_vested_cum': 0,
-        'tokens_burned': 0
+        'tokens_burned': 0,
+        'minted_tokens' : 0,
+        'incentivised_tokens' : 0,
+        'incentivised_tokens_usd' : 0,
+        'incentivised_tokens_cum' : 0,
     }
 
     return token_economy
