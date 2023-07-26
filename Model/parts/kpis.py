@@ -6,12 +6,10 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
     Generate the current date from timestep
     """
 
-    old_date = prev_state['date']
+    initial_date = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
     old_timestep = prev_state['timestep']
-    if old_timestep > 1:
-        new_date = pd.to_datetime(old_date)+pd.DateOffset(months=1)
-    else:
-        new_date = pd.to_datetime(old_date)
+    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=old_timestep-1)
+
     return {'new_date': new_date}
 
 

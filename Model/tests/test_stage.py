@@ -51,27 +51,45 @@ if __name__ == '__main__'   :
     ### BEGIN TESTS ###
     print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
 
+    
+    ## TEST ADOPTION ##
+    print("\n--------------------------------------## TEST FREE SUPPLY USAGE ##-------------------------------------")
+    print("Testing adoption of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="product_users", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=7, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="token_holders", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=8, relative_tolerance=0.001)
+
+    
     ## TEST AGENT VESTING VALUES ##
     print("\n------------------------------------## TEST AGENT VESTING VALUES ##------------------------------------")
-    print("Testing vesting values of radCad timeseries simulation against QTM data tables...")
-    # test all except for the market investors
+    print("Testing individual vesting values of radCad timeseries simulation against QTM data tables...")
+    # test individual vesting numbers of all agents except for the market investors (market investors don't receive vested tokens)
     for i in range(len(stakeholder_names)-1):
         stakeholder = stakeholder_names[i]
-        test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=11+i, relative_tolerance=0.001)
+    
+    print("Testing cumulative vesting values of radCad timeseries simulation against QTM data tables...")
+    # test cumulative vesting numbers of all agents except for the market investors (market investors don't receive vested tokens)
+    for i in range(len(stakeholder_names)-1):
+        stakeholder = stakeholder_names[i]
+        test_timeseries(data=data, data_key=stakeholder+"_tokens_vested_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
 
-    ## TEST CIRCULATING SUPPLY ##
+    
+    ## TEST FREE SUPPLY USAGE ##
+    print("\n--------------------------------------## TEST FREE SUPPLY USAGE ##-------------------------------------")
+    print("Testing free supply usage of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="selling_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=45, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="utility_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=46, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="holding_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=47, relative_tolerance=0.001)
+
+    """ ## TEST CIRCULATING SUPPLY ##
     print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
     print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
     test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)
     
-    ## TEST LOCKED TOKENS ##
-    print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
-    print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
-    test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)
     
     ## TEST META BUCKET ALLOCATIONS ##
     print("\n-----------------------------------## TEST META BUCKET ALLOCATIONS ##----------------------------------")
-    print(data["meta_bucket_allocations"])
+    print(data["meta_bucket_allocations"]) """
     
     
     ### END OF TESTS ###

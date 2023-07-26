@@ -32,9 +32,9 @@ def calculate_raised_capital(param):
 
 # Initialization
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
-              tokens: float, tokens_vested: float, tokens_apr_locked: float, tokens_buyback_locked: float,
-              tokens_liquidity_provisioning: float, tokens_transferred: float, tokens_burned: float, action_list: list,
-              action_weights: Tuple, current_action: str) -> dict:
+              tokens: float, tokens_vested: float, tokens_vested_cum: float, tokens_apr_locked: float,
+              tokens_buyback_locked: float, tokens_liquidity_provisioning: float, tokens_transferred: float,
+              tokens_burned: float, action_list: list, action_weights: Tuple, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -44,6 +44,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'usd_funds': usd_funds,
              'tokens': tokens,
              'tokens_vested': tokens_vested,
+             'tokens_vested_cum': tokens_vested_cum,
              'tokens_apr_locked': tokens_apr_locked,
              'tokens_buyback_locked': tokens_buyback_locked,
              'tokens_liquidity_provisioning': tokens_liquidity_provisioning,
@@ -66,6 +67,7 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     usd_funds = 0,
                                     tokens = 0,
                                     tokens_vested = 0,
+                                    tokens_vested_cum = 0,
                                     tokens_apr_locked = 0,
                                     tokens_buyback_locked = 0,
                                     tokens_liquidity_provisioning = 0,
@@ -166,8 +168,12 @@ def generate_initial_token_economy_metrics():
         'circulating_supply' : 0,
         'MC' : 0,
         'FDV_MC' : 0,
-        'tokens_locked' : 0,
-        'tokens_vested': 0,
+        'selling_perc': 0,
+        'utility_perc': 0,
+        'holding_perc': 0,
+        'tokens_apr_locked' : 0,
+        'tokens_buyback_locked' : 0,
+        'tokens_vested_cum': 0,
         'tokens_burned': 0
     }
 
@@ -229,12 +235,12 @@ def initalize_meta_bucket_allocations():
 
 
 ### TEST FUNCTIONS ###
-def test_timeseries(data, data_key, QTM_data_tables, QTM_row, relative_tolerance=0.001):
+def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_row, relative_tolerance=0.001):
     print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+")...")
     for i in range(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])):
         # get testing values
         QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
-        radCAD_value = float(data[data_key].values[i])
+        radCAD_value = float(data[data_key].values[i]) * data_row_multiplier
 
         # assert the values
         error_message = ("radCad simulation value "+data_key+" = "+ str(radCAD_value)

@@ -52,7 +52,8 @@ def update_agent_vested_tokens(params, substep, state_history, prev_state, polic
 
     for key, value in agent_token_vesting_dict.items():
         updated_agents[key]['tokens'] += value
-        updated_agents[key]['tokens_vested'] += value
+        updated_agents[key]['tokens_vested'] = value
+        updated_agents[key]['tokens_vested_cum'] += value
 
 
     return ('agents', updated_agents)

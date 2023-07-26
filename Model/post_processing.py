@@ -36,6 +36,9 @@ def postprocessing(df):
 
     ## Token Economy
     data['circulating_supply'] = token_economy_ds.map(lambda s: s["circulating_supply"])
+    data['selling_perc'] = token_economy_ds.map(lambda s: s["selling_perc"])
+    data['utility_perc'] = token_economy_ds.map(lambda s: s["utility_perc"])
+    data['holding_perc'] = token_economy_ds.map(lambda s: s["holding_perc"])
     
     ## Agent quantity
     for key in agent_ds[agent_ds.keys()[0]]:
@@ -60,6 +63,10 @@ def postprocessing(df):
     ## agents tokens vested quantity
     for key in agent_ds[agent_ds.keys()[0]]:
             data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_vested'] = agent_ds.map(lambda s: sum([agent['tokens_vested'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
+
+    ## agents tokens vested quantity
+    for key in agent_ds[agent_ds.keys()[0]]:
+            data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_vested_cum'] = agent_ds.map(lambda s: sum([agent['tokens_vested_cum'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
 
 
     ## user adoption

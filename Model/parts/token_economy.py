@@ -7,6 +7,9 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     liquidity_pool = prev_state['liquidity_pool']
     agents = prev_state['agents']
     total_token_supply = params['initial_total_supply']
+    selling_perc = params['avg_token_selling_allocation']
+    utility_perc = params['avg_token_utility_allocation']
+    holding_perc = params['avg_token_holding_allocation']
 
     circulating_tokens = 0
     locked_apr_tokens = 0
@@ -20,7 +23,9 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     MC = liquidity_pool['token_price'] * circulating_tokens
     FDV_MC = liquidity_pool['token_price'] * total_token_supply
 
-    return {'total_token_supply': total_token_supply, 'circulating_supply': circulating_tokens, 'MC': MC, 'FDV_MC': FDV_MC, 'tokens_apr_locked': locked_apr_tokens, 'tokens_buyback_locked': locked_buyback_tokens}
+    return {'total_token_supply': total_token_supply, 'selling_perc': selling_perc, 'utility_perc': utility_perc, 'holding_perc': holding_perc,
+            'circulating_supply': circulating_tokens, 'MC': MC, 'FDV_MC': FDV_MC, 'tokens_apr_locked': locked_apr_tokens,
+            'tokens_buyback_locked': locked_buyback_tokens}
 
 # STATE UPDATE FUNCTIONS
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
@@ -28,6 +33,9 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     Function to update the agents based on the changes in business funds to seed the liquidity pool.
     """
     total_token_supply = policy_input['total_token_supply']
+    selling_perc = policy_input['selling_perc']
+    utility_perc = policy_input['utility_perc']
+    holding_perc = policy_input['holding_perc']
     circulating_supply = policy_input['circulating_supply']
     MC = policy_input['MC']
     FDV_MC = policy_input['FDV_MC']
@@ -40,7 +48,10 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
         'MC' : MC,
         'FDV_MC' : FDV_MC,
         'tokens_apr_locked' : tokens_apr_locked,
-        'tokens_buyback_locked' : tokens_buyback_locked
+        'tokens_buyback_locked' : tokens_buyback_locked,
+        'selling_perc' : selling_perc,
+        'utility_perc' : utility_perc,
+        'holding_perc' : holding_perc
     }
 
     return ('token_economy', updated_token_economy)

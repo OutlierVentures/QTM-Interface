@@ -239,7 +239,7 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
     for key, value in updated_agents.items():
         # check if agent has enough tokens for meta bucket allocations
 
-        if updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['selling'] + agent_allocations[key]['removed'] < 0:
+        if updated_agents[key]['tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['utility'] + agent_allocations[key]['removed'] < 0:
             raise ValueError('Agent ', updated_agents[key]['name'], ' has less tokens: ', updated_agents[key]['tokens'], ' than planned selling allocation ', agent_allocations[key]['selling'],
                              ' and utility allocation ', agent_allocations[key]['utility'], ' plus removing allocation ', agent_allocations[key]['removed'], ' combined!')
         
