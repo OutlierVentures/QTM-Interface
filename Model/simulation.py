@@ -35,7 +35,7 @@ if __name__ == '__main__'   :
     # post processing
     data = postprocessing(df)
 
-    
+    print(data['meta_bucket_allocations'].head(5))
 
     ##---User Adoption Data and Plots---#
     #print(data['product_users']) ##Verified Correct, need to skip first row

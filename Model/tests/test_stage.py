@@ -48,14 +48,33 @@ if __name__ == '__main__'   :
     # post processing
     data = postprocessing(df)
 
-    # test vesting values
-    print("\n------------------------------------")
+    ### BEGIN TESTS ###
+    print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
+
+    ## TEST AGENT VESTING VALUES ##
+    print("\n------------------------------------## TEST AGENT VESTING VALUES ##------------------------------------")
     print("Testing vesting values of radCad timeseries simulation against QTM data tables...")
     # test all except for the market investors
     for i in range(len(stakeholder_names)-1):
         stakeholder = stakeholder_names[i]
         test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
 
+    ## TEST CIRCULATING SUPPLY ##
+    print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
+    print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)
+    
+    ## TEST LOCKED TOKENS ##
+    print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
+    print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)
+    
+    ## TEST META BUCKET ALLOCATIONS ##
+    print("\n-----------------------------------## TEST META BUCKET ALLOCATIONS ##----------------------------------")
+    print(data["meta_bucket_allocations"])
+    
+    
+    ### END OF TESTS ###
     print("\n")
     print(u'\u2713'+" ALL TESTS PASSED!")
     print("\n------------------------------------")

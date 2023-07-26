@@ -32,9 +32,9 @@ def calculate_raised_capital(param):
 
 # Initialization
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
-              tokens: float, tokens_vested: float, tokens_locked: float, tokens_liquidity_provisioning: float,
-              tokens_transferred: float, tokens_burned: float, action_list: list, action_weights: Tuple,
-              current_action: str) -> dict:
+              tokens: float, tokens_vested: float, tokens_apr_locked: float, tokens_buyback_locked: float,
+              tokens_liquidity_provisioning: float, tokens_transferred: float, tokens_burned: float, action_list: list,
+              action_weights: Tuple, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -44,7 +44,8 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'usd_funds': usd_funds,
              'tokens': tokens,
              'tokens_vested': tokens_vested,
-             'tokens_locked': tokens_locked,
+             'tokens_apr_locked': tokens_apr_locked,
+             'tokens_buyback_locked': tokens_buyback_locked,
              'tokens_liquidity_provisioning': tokens_liquidity_provisioning,
              'tokens_transferred': tokens_transferred,
              'tokens_burned': tokens_burned,
@@ -65,7 +66,8 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     usd_funds = 0,
                                     tokens = 0,
                                     tokens_vested = 0,
-                                    tokens_locked = 0,
+                                    tokens_apr_locked = 0,
+                                    tokens_buyback_locked = 0,
                                     tokens_liquidity_provisioning = 0,
                                     tokens_transferred = 0,
                                     tokens_burned = 0,
