@@ -53,7 +53,7 @@ if __name__ == '__main__'   :
 
     
     ## TEST ADOPTION ##
-    print("\n--------------------------------------## TEST FREE SUPPLY USAGE ##-------------------------------------")
+    print("\n-------------------------------------------## TEST ADOPTION ##-----------------------------------------")
     print("Testing adoption of radCad timeseries simulation against QTM data tables...")
     test_timeseries(data=data, data_key="product_users", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=7, relative_tolerance=0.001)
     test_timeseries(data=data, data_key="token_holders", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=8, relative_tolerance=0.001)
