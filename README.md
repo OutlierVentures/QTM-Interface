@@ -16,21 +16,27 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Development Roadmap
 
-- Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
-- Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
-- Build the utility policies
-- Build the trading policies (interactions with the liquidity pool)
-- Build the user adoption policies
+- [DONE] Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
+- [DONE] Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
+- [DONE] Build and test the vesting policies
+- [DONE] Build and test the incentivisation module
+- Build and test the airdrop module
+- Build and test the utility policies
+- Build and test the trading policies (interactions with the liquidity pool)
+- [DONE] Build and test the user adoption policies
 - Build the business policies
-- Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
+- [DONE] Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - Add all remaining plot functionallities
 - Web based UI for outputs
 - Develop risk analysis procedures
-- Test and improve the robustness of all functions -> unit tests
+- Test and improve the robustness of all functions \*> unit tests
 - Staging tests of the whole model
-- Test parameter sweep capabilities
+- Implement and test parameter sweep capabilities
 - Case studies & publishing first results in an article
 - Add more dynamic agent (behavior) policies
+  - Stochastic agents
+  - Intelligent agents I: Hard coded logics
+  - Intelligent agents II: LLM driven decision making
 - Add advanced optimization procedures
 - Build a web-based UI to create another input option for users that don't want to use the initial spreadsheet model as input --> Increase accessibility
 
