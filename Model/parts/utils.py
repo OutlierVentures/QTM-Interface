@@ -28,7 +28,8 @@ def calculate_raised_capital(param):
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, tokens_apr_locked: float,
               tokens_buyback_locked: float, tokens_liquidity_provisioning: float, tokens_transferred: float,
-              tokens_burned: float, action_list: list, action_weights: Tuple, current_action: str) -> dict:
+              tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float, action_list: list,
+              action_weights: Tuple, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -43,7 +44,9 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'tokens_buyback_locked': tokens_buyback_locked,
              'tokens_liquidity_provisioning': tokens_liquidity_provisioning,
              'tokens_transferred': tokens_transferred,
+             'tokens_transferred_cum': tokens_transferred_cum,
              'tokens_burned': tokens_burned,
+             'tokens_burned_cum': tokens_burned_cum,
              'action_list': action_list,
              'action_weights': action_weights,
              'current_action': current_action}
@@ -66,7 +69,9 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_buyback_locked = 0,
                                     tokens_liquidity_provisioning = 0,
                                     tokens_transferred = 0,
+                                    tokens_transferred_cum = 0,
                                     tokens_burned = 0,
+                                    tokens_burned_cum = 0,
                                     action_list = [],
                                     action_weights = [],
                                     current_action = 'hold')
@@ -173,6 +178,9 @@ def generate_initial_token_economy_metrics():
         'incentivised_tokens' : 0,
         'incentivised_tokens_usd' : 0,
         'incentivised_tokens_cum' : 0,
+        'airdrop_tokens' : 0,
+        'airdrop_tokens_usd' : 0,
+        'airdrop_tokens_cum' : 0
     }
 
     return token_economy

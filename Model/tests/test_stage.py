@@ -88,6 +88,15 @@ if __name__ == '__main__'   :
     test_timeseries(data=data, data_key="minted_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=50, relative_tolerance=0.001)
     test_timeseries(data=data, data_key="incentivised_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
     test_timeseries(data=data, data_key="incentivised_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
+    #test_timeseries(data=data, data_key="incentivised_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.001)
+
+
+    ## TEST AIRDROPS ##
+    print("\n------------------------------------------## TEST AIRDROPS ##------------------------------------------")
+    print("Testing airdrops of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="airdrop_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=57, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="airdrop_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=59, relative_tolerance=0.001)
+    #test_timeseries(data=data, data_key="airdrop_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=61, relative_tolerance=0.001)
 
 
     """ ## TEST CIRCULATING SUPPLY ##

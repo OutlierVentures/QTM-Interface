@@ -22,7 +22,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the vesting policies
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the incentivisation module
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the airdrop module
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the airdrop module
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the static agent behavior
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the utility policies
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test the trading policies (interactions with the liquidity pool)

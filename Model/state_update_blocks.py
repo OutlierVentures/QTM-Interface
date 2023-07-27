@@ -6,6 +6,7 @@ from parts.user_adoption import *
 from parts.business_assumptions import *
 from parts.kpis import *
 from parts.incentivisation import *
+from parts.airdrops import *
 
 
 state_update_block = [
@@ -45,6 +46,16 @@ state_update_block = [
         'variables': { 
             'agents': update_agents_after_incentivisation,
             'token_economy': update_token_economy_after_incentivisation,
+        },
+    },
+    {
+        # airdrops.py
+        'policies': {
+            'airdrops': airdrops
+        },
+        'variables': { 
+            'agents': update_agents_after_airdrops,
+            'token_economy': update_token_economy_after_airdrops,
         },
     },
     {

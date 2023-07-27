@@ -43,6 +43,9 @@ def postprocessing(df):
     data['incentivised_tokens'] = token_economy_ds.map(lambda s: s["incentivised_tokens"])
     data['incentivised_tokens_usd'] = token_economy_ds.map(lambda s: s["incentivised_tokens_usd"])
     data['incentivised_tokens_cum'] = token_economy_ds.map(lambda s: s["incentivised_tokens_cum"])
+    data['airdrop_tokens'] = token_economy_ds.map(lambda s: s["airdrop_tokens"])
+    data['airdrop_tokens_usd'] = token_economy_ds.map(lambda s: s["airdrop_tokens_usd"])
+    data['airdrop_tokens_cum'] = token_economy_ds.map(lambda s: s["airdrop_tokens_cum"])
     
     
     ## Liquidity Pool ##
