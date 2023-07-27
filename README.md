@@ -16,16 +16,16 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Development Roadmap
 
-- <span style="color:green">[DONE] Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions</span>
-- <span style="color:green">[DONE] Update the plot functionallities in the `plots.py` with respect to the new parameter conventions</span>
-- <span style="color:green">[DONE] Build and test the vesting policies</span>
-- <span style="color:green">[DONE] Build and test the incentivisation module</span>
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Build and test the vesting policies
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Build and test the incentivisation module
 - Build and test the airdrop module
 - Build and test the utility policies
 - Build and test the trading policies (interactions with the liquidity pool)
-- <span style="color:green">[DONE] Build and test the user adoption policies</span>
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Build and test the user adoption policies
 - Build the business policies
-- <span style="color:green">[DONE] Update the postprocessing w.r.t. the new implemented policies and corresponding state variables</span>
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png)[DONE] Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - Add all remaining plot functionallities
 - Web based UI for outputs
 - Develop risk analysis procedures
