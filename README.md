@@ -16,20 +16,20 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Development Roadmap
 
-- [DONE] Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
-- [DONE] Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
-- [DONE] Build and test the vesting policies
-- [DONE] Build and test the incentivisation module
+- <span style="color:green">[DONE] Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions</span>
+- <span style="color:green">[DONE] Update the plot functionallities in the `plots.py` with respect to the new parameter conventions</span>
+- <span style="color:green">[DONE] Build and test the vesting policies</span>
+- <span style="color:green">[DONE] Build and test the incentivisation module</span>
 - Build and test the airdrop module
 - Build and test the utility policies
 - Build and test the trading policies (interactions with the liquidity pool)
-- [DONE] Build and test the user adoption policies
+- <span style="color:green">[DONE] Build and test the user adoption policies</span>
 - Build the business policies
-- [DONE] Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
+- <span style="color:green">[DONE] Update the postprocessing w.r.t. the new implemented policies and corresponding state variables</span>
 - Add all remaining plot functionallities
 - Web based UI for outputs
 - Develop risk analysis procedures
-- Test and improve the robustness of all functions \*> unit tests
+- Test and improve the robustness of all functions -> unit tests
 - Staging tests of the whole model
 - Implement and test parameter sweep capabilities
 - Case studies & publishing first results in an article
@@ -39,6 +39,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
   - Intelligent agents II: LLM driven decision making
 - Add advanced optimization procedures
 - Build a web-based UI to create another input option for users that don't want to use the initial spreadsheet model as input --> Increase accessibility
+- Write the documentation for the QTM and radCAD integration
 
 ## Installation
 
