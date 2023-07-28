@@ -148,42 +148,21 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             behavior_lst_sell_index = agents[agent]['action_list'].index('trade')
             behavior_lst_utility_index = agents[agent]['action_list'].index('utility')
             behavior_lst_hold_index = agents[agent]['action_list'].index('hold')
-            behavior_lst_remove_index = agents[agent]['action_list'].index('remove_locked_tokens')
-            behavior_lst_locking_apr_index = agents[agent]['action_list'].index('locking_apr')
-            behavior_lst_locking_buyback_index = agents[agent]['action_list'].index('locking_buyback')
-            behavior_lst_liquidity_index = agents[agent]['action_list'].index('liquidity')
-            behavior_lst_transfer_index = agents[agent]['action_list'].index('transfer')
-            behavior_lst_burning_index = agents[agent]['action_list'].index('burning')
 
             # get agent static behavior percentages
             selling_perc = agents[agent]['action_weights'][behavior_lst_sell_index]
             utility_perc = agents[agent]['action_weights'][behavior_lst_utility_index]
             hold_perc = agents[agent]['action_weights'][behavior_lst_hold_index]
-            remove_perc = agents[agent]['action_weights'][behavior_lst_remove_index]
-            locking_apr_perc = agents[agent]['action_weights'][behavior_lst_locking_apr_index]
-            locking_buyback_share_perc = agents[agent]['action_weights'][behavior_lst_locking_buyback_index]
-            liquidity_perc = agents[agent]['action_weights'][behavior_lst_liquidity_index]
-            transfer_perc = agents[agent]['action_weights'][behavior_lst_transfer_index]
-            burn_perc = agents[agent]['action_weights'][behavior_lst_burning_index]
 
             # calculate corresponding absolute token amounts for meta buckets
             # agent meta bucket allocations are based on the agents vested tokens
             sell_tokens = agents[agent]['tokens_vested'] * selling_perc/100
             utility_tokens = agents[agent]['tokens_vested'] * utility_perc/100
             holding_tokens = agents[agent]['tokens_vested'] * hold_perc/100
-            removed_locked_apr_tokens = agents[agent]['tokens_apr_locked'] * remove_perc/100
-            removed_locked_buyback_tokens = agents[agent]['tokens_buyback_locked'] * remove_perc/100
-            removed_liquidity_tokens = agents[agent]['tokens_liquidity_provisioning'] * remove_perc/100
-            removed_tokens = removed_locked_apr_tokens + removed_locked_buyback_tokens + removed_liquidity_tokens 
-            locked_apr_tokens = utility_tokens * locking_apr_perc/100
-            locked_buyback_tokens = utility_tokens * locking_buyback_share_perc/100
-            liquidity_tokens = utility_tokens * liquidity_perc/100
-            transfer_tokens = utility_tokens * transfer_perc/100
-            burn_tokens = utility_tokens * burn_perc/100
 
             # populate meta bucket allocations
             meta_bucket_allocations['selling'] += sell_tokens
-            meta_bucket_allocations['holding'] += agents[agent]['tokens'] - sell_tokens - utility_tokens + removed_tokens
+            meta_bucket_allocations['holding'] += holding_tokens
             meta_bucket_allocations['utility'] += utility_tokens
             meta_bucket_allocations['removed'] += removed_tokens
 
