@@ -208,7 +208,7 @@ def initialize_business_assumptions():
     Initialize the business assumptions metrics.
     """
     business_assumptions = {
-    'cash_balance': 0,
+    'cash_balance': 0, ## Row 184 in model
     }
 
     return business_assumptions
