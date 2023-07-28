@@ -1,5 +1,4 @@
 from parts.vesting import *
-from parts.agent_behavior import *
 from parts.liquidity_pool import *
 from parts.token_economy import *
 from parts.user_adoption import *
@@ -7,6 +6,7 @@ from parts.business_assumptions import *
 from parts.kpis import *
 from parts.incentivisation import *
 from parts.airdrops import *
+from parts.agent_meta_bucket_behavior import *
 
 
 state_update_block = [
@@ -59,34 +59,25 @@ state_update_block = [
         },
     },
     {
-        # agent_behavior.py
+        # agent_meta_bucket_behavior.py
         'policies': {
-            'agent_behaviour': generate_agent_behavior,
+            'generate_agent_meta_bucket_behavior': generate_agent_meta_bucket_behavior,
         },
         'variables': {
-            'agents': update_agent_behavior,
+            'agents': update_agent_meta_bucket_behavior
         },
     },
     {
-        # agent_behavior.py
+        # agent_meta_bucket_behavior.py
         'policies': {
-            'agent_token_allocations': agent_token_allocations,
+            'agent_meta_bucket_allocations': agent_meta_bucket_allocations,
         },
         'variables': {
-            'agents': update_agent_token_allocations,
-            'meta_bucket_allocations':update_meta_bucket_allocations,
+            'agents': update_agent_meta_bucket_allocations,
+            'token_economy': update_token_economy_meta_bucket_allocations
         },
     },
     {
-        # token_economy.py
-        'policies': {
-            'token_economy_metrics': token_economy_metrics,
-        },
-        'variables': {
-            'token_economy': update_token_economy,
-        },
-    },
-     {
         # user_adoption.py
         'policies': {
             'user_adoption_metrics': user_adoption_metrics,
@@ -103,5 +94,14 @@ state_update_block = [
         'variables': {
             'business_assumptions': update_business_assumptions,
         },
-    }
+    },
+    {
+        # token_economy.py
+        'policies': {
+            'token_economy_metrics': token_economy_metrics,
+        },
+        'variables': {
+            'token_economy': update_token_economy,
+        },
+    },
 ]

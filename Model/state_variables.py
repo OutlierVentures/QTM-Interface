@@ -18,15 +18,12 @@ initial_user_adoption = initialize_user_adoption()
 # initialize the initial business assumptions
 business_assumptions = initialize_business_assumptions()
 
-meta_bucket_allocations = initalize_meta_bucket_allocations()
-
 # compose the initial state
 initial_state = {
+    'date': convert_date(sys_param),
     'agents': initial_stakeholders,
     'liquidity_pool': initial_liquidity_pool,
     'token_economy': initial_token_economy,
     'user_adoption': initial_user_adoption,
-    'business_assumptions': business_assumptions,
-    'date': convert_date(sys_param),
-    'meta_bucket_allocations':meta_bucket_allocations
+    'business_assumptions': business_assumptions
 }

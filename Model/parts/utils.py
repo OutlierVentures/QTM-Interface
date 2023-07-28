@@ -177,6 +177,9 @@ def generate_initial_token_economy_metrics():
         'selling_perc': 0,
         'utility_perc': 0,
         'holding_perc': 0,
+        'selling_allocation': 0,
+        'utility_allocation': 0,
+        'holding_allocation': 0,
         'tokens_apr_locked' : 0,
         'tokens_buyback_locked' : 0,
         'tokens_vested_cum': 0,
@@ -241,8 +244,7 @@ def initalize_meta_bucket_allocations():
     meta_bucket_allocations = {
         'selling': 0,
         'holding': 0,
-        'utility': 0,
-        'removed': 0
+        'utility': 0
     }
     return meta_bucket_allocations
 

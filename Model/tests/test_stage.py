@@ -53,7 +53,9 @@ if __name__ == '__main__'   :
     data = postprocessing(df)
 
     ### BEGIN TESTS ###
+    print("\n-------------------------------------------------------------------------------------------------------")
     print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
+    print("\n-------------------------------------------------------------------------------------------------------")
 
     
     ## TEST ADOPTION ##
@@ -66,13 +68,11 @@ if __name__ == '__main__'   :
     ## TEST AGENT VESTING VALUES ##
     print("\n------------------------------------## TEST AGENT VESTING VALUES ##------------------------------------")
     print("Testing individual vesting values of radCad timeseries simulation against QTM data tables...")
-    # test individual vesting numbers of all agents except for the market investors (market investors don't receive vested tokens)
     for i in range(len(stakeholder_names)-1):
         stakeholder = stakeholder_names[i]
         test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=11+i, relative_tolerance=0.001)
     
     print("Testing cumulative vesting values of radCad timeseries simulation against QTM data tables...")
-    # test cumulative vesting numbers of all agents except for the market investors (market investors don't receive vested tokens)
     for i in range(len(stakeholder_names)-1):
         stakeholder = stakeholder_names[i]
         test_timeseries(data=data, data_key=stakeholder+"_tokens_vested_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
@@ -101,6 +101,16 @@ if __name__ == '__main__'   :
     test_timeseries(data=data, data_key="airdrop_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=57, relative_tolerance=0.001)
     test_timeseries(data=data, data_key="airdrop_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=59, relative_tolerance=0.001)
     #test_timeseries(data=data, data_key="airdrop_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=61, relative_tolerance=0.001)
+
+
+    ## TEST AGENT META BUCKET ALLOCATIONS ##
+    print("\n--------------------------------## TEST AGENT META BUCKET ALLOCATIONS ##--------------------------------")
+    print("Testing individual agent meta bucket allocations of radCad timeseries simulation against QTM data tables...")
+    for i in range(len(stakeholder_names)-6):
+        stakeholder = stakeholder_names[i]
+        test_timeseries(data=data, data_key=stakeholder+"_selling_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=64+i, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key=stakeholder+"_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key=stakeholder+"_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
 
     """ ## TEST CIRCULATING SUPPLY ##
