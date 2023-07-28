@@ -33,7 +33,11 @@ importlib.reload(state_variables)
 importlib.reload(state_update_blocks)
 importlib.reload(sys_params)
 
-QTM_data_tables = pd.read_csv('./Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+
+# Get the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+QTM_data_tables = pd.read_csv(current_dir+'/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
 if __name__ == '__main__'   :
     MONTE_CARLO_RUNS = 1

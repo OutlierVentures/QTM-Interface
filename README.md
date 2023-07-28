@@ -16,6 +16,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Development Roadmap
 
+### V.1
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Initialize the project, create the development roadmap & README.md
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement interface to the QTM spreadsheet parameters
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
@@ -33,16 +34,19 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Test and improve the robustness of all functions -> unit tests
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Staging tests of the whole model
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build a web-based UI to create another input option for users that don't want to use the initial spreadsheet model as input --> Increase accessibility
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Case studies & publishing first results in an article
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Write the documentation for the QTM and radCAD integration
+
+### V.2
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build a web-based UI to create another input option
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add more dynamic agent (behavior) policies
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Stochastic agents
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents I: Hard coded logics
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents II: LLM driven decision making
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
+  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
+  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
 
 ## Installation
 
