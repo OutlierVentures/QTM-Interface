@@ -7,7 +7,8 @@ from parts.kpis import *
 from parts.incentivisation import *
 from parts.airdrops import *
 from parts.agent_meta_bucket_behavior import *
-from parts.standard_utilities.staking_base_apr import *
+from parts.staking_base_apr import *
+from parts.agent_utility_behavior import *
 
 
 state_update_block = [
@@ -105,14 +106,31 @@ state_update_block = [
             'token_economy': update_token_economy,
         },
     },
-    ## START OF UTILITIES
+
+
+    
     {
-        # staking_base_apr.py
-        'policies': {
-            'staking_base_apr': staking_base_apr,
-        },
-        'variables': {
-            'standard_utilities': update_staking_base_apr,
-        },
+    # staking_base_apr.py
+    'policies': {
+        'apr': apr,
+    },
+    'variables': {
+        'token_economy': update_token_economy_after_apr,
+    },
     },
 ]
+
+''' 
+ {
+    # agent_utility_behavior.py
+    'policies': {
+        'generate_agent_behavior': generate_agent_behavior,
+        'agent_token_allocations':agent_token_allocations,
+    },
+    'variables': {
+        'agents': update_agent_behavior,
+        'agents':update_agent_token_allocations,
+        'token_economy':update_meta_bucket_allocations
+
+    },
+    },'''
