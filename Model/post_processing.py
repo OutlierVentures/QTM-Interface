@@ -1,5 +1,17 @@
 import pandas as pd
 
+
+
+import warnings
+
+warnings.filterwarnings("ignore")
+
+
+
+
+
+
+
 def postprocessing(df):
     '''
     Definition:
