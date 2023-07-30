@@ -113,7 +113,14 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key=stakeholder+"_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
 
-    """ ## TEST CIRCULATING SUPPLY ##
+    ## TEST ADOPTION 2 ##
+    print("\n---------------------------------------## TEST ADOPTION 2 ##--------------------------------------")
+    print("Testing incentivisation of radCad timeseries simulation against QTM data tables...")
+    test_timeseries(data=data, data_key="product_revenue", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=117, relative_tolerance=0.001)
+    test_timeseries(data=data, data_key="token_buys", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=119, relative_tolerance=0.001)
+
+
+    """ ## TEST A SUPPLY ##
     print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
     print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
     test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)

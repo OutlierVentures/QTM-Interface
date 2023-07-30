@@ -64,7 +64,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     ## Product Revenue
     
     prev_product_users = prev_state['user_adoption']['product_users']
-    if current_month == 2:
+    if current_month == 1:
         product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
     else:
         product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
@@ -84,7 +84,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     ## Calculating Token Buys
     prev_token_holders = prev_state['user_adoption']['token_holders']
-    if current_month == 2:
+    if current_month == 1:
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:
         token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
