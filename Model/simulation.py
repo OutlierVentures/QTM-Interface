@@ -36,28 +36,3 @@ if __name__ == '__main__'   :
     data = postprocessing(df)
 
     print(data['meta_bucket_allocations'].head(5))
-
-    ##---User Adoption Data and Plots---#
-    #print(data['product_users']) ##Verified Correct, need to skip first row
-    #print(data['token_holders']) ##Verified Correct, need to skip first row
-    #print(data['token_buys'])   ##Verified Correct, need to skip first row
-    #print(data['product_revenue']) ##Verified Correct, need to skip first row
-
-    #plot_line_chart(data,'timestep',['token_holders','product_users'])
-    #plot_line_chart(data,'timestep',['product_revenue'])
-    #plot_line_chart(data,'timestep',['token_buys'])
-    #print(data['product_revenue'])
-
-
-    ##---Business Assumption Data and Plots---#
-
-    #print(data['cash_balance']) ##Data verified but need to set up buy backs properly, later problem
-    #plot_line_chart(data,'timestep',['cash_balance'])
-
-    ##---KPI Plots---#
-    #plot_line_chart(data,'date',['timestep'])
-
-    #monte_carlo_plot(data,'timestep','timestep','team_tokens_vested',1)
-
-    #plt.show()
-

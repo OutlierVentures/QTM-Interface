@@ -18,6 +18,11 @@ initial_user_adoption = initialize_user_adoption()
 # initialize the initial business assumptions
 business_assumptions = initialize_business_assumptions()
 
+# initialize the initial standard utilities
+standard_utilities = initialize_standard_utilities()
+
+
+
 # compose the initial state
 initial_state = {
     'date': convert_date(sys_param),
@@ -25,5 +30,6 @@ initial_state = {
     'liquidity_pool': initial_liquidity_pool,
     'token_economy': initial_token_economy,
     'user_adoption': initial_user_adoption,
-    'business_assumptions': business_assumptions
+    'business_assumptions': business_assumptions,
+    'standard_utilities': standard_utilities 
 }
