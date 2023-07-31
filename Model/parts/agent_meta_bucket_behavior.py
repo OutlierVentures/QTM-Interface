@@ -101,7 +101,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
 
         # populate agent behavior dictionary
         for agent in agents:
-            agent_behavior_dict[agents[agent]['name']] = {
+            agent_behavior_dict[agent] = {
                 'sell': params['avg_token_selling_allocation'],
                 'hold': params['avg_token_holding_allocation'],
                 'utility': params['avg_token_utility_allocation']
@@ -129,15 +129,10 @@ def agent_meta_bucket_allocations(params, substep, state_history, prev_state, **
     agent_allocations = {}
     for agent in agents:
         if agents[agent]['type'] == 'market_investor' or agents[agent]['type'] == 'early_investor' or agents[agent]['type'] == 'team':
-            # get agent static behavior indices for behavior list
-            behavior_lst_sell_index = agents[agent]['action_list'].index('sell')
-            behavior_lst_utility_index = agents[agent]['action_list'].index('utility')
-            behavior_lst_hold_index = agents[agent]['action_list'].index('hold')
-
             # get agent static behavior percentages
-            selling_perc = agents[agent]['action_weights'][behavior_lst_sell_index]
-            utility_perc = agents[agent]['action_weights'][behavior_lst_utility_index]
-            hold_perc = agents[agent]['action_weights'][behavior_lst_hold_index]
+            selling_perc = agents[agent]['actions']['sell']
+            utility_perc = agents[agent]['actions']['utility']
+            hold_perc = agents[agent]['actions']['hold']
 
             # calculate corresponding absolute token amounts for meta buckets
             # agent meta bucket allocations are based on the agents vested tokens
@@ -175,9 +170,8 @@ def update_agent_meta_bucket_behavior(params, substep, state_history, prev_state
     updated_agents = prev_state['agents']
     agent_behavior_dict = policy_input['agent_behavior_dict']
 
-    for key, value in updated_agents.items():
-        updated_agents[key]['action_list'] = list(agent_behavior_dict[updated_agents[key]['name']].keys())
-        updated_agents[key]['action_weights'] += tuple(agent_behavior_dict[updated_agents[key]['name']].values())
+    for key in updated_agents:
+        updated_agents[key]['actions'] = agent_behavior_dict[key]
 
     return ('agents', updated_agents)
 

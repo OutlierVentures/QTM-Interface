@@ -31,8 +31,8 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, tokens_apr_locked: float,
               tokens_buyback_locked: float, tokens_liquidity_provisioning: float, tokens_transferred: float,
               tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
-              selling_tokens: float, utility_tokens: float, holding_tokens: float, action_list: list,
-              action_weights: Tuple, current_action: str) -> dict:
+              selling_tokens: float, utility_tokens: float, holding_tokens: float, actions: dict,
+              current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -53,8 +53,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'selling_tokens': selling_tokens,
              'utility_tokens': utility_tokens,
              'holding_tokens': holding_tokens,
-             'action_list': action_list,
-             'action_weights': action_weights,
+             'actions': actions,
              'current_action': current_action}
     return agent
 
@@ -81,8 +80,7 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     selling_tokens = 0,
                                     utility_tokens = 0,
                                     holding_tokens = 0,
-                                    action_list = [],
-                                    action_weights = [],
+                                    actions = {},
                                     current_action = 'hold')
     return initial_agents
 

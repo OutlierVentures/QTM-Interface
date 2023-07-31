@@ -101,8 +101,8 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
 
         # populate agent behavior dictionary
         for agent in agents:
-            agent_behavior_dict[agents[agent]['name']] = {
-                'trade': params['avg_token_selling_allocation'],
+            agent_behavior_dict[agent] = {
+                'sell': params['avg_token_selling_allocation'],
                 'hold': params['avg_token_holding_allocation'],
                 'utility': params['avg_token_utility_allocation'],
                 'remove_locked_tokens': params['avg_token_utility_removal'],
@@ -144,27 +144,16 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
     agent_allocations = {}
     for agent in agents:
         if agents[agent]['type'] != 'protocol_bucket':
-            # get agent static behavior indices for behavior list
-            behavior_lst_sell_index = agents[agent]['action_list'].index('trade')
-            behavior_lst_utility_index = agents[agent]['action_list'].index('utility')
-            behavior_lst_hold_index = agents[agent]['action_list'].index('hold')
-            behavior_lst_remove_index = agents[agent]['action_list'].index('remove_locked_tokens')
-            behavior_lst_locking_apr_index = agents[agent]['action_list'].index('locking_apr')
-            behavior_lst_locking_buyback_index = agents[agent]['action_list'].index('locking_buyback')
-            behavior_lst_liquidity_index = agents[agent]['action_list'].index('liquidity')
-            behavior_lst_transfer_index = agents[agent]['action_list'].index('transfer')
-            behavior_lst_burning_index = agents[agent]['action_list'].index('burning')
-
             # get agent static behavior percentages
-            selling_perc = agents[agent]['action_weights'][behavior_lst_sell_index]
-            utility_perc = agents[agent]['action_weights'][behavior_lst_utility_index]
-            hold_perc = agents[agent]['action_weights'][behavior_lst_hold_index]
-            remove_perc = agents[agent]['action_weights'][behavior_lst_remove_index]
-            locking_apr_perc = agents[agent]['action_weights'][behavior_lst_locking_apr_index]
-            locking_buyback_share_perc = agents[agent]['action_weights'][behavior_lst_locking_buyback_index]
-            liquidity_perc = agents[agent]['action_weights'][behavior_lst_liquidity_index]
-            transfer_perc = agents[agent]['action_weights'][behavior_lst_transfer_index]
-            burn_perc = agents[agent]['action_weights'][behavior_lst_burning_index]
+            selling_perc = agents[agent]['actions']['sell']
+            utility_perc = agents[agent]['actions']['utility']
+            hold_perc = agents[agent]['actions']['hold']
+            remove_perc = agents[agent]['actions']['remove_locked_tokens']
+            locking_apr_perc = agents[agent]['actions']['locking_apr']
+            locking_buyback_share_perc = agents[agent]['actions']['locking_buyback']
+            liquidity_perc = agents[agent]['actions']['liquidity']
+            transfer_perc = agents[agent]['actions']['transfer']
+            burn_perc = agents[agent]['actions']['burning']
 
             # calculate corresponding absolute token amounts for meta buckets
             # agent meta bucket allocations are based on the agents vested tokens
@@ -229,9 +218,8 @@ def update_agent_behavior(params, substep, state_history, prev_state, policy_inp
     updated_agents = prev_state['agents']
     agent_behavior_dict = policy_input['agent_behavior_dict']
 
-    for key, value in updated_agents.items():
-        updated_agents[key]['action_list'] = list(agent_behavior_dict[updated_agents[key]['name']].keys())
-        updated_agents[key]['action_weights'] += tuple(agent_behavior_dict[updated_agents[key]['name']].values())
+    for key in updated_agents:
+        updated_agents[key]['actions'] = agent_behavior_dict[key]
 
     return ('agents', updated_agents)
 
