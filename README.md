@@ -75,10 +75,12 @@ The user can adjust the length of the simulation by changing the `TIMESTEPS` par
 - Go with your terminal to the `./Model/` directory.
 - Run `python simulation.py` within the environment.
 
-### Module Process Notes
+### Module Process Idea
 
-    1. Add parameters to ingest from spreadsheet
-    2. Create function in utils to intialize values in state variables
-    3. Create a .py file in parts then add the policy and state update functions
-    4. Add to state update block file
-    5. Add to post processing and create a plot to display it
+Create a function that combines all of these into a single file
+
+    1. Add parameters to ingest external data
+    2. Function to intialize values in state variables
+    3. The policy and state update functions
+    4. Update state update block file
+    5. Post processing and plots to display it
