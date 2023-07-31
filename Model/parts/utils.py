@@ -2,6 +2,8 @@ import numpy as np
 import math
 import uuid
 import random
+import sys
+import os
 from datetime import datetime
 from typing import *
 import pandas as pd
@@ -272,7 +274,14 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
 
 
 def import_dummy_data(prev_state,row):
-    QTM_data_tables = pd.read_csv('Model/tests/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+    # Get the current directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Go up one folder
+    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+
+    QTM_data_tables = pd.read_csv(parent_dir+'/tests/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+
     QTM_row = row
     i = prev_state['timestep']-1
     QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
