@@ -1,4 +1,4 @@
-
+from .utils import import_dummy_data
 
 
 
@@ -11,14 +11,14 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     lock_payout_source = params['lock_payout_source']
     lock_apr = params['lock_apr']
     lock_share = params['lock_share']
+    
+    # fake data 
+    dummy_locked_apr_tokens = import_dummy_data(prev_state,109)
+    #locked_apr_tokens = prev_state['token_economy']['tokens_apr_locked'] this is not full
 
-    print(prev_state['token_economy'])
-    #locked_apr_tokens = prev_state['token_economy']['tokens_apr_locked'] 
-    # policy logic at a meta level, need to do it for every single agent?
 
-    #total_reward_tokens = locked_apr_tokens * lock_apr/100/12
+    total_reward_tokens = dummy_locked_apr_tokens * lock_apr/100/12
 
-    total_reward_tokens = 0
 
     return {'total_reward_tokens': total_reward_tokens}
 

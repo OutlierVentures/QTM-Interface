@@ -266,3 +266,16 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
         np.testing.assert_allclose(radCAD_value, QTM_data_table_value, rtol=relative_tolerance, err_msg=error_message)
     print(u'\u2713'+" Test passed!")
     print("------------------------------------")
+
+
+
+
+
+def import_dummy_data(prev_state,row):
+    QTM_data_tables = pd.read_csv('Model/tests/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+    QTM_row = row
+    i = prev_state['timestep']-1
+    QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
+    
+    return  QTM_data_table_value
+
