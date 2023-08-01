@@ -49,6 +49,7 @@ def postprocessing(df):
     data['selling_perc'] = token_economy_ds.map(lambda s: s["selling_perc"])
     data['utility_perc'] = token_economy_ds.map(lambda s: s["utility_perc"])
     data['holding_perc'] = token_economy_ds.map(lambda s: s["holding_perc"])
+    data['remove_perc'] = token_economy_ds.map(lambda s: s["remove_perc"])
     data['minted_tokens'] = token_economy_ds.map(lambda s: s["minted_tokens"])
     data['incentivised_tokens'] = token_economy_ds.map(lambda s: s["incentivised_tokens"])
     data['incentivised_tokens_usd'] = token_economy_ds.map(lambda s: s["incentivised_tokens_usd"])

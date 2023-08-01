@@ -177,6 +177,7 @@ def generate_initial_token_economy_metrics():
         'selling_perc': 0,
         'utility_perc': 0,
         'holding_perc': 0,
+        'remove_perc': 0,
         'selling_allocation': 0,
         'utility_allocation': 0,
         'holding_allocation': 0,
