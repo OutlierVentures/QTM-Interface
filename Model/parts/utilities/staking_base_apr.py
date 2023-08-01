@@ -1,4 +1,4 @@
-from .utils import import_dummy_data
+from ..utils import import_dummy_data
 
 
 

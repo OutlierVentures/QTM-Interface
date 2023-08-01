@@ -225,15 +225,16 @@ def initialize_business_assumptions():
     return business_assumptions
 
 
-def initialize_standard_utilities():
+def initialize_utilities():
     """
     Initialize the staking base apr metrics.
     """
-    standard_utilities = {
-    'staking_base_apr_cum':0
+    utilities = {
+    'staking_base_apr_cum':0,
+    'buybacks_from_revenue_share_usd': 0
     }
 
-    return standard_utilities
+    return utilities
 
 
 

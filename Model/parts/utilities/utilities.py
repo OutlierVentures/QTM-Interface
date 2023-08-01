@@ -46,10 +46,37 @@ def staking_base_apr(params, substep, state_history, prev_state, **kwargs):
 # STATE UPDATE FUNCTIONS
 def update_staking_base_apr(params, substep, state_history, prev_state, policy_input, **kwargs):
 
-    update_standard_utilities = prev_state['standard_utilities']
-    update_standard_utilities['staking_base_apr_cum'] = policy_input['staking_base_apr_cum']
+    update_utilities = prev_state['utilities']
+    update_utilities['staking_base_apr_cum'] = policy_input['staking_base_apr_cum']
 
-    return ('standard_utilities',update_standard_utilities)
+    return ('utilities',update_utilities)
+
+
+
+# POLICY FUNCTIONS
+def staking_revenue_share_buyback_amount(params, substep, state_history, prev_state, **kwargs):
+    """
+    Policy function to incentivise the ecosystem
+    """
+    # get parameters
+
+    # get state variables
+
+
+# STATE UPDATE FUNCTIONS
+def update_buyback_amount_from_revenue_share(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update capital amount for token buybacks from the predicted revenue share
+    """
+    # get parameters
+
+    # get state variables
+
+    # get policy input
+
+    # update logic
+
+    return ('agents', '')
 
 
 

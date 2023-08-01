@@ -1,14 +1,15 @@
-from parts.vesting import *
+from parts.initial_emissions.vesting import *
+from parts.initial_emissions.incentivisation import *
+from parts.initial_emissions.airdrops import *
 from parts.liquidity_pool import *
 from parts.token_economy import *
 from parts.user_adoption import *
 from parts.business_assumptions import *
 from parts.kpis import *
-from parts.incentivisation import *
-from parts.airdrops import *
-from parts.agent_meta_bucket_behavior import *
-from parts.staking_base_apr import *
-from parts.agent_utility_behavior import *
+from parts.agents_behavior.agent_meta_bucket_behavior import *
+from parts.agents_behavior.agent_utility_behavior import *
+from parts.utilities.staking_base_apr import *
+from parts.utilities.staking_revenue_share import *
 
 
 state_update_block = [
@@ -98,6 +99,24 @@ state_update_block = [
         },
     },
     {
+        # staking_base_apr.py
+        'policies': {
+            'apr': apr,
+        },
+        'variables': {
+            'token_economy': update_token_economy_after_apr,
+        },
+    },
+    {
+        # utilities/staking_revenue_share.py
+        'policies': {
+            'staking_revenue_share_buyback_amount': staking_revenue_share_buyback_amount,
+        },
+        'variables': {
+            'utilities': update_buyback_amount_from_revenue_share,
+        },
+    },
+    {
         # token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
@@ -105,18 +124,6 @@ state_update_block = [
         'variables': {
             'token_economy': update_token_economy,
         },
-    },
-
-
-    
-    {
-    # staking_base_apr.py
-    'policies': {
-        'apr': apr,
-    },
-    'variables': {
-        'token_economy': update_token_economy_after_apr,
-    },
     },
 ]
 

@@ -32,6 +32,7 @@ def postprocessing(df):
     token_economy_ds = df.token_economy
     user_adoption_ds = df.user_adoption
     business_assumptions_ds = df.business_assumptions
+    utilities_ds = df.utilities
     
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
@@ -70,7 +71,6 @@ def postprocessing(df):
     data['usdc'] = liquidity_pool_ds.map(lambda s: s["usdc"])
     data['constant_product'] = liquidity_pool_ds.map(lambda s: s["constant_product"])
     data['token_price'] = liquidity_pool_ds.map(lambda s: s["token_price"])
-
     
     ## AGENTS ##
     for key in agent_ds[agent_ds.keys()[0]]:
@@ -104,6 +104,9 @@ def postprocessing(df):
         # Agents meta bucket holding tokens quantity
         data[agent_ds[agent_ds.keys()[0]][key]['name']+'_holding_tokens'] = agent_ds.map(lambda s: sum([agent['holding_tokens'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
 
+    
+    ## UTILITIES ##
+    data['buyback_from_revenue_share_usd'] = utilities_ds.map(lambda s: s["buyback_from_revenue_share_usd"])
 
     ## USER ADOPTION ##
     for key in user_adoption_ds[user_adoption_ds.keys()[0]]:
