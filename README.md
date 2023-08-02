@@ -19,7 +19,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 ### V.1
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Initialize the project, create the development roadmap & README.md
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement interface to the QTM spreadsheet parameters
-- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing in the `post_processing.py` with respect to the new streamlined adoption of the QTM parameters and conventions
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing in the `post_processing.py` with respect to the new QTM parameters and conventions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the plot functionallities in the `plots.py` with respect to the new parameter conventions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the vesting policies
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the incentivisation module
