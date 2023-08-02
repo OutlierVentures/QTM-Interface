@@ -14,8 +14,27 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     
     # fake data 
     dummy_locked_apr_tokens = import_dummy_data(prev_state,109)
-    #locked_apr_tokens = prev_state['token_economy']['tokens_apr_locked'] this is not full
 
+
+    #Calculating the agent utility sum -> Row 87
+    agent_utility_sum = 0
+    agents = prev_state['agents'].copy()
+    for agent in agents:
+        
+        utility_tokens = agents[agent]['utility_tokens']
+        agent_utility_sum += utility_tokens
+
+    dummy_holding_supply = import_dummy_data(prev_state,86)
+    agent_utility_sum += dummy_holding_supply
+    print(agent_utility_sum)
+
+
+    #agent_utility_sum = 
+    #stake_base_apr_allocation = agent_utility_sum*stake_base_apr_perc/100
+    
+    #removal_token = =-prev_month_cum*utility_removal_perc/100
+
+    #cumulative =prev_month_cum +stake_base_apr_allocation+ removal_token
 
     total_reward_tokens = dummy_locked_apr_tokens * lock_apr/100/12
 

@@ -54,7 +54,7 @@ if __name__ == '__main__'   :
 
 
 
-    tests = 0
+    tests = 1
 
     if tests == 0:
         ### BEGIN TESTS ###
