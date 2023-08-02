@@ -37,6 +37,7 @@ agent_token_allocation = {
     'foundation_token_allocation' : [x / 100 for x in sys_param['foundation_allocation']],
     'incentivisation_token_allocation' : [x / 100 for x in sys_param['incentivisation_allocation']],
     'placeholder_token_allocation' : [x / 100 for x in sys_param['placeholder_allocation']],
+    'airdrop_token_allocation' : [x / 100 for x in sys_param['airdrop_allocation']],
     'market_token_allocation' : [0]
 }
 

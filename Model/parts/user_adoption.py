@@ -42,15 +42,13 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     current_month = prev_state['timestep']
     current_date = prev_state['date']
-    initial_date = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
-    #launchDate = [item.get('date') for item in state_history[0] if 'date' in item]
+    launchDate = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
 
-    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - initial_date).days
+    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
     #current_day = current_month*30.437 #need to adjust it to being months
 
-
-    total_days = 3653 # THis is what is shown in the model as a constant
-                        
+    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
+    total_days = 3653                        
 
     ## Product user adoption
     initial_product_users = params['initial_product_users']
@@ -91,13 +89,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     #token2_in_lp = token_buys/ lp2 price
     # This is going to be the same as token buys because we are assuing USD is the pair
-    
-
-    avg_token_utility_allocation = params['avg_token_utility_allocation']
-    avg_token_holding_allocation = params['avg_token_holding_allocation']
-    avg_token_selling_allocation = params['avg_token_selling_allocation']
-    avg_token_utility_removal = params['avg_token_utility_removal']
-
 
     return {'product_users': product_users, 'token_holders': token_holders,'product_revenue': product_revenue,'token_buys':token_buys}
 

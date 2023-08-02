@@ -220,6 +220,7 @@ def initialize_business_assumptions():
     """
     business_assumptions = {
     'cash_balance': 0, ## Row 184 in model
+    'buybacks_usd': 0 ## Row 134 in model
     }
 
     return business_assumptions

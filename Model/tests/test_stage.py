@@ -124,26 +124,35 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="product_revenue", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=117, relative_tolerance=0.001)
         test_timeseries(data=data, data_key="token_buys", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=119, relative_tolerance=0.001)
 
+        
         ## TEST TOKEN ALLOCATION REMOVAL PERCENTAGE ##
         print("\n-------------------------------## TEST TOKEN UTILITY REMOVAL PERCENTAGE ##------------------------------")
         print("Testing token utility removal percentage of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="remove_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=123, relative_tolerance=0.001)
 
+        
         ## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##
         print("\n----------------------------## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##---------------------------")
         print("Testing token utility removal percentage of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="buyback_from_revenue_share_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=133, relative_tolerance=0.001)
 
+        
+        ## TEST SUM OF BUYBACKS ##
+        print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
+        print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="buybacks_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
+
+        
+        ## TEST CASH BALANCE ##
+        print("\n-----------------------------------------## TEST CASH BALANCE ##----------------------------------------")
+        print("Testing cash balance of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="cash_balance", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=184, relative_tolerance=0.001)
+
 
         """ ## TEST A SUPPLY ##
         print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
         print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)
-        
-        
-        ## TEST META BUCKET ALLOCATIONS ##
-        print("\n-----------------------------------## TEST META BUCKET ALLOCATIONS ##----------------------------------")
-        print(data["meta_bucket_allocations"]) """
+        test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)"""
         
         
         ### END OF TESTS ###

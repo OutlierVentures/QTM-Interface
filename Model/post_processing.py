@@ -1,16 +1,7 @@
 import pandas as pd
-
-
-
 import warnings
 
 warnings.filterwarnings("ignore")
-
-
-
-
-
-
 
 def postprocessing(df):
     '''
@@ -113,8 +104,8 @@ def postprocessing(df):
         key_values = user_adoption_ds.apply(lambda s: s.get(key))
         data[key] = key_values
 
-
-    cash_balance = business_assumptions_ds.apply(lambda s: s.get('cash_balance'))
-    data['cash_balance'] = cash_balance
+    ## BUSINESS ASSUMPTIONS ##
+    data['buybacks_usd'] = business_assumptions_ds.apply(lambda s: s.get('buybacks_usd'))
+    data['cash_balance'] = business_assumptions_ds.apply(lambda s: s.get('cash_balance'))
     
     return data

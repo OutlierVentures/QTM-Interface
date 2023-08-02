@@ -7,7 +7,6 @@ from parts.user_adoption import *
 from parts.business_assumptions import *
 from parts.kpis import *
 from parts.agents_behavior.agent_meta_bucket_behavior import *
-from parts.agents_behavior.agent_utility_behavior import *
 from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *
 
@@ -18,8 +17,7 @@ state_update_block = [
         'policies': {
             'initialize_liquidity_pool': initialize_liquidity_pool
         },
-        'variables': { 
-            'agents': update_agents_after_lp_seeding,
+        'variables': {
             'liquidity_pool': update_lp_after_lp_seeding
         },
     },
@@ -90,15 +88,6 @@ state_update_block = [
         },
     },
     {
-        # business_assumptions.py
-        'policies': {
-            'business_assumption_metrics': business_assumption_metrics,
-        },
-        'variables': {
-            'business_assumptions': update_business_assumptions,
-        },
-    },
-    {
         # staking_base_apr.py
         'policies': {
             'apr': apr,
@@ -114,6 +103,15 @@ state_update_block = [
         },
         'variables': {
             'utilities': update_buyback_amount_from_revenue_share,
+        },
+    },
+    {
+        # business_assumptions.py
+        'policies': {
+            'business_assumption_metrics': business_assumption_metrics,
+        },
+        'variables': {
+            'business_assumptions': update_business_assumptions,
         },
     },
     {
