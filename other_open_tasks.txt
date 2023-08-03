@@ -1,0 +1,7 @@
+Notes for all micro tasks that need to be done at some point, where we didn't finish a certain detail
+
+- calculation of the circulating supply in the token_economy.py
+- add description and structure notes (e.g. # parameters, # state variables # policy inputs, ...) for every function
+- consistency checks
+- unique agent naming checks
+- error handling for functions and the whole model

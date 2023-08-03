@@ -51,34 +51,11 @@ def postprocessing(df):
         # Agent quantity
         data[agent_ds[agent_ds.keys()[0]][key]['name']+'_agents'] = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
         
-        # Agent tokens quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens'] = agent_ds.map(lambda s: sum([agent['tokens'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
+        # Agent attributes
+        key_values = agent_ds.apply(lambda s: s.get(key))
+        for key2 in key_values[key_values.keys()[0]]:
+            data[agent_ds[agent_ds.keys()[0]][key]['name']+'_'+key2] = agent_ds.map(lambda s: [agent[key2] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']][0])
 
-        # Agents usd_funds quantitiy
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_usd_funds'] = agent_ds.map(lambda s: sum([agent['usd_funds'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents tokens apr locked quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_apr_locked'] = agent_ds.map(lambda s: sum([agent['tokens_apr_locked'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents tokens buyback locked quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_buyback_locked'] = agent_ds.map(lambda s: sum([agent['tokens_buyback_locked'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents tokens vested quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_vested'] = agent_ds.map(lambda s: sum([agent['tokens_vested'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents tokens vested cumulative quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_tokens_vested_cum'] = agent_ds.map(lambda s: sum([agent['tokens_vested_cum'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents meta bucket selling tokens quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_selling_tokens'] = agent_ds.map(lambda s: sum([agent['selling_tokens'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents meta bucket utility tokens quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_utility_tokens'] = agent_ds.map(lambda s: sum([agent['utility_tokens'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-        # Agents meta bucket holding tokens quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_holding_tokens'] = agent_ds.map(lambda s: sum([agent['holding_tokens'] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
-
-    
     ## UTILITIES ##
     for key in utilities_ds[utilities_ds.keys()[0]]:
         key_values = utilities_ds.apply(lambda s: s.get(key))
@@ -92,6 +69,11 @@ def postprocessing(df):
     ## BUSINESS ASSUMPTIONS ##
     for key in business_assumptions_ds[business_assumptions_ds.keys()[0]]:
         key_values = business_assumptions_ds.apply(lambda s: s.get(key))
-        data[key] = key_values 
+        data[key] = key_values
+    
+    ## AGGREGATED METRICS ##
+    data["From_Holding_Supply_Selling"] = data["airdrop_receivers_selling_tokens"].add(data["incentivisation_receivers_selling_tokens"])
+    data["From_Holding_Supply_Utility"] = data["airdrop_receivers_utility_tokens"].add(data["incentivisation_receivers_utility_tokens"])
+    data["From_Holding_Supply_Holding"] = data["airdrop_receivers_holding_tokens"].add(data["incentivisation_receivers_holding_tokens"])
     
     return data

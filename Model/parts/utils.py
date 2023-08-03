@@ -268,9 +268,13 @@ def initalize_meta_bucket_allocations():
 
 
 ### TEST FUNCTIONS ###
-def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_row, relative_tolerance=0.001):
-    print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+")...")
-    for i in range(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])):
+def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_row, relative_tolerance=0.001, timestep_cut_off=0):
+    # get amount of accounted for timesteps
+    n_timesteps = len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]) - [len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])-timestep_cut_off if timestep_cut_off > 0 else 0][0]
+
+    print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+") for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps...")
+    
+    for i in range(n_timesteps):
         # get testing values
         QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
         radCAD_value = float(data[data_key].values[i]) * data_row_multiplier
@@ -282,7 +286,10 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
         +str([radCAD_value/QTM_data_table_value * 100 if QTM_data_table_value!= 0 else "NaN"][0])+"%.")
 
         np.testing.assert_allclose(radCAD_value, QTM_data_table_value, rtol=relative_tolerance, err_msg=error_message)
-    print(u'\u2713'+" Test passed!")
+    if n_timesteps == len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]):
+        print(u'\u2713'+" Test passed!")
+    else:
+        print("("+u'\u2713'+") Test passed for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps!")
     print("------------------------------------")
 
 

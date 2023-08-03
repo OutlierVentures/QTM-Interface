@@ -119,6 +119,13 @@ if __name__ == '__main__'   :
             test_timeseries(data=data, data_key=stakeholder+"_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
             test_timeseries(data=data, data_key=stakeholder+"_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
+        ## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##
+        print("\n-------------------------## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##-------------------------")
+        print("Testing from holding supply meta bucket allocations of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="From_Holding_Supply_Selling", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=73, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="From_Holding_Supply_Utility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=86, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="From_Holding_Supply_Holding", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=99, relative_tolerance=0.001, timestep_cut_off=1)
+
 
         ## TEST ADOPTION 2 ##
         print("\n------------------------------------------## TEST ADOPTION 2 ##-----------------------------------------")
@@ -143,6 +150,7 @@ if __name__ == '__main__'   :
         print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
         print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="buybacks_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
+
 
         ## TEST PROTOCOL BUCKET BURN ##
         print("\n----------------------------------------## TEST PROTOCOL BUCKET BURN ##--------------------------------------")
