@@ -33,11 +33,13 @@ importlib.reload(state_variables)
 importlib.reload(state_update_blocks)
 importlib.reload(sys_params)
 
-
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-QTM_data_tables = pd.read_csv(current_dir+'/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+# Go two folders up
+parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
+
+QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
 if __name__ == '__main__'   :
     MONTE_CARLO_RUNS = 1
@@ -141,6 +143,11 @@ if __name__ == '__main__'   :
         print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
         print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="buybacks_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
+
+        ## TEST PROTOCOL BUCKET BURN ##
+        print("\n----------------------------------------## TEST PROTOCOL BUCKET BURN ##--------------------------------------")
+        print("Testing protocol bucket burn of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="tokens_burned", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=138, relative_tolerance=0.001)
 
         
         ## TEST CASH BALANCE ##

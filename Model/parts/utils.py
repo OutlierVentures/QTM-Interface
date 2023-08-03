@@ -196,7 +196,11 @@ def generate_initial_token_economy_metrics():
         'tokens_buyback_locked' : 0,
         'tokens_vested_cum': 0,
         'tokens_burned': 0,
+        'tokens_burned_cum': 0,
+        'tokens_burned_usd': 0,
         'minted_tokens' : 0,
+        'minted_tokens_cum': 0,
+        'minted_tokens_usd': 0,
         'incentivised_tokens' : 0,
         'incentivised_tokens_usd' : 0,
         'incentivised_tokens_cum' : 0,
@@ -289,10 +293,10 @@ def import_dummy_data(prev_state,row):
     # Get the current directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Go up one folder
-    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+    # Go two folders up
+    parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
 
-    QTM_data_tables = pd.read_csv(parent_dir+'/tests/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+    QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
     QTM_row = row
     i = prev_state['timestep']-1

@@ -76,6 +76,8 @@ def update_token_economy_after_incentivisation(params, substep, state_history, p
     # update logic
     incentivisation_tokens = vested_incentivisation_tokens + minted_incentivisation_tokens
     updated_token_economy['minted_tokens'] = minted_incentivisation_tokens
+    updated_token_economy['minted_tokens_cum'] += minted_incentivisation_tokens
+    updated_token_economy['minted_tokens_usd'] = minted_incentivisation_tokens  * liquidity_pool['token_price']
     updated_token_economy['incentivised_tokens'] = incentivisation_tokens
     updated_token_economy['incentivised_tokens_usd'] = incentivisation_tokens * liquidity_pool['token_price']
     updated_token_economy['incentivised_tokens_cum'] += incentivisation_tokens

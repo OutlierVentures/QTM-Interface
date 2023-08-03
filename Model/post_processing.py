@@ -37,32 +37,14 @@ def postprocessing(df):
            )
 
     ## Token Economy ##
-    data['circulating_supply'] = token_economy_ds.map(lambda s: s["circulating_supply"])
-    data['selling_perc'] = token_economy_ds.map(lambda s: s["selling_perc"])
-    data['utility_perc'] = token_economy_ds.map(lambda s: s["utility_perc"])
-    data['holding_perc'] = token_economy_ds.map(lambda s: s["holding_perc"])
-    data['remove_perc'] = token_economy_ds.map(lambda s: s["remove_perc"])
-    data['minted_tokens'] = token_economy_ds.map(lambda s: s["minted_tokens"])
-    data['incentivised_tokens'] = token_economy_ds.map(lambda s: s["incentivised_tokens"])
-    data['incentivised_tokens_usd'] = token_economy_ds.map(lambda s: s["incentivised_tokens_usd"])
-    data['incentivised_tokens_cum'] = token_economy_ds.map(lambda s: s["incentivised_tokens_cum"])
-    data['airdrop_tokens'] = token_economy_ds.map(lambda s: s["airdrop_tokens"])
-    data['airdrop_tokens_usd'] = token_economy_ds.map(lambda s: s["airdrop_tokens_usd"])
-    data['airdrop_tokens_cum'] = token_economy_ds.map(lambda s: s["airdrop_tokens_cum"])
-    data['selling_allocation'] = token_economy_ds.map(lambda s: s["selling_allocation"])
-    data['utility_allocation'] = token_economy_ds.map(lambda s: s["utility_allocation"])
-    data['holding_allocation'] = token_economy_ds.map(lambda s: s["holding_allocation"])
-       
+    for key in token_economy_ds[token_economy_ds.keys()[0]]:
+        key_values = token_economy_ds.apply(lambda s: s.get(key))
+        data[key] = key_values     
 
-
-
-    
-    
     ## Liquidity Pool ##
-    data['tokens'] = liquidity_pool_ds.map(lambda s: s["tokens"])
-    data['usdc'] = liquidity_pool_ds.map(lambda s: s["usdc"])
-    data['constant_product'] = liquidity_pool_ds.map(lambda s: s["constant_product"])
-    data['token_price'] = liquidity_pool_ds.map(lambda s: s["token_price"])
+    for key in liquidity_pool_ds[liquidity_pool_ds.keys()[0]]:
+        key_values = liquidity_pool_ds.apply(lambda s: s.get(key))
+        data[key] = key_values  
     
     ## AGENTS ##
     for key in agent_ds[agent_ds.keys()[0]]:
@@ -98,11 +80,9 @@ def postprocessing(df):
 
     
     ## UTILITIES ##
-    data['buyback_from_revenue_share_usd'] = utilities_ds.map(lambda s: s["buyback_from_revenue_share_usd"])
-    
-    #apr
-    data['staking_rewards'] = utilities_ds.map(lambda s: s["staking_rewards"])
-
+    for key in utilities_ds[utilities_ds.keys()[0]]:
+        key_values = utilities_ds.apply(lambda s: s.get(key))
+        data[key] = key_values  
 
     ## USER ADOPTION ##
     for key in user_adoption_ds[user_adoption_ds.keys()[0]]:
@@ -110,7 +90,8 @@ def postprocessing(df):
         data[key] = key_values
 
     ## BUSINESS ASSUMPTIONS ##
-    data['buybacks_usd'] = business_assumptions_ds.apply(lambda s: s.get('buybacks_usd'))
-    data['cash_balance'] = business_assumptions_ds.apply(lambda s: s.get('cash_balance'))
+    for key in business_assumptions_ds[business_assumptions_ds.keys()[0]]:
+        key_values = business_assumptions_ds.apply(lambda s: s.get(key))
+        data[key] = key_values 
     
     return data
