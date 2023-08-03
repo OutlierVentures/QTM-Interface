@@ -38,7 +38,9 @@ agent_token_allocation = {
     'incentivisation_token_allocation' : [x / 100 for x in sys_param['incentivisation_allocation']],
     'placeholder_token_allocation' : [x / 100 for x in sys_param['placeholder_allocation']],
     'airdrop_token_allocation' : [x / 100 for x in sys_param['airdrop_allocation']],
-    'market_token_allocation' : [0]
+    'market_token_allocation' : [0],
+    'airdrop_receivers_token_allocation' : [0],
+    'incentivisation_receivers_token_allocation' : [0]
 }
 
 sys_param.update(agent_token_allocation)
@@ -68,7 +70,9 @@ stakeholder_names = [
     'foundation',
     'incentivisation',
     'placeholder',
-    'market_investors'
+    'market_investors',
+    'airdrop_receivers',
+    'incentivisation_receivers'
 ]
 #initial_stakeholder_values = generate_agents(stakeholder_names)
 
@@ -88,7 +92,9 @@ stakeholder_name_mapping = {
     'foundation': 'protocol_bucket',
     'incentivisation': 'protocol_bucket',
     'placeholder': 'protocol_bucket',
-    'market': 'market_investors',
+    'market_investors': 'market_investors',
+    'airdrop_receivers': 'airdrop_receivers',
+    'incentivisation_receivers': 'incentivisation_receivers',
 }
 
 initial_stakeholder_values = generate_agents(stakeholder_name_mapping)

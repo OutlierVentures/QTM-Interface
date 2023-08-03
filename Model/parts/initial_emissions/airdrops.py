@@ -45,11 +45,10 @@ def update_agents_after_airdrops(params, substep, state_history, prev_state, pol
     airdrop_tokens = policy_input['airdrop_tokens']
 
     # update logic
-    # add airdropped tokens to market participants
-    # count amount of market_investors and early_investors in updated_agents
-    investors = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'market_investors' or updated_agents[agent]['type'] == 'early_investor')])
+    # add airdropped tokens to airdrop receivers stakeholder group
+    investors = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'airdrop_receivers')])
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'market_investors' or updated_agents[agent]['type'] == 'early_investor':
+        if updated_agents[agent]['type'] == 'airdrop_receivers':
             updated_agents[agent]['tokens'] = updated_agents[agent]['tokens'] + airdrop_tokens / investors
 
     return ('agents', updated_agents)

@@ -54,7 +54,7 @@ if __name__ == '__main__'   :
 
 
 
-    tests = 1
+    tests = 0
 
     if tests == 0:
         ### BEGIN TESTS ###
@@ -73,12 +73,12 @@ if __name__ == '__main__'   :
         ## TEST AGENT VESTING VALUES ##
         print("\n------------------------------------## TEST AGENT VESTING VALUES ##------------------------------------")
         print("Testing individual vesting values of radCad timeseries simulation against QTM data tables...")
-        for i in range(len(stakeholder_names)-1):
+        for i in range(len(stakeholder_names)-3):
             stakeholder = stakeholder_names[i]
             test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=11+i, relative_tolerance=0.001)
         
         print("Testing cumulative vesting values of radCad timeseries simulation against QTM data tables...")
-        for i in range(len(stakeholder_names)-1):
+        for i in range(len(stakeholder_names)-3):
             stakeholder = stakeholder_names[i]
             test_timeseries(data=data, data_key=stakeholder+"_tokens_vested_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
 
@@ -111,7 +111,7 @@ if __name__ == '__main__'   :
         ## TEST AGENT META BUCKET ALLOCATIONS ##
         print("\n--------------------------------## TEST AGENT META BUCKET ALLOCATIONS ##--------------------------------")
         print("Testing individual agent meta bucket allocations of radCad timeseries simulation against QTM data tables...")
-        for i in range(len(stakeholder_names)-6):
+        for i in range(len(stakeholder_names)-8):
             stakeholder = stakeholder_names[i]
             test_timeseries(data=data, data_key=stakeholder+"_selling_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=64+i, relative_tolerance=0.001)
             test_timeseries(data=data, data_key=stakeholder+"_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)

@@ -86,6 +86,20 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 'utility': 25,
                 'remove_locked_tokens': 5,
                 'incentivise': 0
+            },
+            'airdrop_receivers': {
+                'trade': 60,
+                'hold': 10,
+                'utility': 25,
+                'remove_locked_tokens': 5,
+                'incentivise': 0
+            },
+            'incentivisation_receivers': {
+                'trade': 60,
+                'hold': 10,
+                'utility': 25,
+                'remove_locked_tokens': 5,
+                'incentivise': 0
             }
         }
     
