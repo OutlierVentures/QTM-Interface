@@ -93,7 +93,7 @@ state_update_block = [
             'apr': apr,
         },
         'variables': {
-            'token_economy': update_token_economy_after_apr,
+            'utilities': update_utilties_after_apr,
         },
     },
     {

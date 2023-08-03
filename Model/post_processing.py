@@ -52,9 +52,10 @@ def postprocessing(df):
     data['selling_allocation'] = token_economy_ds.map(lambda s: s["selling_allocation"])
     data['utility_allocation'] = token_economy_ds.map(lambda s: s["utility_allocation"])
     data['holding_allocation'] = token_economy_ds.map(lambda s: s["holding_allocation"])
-        #apr
-    data['apr_tokens'] = token_economy_ds.map(lambda s: s["apr_tokens"])
-    data['apr_tokens_usd'] = token_economy_ds.map(lambda s: s["apr_tokens_usd"])
+       
+
+
+
     
     
     ## Liquidity Pool ##
@@ -98,6 +99,10 @@ def postprocessing(df):
     
     ## UTILITIES ##
     data['buyback_from_revenue_share_usd'] = utilities_ds.map(lambda s: s["buyback_from_revenue_share_usd"])
+    
+    #apr
+    data['staking_rewards'] = utilities_ds.map(lambda s: s["staking_rewards"])
+
 
     ## USER ADOPTION ##
     for key in user_adoption_ds[user_adoption_ds.keys()[0]]:

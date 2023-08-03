@@ -231,7 +231,9 @@ def initialize_utilities():
     Initialize the staking base apr metrics.
     """
     utilities = {
+
     'staking_base_apr_cum':0,
+    'staking_rewards':0,
     'buybacks_from_revenue_share_usd': 0
     }
 

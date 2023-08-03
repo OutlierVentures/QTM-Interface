@@ -166,7 +166,7 @@ if __name__ == '__main__'   :
       ## TEST ADOPTION 2 ##
         print("\n---------------------------------------## Rewards apr ##--------------------------------------")
         print("Testing apr of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="apr_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key="staking_rewards", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001)
        #NOT READY TO TEST YET ->    test_timeseries(data=data, data_key="apr_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=166, relative_tolerance=0.001)
 
 
