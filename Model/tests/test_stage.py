@@ -63,8 +63,17 @@ if __name__ == '__main__'   :
         print("\n-------------------------------------------------------------------------------------------------------")
         print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
         print("\n-------------------------------------------------------------------------------------------------------")
+        print("\n")
+
+        ### MOCKUPS ###
+        ## TEST MOCKUPS ##
+        print("\n-------------------------------------------## MOCKUP TESTS ##------------------------------------------")
+        print("Testing MOCKUP implementations of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="holding_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.001)
+        print("\n\n")
 
         
+        ### MODEL ###
         ## TEST ADOPTION ##
         print("\n-------------------------------------------## TEST ADOPTION ##-----------------------------------------")
         print("Testing adoption of radCad timeseries simulation against QTM data tables...")
@@ -119,6 +128,7 @@ if __name__ == '__main__'   :
             test_timeseries(data=data, data_key=stakeholder+"_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
             test_timeseries(data=data, data_key=stakeholder+"_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
+        
         ## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##
         print("\n-------------------------## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##-------------------------")
         print("Testing from holding supply meta bucket allocations of radCad timeseries simulation against QTM data tables...")
@@ -126,10 +136,17 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="From_Holding_Supply_Utility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=86, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="From_Holding_Supply_Holding", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=99, relative_tolerance=0.001, timestep_cut_off=1)
 
+        
+        ## TEST META UTILITY SHARE ALLOCATIONS ##
+        print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")
+        print("Testing meta utility share allocations of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="staking_revenue_share_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="staking_revenue_share_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=110, relative_tolerance=0.001, timestep_cut_off=1)
 
+       
         ## TEST ADOPTION 2 ##
         print("\n------------------------------------------## TEST ADOPTION 2 ##-----------------------------------------")
-        print("Testing incentivisation of radCad timeseries simulation against QTM data tables...")
+        print("Testing product revenue and token_buys of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="product_revenue", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=117, relative_tolerance=0.001)
         test_timeseries(data=data, data_key="token_buys", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=119, relative_tolerance=0.001)
 

@@ -12,7 +12,7 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     lock_share = params['lock_share']/100
     
     # fake data 
-    dummy_locked_apr_tokens = import_dummy_data(prev_state,109)
+    dummy_locked_apr_tokens = import_dummy_data(109, prev_state['timestep']-1)
 
 
     #Calculating the agent utility sum -> Row 87
@@ -23,7 +23,7 @@ def apr(params, substep, state_history, prev_state, **kwargs):
         utility_tokens = agents[agent]['utility_tokens']
         agent_utility_sum += utility_tokens
 
-    dummy_airdrop_holding_supply = import_dummy_data(prev_state,86)
+    dummy_airdrop_holding_supply = import_dummy_data(86, prev_state['timestep']-1)
     agent_utility_sum += dummy_airdrop_holding_supply
 
 

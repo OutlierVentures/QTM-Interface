@@ -10,8 +10,22 @@ from parts.agents_behavior.agent_meta_bucket_behavior import *
 from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *
 
+from parts.mockups import *
+
 
 state_update_block = [
+    ## MOCKUP STATE UPDATE BLOCKS ##
+    {
+        # mockups.py
+        'policies': {
+            'MOCKUP_populate_holding_supply': MOCKUP_populate_holding_supply
+        },
+        'variables': {
+            'token_economy': MOCKUP_update_holding_supply
+        },
+    },
+
+    ## MODEL STATE UPDATE BLOCKS ##
     {
         # ecosystem/liquidity_pool.py
         'policies': {
@@ -113,6 +127,16 @@ state_update_block = [
         },
         'variables': {
             'utilities': update_buyback_amount_from_revenue_share,
+        },
+    },
+    {
+        # utilities/staking_revenue_share.py
+        'policies': {
+            'staking_revenue_share_buyback_agent_allocation': staking_revenue_share_buyback_agent_allocation,
+        },
+        'variables': {
+            'agents': update_staking_revenue_share_buyback_agent_allocation,
+            'utilities': update_staking_revenue_share_buyback_meta_allocation,
         },
     },
     {

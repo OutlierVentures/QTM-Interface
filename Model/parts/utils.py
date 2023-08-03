@@ -183,15 +183,16 @@ def generate_initial_token_economy_metrics():
     token_economy = {
         'total_supply' : 0,
         'circulating_supply' : 0,
+        'holding_supply' : 0,
         'MC' : 0,
         'FDV_MC' : 0,
         'selling_perc': 0,
         'utility_perc': 0,
         'holding_perc': 0,
         'remove_perc': 0,
-        'selling_allocation': 0,
-        'utility_allocation': 0,
-        'holding_allocation': 0,
+        'selling_allocation': 0, # from vesting
+        'utility_allocation': 0, # from vesting
+        'holding_allocation': 0, # from vesting
         'tokens_apr_locked' : 0,
         'tokens_buyback_locked' : 0,
         'tokens_vested_cum': 0,
@@ -246,8 +247,11 @@ def initialize_utilities():
     Initialize the staking base apr metrics.
     """
     utilities = {
+    'staking_rewards': 0,
     'staking_base_apr_cum':0,
-    'buybacks_from_revenue_share_usd': 0
+    'buybacks_from_revenue_share_usd': 0,
+    'staking_revenue_share_allocation': 0,
+    'staking_revenue_share_allocation_cum': 0,
     }
 
     return utilities
@@ -296,7 +300,7 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
 
 
 
-def import_dummy_data(prev_state,row):
+def import_dummy_data(row, timestep):
     # Get the current directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -306,8 +310,7 @@ def import_dummy_data(prev_state,row):
     QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
     QTM_row = row
-    i = prev_state['timestep']-1
-    QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
+    QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][timestep].replace(",",""))
     
     return  QTM_data_table_value
 
