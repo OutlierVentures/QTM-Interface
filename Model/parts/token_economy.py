@@ -1,4 +1,21 @@
+import pandas as pd
+
 # POLICY FUNCTIONS
+def generate_date(params, substep, state_history, prev_state, **kwargs):
+    """
+    Generate the current date from timestep
+    """
+    # parameters
+    initial_date = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
+    
+    # state variables
+    old_timestep = prev_state['timestep']
+    
+    # policy logic
+    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=old_timestep-1)
+
+    return {'new_date': new_date}
+
 def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
@@ -29,6 +46,15 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
             'tokens_buyback_locked': locked_buyback_tokens}
 
 # STATE UPDATE FUNCTIONS
+def update_date(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the current date of the timestep
+    """
+    # policy input / update logic
+    updated_date = policy_input['new_date']
+
+    return ('date', updated_date)
+
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the agents based on the changes in business funds to seed the liquidity pool.

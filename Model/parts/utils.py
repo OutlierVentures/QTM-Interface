@@ -28,8 +28,10 @@ def calculate_raised_capital(param):
 
 # Initialization
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
-              tokens: float, tokens_vested: float, tokens_vested_cum: float, tokens_apr_locked: float,
-              tokens_buyback_locked: float, tokens_liquidity_provisioning: float, tokens_transferred: float,
+              tokens: float, tokens_vested: float, tokens_vested_cum: float, 
+              tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float,
+              tokens_incentivised_cum: float, tokens_apr_locked: float, tokens_buyback_locked: float,
+              tokens_liquidity_provisioning: float, tokens_transferred: float,
               tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
               selling_tokens: float, utility_tokens: float, holding_tokens: float, actions: dict,
               current_action: str) -> dict:
@@ -43,6 +45,10 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'tokens': tokens,
              'tokens_vested': tokens_vested,
              'tokens_vested_cum': tokens_vested_cum,
+             'tokens_airdropped': tokens_airdropped,
+             'tokens_airdropped_cum': tokens_airdropped_cum,
+             'tokens_incentivised': tokens_incentivised,
+             'tokens_incentivised_cum': tokens_incentivised_cum,
              'tokens_apr_locked': tokens_apr_locked,
              'tokens_buyback_locked': tokens_buyback_locked,
              'tokens_liquidity_provisioning': tokens_liquidity_provisioning,
@@ -70,6 +76,10 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens = 0,
                                     tokens_vested = 0,
                                     tokens_vested_cum = 0,
+                                    tokens_airdropped = 0,
+                                    tokens_airdropped_cum = 0,
+                                    tokens_incentivised = 0,
+                                    tokens_incentivised_cum = 0,
                                     tokens_apr_locked = 0,
                                     tokens_buyback_locked = 0,
                                     tokens_liquidity_provisioning = 0,
@@ -143,6 +153,7 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     allocation_sum = []
     # get max length of possible raised_capital parameters
     max_length = max([len(agent_token_allocations[key]) for key in agent_token_allocations])
+    
     # calculate the raised capital for all possible parameter list combinations in sys_param where "_raised" is in the key
     for i in range(max_length):
         allocation_sum.append(sum([agent_token_allocations[key][i] if (i < len(agent_token_allocations[key])) else agent_token_allocations[key][-1] for key in agent_token_allocations]))
@@ -231,9 +242,7 @@ def initialize_utilities():
     Initialize the staking base apr metrics.
     """
     utilities = {
-
     'staking_base_apr_cum':0,
-    'staking_rewards':0,
     'buybacks_from_revenue_share_usd': 0
     }
 

@@ -5,7 +5,6 @@ from parts.liquidity_pool import *
 from parts.token_economy import *
 from parts.user_adoption import *
 from parts.business_assumptions import *
-from parts.kpis import *
 from parts.agents_behavior.agent_meta_bucket_behavior import *
 from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *

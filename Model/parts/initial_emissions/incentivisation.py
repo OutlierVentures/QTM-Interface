@@ -47,10 +47,15 @@ def update_agents_after_incentivisation(params, substep, state_history, prev_sta
 
     # add vested incentivisation tokens to market participants
     # count amount of market_investors and early_investors in updated_agents
-    investors = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'incentivisation_receivers')])
+    incentivisation_receivers = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'incentivisation_receivers')])
     for agent in updated_agents:
         if updated_agents[agent]['type'] == 'incentivisation_receivers':
-            updated_agents[agent]['tokens'] = updated_agents[agent]['tokens'] + vested_incentivisation_tokens / investors
+
+            incentivisation_per_incentivisation_receiver = vested_incentivisation_tokens / incentivisation_receivers
+
+            updated_agents[agent]['tokens'] += incentivisation_per_incentivisation_receiver
+            updated_agents[agent]['tokens_incentivised'] = incentivisation_per_incentivisation_receiver
+            updated_agents[agent]['tokens_incentivised_cum'] += incentivisation_per_incentivisation_receiver
 
     return ('agents', updated_agents)
 
