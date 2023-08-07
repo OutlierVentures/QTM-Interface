@@ -188,7 +188,16 @@ state_update_block = [
         },
     },
     {
-        # substep 19: ecosystem/token_economy.py
+        # substep 19: ecosystem/liquidity_pool.py
+        'policies': {
+            'liquidity_pool_tx4_after_buyback': liquidity_pool_tx4_after_buyback,
+        },
+        'variables': {
+            'liquidity_pool': update_liquidity_pool_after_transaction,
+        },
+    },
+    {
+        # substep 20: ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
         },

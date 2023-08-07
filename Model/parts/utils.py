@@ -247,7 +247,7 @@ def initialize_utilities():
     utilities = {
     'staking_rewards': 0,
     'staking_base_apr_cum':0,
-    'buybacks_from_revenue_share_usd': 0,
+    'buyback_from_revenue_share_usd': 0,
     'staking_revenue_share_allocation': 0,
     'staking_revenue_share_allocation_cum': 0,
     'liquidity_mining_allocation': 0,

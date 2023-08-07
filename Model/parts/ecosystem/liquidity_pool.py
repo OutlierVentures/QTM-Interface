@@ -128,8 +128,6 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
     """
 
     # parameters
-    token_lp_weight = 0.5
-    usdc_lp_weight = 0.5
 
     # state variables
     current_month = prev_state['timestep']
@@ -156,6 +154,44 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
 
         token_price = lp_usdc / lp_tokens
         constant_product = lp_usdc * lp_tokens
+    
+    else:
+        pass
+        
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+
+def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state, **kwargs):
+    """
+    Function to calculate the liquidity pool after buyback
+    """
+
+    # parameters
+    token_lp_weight = 0.5
+    usdc_lp_weight = 0.5
+
+    # state variables
+    current_month = prev_state['timestep']
+    liquidity_pool = prev_state['liquidity_pool'].copy()
+    business_assumptions = prev_state['business_assumptions'].copy()
+    utilities = prev_state['utilities'].copy()
+
+    # policy variables
+    lp_tokens = liquidity_pool['tokens']
+    lp_usdc = liquidity_pool['usdc']
+    constant_product = liquidity_pool['constant_product']
+    token_price = liquidity_pool['token_price']
+    buybacks_usd = business_assumptions['buybacks_usd']
+
+    # policy logic
+    if current_month == 1:
+        # calculate the liquidity pool after buyback
+        lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + buybacks_usd))**(usdc_lp_weight/token_lp_weight))
+        lp_usdc = lp_usdc + buybacks_usd
+
+        token_price = lp_usdc / lp_tokens
+        
+        error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+        np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
     
     else:
         pass
