@@ -154,5 +154,4 @@ token incentivisation exponent,token_incentivisation_exponent,2,,,,-,exponent on
 team vesting weight,team_vesting_weight,0.1,,,,share of vested tokens / 100%,the priority with which the team gets their tokens vested through the AAV controller
 foundation vesting weight,foundation_vesting_weight,0.6,,,,share of vested tokens / 100%,the priority with which the foundation gets their tokens vested through the AAV controller
 investor vesting weight,investor_vesting_weight,0.3,,,,share of vested tokens / 100%,the priority with which the investors get their tokens vested through the AAV controller
-stakeholder that owns all business funds,business_fund_holder,reserve,,,,-,stakeholder that gets all the raised funds and also seeds the liquidity
 agent behavior,agent_behavior,static,,,,,static = replica of the spreadsheet QTM; stochastic = actions based on probabilities; dynamic = actions based on optimization goals

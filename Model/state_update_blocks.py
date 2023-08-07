@@ -160,6 +160,15 @@ state_update_block = [
         },
     },
     {
+        # ecosystem/liquidity_pool.py
+        'policies': {
+            'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
+        },
+        'variables': {
+            'liquidity_pool': update_liquidity_pool_tx1_after_adoption,
+        },
+    },
+    {
         # ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,

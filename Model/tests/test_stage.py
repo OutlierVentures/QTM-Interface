@@ -178,6 +178,15 @@ if __name__ == '__main__'   :
         print("Testing protocol bucket burn of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="tokens_burned", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=138, relative_tolerance=0.001)
 
+
+        ## TEST LIQUIDITY POOL TRANSACTIONS ##
+        print("\n-------------------------------------## TEST LIQUIDITY POOL TRANSACTIONS ##-----------------------------------")
+        print("Testing liquidity pool transactions of radCad timeseries simulation against QTM data tables...")
+        print("Tx1 - after adoption..")
+        test_timeseries(data=data, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=141, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=142, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=143, relative_tolerance=0.01, timestep_cut_off=1)
+
         
         ## TEST CASH BALANCE ##
         print("\n-----------------------------------------## TEST CASH BALANCE ##----------------------------------------")
