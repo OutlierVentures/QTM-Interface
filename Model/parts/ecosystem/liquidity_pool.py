@@ -122,6 +122,45 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
         
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
 
+def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, prev_state, **kwargs):
+    """
+    Function to calculate the liquidity pool after liquidity addition
+    """
+
+    # parameters
+    token_lp_weight = 0.5
+    usdc_lp_weight = 0.5
+
+    # state variables
+    current_month = prev_state['timestep']
+    liquidity_pool = prev_state['liquidity_pool'].copy()
+    agents = prev_state['agents'].copy()
+
+    # policy variables
+    lp_tokens = liquidity_pool['tokens']
+    lp_usdc = liquidity_pool['usdc']
+    constant_product = liquidity_pool['constant_product']
+    token_price = liquidity_pool['token_price']
+
+    # policy logic
+    if current_month == 1:
+        # get amount of tokens to be used for liquidity mining
+        tokens_for_liquidity = 0
+        for agent in agents:
+            tokens_for_liquidity += agents[agent]['tokens_liquidity_mining']
+
+        # calculate the liquidity pool after the vesting sells
+        lp_usdc = lp_usdc + tokens_for_liquidity * token_price
+        lp_tokens = lp_tokens + tokens_for_liquidity
+
+
+        token_price = lp_usdc / lp_tokens
+        constant_product = lp_usdc * lp_tokens
+    
+    else:
+        pass
+        
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
 
 
 # STATE UPDATE FUNCTIONS

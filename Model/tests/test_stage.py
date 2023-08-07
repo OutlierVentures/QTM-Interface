@@ -52,9 +52,10 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
     data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
     data_tx2 = postprocessing(df, substep=17) # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=18) # after vesting sell lp tx
+    data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
 
 
 
@@ -203,6 +204,10 @@ if __name__ == '__main__'   :
         test_timeseries(data=data_tx2, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=144, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data_tx2, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=145, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data_tx2, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=146, relative_tolerance=0.01, timestep_cut_off=1)
+        print("Tx3 - after liquidity addition..")
+        test_timeseries(data=data_tx3, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=147, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx3, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=148, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx3, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=149, relative_tolerance=0.01, timestep_cut_off=1)
 
         
         ## TEST CASH BALANCE ##
