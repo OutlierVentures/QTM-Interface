@@ -165,6 +165,7 @@ state_update_block = [
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
         'variables': {
+            'agents': update_agents_tx1_after_adoption,
             'liquidity_pool': update_liquidity_pool_tx1_after_adoption,
         },
     },
