@@ -52,7 +52,7 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data = postprocessing(df, substep=df.substep.max())
+    data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
     data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
     data_tx2 = postprocessing(df, substep=17) # after vesting sell lp tx
 

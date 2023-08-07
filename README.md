@@ -17,6 +17,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 ## Development Roadmap
 
 ### V.1
+
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Initialize the project, create the development roadmap & README.md
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement interface to the QTM spreadsheet parameters
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing in the `post_processing.py` with respect to the new QTM parameters and conventions
@@ -24,11 +25,13 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the vesting policies
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the incentivisation module
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the airdrop module
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the static agent behavior
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the static agent behavior
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the utility policies
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test the trading policies (interactions with the liquidity pool)
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the liquidity pool interactions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the user adoption policies
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build the business policies
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test protocol bucket allocations
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test the rest of token ecosystem KPIs / metrics
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add all remaining plot functionallities
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
@@ -39,6 +42,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Write the documentation for the QTM and radCAD integration
 
 ### V.2
+
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build a web-based UI to create another input option
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add more dynamic agent (behavior) policies
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Stochastic agents
