@@ -136,6 +136,17 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="From_Holding_Supply_Utility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=86, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="From_Holding_Supply_Holding", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=99, relative_tolerance=0.001, timestep_cut_off=1)
 
+
+        ## TEST META BUCKET ALLOCATION SUMS ##
+        print("\n---------------------------------## TEST META BUCKET ALLOCATION SUMS ##---------------------------------")
+        print("Testing meta bucket allocation sums of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="selling_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=74, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="selling_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=75, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="utility_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=87, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="utility_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=88, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=100, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="holding_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=101, relative_tolerance=0.001, timestep_cut_off=1)
+
         
         ## TEST META UTILITY SHARE ALLOCATIONS ##
         print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")

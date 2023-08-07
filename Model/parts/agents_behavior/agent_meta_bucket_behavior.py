@@ -230,5 +230,8 @@ def update_token_economy_meta_bucket_allocations(params, substep, state_history,
     updated_token_economy['selling_allocation'] = updated_meta_bucket_allocations['selling']
     updated_token_economy['utility_allocation'] = updated_meta_bucket_allocations['utility']
     updated_token_economy['holding_allocation'] = updated_meta_bucket_allocations['holding']
+    updated_token_economy['selling_allocation_cum'] += updated_meta_bucket_allocations['selling']
+    updated_token_economy['utility_allocation_cum'] += updated_meta_bucket_allocations['utility']
+    updated_token_economy['holding_allocation_cum'] += updated_meta_bucket_allocations['holding']
 
     return ('token_economy', updated_token_economy)

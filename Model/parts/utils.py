@@ -190,9 +190,12 @@ def generate_initial_token_economy_metrics():
         'utility_perc': 0,
         'holding_perc': 0,
         'remove_perc': 0,
-        'selling_allocation': 0, # from vesting
-        'utility_allocation': 0, # from vesting
-        'holding_allocation': 0, # from vesting
+        'selling_allocation': 0, # from vesting + airdrops + incentivisation
+        'utility_allocation': 0, # from vesting + airdrops + incentivisation
+        'holding_allocation': 0, # from vesting + airdrops + incentivisation
+        'selling_allocation_cum': 0, # from vesting + airdrops + incentivisation
+        'utility_allocation_cum': 0, # from vesting + airdrops + incentivisation
+        'holding_allocation_cum': 0, # from vesting + airdrops + incentivisation
         'tokens_apr_locked' : 0,
         'tokens_buyback_locked' : 0,
         'tokens_vested_cum': 0,
@@ -212,8 +215,6 @@ def generate_initial_token_economy_metrics():
 
     return token_economy
 
-
-
 def initialize_user_adoption():
     """
     Initialize the user adoption metrics.
@@ -226,9 +227,6 @@ def initialize_user_adoption():
     }
 
     return user_adoption
-
-
-
 
 def initialize_business_assumptions():
     """
@@ -257,20 +255,6 @@ def initialize_utilities():
     }
 
     return utilities
-
-
-
-
-def initalize_meta_bucket_allocations():
-    """
-    Initialize the business assumptions metrics.
-    """
-    meta_bucket_allocations = {
-        'selling': 0,
-        'holding': 0,
-        'utility': 0
-    }
-    return meta_bucket_allocations
 
 
 ### TEST FUNCTIONS ###

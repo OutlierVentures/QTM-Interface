@@ -35,4 +35,3 @@ if __name__ == '__main__'   :
     # post processing
     data = postprocessing(df)
 
-    print(data['meta_bucket_allocations'].head(5))
