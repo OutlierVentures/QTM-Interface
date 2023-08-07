@@ -33,5 +33,5 @@ if __name__ == '__main__'   :
 
 
     # post processing
-    data = postprocessing(df)
+    data = postprocessing(df, substep=df.substep.max())
 

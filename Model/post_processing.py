@@ -3,7 +3,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-def postprocessing(df):
+def postprocessing(df, substep):
     '''
     Definition:
     Refine and extract metrics from the simulation
@@ -11,8 +11,9 @@ def postprocessing(df):
     Parameters:
     df: simulation dataframe
     '''
+    print("Postprocessing for substep: ", substep, " started..")
     # subset to last substep
-    df = df[df['substep'] == df.substep.max()] 
+    df = df[df['substep'] == substep] 
 
     # Get the ABM results
     timesteps = df.timestep
@@ -76,4 +77,5 @@ def postprocessing(df):
     data["From_Holding_Supply_Utility"] = data["airdrop_receivers_utility_tokens"].add(data["incentivisation_receivers_utility_tokens"])
     data["From_Holding_Supply_Holding"] = data["airdrop_receivers_holding_tokens"].add(data["incentivisation_receivers_holding_tokens"])
     
+    print("Postprocessing for substep: ", substep, " finished!")
     return data

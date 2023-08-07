@@ -52,7 +52,9 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data = postprocessing(df)
+    data = postprocessing(df, substep=df.substep.max())
+    data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=17) # after vesting sell lp tx
 
 
 
@@ -194,9 +196,13 @@ if __name__ == '__main__'   :
         print("\n-------------------------------------## TEST LIQUIDITY POOL TRANSACTIONS ##-----------------------------------")
         print("Testing liquidity pool transactions of radCad timeseries simulation against QTM data tables...")
         print("Tx1 - after adoption..")
-        test_timeseries(data=data, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=141, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=142, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=143, relative_tolerance=0.01, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=141, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=142, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=143, relative_tolerance=0.01, timestep_cut_off=1)
+        print("Tx2 - after vesting sell..")
+        test_timeseries(data=data_tx2, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=144, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx2, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=145, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx2, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=146, relative_tolerance=0.01, timestep_cut_off=1)
 
         
         ## TEST CASH BALANCE ##

@@ -86,20 +86,31 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     # state variables
     current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool'].copy()
-    user_adoption = prev_state['user_adoption'].copy()
-    token_buys = user_adoption['token_buys']
+    agents = prev_state['agents'].copy()
+    token_economy = prev_state['token_economy'].copy()
 
     # policy variables
     lp_tokens = liquidity_pool['tokens']
     lp_usdc = liquidity_pool['usdc']
     constant_product = liquidity_pool['constant_product']
     token_price = liquidity_pool['token_price']
+    selling_allocation = token_economy['selling_allocation']
 
     # policy logic
     if current_month == 1:
-        # calculate the liquidity pool after the adoption buys
-        lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + token_buys))**(usdc_lp_weight/token_lp_weight))
-        lp_usdc = lp_usdc + token_buys
+        # get amount of tokens to be sold by agents from vesting + airdrops + incentivisation
+        tokens_to_sell = 0
+        for agent in agents:
+            tokens_to_sell += agents[agent]['selling_tokens']
+        
+        # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
+        error_message = 'The amount of tokens to be sold '+str(tokens_to_sell)+' is not equal to the meta bucket selling allocation '+str(selling_allocation)+'!'
+        np.testing.assert_allclose(tokens_to_sell, selling_allocation, rtol=0.001, err_msg=error_message)
+
+        # calculate the liquidity pool after the vesting sells
+        lp_usdc = lp_usdc - lp_usdc * (1 - (lp_tokens / (lp_tokens + tokens_to_sell))**(token_lp_weight/usdc_lp_weight))
+        lp_tokens = lp_tokens + tokens_to_sell
+
 
         token_price = lp_usdc / lp_tokens
 
@@ -110,6 +121,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
         pass
         
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+
 
 
 # STATE UPDATE FUNCTIONS
@@ -146,34 +158,12 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
             bought_tokens_per_market_investor = bought_tokens / market_investors
 
             updated_agents[agent]['tokens'] += bought_tokens_per_market_investor
-    
 
     return ('agents', updated_agents)
 
-def update_liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state, policy_input, **kwargs):
+def update_liquidity_pool_after_transaction(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the liquidity pool after the adoption buys
-    """
-    # state variables
-    updated_liquidity_pool = prev_state['liquidity_pool']
-
-    # get policy inputs
-    lp_tokens = policy_input['lp_tokens']
-    lp_usdc = policy_input['lp_usdc']
-    constant_product = policy_input['constant_product']
-    token_price = policy_input['token_price']
-
-    # update logic
-    updated_liquidity_pool['tokens'] = lp_tokens
-    updated_liquidity_pool['usdc'] = lp_usdc
-    updated_liquidity_pool['constant_product'] = constant_product
-    updated_liquidity_pool['token_price'] = token_price
-
-    return ('liquidity_pool', updated_liquidity_pool)
-
-def update_liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_state, policy_input, **kwargs):
-    """
-    Function to update the liquidity pool after the vesting sell
     """
     # state variables
     updated_liquidity_pool = prev_state['liquidity_pool']

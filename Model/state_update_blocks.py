@@ -17,7 +17,7 @@ from parts.mockups import *
 state_update_block = [
     ## MOCKUP STATE UPDATE BLOCKS ##
     {
-        # mockups.py
+        # substep 1: mockups.py
         'policies': {
             'MOCKUP_populate_holding_supply': MOCKUP_populate_holding_supply
         },
@@ -28,7 +28,7 @@ state_update_block = [
 
     ## MODEL STATE UPDATE BLOCKS ##
     {
-        # ecosystem/liquidity_pool.py
+        # substep 2: ecosystem/liquidity_pool.py
         'policies': {
             'initialize_liquidity_pool': initialize_liquidity_pool
         },
@@ -37,7 +37,7 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/token_economy.py
+        # substep 3: ecosystem/token_economy.py
         'policies': {
             'generate_date': generate_date
         },
@@ -46,7 +46,7 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/vesting.py
+        # substep 4: ecosystem/vesting.py
         'policies': {
             'vest_tokens': vest_tokens
         },
@@ -55,7 +55,7 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/incentivisation.py
+        # substep 5: ecosystem/incentivisation.py
         'policies': {
             'incentivisation': incentivisation
         },
@@ -65,7 +65,7 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/airdrops.py
+        # substep 6: ecosystem/airdrops.py
         'policies': {
             'airdrops': airdrops
         },
@@ -75,7 +75,7 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/burn.py
+        # substep 7: ecosystem/burn.py
         'policies': {
             'burn_from_protocol_bucket': burn_from_protocol_bucket
         },
@@ -85,7 +85,7 @@ state_update_block = [
         },
     },
     {
-        # agents_behavior/agent_meta_bucket_behavior.py
+        # substep 8: agents_behavior/agent_meta_bucket_behavior.py
         'policies': {
             'generate_agent_meta_bucket_behavior': generate_agent_meta_bucket_behavior,
         },
@@ -94,7 +94,7 @@ state_update_block = [
         },
     },
     {
-        # agents_behavior/agent_meta_bucket_behavior.py
+        # substep 9: agents_behavior/agent_meta_bucket_behavior.py
         'policies': {
             'agent_meta_bucket_allocations': agent_meta_bucket_allocations,
         },
@@ -104,7 +104,7 @@ state_update_block = [
         },
     },
     {
-        # business/user_adoption.py
+        # substep 10: business/user_adoption.py
         'policies': {
             'user_adoption_metrics': user_adoption_metrics,
         },
@@ -113,7 +113,7 @@ state_update_block = [
         },
     },
     {
-        # utilities/staking_base_apr.py
+        # substep 11: utilities/staking_base_apr.py
         'policies': {
             'apr': apr,
         },
@@ -122,7 +122,7 @@ state_update_block = [
         },
     },
     {
-        # utilities/staking_revenue_share.py
+        # substep 12: utilities/staking_revenue_share.py
         'policies': {
             'staking_revenue_share_buyback_amount': staking_revenue_share_buyback_amount,
         },
@@ -131,7 +131,7 @@ state_update_block = [
         },
     },
     {
-        # utilities/staking_revenue_share.py
+        # substep 13: utilities/staking_revenue_share.py
         'policies': {
             'staking_revenue_share_buyback_agent_allocation': staking_revenue_share_buyback_agent_allocation,
         },
@@ -141,7 +141,7 @@ state_update_block = [
         },
     },
     {
-        # utilities/liquidity_mining.py
+        # substep 14: utilities/liquidity_mining.py
         'policies': {
             'staking_liquidity_mining_agent_allocation': staking_liquidity_mining_agent_allocation,
         },
@@ -151,7 +151,7 @@ state_update_block = [
         },
     },
     {
-        # business/business_assumptions.py
+        # substep 15: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
         },
@@ -160,17 +160,26 @@ state_update_block = [
         },
     },
     {
-        # ecosystem/liquidity_pool.py
+        # substep 16: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
         'variables': {
             'agents': update_agents_tx1_after_adoption,
-            'liquidity_pool': update_liquidity_pool_tx1_after_adoption,
+            'liquidity_pool': update_liquidity_pool_after_transaction,
         },
     },
     {
-        # ecosystem/token_economy.py
+        # substep 17: ecosystem/liquidity_pool.py
+        'policies': {
+            'liquidity_pool_tx2_after_vesting_sell': liquidity_pool_tx2_after_vesting_sell,
+        },
+        'variables': {
+            'liquidity_pool': update_liquidity_pool_after_transaction,
+        },
+    },
+    {
+        # substep 18: ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
         },
