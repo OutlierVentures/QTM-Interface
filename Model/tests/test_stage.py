@@ -140,8 +140,12 @@ if __name__ == '__main__'   :
         ## TEST META UTILITY SHARE ALLOCATIONS ##
         print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")
         print("Testing meta utility share allocations of radCad timeseries simulation against QTM data tables...")
+        # staking: revenue share
         test_timeseries(data=data, data_key="staking_revenue_share_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="staking_revenue_share_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=110, relative_tolerance=0.001, timestep_cut_off=1)
+        # liquidity mining
+        test_timeseries(data=data, data_key="liquidity_mining_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=105, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="liquidity_mining_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=111, relative_tolerance=0.001, timestep_cut_off=1)
 
        
         ## TEST ADOPTION 2 ##

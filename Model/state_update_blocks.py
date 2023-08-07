@@ -9,6 +9,7 @@ from parts.business.business_assumptions import *
 from parts.agents_behavior.agent_meta_bucket_behavior import *
 from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *
+from parts.utilities.liquidity_mining import *
 
 from parts.mockups import *
 
@@ -137,6 +138,16 @@ state_update_block = [
         'variables': {
             'agents': update_staking_revenue_share_buyback_agent_allocation,
             'utilities': update_staking_revenue_share_buyback_meta_allocation,
+        },
+    },
+    {
+        # utilities/liquidity_mining.py
+        'policies': {
+            'staking_liquidity_mining_agent_allocation': staking_liquidity_mining_agent_allocation,
+        },
+        'variables': {
+            'agents': update_liquidity_mining_agent_allocation,
+            'utilities': update_liquidity_mining_meta_allocation,
         },
     },
     {
