@@ -72,7 +72,7 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
     else:
         pass
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price, 'tx': 1}
 
 def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_state, **kwargs):
     """
@@ -120,7 +120,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     else:
         pass
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price, 'tx': 2}
 
 def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, prev_state, **kwargs):
     """
@@ -158,7 +158,7 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
     else:
         pass
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price, 'tx': 3}
 
 def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state, **kwargs):
     """
@@ -196,7 +196,7 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     else:
         pass
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price, 'tx': 4}
 
 
 # STATE UPDATE FUNCTIONS
@@ -216,6 +216,7 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
     # state variables
     liquidity_pool = prev_state['liquidity_pool'].copy()
     updated_agents = prev_state['agents'].copy()
+
 
     # get policy inputs
     new_lp_tokens = policy_input['lp_tokens']
@@ -240,6 +241,9 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     """
     Function to update the liquidity pool after the adoption buys
     """
+    # parameters
+    initial_token_price = params['initial_token_price']
+
     # state variables
     updated_liquidity_pool = prev_state['liquidity_pool']
 
@@ -248,11 +252,22 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     lp_usdc = policy_input['lp_usdc']
     constant_product = policy_input['constant_product']
     token_price = policy_input['token_price']
+    
+    # prepare volatility calculation
+    if policy_input['tx'] == 1:
+        updated_liquidity_pool['token_price_max'] = token_price
+        updated_liquidity_pool['token_price_min'] = token_price
+    elif policy_input['tx'] in [2, 3, 4]:
+        updated_liquidity_pool['token_price_max'] = np.max([updated_liquidity_pool['token_price_max'], token_price, initial_token_price])
+        updated_liquidity_pool['token_price_min'] = np.min([updated_liquidity_pool['token_price_min'], token_price, initial_token_price])
 
     # update logic
     updated_liquidity_pool['tokens'] = lp_tokens
     updated_liquidity_pool['usdc'] = lp_usdc
     updated_liquidity_pool['constant_product'] = constant_product
     updated_liquidity_pool['token_price'] = token_price
+    updated_liquidity_pool['LP_valuation'] = lp_usdc + lp_tokens * token_price
+    updated_liquidity_pool['volatility'] = ((updated_liquidity_pool['token_price_max'] - updated_liquidity_pool['token_price_min'])
+                                            / updated_liquidity_pool['token_price_max'] * 100)
 
     return ('liquidity_pool', updated_liquidity_pool)

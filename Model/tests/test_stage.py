@@ -214,6 +214,13 @@ if __name__ == '__main__'   :
         test_timeseries(data=data_tx4, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=151, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data_tx4, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=152, relative_tolerance=0.01, timestep_cut_off=1)
 
+
+        ## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##
+        print("\n-------------------------------## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##------------------------------")
+        print("Testing liquidity pool valuation and volatility of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="LP_valuation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=154, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="volatility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=156, relative_tolerance=0.001, timestep_cut_off=1)
+
         
         ## TEST CASH BALANCE ##
         print("\n-----------------------------------------## TEST CASH BALANCE ##----------------------------------------")

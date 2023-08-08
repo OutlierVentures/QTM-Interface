@@ -171,7 +171,11 @@ def initialize_dex_liquidity():
         'tokens' : 0,
         'usdc' : 0,
         'constant_product' : 0,
-        'token_price' : 0
+        'token_price' : 0,
+        'LP_valuation': 0,
+        'volatility': 0,
+        'token_price_max': 0,
+        'token_price_min': 0
     }
 
     return liquidity_pool
