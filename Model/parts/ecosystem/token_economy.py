@@ -20,15 +20,16 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
     """
-
-    # state variables
-    liquidity_pool = prev_state['liquidity_pool']
-    agents = prev_state['agents']
+    # parameters
     total_token_supply = params['initial_total_supply']
     selling_perc = params['avg_token_selling_allocation']
     utility_perc = params['avg_token_utility_allocation']
     holding_perc = params['avg_token_holding_allocation']
     remove_perc = params['avg_token_utility_removal']
+
+    # state variables
+    liquidity_pool = prev_state['liquidity_pool']
+    agents = prev_state['agents']
 
     # policy logic
     circulating_tokens = 0
@@ -36,9 +37,9 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     locked_buyback_tokens = 0
 
     for stakeholder in agents:
-        circulating_tokens += agents[stakeholder]['tokens'] # this needs to be changed as the circulating supply should be calculated from the emitted and burned ecosystem tokens
-        locked_apr_tokens += agents[stakeholder]['tokens_apr_locked']
-        locked_buyback_tokens += agents[stakeholder]['tokens_buyback_locked']
+        circulating_tokens += agents[stakeholder]['a_tokens'] # this needs to be changed as the circulating supply should be calculated from the emitted and burned ecosystem tokens
+        locked_apr_tokens += agents[stakeholder]['a_tokens_apr_locked']
+        locked_buyback_tokens += agents[stakeholder]['a_tokens_buyback_locked']
     
     MC = liquidity_pool['token_price'] * circulating_tokens
     FDV_MC = liquidity_pool['token_price'] * total_token_supply

@@ -143,22 +143,22 @@ def agent_meta_bucket_allocations(params, substep, state_history, prev_state, **
     agent_allocations = {}
     for agent in agents:
         # get agent static behavior percentages
-        selling_perc = agents[agent]['actions']['sell']
-        utility_perc = agents[agent]['actions']['utility']
-        hold_perc = agents[agent]['actions']['hold']
+        selling_perc = agents[agent]['a_actions']['sell']
+        utility_perc = agents[agent]['a_actions']['utility']
+        hold_perc = agents[agent]['a_actions']['hold']
 
-        if agents[agent]['type'] == 'early_investor' or agents[agent]['type'] == 'team':
+        if agents[agent]['a_type'] == 'early_investor' or agents[agent]['a_type'] == 'team':
             # calculate corresponding absolute token amounts for meta buckets
             # agent meta bucket allocations are based on the agents vested tokens
-            sell_tokens = agents[agent]['tokens_vested'] * selling_perc
-            utility_tokens = agents[agent]['tokens_vested'] * utility_perc
-            holding_tokens = agents[agent]['tokens_vested'] * hold_perc
+            sell_tokens = agents[agent]['a_tokens_vested'] * selling_perc
+            utility_tokens = agents[agent]['a_tokens_vested'] * utility_perc
+            holding_tokens = agents[agent]['a_tokens_vested'] * hold_perc
 
-        elif agents[agent]['type'] == 'airdrop_receivers' or agents[agent]['type'] == 'incentivisation_receivers':
+        elif agents[agent]['a_type'] == 'airdrop_receivers' or agents[agent]['a_type'] == 'incentivisation_receivers':
             # calculate corresponding absolute token amounts for meta buckets
-            sell_tokens = (agents[agent]['tokens_airdropped'] + agents[agent]['tokens_incentivised']) * selling_perc
-            utility_tokens = (agents[agent]['tokens_airdropped'] + agents[agent]['tokens_incentivised']) * utility_perc
-            holding_tokens = (agents[agent]['tokens_airdropped'] + agents[agent]['tokens_incentivised']) * hold_perc
+            sell_tokens = (agents[agent]['a_tokens_airdropped'] + agents[agent]['a_tokens_incentivised']) * selling_perc
+            utility_tokens = (agents[agent]['a_tokens_airdropped'] + agents[agent]['a_tokens_incentivised']) * utility_perc
+            holding_tokens = (agents[agent]['a_tokens_airdropped'] + agents[agent]['a_tokens_incentivised']) * hold_perc
         
         else:
             # calculate corresponding absolute token amounts for meta buckets
@@ -191,7 +191,7 @@ def update_agent_meta_bucket_behavior(params, substep, state_history, prev_state
     agent_behavior_dict = policy_input['agent_behavior_dict']
 
     for key in updated_agents:
-        updated_agents[key]['actions'] = agent_behavior_dict[key]
+        updated_agents[key]['a_actions'] = agent_behavior_dict[key]
 
     return ('agents', updated_agents)
 
@@ -206,12 +206,12 @@ def update_agent_meta_bucket_allocations(params, substep, state_history, prev_st
     # get policy inputs
     agent_allocations = policy_input['agent_allocations']
 
-    for key, value in updated_agents.items():
+    for key in updated_agents:
         # update agent token allocations
-        updated_agents[key]['selling_tokens'] = agent_allocations[key]['selling']
-        updated_agents[key]['utility_tokens'] = agent_allocations[key]['utility']
-        updated_agents[key]['holding_tokens'] = agent_allocations[key]['holding']
-        updated_agents[key]['tokens'] -= (agent_allocations[key]['selling'] + agent_allocations[key]['utility'])
+        updated_agents[key]['a_selling_tokens'] = agent_allocations[key]['selling']
+        updated_agents[key]['a_utility_tokens'] = agent_allocations[key]['utility']
+        updated_agents[key]['a_holding_tokens'] = agent_allocations[key]['holding']
+        updated_agents[key]['a_tokens'] -= (agent_allocations[key]['selling'] + agent_allocations[key]['utility'])
 
     return ('agents', updated_agents)
 

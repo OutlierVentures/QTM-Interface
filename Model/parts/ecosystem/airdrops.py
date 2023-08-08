@@ -46,15 +46,15 @@ def update_agents_after_airdrops(params, substep, state_history, prev_state, pol
 
     # update logic
     # add airdropped tokens to airdrop receivers stakeholder group
-    airdrop_receivers = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'airdrop_receivers')])
+    airdrop_receivers = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'airdrop_receivers')])
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'airdrop_receivers':
+        if updated_agents[agent]['a_type'] == 'airdrop_receivers':
             
             airdrop_per_airdrop_receiver = airdrop_tokens / airdrop_receivers
 
-            updated_agents[agent]['tokens'] += airdrop_per_airdrop_receiver
-            updated_agents[agent]['tokens_airdropped'] = airdrop_per_airdrop_receiver
-            updated_agents[agent]['tokens_airdropped_cum'] += airdrop_per_airdrop_receiver
+            updated_agents[agent]['a_tokens'] += airdrop_per_airdrop_receiver
+            updated_agents[agent]['a_tokens_airdropped'] = airdrop_per_airdrop_receiver
+            updated_agents[agent]['a_tokens_airdropped_cum'] += airdrop_per_airdrop_receiver
 
     return ('agents', updated_agents)
 

@@ -30,8 +30,9 @@ def calculate_raised_capital(param):
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, 
               tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float,
-              tokens_incentivised_cum: float, tokens_apr_locked: float, tokens_buyback_locked: float,
-              tokens_liquidity_mining: float, tokens_transferred: float,
+              tokens_incentivised_cum: float, tokens_apr_locked: float, tokens_apr_locked_cum: float,
+              tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
+              tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float, tokens_transferred: float,
               tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
               selling_tokens: float, utility_tokens: float, holding_tokens: float, actions: dict,
               current_action: str) -> dict:
@@ -39,28 +40,31 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
 
-    agent = {'name': stakeholder_name, # 'incentivisation', 'placeholder', 'market_investors
-             'type': stakeholder_type,
-             'usd_funds': usd_funds,
-             'tokens': tokens,
-             'tokens_vested': tokens_vested,
-             'tokens_vested_cum': tokens_vested_cum,
-             'tokens_airdropped': tokens_airdropped,
-             'tokens_airdropped_cum': tokens_airdropped_cum,
-             'tokens_incentivised': tokens_incentivised,
-             'tokens_incentivised_cum': tokens_incentivised_cum,
-             'tokens_apr_locked': tokens_apr_locked,
-             'tokens_buyback_locked': tokens_buyback_locked,
-             'tokens_liquidity_mining': tokens_liquidity_mining,
-             'tokens_transferred': tokens_transferred,
-             'tokens_transferred_cum': tokens_transferred_cum,
-             'tokens_burned': tokens_burned,
-             'tokens_burned_cum': tokens_burned_cum,
-             'selling_tokens': selling_tokens,
-             'utility_tokens': utility_tokens,
-             'holding_tokens': holding_tokens,
-             'actions': actions,
-             'current_action': current_action}
+    agent = {'a_name': stakeholder_name, # 'incentivisation', 'placeholder', 'market_investors
+             'a_type': stakeholder_type,
+             'a_usd_funds': usd_funds,
+             'a_tokens': tokens,
+             'a_tokens_vested': tokens_vested,
+             'a_tokens_vested_cum': tokens_vested_cum,
+             'a_tokens_airdropped': tokens_airdropped,
+             'a_tokens_airdropped_cum': tokens_airdropped_cum,
+             'a_tokens_incentivised': tokens_incentivised,
+             'a_tokens_incentivised_cum': tokens_incentivised_cum,
+             'a_tokens_apr_locked': tokens_apr_locked,
+             'a_tokens_apr_locked_cum': tokens_apr_locked_cum,
+             'a_tokens_buyback_locked': tokens_buyback_locked,
+             'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum,
+             'a_tokens_liquidity_mining': tokens_liquidity_mining,
+             'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum,
+             'a_tokens_transferred': tokens_transferred,
+             'a_tokens_transferred_cum': tokens_transferred_cum,
+             'a_tokens_burned': tokens_burned,
+             'a_tokens_burned_cum': tokens_burned_cum,
+             'a_selling_tokens': selling_tokens,
+             'a_utility_tokens': utility_tokens,
+             'a_holding_tokens': holding_tokens,
+             'a_actions': actions,
+             'a_current_action': current_action}
     return agent
 
 def generate_agents(stakeholder_name_mapping: dict) -> dict:
@@ -81,8 +85,11 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_incentivised = 0,
                                     tokens_incentivised_cum = 0,
                                     tokens_apr_locked = 0,
+                                    tokens_apr_locked_cum = 0,
                                     tokens_buyback_locked = 0,
+                                    tokens_buyback_locked_cum = 0,
                                     tokens_liquidity_mining = 0,
+                                    tokens_liquidity_mining_cum = 0,
                                     tokens_transferred = 0,
                                     tokens_transferred_cum = 0,
                                     tokens_burned = 0,
@@ -172,7 +179,7 @@ def initialize_dex_liquidity():
         'usdc' : 0,
         'constant_product' : 0,
         'token_price' : 0,
-        'LP_valuation': 0,
+        'lp_valuation': 0,
         'volatility': 0,
         'token_price_max': 0,
         'token_price_min': 0
@@ -256,6 +263,8 @@ def initialize_utilities():
     'staking_revenue_share_allocation_cum': 0,
     'liquidity_mining_allocation': 0,
     'liquidity_mining_allocation_cum': 0,
+    'burning_allocation': 0,
+    'burning_allocation_cum': 0,
     }
 
     return utilities

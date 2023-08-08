@@ -40,10 +40,10 @@ def update_protocol_bucket_agent_after_burn(params, substep, state_history, prev
     # update logic
     # subtract burn tokens from protocol bucket
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'protocol_bucket' and burn_project_bucket.lower() in updated_agents[agent]['name'].lower():
-            updated_agents[agent]['tokens'] -= [burn_token_amount if burn_token_amount < updated_agents[agent]['tokens'] else updated_agents[agent]['tokens']][0]
-            updated_agents[agent]['tokens_burned'] = burn_token_amount
-            updated_agents[agent]['tokens_burned_cum'] += burn_token_amount
+        if updated_agents[agent]['a_type'] == 'protocol_bucket' and burn_project_bucket.lower() in updated_agents[agent]['a_name'].lower():
+            updated_agents[agent]['a_tokens'] -= [burn_token_amount if burn_token_amount < updated_agents[agent]['a_tokens'] else updated_agents[agent]['a_tokens']][0]
+            updated_agents[agent]['a_tokens_burned'] = burn_token_amount
+            updated_agents[agent]['a_tokens_burned_cum'] += burn_token_amount
 
     return ('agents', updated_agents)
 

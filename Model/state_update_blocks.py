@@ -10,6 +10,7 @@ from parts.agents_behavior.agent_meta_bucket_behavior import *
 from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *
 from parts.utilities.liquidity_mining import *
+from parts.utilities.burning import *
 
 from parts.mockups import *
 
@@ -151,7 +152,17 @@ state_update_block = [
         },
     },
     {
-        # substep 15: business/business_assumptions.py
+        # substep 15: utilities/burning.py
+        'policies': {
+            'burning_agent_allocation': burning_agent_allocation,
+        },
+        'variables': {
+            'agents': update_burning_agent_allocation,
+            'utilities': update_burning_meta_allocation,
+        },
+    },
+    {
+        # substep 16: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
         },
@@ -160,7 +171,7 @@ state_update_block = [
         },
     },
     {
-        # substep 16: ecosystem/liquidity_pool.py
+        # substep 17: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
@@ -170,7 +181,7 @@ state_update_block = [
         },
     },
     {
-        # substep 17: ecosystem/liquidity_pool.py
+        # substep 18: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx2_after_vesting_sell': liquidity_pool_tx2_after_vesting_sell,
         },
@@ -179,7 +190,7 @@ state_update_block = [
         },
     },
     {
-        # substep 18: ecosystem/liquidity_pool.py
+        # substep 19: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx3_after_liquidity_addition': liquidity_pool_tx3_after_liquidity_addition,
         },
@@ -188,7 +199,7 @@ state_update_block = [
         },
     },
     {
-        # substep 19: ecosystem/liquidity_pool.py
+        # substep 20: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx4_after_buyback': liquidity_pool_tx4_after_buyback,
         },
@@ -197,7 +208,7 @@ state_update_block = [
         },
     },
     {
-        # substep 20: ecosystem/token_economy.py
+        # substep 21: ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
         },

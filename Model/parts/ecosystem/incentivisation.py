@@ -14,8 +14,8 @@ def incentivisation(params, substep, state_history, prev_state, **kwargs):
     # policy logic
     # Incentivisation through protocol bucket vesting
     for agent in agents:
-        if agents[agent]['type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in agents[agent]['name'].lower():
-            vested_incentivisation_tokens = agents[agent]['tokens']
+        if agents[agent]['a_type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in agents[agent]['a_name'].lower():
+            vested_incentivisation_tokens = agents[agent]['a_tokens']
 
     # Incentivisation through minting
     if incentivisation_payout_source == 'Minting':
@@ -42,20 +42,20 @@ def update_agents_after_incentivisation(params, substep, state_history, prev_sta
     # update logic
     # subtract vested incentivisation tokens from protocol bucket
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in updated_agents[agent]['name'].lower():
-            updated_agents[agent]['tokens'] = updated_agents[agent]['tokens'] - vested_incentivisation_tokens
+        if updated_agents[agent]['a_type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in updated_agents[agent]['a_name'].lower():
+            updated_agents[agent]['a_tokens'] = updated_agents[agent]['a_tokens'] - vested_incentivisation_tokens
 
     # add vested incentivisation tokens to market participants
     # count amount of market_investors and early_investors in updated_agents
-    incentivisation_receivers = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'incentivisation_receivers')])
+    incentivisation_receivers = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'incentivisation_receivers')])
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'incentivisation_receivers':
+        if updated_agents[agent]['a_type'] == 'incentivisation_receivers':
 
             incentivisation_per_incentivisation_receiver = vested_incentivisation_tokens / incentivisation_receivers
 
-            updated_agents[agent]['tokens'] += incentivisation_per_incentivisation_receiver
-            updated_agents[agent]['tokens_incentivised'] = incentivisation_per_incentivisation_receiver
-            updated_agents[agent]['tokens_incentivised_cum'] += incentivisation_per_incentivisation_receiver
+            updated_agents[agent]['a_tokens'] += incentivisation_per_incentivisation_receiver
+            updated_agents[agent]['a_tokens_incentivised'] = incentivisation_per_incentivisation_receiver
+            updated_agents[agent]['a_tokens_incentivised_cum'] += incentivisation_per_incentivisation_receiver
 
     return ('agents', updated_agents)
 

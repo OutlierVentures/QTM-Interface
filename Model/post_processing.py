@@ -29,11 +29,7 @@ def postprocessing(df, substep):
     # Create an analysis dataset
     data = (pd.DataFrame({'timestep': timesteps,
                           'date': date,
-                          'run': df.run,
-                          'agents': agent_ds,
-                          'liquidity_pool': liquidity_pool_ds,
-                          'token_economy': token_economy_ds,
-                          'user_adoption':user_adoption_ds
+                          'run': df.run
                           })
            )
 
@@ -50,12 +46,12 @@ def postprocessing(df, substep):
     ## AGENTS ##
     for key in agent_ds[agent_ds.keys()[0]]:
         # Agent quantity
-        data[agent_ds[agent_ds.keys()[0]][key]['name']+'_agents'] = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']]))
+        data[agent_ds[agent_ds.keys()[0]][key]['a_name']+'_agents'] = agent_ds.map(lambda s: sum([1 for agent in s.values() if agent['a_name'] == agent_ds[agent_ds.keys()[0]][key]['a_name']]))
         
         # Agent attributes
         key_values = agent_ds.apply(lambda s: s.get(key))
         for key2 in key_values[key_values.keys()[0]]:
-            data[agent_ds[agent_ds.keys()[0]][key]['name']+'_'+key2] = agent_ds.map(lambda s: [agent[key2] for agent in s.values() if agent['name'] == agent_ds[agent_ds.keys()[0]][key]['name']][0])
+            data[agent_ds[agent_ds.keys()[0]][key]['a_name']+'_'+key2] = agent_ds.map(lambda s: [agent[key2] for agent in s.values() if agent['a_name'] == agent_ds[agent_ds.keys()[0]][key]['a_name']][0])
 
     ## UTILITIES ##
     for key in utilities_ds[utilities_ds.keys()[0]]:
@@ -73,9 +69,9 @@ def postprocessing(df, substep):
         data[key] = key_values
     
     ## AGGREGATED METRICS ##
-    data["From_Holding_Supply_Selling"] = data["airdrop_receivers_selling_tokens"].add(data["incentivisation_receivers_selling_tokens"])
-    data["From_Holding_Supply_Utility"] = data["airdrop_receivers_utility_tokens"].add(data["incentivisation_receivers_utility_tokens"])
-    data["From_Holding_Supply_Holding"] = data["airdrop_receivers_holding_tokens"].add(data["incentivisation_receivers_holding_tokens"])
+    data["From_Holding_Supply_Selling"] = data["airdrop_receivers_a_selling_tokens"].add(data["incentivisation_receivers_a_selling_tokens"])
+    data["From_Holding_Supply_Utility"] = data["airdrop_receivers_a_utility_tokens"].add(data["incentivisation_receivers_a_utility_tokens"])
+    data["From_Holding_Supply_Holding"] = data["airdrop_receivers_a_holding_tokens"].add(data["incentivisation_receivers_a_holding_tokens"])
     
     print("Postprocessing for substep: ", substep, " finished!")
     return data

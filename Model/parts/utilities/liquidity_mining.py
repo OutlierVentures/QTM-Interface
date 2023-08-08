@@ -13,7 +13,7 @@ def staking_liquidity_mining_agent_allocation(params, substep, state_history, pr
     agent_utility_sum = 0
     agents_liquidity_mining_allocations = {}
     for agent in agents:
-        utility_tokens = agents[agent]['utility_tokens']
+        utility_tokens = agents[agent]['a_utility_tokens']
         agents_liquidity_mining_allocations[agent] = utility_tokens * liquidity_mining_share
         agent_utility_sum += agents_liquidity_mining_allocations[agent]
     
@@ -35,7 +35,8 @@ def update_liquidity_mining_agent_allocation(params, substep, state_history, pre
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['tokens_liquidity_mining'] = agents_liquidity_mining_allocations[agent]
+        updated_agents[agent]['a_tokens_liquidity_mining'] = agents_liquidity_mining_allocations[agent]
+        updated_agents[agent]['a_tokens_liquidity_mining_cum'] += agents_liquidity_mining_allocations[agent]
 
     return ('agents', updated_agents)
 

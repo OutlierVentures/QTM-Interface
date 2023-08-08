@@ -12,8 +12,8 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     agent_token_vesting_dict = {}
     for key, agent in agents.items():
         # Get all invesotor info
-        agent_type = agent['name']
-        agent_tokens_vested = agent['tokens_vested']
+        agent_type = agent['a_name']
+        agent_tokens_vested = agent['a_tokens_vested']
         agent_token_allocation = [params[agent_type+"_token_allocation"] if agent_type+"_token_allocation" in params else 0][0]
         agent_initial_vesting_perc = [params[agent_type+"_initial_vesting"] if agent_type+"_initial_vesting" in params else 0][0]
         agent_cliff_months = [params[agent_type+"_cliff"] if agent_type+"_cliff" in params else 0][0]
@@ -51,9 +51,8 @@ def update_agent_vested_tokens(params, substep, state_history, prev_state, polic
     agent_token_vesting_dict = policy_input['agent_token_vesting_dict']
 
     for key, value in agent_token_vesting_dict.items():
-        updated_agents[key]['tokens'] += value
-        updated_agents[key]['tokens_vested'] = value
-        updated_agents[key]['tokens_vested_cum'] += value
-
+        updated_agents[key]['a_tokens'] += value
+        updated_agents[key]['a_tokens_vested'] = value
+        updated_agents[key]['a_tokens_vested_cum'] += value
 
     return ('agents', updated_agents)

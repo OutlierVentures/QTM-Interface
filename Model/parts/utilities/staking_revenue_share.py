@@ -13,7 +13,7 @@ def staking_revenue_share_buyback_agent_allocation(params, substep, state_histor
     agent_utility_sum = 0
     agents_staking_buyback_allocations = {}
     for agent in agents:
-        utility_tokens = agents[agent]['utility_tokens']
+        utility_tokens = agents[agent]['a_utility_tokens']
         agents_staking_buyback_allocations[agent] = utility_tokens * lock_buyback_distribute_share
         agent_utility_sum += agents_staking_buyback_allocations[agent]
     
@@ -58,7 +58,8 @@ def update_staking_revenue_share_buyback_agent_allocation(params, substep, state
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['tokens_buyback_locked'] = agents_staking_buyback_allocations[agent]
+        updated_agents[agent]['a_tokens_buyback_locked'] = agents_staking_buyback_allocations[agent]
+        updated_agents[agent]['a_tokens_buyback_locked_cum'] += agents_staking_buyback_allocations[agent]
 
     return ('agents', updated_agents)
 

@@ -52,10 +52,10 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=17) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=18) # after vesting sell lp tx
-    data_tx4 = postprocessing(df, substep=19) # after vesting sell lp tx
+    data_tx1 = postprocessing(df, substep=17) # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=18) # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=19) # after vesting sell lp tx
+    data_tx4 = postprocessing(df, substep=20) # after vesting sell lp tx
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
 
 
@@ -90,12 +90,12 @@ if __name__ == '__main__'   :
         print("Testing individual vesting values of radCad timeseries simulation against QTM data tables...")
         for i in range(len(stakeholder_names)-3):
             stakeholder = stakeholder_names[i]
-            test_timeseries(data=data, data_key=stakeholder+"_tokens_vested", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=11+i, relative_tolerance=0.001)
+            test_timeseries(data=data, data_key=stakeholder+"_a_tokens_vested", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=11+i, relative_tolerance=0.001)
         
         print("Testing cumulative vesting values of radCad timeseries simulation against QTM data tables...")
         for i in range(len(stakeholder_names)-3):
             stakeholder = stakeholder_names[i]
-            test_timeseries(data=data, data_key=stakeholder+"_tokens_vested_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
+            test_timeseries(data=data, data_key=stakeholder+"_a_tokens_vested_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=28+i, relative_tolerance=0.001)
 
         
         ## TEST FREE SUPPLY USAGE ##
@@ -128,9 +128,9 @@ if __name__ == '__main__'   :
         print("Testing individual agent meta bucket allocations of radCad timeseries simulation against QTM data tables...")
         for i in range(len(stakeholder_names)-8):
             stakeholder = stakeholder_names[i]
-            test_timeseries(data=data, data_key=stakeholder+"_selling_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=64+i, relative_tolerance=0.001)
-            test_timeseries(data=data, data_key=stakeholder+"_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
-            test_timeseries(data=data, data_key=stakeholder+"_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
+            test_timeseries(data=data, data_key=stakeholder+"_a_selling_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=64+i, relative_tolerance=0.001)
+            test_timeseries(data=data, data_key=stakeholder+"_a_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
+            test_timeseries(data=data, data_key=stakeholder+"_a_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
         
         ## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##
@@ -161,6 +161,9 @@ if __name__ == '__main__'   :
         # liquidity mining
         test_timeseries(data=data, data_key="liquidity_mining_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=105, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="liquidity_mining_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=111, relative_tolerance=0.001, timestep_cut_off=1)
+        # burning
+        test_timeseries(data=data, data_key="burning_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=106, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="burning_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
 
        
         ## TEST ADOPTION 2 ##
@@ -218,7 +221,7 @@ if __name__ == '__main__'   :
         ## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##
         print("\n-------------------------------## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##------------------------------")
         print("Testing liquidity pool valuation and volatility of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="LP_valuation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=154, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="lp_valuation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=154, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="volatility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=156, relative_tolerance=0.001, timestep_cut_off=1)
 
         

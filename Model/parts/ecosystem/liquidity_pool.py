@@ -71,7 +71,7 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
     
     else:
         pass
-        
+
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'constant_product': constant_product, 'token_price': token_price, 'tx': 1}
 
 def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_state, **kwargs):
@@ -101,7 +101,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
         # get amount of tokens to be sold by agents from vesting + airdrops + incentivisation
         tokens_to_sell = 0
         for agent in agents:
-            tokens_to_sell += agents[agent]['selling_tokens']
+            tokens_to_sell += agents[agent]['a_selling_tokens']
         
         # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
         error_message = 'The amount of tokens to be sold '+str(tokens_to_sell)+' is not equal to the meta bucket selling allocation '+str(selling_allocation)+'!'
@@ -145,7 +145,7 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
         # get amount of tokens to be used for liquidity mining
         tokens_for_liquidity = 0
         for agent in agents:
-            tokens_for_liquidity += agents[agent]['tokens_liquidity_mining']
+            tokens_for_liquidity += agents[agent]['a_tokens_liquidity_mining']
 
         # calculate the liquidity pool after the vesting sells
         lp_usdc = lp_usdc + tokens_for_liquidity * token_price
@@ -227,13 +227,13 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
     # update logic
     bought_tokens = new_lp_tokens - old_lp_tokens
     # distribute the bought tokens to the market_investors agents
-    market_investors = sum([1 for agent in updated_agents if (updated_agents[agent]['type'] == 'market_investors')])
+    market_investors = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'market_investors')])
     for agent in updated_agents:
-        if updated_agents[agent]['type'] == 'market_investors':
+        if updated_agents[agent]['a_type'] == 'market_investors':
             
             bought_tokens_per_market_investor = bought_tokens / market_investors
 
-            updated_agents[agent]['tokens'] += bought_tokens_per_market_investor
+            updated_agents[agent]['a_tokens'] += bought_tokens_per_market_investor
 
     return ('agents', updated_agents)
 
@@ -266,7 +266,7 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     updated_liquidity_pool['usdc'] = lp_usdc
     updated_liquidity_pool['constant_product'] = constant_product
     updated_liquidity_pool['token_price'] = token_price
-    updated_liquidity_pool['LP_valuation'] = lp_usdc + lp_tokens * token_price
+    updated_liquidity_pool['lp_valuation'] = lp_usdc + lp_tokens * token_price
     updated_liquidity_pool['volatility'] = ((updated_liquidity_pool['token_price_max'] - updated_liquidity_pool['token_price_min'])
                                             / updated_liquidity_pool['token_price_max'] * 100)
 
