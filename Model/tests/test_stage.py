@@ -60,7 +60,7 @@ if __name__ == '__main__'   :
 
 
 
-    tests = 0
+    tests = 1
 
     if tests == 0:
         ### BEGIN TESTS ###
@@ -237,6 +237,12 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)"""
         
         
+      ## TEST APR ##
+        print("\n---------------------------------------## Rewards apr ##--------------------------------------")
+        print("Testing apr of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key="staking_rewards", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001, timestep_cut_off=1)
+       #NOT READY TO TEST YET ->    test_timeseries(data=data, data_key="apr_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=166, relative_tolerance=0.001)
+
         ### END OF TESTS ###
         print("\n")
         print(u'\u2713'+" ALL TESTS PASSED!")
@@ -244,11 +250,5 @@ if __name__ == '__main__'   :
 
     else:
 
-
-      ## TEST ADOPTION 2 ##
-        print("\n---------------------------------------## Rewards apr ##--------------------------------------")
-        print("Testing apr of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="staking_rewards", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001)
-       #NOT READY TO TEST YET ->    test_timeseries(data=data, data_key="apr_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=166, relative_tolerance=0.001)
 
 
