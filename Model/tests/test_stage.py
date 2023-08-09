@@ -113,7 +113,7 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key='te_incentivised_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
         test_timeseries(data=data, data_key='te_incentivised_tokens_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
         #test_timeseries(data=data, data_key='te_incentivised_tokens_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.001)
-#ERROR
+
 
         ## TEST AIRDROPS ##
         print("\n------------------------------------------## TEST AIRDROPS ##------------------------------------------")
@@ -164,10 +164,11 @@ if __name__ == '__main__'   :
         # burning
         test_timeseries(data=data, data_key='u_burning_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=106, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key='u_burning_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
-
-        # holding, no cum, already assessed in holding supply
+        # holding, cum comes later
         test_timeseries(data=data, data_key="u_holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
-#ERROR
+        # transfer
+        test_timeseries(data=data, data_key='u_transfer_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_transfer_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
 
         ## TEST ADOPTION 2 ##
         print("\n------------------------------------------## TEST ADOPTION 2 ##-----------------------------------------")
@@ -242,20 +243,18 @@ if __name__ == '__main__'   :
         
       ## TEST APR ##
         print("\n---------------------------------------## Rewards apr ##--------------------------------------")
-        print("Testing apr of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key='u_staking_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001, timestep_cut_off=1)
-       #NOT READY TO TEST YET ->    test_timeseries(data=data, data_key="apr_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=166, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='u_staking_base_apr', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=103, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_base_apr_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=109, relative_tolerance=0.001, timestep_cut_off=1)
+
+
 
         ### END OF TESTS ###
         print("\n")
         print(u'\u2713'+" ALL TESTS PASSED!")
         print("\n------------------------------------")
 
+
     else:
 
-    # holding
-        test_timeseries(data=data, data_key='u_transfer_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key='u_transfer_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
-
-
-
+        pass
