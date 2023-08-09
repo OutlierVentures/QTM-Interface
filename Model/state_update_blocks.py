@@ -11,6 +11,7 @@ from parts.utilities.staking_base_apr import *
 from parts.utilities.staking_revenue_share import *
 from parts.utilities.liquidity_mining import *
 from parts.utilities.burning import *
+from parts.utilities.holding import *
 
 from parts.mockups import *
 
@@ -162,6 +163,17 @@ state_update_block = [
         },
     },
     {
+        # substep 15: utilities/holding.py
+        'policies': {
+            'holding_agent_allocation': holding_agent_allocation,
+        },
+        'variables': {
+            'agents': update_holding_agent_allocation,
+            'utilities': update_holding_meta_allocation,
+        },
+    },
+    
+    {
         # substep 16: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
@@ -217,18 +229,3 @@ state_update_block = [
         },
     },
 ]
-
-''' 
- {
-    # agent_utility_behavior.py
-    'policies': {
-        'generate_agent_behavior': generate_agent_behavior,
-        'agent_token_allocations':agent_token_allocations,
-    },
-    'variables': {
-        'agents': update_agent_behavior,
-        'agents':update_agent_token_allocations,
-        'token_economy':update_meta_bucket_allocations
-
-    },
-    },'''

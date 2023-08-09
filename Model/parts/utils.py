@@ -265,6 +265,8 @@ def initialize_utilities():
     'liquidity_mining_allocation_cum': 0,
     'burning_allocation': 0,
     'burning_allocation_cum': 0,
+    'holding_allocation': 0,
+    'holding_allocation_cum': 0,
     }
 
     return utilities
