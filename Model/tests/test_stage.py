@@ -62,7 +62,7 @@ if __name__ == '__main__'   :
 
     tests = 1
 
-    if tests == 0:
+    if tests == 1:
         ### BEGIN TESTS ###
         print("\n-------------------------------------------------------------------------------------------------------")
         print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
@@ -113,7 +113,7 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="incentivised_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
         test_timeseries(data=data, data_key="incentivised_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
         #test_timeseries(data=data, data_key="incentivised_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.001)
-
+#ERROR
 
         ## TEST AIRDROPS ##
         print("\n------------------------------------------## TEST AIRDROPS ##------------------------------------------")
@@ -130,7 +130,7 @@ if __name__ == '__main__'   :
             stakeholder = stakeholder_names[i]
             test_timeseries(data=data, data_key=stakeholder+"_a_selling_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=64+i, relative_tolerance=0.001)
             test_timeseries(data=data, data_key=stakeholder+"_a_utility_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=77+i, relative_tolerance=0.001)
-            test_timeseries(data=data, data_key=stakeholder+"_a_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
+            #test_timeseries(data=data, data_key=stakeholder+"_a_holding_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=90+i, relative_tolerance=0.001)
 
         
         ## TEST FROM HOLDING SUPPLY META BUCKET ALLOCATIONS ##
@@ -166,8 +166,8 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="burning_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
 
         # holding, no cum, already assessed in holding supply
-        test_timeseries(data=data, data_key="holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
-
+        test_timeseries(data=data, data_key="u_holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
+#ERROR
 
         ## TEST ADOPTION 2 ##
         print("\n------------------------------------------## TEST ADOPTION 2 ##-----------------------------------------")

@@ -164,26 +164,7 @@ state_update_block = [
             'utilities': update_burning_meta_allocation,
         },
     },
-    {
-        # substep 15: utilities/holding.py
-        'policies': {
-            'holding_agent_allocation': holding_agent_allocation,
-        },
-        'variables': {
-            'agents': update_holding_agent_allocation,
-            'utilities': update_holding_meta_allocation,
-        },
-    },
-    {
-        # substep 15: utilities/transfer.py
-        'policies': {
-            'transfer_agent_allocation': transfer_agent_allocation,
-        },
-        'variables': {
-            'agents': update_transfer_agent_allocation,
-            'utilities': update_transfer_meta_allocation,
-        },
-    },
+
     
     {
         # substep 16: business/business_assumptions.py
@@ -239,5 +220,26 @@ state_update_block = [
         'variables': {
             'token_economy': update_token_economy,
         },
+    },
+    {
+    # substep 22: utilities/transfer.py
+    'policies': {
+        'transfer_agent_allocation': transfer_agent_allocation,
+    },
+    'variables': {
+        'agents': update_transfer_agent_allocation,
+        'utilities': update_transfer_meta_allocation,
+    },
+    },
+
+    {
+    # substep 23: utilities/holding.py
+    'policies': {
+        'holding_agent_allocation': holding_agent_allocation,
+    },
+    'variables': {
+        'agents': update_holding_agent_allocation,
+        'utilities': update_holding_meta_allocation,
+    },
     },
 ]

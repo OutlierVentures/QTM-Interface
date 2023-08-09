@@ -60,6 +60,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_transferred_cum': tokens_transferred_cum,
              'a_tokens_burned': tokens_burned,
              'a_tokens_burned_cum': tokens_burned_cum,
+             'a_tokens_held': holding_tokens,
              'a_selling_tokens': selling_tokens,
              'a_utility_tokens': utility_tokens,
              'a_holding_tokens': holding_tokens,
@@ -265,8 +266,8 @@ def initialize_utilities():
     'liquidity_mining_allocation_cum': 0,
     'burning_allocation': 0,
     'burning_allocation_cum': 0,
-    'holding_allocation': 0,
-    'holding_allocation_cum': 0,
+    'u_holding_allocation': 0, #added u for utility because of the metabucket with the same name
+    'u_holding_allocation_cum': 0,
     'transfer_allocation':0,
     'transfer_allocation_cum': 0,
     }

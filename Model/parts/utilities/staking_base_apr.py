@@ -10,12 +10,9 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     # get parameters
     lock_apr = params['lock_apr']/100
     lock_share = params['lock_share']/100
-    
-    # fake data 
-    
+        
 
 
-    #Calculating the agent utility sum -> Row 87
     agent_utility_sum = 0
     agents = prev_state['agents'].copy()
     for agent in agents:
@@ -25,8 +22,6 @@ def apr(params, substep, state_history, prev_state, **kwargs):
 
     
     staking_base_apr = agent_utility_sum * lock_share
-
-
 
     utility_removal_perc = prev_state['token_economy']['remove_perc']/100
      
