@@ -267,6 +267,8 @@ def initialize_utilities():
     'burning_allocation_cum': 0,
     'holding_allocation': 0,
     'holding_allocation_cum': 0,
+    'transfer_allocation':0,
+    'transfer_allocation_cum': 0,
     }
 
     return utilities

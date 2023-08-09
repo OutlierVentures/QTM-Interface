@@ -254,7 +254,8 @@ if __name__ == '__main__'   :
     else:
 
     # holding
-        test_timeseries(data=data, data_key="holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="transfer_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="transfer_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
 
 
 

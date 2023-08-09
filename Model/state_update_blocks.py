@@ -12,6 +12,8 @@ from parts.utilities.staking_revenue_share import *
 from parts.utilities.liquidity_mining import *
 from parts.utilities.burning import *
 from parts.utilities.holding import *
+from parts.utilities.transfer import *
+
 
 from parts.mockups import *
 
@@ -170,6 +172,16 @@ state_update_block = [
         'variables': {
             'agents': update_holding_agent_allocation,
             'utilities': update_holding_meta_allocation,
+        },
+    },
+    {
+        # substep 15: utilities/transfer.py
+        'policies': {
+            'transfer_agent_allocation': transfer_agent_allocation,
+        },
+        'variables': {
+            'agents': update_transfer_agent_allocation,
+            'utilities': update_transfer_meta_allocation,
         },
     },
     
