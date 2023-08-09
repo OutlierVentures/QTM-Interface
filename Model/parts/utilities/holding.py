@@ -38,6 +38,7 @@ def update_holding_agent_allocation(params, substep, state_history, prev_state, 
     Function to update agent holding allocations
     """
     # get parameters
+    holding_payout_source = params['holding_payout_source']
 
     # get state variables
     updated_agents = prev_state['agents'].copy()
@@ -48,6 +49,8 @@ def update_holding_agent_allocation(params, substep, state_history, prev_state, 
     # update logic
     for agent in updated_agents:
         updated_agents[agent]['a_tokens'] += agents_holding_allocations[agent]
+
+        # update reward payout bucket
 
     return ('agents', updated_agents)
 

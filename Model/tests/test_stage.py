@@ -52,10 +52,10 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data_tx1 = postprocessing(df, substep=17) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=18) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=19) # after vesting sell lp tx
-    data_tx4 = postprocessing(df, substep=20) # after vesting sell lp tx
+    data_tx1 = postprocessing(df, substep=19) # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=20) # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=21) # after vesting sell lp tx
+    data_tx4 = postprocessing(df, substep=22) # after vesting sell lp tx
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
 
 

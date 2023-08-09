@@ -164,10 +164,31 @@ state_update_block = [
             'utilities': update_burning_meta_allocation,
         },
     },
+    {
+        # substep 16: utilities/transfer.py
+        'policies': {
+            'transfer_agent_allocation': transfer_agent_allocation,
+        },
+        'variables': {
+            'agents': update_transfer_agent_allocation,
+            'utilities': update_transfer_meta_allocation,
+        },
+    },
+
+    {
+        # substep 17: utilities/holding.py
+        'policies': {
+            'holding_agent_allocation': holding_agent_allocation,
+        },
+        'variables': {
+            'agents': update_holding_agent_allocation,
+            'utilities': update_holding_meta_allocation,
+        },
+    },
 
     
     {
-        # substep 16: business/business_assumptions.py
+        # substep 18: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
         },
@@ -176,7 +197,7 @@ state_update_block = [
         },
     },
     {
-        # substep 17: ecosystem/liquidity_pool.py
+        # substep 19: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
@@ -186,7 +207,7 @@ state_update_block = [
         },
     },
     {
-        # substep 18: ecosystem/liquidity_pool.py
+        # substep 20: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx2_after_vesting_sell': liquidity_pool_tx2_after_vesting_sell,
         },
@@ -195,7 +216,7 @@ state_update_block = [
         },
     },
     {
-        # substep 19: ecosystem/liquidity_pool.py
+        # substep 21: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx3_after_liquidity_addition': liquidity_pool_tx3_after_liquidity_addition,
         },
@@ -204,7 +225,7 @@ state_update_block = [
         },
     },
     {
-        # substep 20: ecosystem/liquidity_pool.py
+        # substep 22: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx4_after_buyback': liquidity_pool_tx4_after_buyback,
         },
@@ -213,33 +234,12 @@ state_update_block = [
         },
     },
     {
-        # substep 21: ecosystem/token_economy.py
+        # substep 23: ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
         },
         'variables': {
             'token_economy': update_token_economy,
         },
-    },
-    {
-    # substep 22: utilities/transfer.py
-    'policies': {
-        'transfer_agent_allocation': transfer_agent_allocation,
-    },
-    'variables': {
-        'agents': update_transfer_agent_allocation,
-        'utilities': update_transfer_meta_allocation,
-    },
-    },
-
-    {
-    # substep 23: utilities/holding.py
-    'policies': {
-        'holding_agent_allocation': holding_agent_allocation,
-    },
-    'variables': {
-        'agents': update_holding_agent_allocation,
-        'utilities': update_holding_meta_allocation,
-    },
-    },
+    }
 ]

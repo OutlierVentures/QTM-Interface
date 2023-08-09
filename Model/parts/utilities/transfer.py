@@ -26,6 +26,7 @@ def update_transfer_agent_allocation(params, substep, state_history, prev_state,
     Function to update agent transfer allocations
     """
     # get parameters
+    transfer_destination = params['transfer_destination']
 
     # get state variables
     updated_agents = prev_state['agents'].copy()
@@ -35,8 +36,15 @@ def update_transfer_agent_allocation(params, substep, state_history, prev_state,
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['a_tokens_transferred'] = agents_transfer_allocations[agent]
-        updated_agents[agent]['a_tokens_transferred_cum'] += agents_transfer_allocations[agent]
+
+        transferred_tokens_by_agent = agents_transfer_allocations[agent]
+
+        updated_agents[agent]['a_tokens_transferred'] = transferred_tokens_by_agent
+        updated_agents[agent]['a_tokens_transferred_cum'] += transferred_tokens_by_agent
+
+        # update transfer destination bucket
+        if updated_agents[agent]['a_type'] == 'protocol_bucket' and transfer_destination.lower() in updated_agents[agent]['a_name'].lower():
+            updated_agents[agent]['a_tokens'] = updated_agents[agent]['a_tokens'] + transferred_tokens_by_agent
 
     return ('agents', updated_agents)
 

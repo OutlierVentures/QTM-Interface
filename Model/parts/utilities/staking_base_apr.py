@@ -39,7 +39,7 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     staking_rewards = staking_base_apr_cum * lock_apr/12
   
 
-    return {'u_staking_rewards': staking_rewards,'u_staking_base_apr_cum':staking_base_apr_cum}
+    return {'staking_rewards': staking_rewards,'staking_base_apr_cum':staking_base_apr_cum}
 
 
 
@@ -63,8 +63,8 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    stake_base_apr_allocation_cum = policy_input['u_staking_base_apr_cum']
-    staking_rewards = policy_input['u_staking_rewards']
+    stake_base_apr_allocation_cum = policy_input['staking_base_apr_cum']
+    staking_rewards = policy_input['staking_rewards']
 
     # update logic
 
