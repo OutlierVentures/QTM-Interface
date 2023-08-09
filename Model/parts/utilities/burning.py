@@ -17,7 +17,7 @@ def burning_agent_allocation(params, substep, state_history, prev_state, **kwarg
         agents_burning_allocations[agent] = utility_tokens * burning_share
         agent_utility_sum += agents_burning_allocations[agent]
     
-    return {'burning_allocation': agent_utility_sum, 'agents_burning_allocations': agents_burning_allocations}
+    return {'u_burning_allocation': agent_utility_sum, 'agents_burning_allocations': agents_burning_allocations}
 
 
 # STATE UPDATE FUNCTIONS
@@ -50,10 +50,10 @@ def update_burning_meta_allocation(params, substep, state_history, prev_state, p
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    burning_allocation = policy_input['burning_allocation']
+    burning_allocation = policy_input['u_burning_allocation']
 
     # update logic
-    updated_utilities['burning_allocation'] = burning_allocation
-    updated_utilities['burning_allocation_cum'] += burning_allocation
+    updated_utilities['u_burning_allocation'] = burning_allocation
+    updated_utilities['u_burning_allocation_cum'] += burning_allocation
 
     return ('utilities', updated_utilities)

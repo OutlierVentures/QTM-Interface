@@ -23,13 +23,13 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     
     staking_base_apr = agent_utility_sum * lock_share
 
-    utility_removal_perc = prev_state['token_economy']['remove_perc']/100
+    utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
      
     if prev_state['timestep'] == 1 :
         removal_token = 0
         prev_staking_base_apr_cum = 0
     else:
-        prev_staking_base_apr_cum = prev_state['utilities']['staking_base_apr_cum']
+        prev_staking_base_apr_cum = prev_state['utilities']['u_staking_base_apr_cum']
         removal_token = -staking_base_apr * utility_removal_perc
 
     staking_base_apr_cum = prev_staking_base_apr_cum + staking_base_apr + removal_token
@@ -39,7 +39,7 @@ def apr(params, substep, state_history, prev_state, **kwargs):
     staking_rewards = staking_base_apr_cum * lock_apr/12
   
 
-    return {'staking_rewards': staking_rewards,'staking_base_apr_cum':staking_base_apr_cum}
+    return {'u_staking_rewards': staking_rewards,'u_staking_base_apr_cum':staking_base_apr_cum}
 
 
 
@@ -63,13 +63,13 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    stake_base_apr_allocation_cum = policy_input['staking_base_apr_cum']
-    staking_rewards = policy_input['staking_rewards']
+    stake_base_apr_allocation_cum = policy_input['u_staking_base_apr_cum']
+    staking_rewards = policy_input['u_staking_rewards']
 
     # update logic
 
-    updated_utilities['staking_base_apr_cum'] = stake_base_apr_allocation_cum
-    updated_utilities['staking_rewards'] = staking_rewards
+    updated_utilities['u_staking_base_apr_cum'] = stake_base_apr_allocation_cum
+    updated_utilities['u_staking_rewards'] = staking_rewards
 
 
 

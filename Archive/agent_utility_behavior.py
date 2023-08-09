@@ -247,7 +247,6 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
         updated_agents[key]['a_tokens_liquidity_mining'] = updated_agents[key]['a_tokens_liquidity_mining'] + agent_allocations[key]['liquidity']
         updated_agents[key]['a_tokens_transferred'] = updated_agents[key]['a_tokens_transferred'] + agent_allocations[key]['transfer']
         updated_agents[key]['a_tokens_burned'] = updated_agents[key]['a_tokens_burned'] + agent_allocations[key]['burn']
-        updated_agents[key]['a_tokens_held'] = updated_agents[key]['a_tokens_held'] + agent_allocations[key]['burn']
 
 
     return ('agents', updated_agents)

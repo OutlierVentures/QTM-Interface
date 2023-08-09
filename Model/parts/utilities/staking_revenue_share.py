@@ -17,7 +17,7 @@ def staking_revenue_share_buyback_agent_allocation(params, substep, state_histor
         agents_staking_buyback_allocations[agent] = utility_tokens * lock_buyback_distribute_share
         agent_utility_sum += agents_staking_buyback_allocations[agent]
     
-    return {'staking_revenue_share_allocation': agent_utility_sum, 'agents_staking_buyback_allocations': agents_staking_buyback_allocations}
+    return {'u_staking_revenue_share_allocation': agent_utility_sum, 'agents_staking_buyback_allocations': agents_staking_buyback_allocations}
 
 
 def staking_revenue_share_buyback_amount(params, substep, state_history, prev_state, **kwargs):
@@ -30,7 +30,7 @@ def staking_revenue_share_buyback_amount(params, substep, state_history, prev_st
 
     # get state variables
     user_adoption = prev_state['user_adoption'].copy()
-    product_revenue = user_adoption['product_revenue']
+    product_revenue = user_adoption['ua_product_revenue']
 
     # policy logic
     if float(staking_revenue_utility_share_allocation) > 0:
@@ -38,7 +38,7 @@ def staking_revenue_share_buyback_amount(params, substep, state_history, prev_st
     else:
         buyback_amount = 0
 
-    return {'buyback_from_revenue_share_usd': buyback_amount}
+    return {'u_buyback_from_revenue_share_usd': buyback_amount}
 
 
 
@@ -73,11 +73,11 @@ def update_staking_revenue_share_buyback_meta_allocation(params, substep, state_
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    staking_revenue_share_allocation = policy_input['staking_revenue_share_allocation']
+    staking_revenue_share_allocation = policy_input['u_staking_revenue_share_allocation']
 
     # update logic
-    updated_utilities['staking_revenue_share_allocation'] = staking_revenue_share_allocation
-    updated_utilities['staking_revenue_share_allocation_cum'] += staking_revenue_share_allocation
+    updated_utilities['u_staking_revenue_share_allocation'] = staking_revenue_share_allocation
+    updated_utilities['u_staking_revenue_share_allocation_cum'] += staking_revenue_share_allocation
 
     return ('utilities', updated_utilities)
 
@@ -91,9 +91,9 @@ def update_buyback_amount_from_revenue_share(params, substep, state_history, pre
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    buyback_from_revenue_share_usd = policy_input['buyback_from_revenue_share_usd']
+    buyback_from_revenue_share_usd = policy_input['u_buyback_from_revenue_share_usd']
 
     # update logic
-    updated_utilities['buyback_from_revenue_share_usd'] = buyback_from_revenue_share_usd
+    updated_utilities['u_buyback_from_revenue_share_usd'] = buyback_from_revenue_share_usd
 
     return ('utilities', updated_utilities)

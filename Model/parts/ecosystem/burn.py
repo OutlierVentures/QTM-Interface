@@ -61,8 +61,8 @@ def update_token_economy_after_protocol_bucket_burn(params, substep, state_histo
     burn_token_amount = policy_input['burn_token_amount']
 
     # update logic
-    updated_token_economy['tokens_burned'] = burn_token_amount
-    updated_token_economy['tokens_burned_cum'] += burn_token_amount
-    updated_token_economy['tokens_burned_usd'] = burn_token_amount * liquidity_pool['token_price']
+    updated_token_economy['te_tokens_burned'] = burn_token_amount
+    updated_token_economy['te_tokens_burned_cum'] += burn_token_amount
+    updated_token_economy['te_tokens_burned_usd'] = burn_token_amount * liquidity_pool['lp_token_price']
 
     return ('token_economy', updated_token_economy)

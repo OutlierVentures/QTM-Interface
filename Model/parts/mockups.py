@@ -31,6 +31,6 @@ def MOCKUP_update_holding_supply(params, substep, state_history, prev_state, pol
     holding_supply_i = policy_input['holding_supply_i']
 
     # update logic
-    updated_token_economy["holding_supply"] = holding_supply_i
+    updated_token_economy['te_holding_supply'] = holding_supply_i
 
     return ('token_economy', updated_token_economy)

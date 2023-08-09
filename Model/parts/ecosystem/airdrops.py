@@ -29,7 +29,7 @@ def airdrops(params, substep, state_history, prev_state, **kwargs):
     if current_date <= airdrop_date3 and current_date+pd.DateOffset(months=1) > airdrop_date3:
         airdrop_tokens += total_token_supply * airdrop_allocation/100 * airdrop_amount3/100
 
-    return {'airdrop_tokens': airdrop_tokens}
+    return {'te_airdrop_tokens': airdrop_tokens}
 
 # STATE UPDATE FUNCTIONS
 def update_agents_after_airdrops(params, substep, state_history, prev_state, policy_input, **kwargs):
@@ -42,7 +42,7 @@ def update_agents_after_airdrops(params, substep, state_history, prev_state, pol
     updated_agents = prev_state['agents']
 
     # get policy input
-    airdrop_tokens = policy_input['airdrop_tokens']
+    airdrop_tokens = policy_input['te_airdrop_tokens']
 
     # update logic
     # add airdropped tokens to airdrop receivers stakeholder group
@@ -69,11 +69,11 @@ def update_token_economy_after_airdrops(params, substep, state_history, prev_sta
     liquidity_pool = prev_state['liquidity_pool']
 
     # get policy input
-    airdrop_tokens = policy_input['airdrop_tokens']
+    airdrop_tokens = policy_input['te_airdrop_tokens']
 
     # update logic
-    updated_token_economy['airdrop_tokens'] = airdrop_tokens
-    updated_token_economy['airdrop_tokens_cum'] += airdrop_tokens
-    updated_token_economy['airdrop_tokens_usd'] = airdrop_tokens * liquidity_pool['token_price']
+    updated_token_economy['te_airdrop_tokens'] = airdrop_tokens
+    updated_token_economy['te_airdrop_tokens_cum'] += airdrop_tokens
+    updated_token_economy['te_airdrop_tokens_usd'] = airdrop_tokens * liquidity_pool['lp_token_price']
 
     return ('token_economy', updated_token_economy)

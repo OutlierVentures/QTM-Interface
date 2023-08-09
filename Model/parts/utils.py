@@ -40,32 +40,32 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
 
-    agent = {'a_name': stakeholder_name, # 'incentivisation', 'placeholder', 'market_investors
-             'a_type': stakeholder_type,
-             'a_usd_funds': usd_funds,
-             'a_tokens': tokens,
-             'a_tokens_vested': tokens_vested,
-             'a_tokens_vested_cum': tokens_vested_cum,
-             'a_tokens_airdropped': tokens_airdropped,
-             'a_tokens_airdropped_cum': tokens_airdropped_cum,
-             'a_tokens_incentivised': tokens_incentivised,
-             'a_tokens_incentivised_cum': tokens_incentivised_cum,
-             'a_tokens_apr_locked': tokens_apr_locked,
-             'a_tokens_apr_locked_cum': tokens_apr_locked_cum,
-             'a_tokens_buyback_locked': tokens_buyback_locked,
-             'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum,
-             'a_tokens_liquidity_mining': tokens_liquidity_mining,
-             'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum,
-             'a_tokens_transferred': tokens_transferred,
-             'a_tokens_transferred_cum': tokens_transferred_cum,
-             'a_tokens_burned': tokens_burned,
-             'a_tokens_burned_cum': tokens_burned_cum,
-             'a_tokens_held': holding_tokens,
-             'a_selling_tokens': selling_tokens,
-             'a_utility_tokens': utility_tokens,
-             'a_holding_tokens': holding_tokens,
-             'a_actions': actions,
-             'a_current_action': current_action}
+    agent = {'a_name': stakeholder_name, # seed, advisor, reserve, incentivisation, placeholder, market_investors, etc.
+             'a_type': stakeholder_type, # early_investor, protocol_bucket, market_investors, airdrop_receiver, incentivisation_receiver
+             'a_usd_funds': usd_funds, # amount of USD funds available to this stakeholder (not applicalbe/used in the current version)
+             'a_tokens': tokens, # amount of held tokens by this stakeholder group
+             'a_tokens_vested': tokens_vested, # amount of vested tokens per timestep
+             'a_tokens_vested_cum': tokens_vested_cum, # amount of vested tokens cumulatively
+             'a_tokens_airdropped': tokens_airdropped, # amount of airdropped tokens per timestep
+             'a_tokens_airdropped_cum': tokens_airdropped_cum, # amount of airdropped tokens cumulatively
+             'a_tokens_incentivised': tokens_incentivised, # amount of incentivised tokens per timestep
+             'a_tokens_incentivised_cum': tokens_incentivised_cum, # amount of incentivised tokens cumulatively
+             'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
+             'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
+             'a_tokens_buyback_locked': tokens_buyback_locked, # amount of tokens locked for buyback per timestep
+             'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum, # amount of tokens locked for buyback cumulatively
+             'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens locked for liquidity mining per timestep
+             'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens locked for liquidity mining cumulatively
+             'a_tokens_transferred': tokens_transferred, # amount of tokens transferred per timestep
+             'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
+             'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
+             'a_tokens_burned_cum': tokens_burned_cum, # amount of tokens burned cumulatively
+             'a_selling_tokens': selling_tokens, # agent meta bucket selling allocations
+             'a_utility_tokens': utility_tokens, # agent meta bucket utility allocations
+             'a_holding_tokens': holding_tokens, # agent meta bucket holding allocations
+             'a_actions': actions, # dictionary of actions taken by this stakeholder
+             'a_current_action': current_action # current action taken by this stakeholder
+             }
     return agent
 
 def generate_agents(stakeholder_name_mapping: dict) -> dict:
@@ -176,14 +176,14 @@ def initialize_dex_liquidity():
     Initialize the DEX liquidity pool.
     """
     liquidity_pool = {
-        'tokens' : 0,
-        'usdc' : 0,
-        'constant_product' : 0,
-        'token_price' : 0,
-        'lp_valuation': 0,
-        'volatility': 0,
-        'token_price_max': 0,
-        'token_price_min': 0
+        'lp_tokens' : 0, # amount of native protocol tokens in LP
+        'lp_usdc' : 0, # amount of USDC in LP
+        'lp_constant_product' : 0, # constant product of LP tokens and USDC
+        'lp_token_price' : 0, # price of LP token
+        'lp_valuation': 0, # valuation of LP tokens
+        'lp_volatility': 0, # volatility of LP tokens
+        'lp_token_price_max': 0, # max price of LP token
+        'lp_token_price_min': 0 # min price of LP token
     }
 
     return liquidity_pool
@@ -193,36 +193,36 @@ def generate_initial_token_economy_metrics():
     Set the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
     """
     token_economy = {
-        'total_supply' : 0,
-        'circulating_supply' : 0,
-        'holding_supply' : 0,
-        'MC' : 0,
-        'FDV_MC' : 0,
-        'selling_perc': 0,
-        'utility_perc': 0,
-        'holding_perc': 0,
-        'remove_perc': 0,
-        'selling_allocation': 0, # from vesting + airdrops + incentivisation
-        'utility_allocation': 0, # from vesting + airdrops + incentivisation
-        'holding_allocation': 0, # from vesting + airdrops + incentivisation
-        'selling_allocation_cum': 0, # from vesting + airdrops + incentivisation
-        'utility_allocation_cum': 0, # from vesting + airdrops + incentivisation
-        'holding_allocation_cum': 0, # from vesting + airdrops + incentivisation
-        'tokens_apr_locked' : 0,
-        'tokens_buyback_locked' : 0,
-        'tokens_vested_cum': 0,
-        'tokens_burned': 0,
-        'tokens_burned_cum': 0,
-        'tokens_burned_usd': 0,
-        'minted_tokens' : 0,
-        'minted_tokens_cum': 0,
-        'minted_tokens_usd': 0,
-        'incentivised_tokens' : 0,
-        'incentivised_tokens_usd' : 0,
-        'incentivised_tokens_cum' : 0,
-        'airdrop_tokens' : 0,
-        'airdrop_tokens_usd' : 0,
-        'airdrop_tokens_cum' : 0
+        'te_total_supply' : 0, # total token supply in existence
+        'te_circulating_supply' : 0, # circulating token supply
+        'te_holding_supply' : 0, # supply of tokens held by agents
+        'te_MC' : 0, # market capitalization
+        'te_FDV_MC' : 0, # fully diluted market capitalization
+        'te_selling_perc': 0, # percentage of tokens sold
+        'te_utility_perc': 0, # percentage of tokens used for utility
+        'te_holding_perc': 0, # percentage of tokens held
+        'te_remove_perc': 0, # percentage of tokens removed
+        'te_selling_allocation': 0, # from vesting + airdrops + incentivisation
+        'te_utility_allocation': 0, # from vesting + airdrops + incentivisation
+        'te_holding_allocation': 0, # from vesting + airdrops + incentivisation
+        'te_selling_allocation_cum': 0, # from vesting + airdrops + incentivisation
+        'te_utility_allocation_cum': 0, # from vesting + airdrops + incentivisation
+        'te_holding_allocation_cum': 0, # from vesting + airdrops + incentivisation
+        'te_tokens_apr_locked' : 0, # tokens locked for APR
+        'te_tokens_buyback_locked' : 0, # tokens locked for buyback
+        'te_tokens_vested_cum': 0, # tokens vested cumulatively
+        'te_tokens_burned': 0, # tokens burned
+        'te_tokens_burned_cum': 0, # tokens burned cumulatively
+        'te_tokens_burned_usd': 0, # tokens burned in USD
+        'te_minted_tokens' : 0, # tokens minted
+        'te_minted_tokens_cum': 0, # tokens minted cumulatively
+        'te_minted_tokens_usd': 0, # tokens minted in USD
+        'te_incentivised_tokens' : 0, # tokens incentivised
+        'te_incentivised_tokens_usd' : 0, # tokens incentivised in USD
+        'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
+        'te_airdrop_tokens' : 0, # tokens airdropped
+        'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
+        'te_airdrop_tokens_cum' : 0 # tokens airdropped cumulatively
     }
 
     return token_economy
@@ -232,10 +232,10 @@ def initialize_user_adoption():
     Initialize the user adoption metrics.
     """
     user_adoption = {
-    'product_users': 0,
-    'token_holders': 0,
-    'product_revenue':0,
-    'token_buys': 0
+    'ua_product_users': 0, # amount of product users
+    'ua_token_holders': 0, # amount of token holders
+    'ua_product_revenue':0, # product revenue
+    'ua_token_buys': 0 # amount of effective token buys
     }
 
     return user_adoption
@@ -245,8 +245,8 @@ def initialize_business_assumptions():
     Initialize the business assumptions metrics.
     """
     business_assumptions = {
-    'cash_balance': 0, ## Row 184 in model
-    'buybacks_usd': 0 ## Row 134 in model
+    'ba_cash_balance': 0, ## Row 184 in model
+    'ba_buybacks_usd': 0 ## Row 134 in model
     }
 
     return business_assumptions
@@ -257,19 +257,19 @@ def initialize_utilities():
     Initialize the staking base apr metrics.
     """
     utilities = {
-    'staking_rewards': 0,
-    'staking_base_apr_cum':0,
-    'buyback_from_revenue_share_usd': 0,
-    'staking_revenue_share_allocation': 0,
-    'staking_revenue_share_allocation_cum': 0,
-    'liquidity_mining_allocation': 0,
-    'liquidity_mining_allocation_cum': 0,
-    'burning_allocation': 0,
-    'burning_allocation_cum': 0,
+    'u_staking_rewards': 0,
+    'u_staking_base_apr_cum':0,
+    'u_buyback_from_revenue_share_usd': 0,
+    'u_staking_revenue_share_allocation': 0,
+    'u_staking_revenue_share_allocation_cum': 0,
+    'u_liquidity_mining_allocation': 0,
+    'u_liquidity_mining_allocation_cum': 0,
+    'u_burning_allocation': 0,
+    'u_burning_allocation_cum': 0,
     'u_holding_allocation': 0, #added u for utility because of the metabucket with the same name
     'u_holding_allocation_cum': 0,
-    'transfer_allocation':0,
-    'transfer_allocation_cum': 0,
+    'u_transfer_allocation':0,
+    'u_transfer_allocation_cum': 0,
     }
 
     return utilities

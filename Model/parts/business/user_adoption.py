@@ -61,7 +61,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     ## Product Revenue
     
-    prev_product_users = prev_state['user_adoption']['product_users']
+    prev_product_users = prev_state['user_adoption']['ua_product_users']
     if current_month == 1:
         product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
     else:
@@ -81,7 +81,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
 
     ## Calculating Token Buys
-    prev_token_holders = prev_state['user_adoption']['token_holders']
+    prev_token_holders = prev_state['user_adoption']['ua_token_holders']
     if current_month == 1:
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:
@@ -90,7 +90,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     #token2_in_lp = token_buys/ lp2 price
     # This is going to be the same as token buys because we are assuing USD is the pair
 
-    return {'product_users': product_users, 'token_holders': token_holders,'product_revenue': product_revenue,'token_buys':token_buys}
+    return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
 
 
 
@@ -100,17 +100,17 @@ def update_user_adoption(params, substep, state_history, prev_state, policy_inpu
     Function to update the user adoption metrics
     """
 
-    product_users = policy_input['product_users']
-    token_holders  = policy_input['token_holders']
-    product_revenue = policy_input['product_revenue']
-    token_buys = policy_input['token_buys']
+    product_users = policy_input['ua_product_users']
+    token_holders  = policy_input['ua_token_holders']
+    product_revenue = policy_input['ua_product_revenue']
+    token_buys = policy_input['ua_token_buys']
 
     
     updated_user_adoption = {
-        'product_users': product_users,
-        'token_holders': token_holders,
-        'product_revenue': product_revenue,
-        'token_buys': token_buys
+        'ua_product_users': product_users,
+        'ua_token_holders': token_holders,
+        'ua_product_revenue': product_revenue,
+        'ua_token_buys': token_buys
     }
 
     return ('user_adoption', updated_user_adoption)

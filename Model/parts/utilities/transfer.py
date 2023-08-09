@@ -17,7 +17,7 @@ def transfer_agent_allocation(params, substep, state_history, prev_state, **kwar
         agents_transfer_allocations[agent] = utility_tokens * transfer_share
         agent_utility_sum += agents_transfer_allocations[agent]
     
-    return {'transfer_allocation': agent_utility_sum, 'agents_transfer_allocations': agents_transfer_allocations}
+    return {'u_transfer_allocation': agent_utility_sum, 'agents_transfer_allocations': agents_transfer_allocations}
 
 
 # STATE UPDATE FUNCTIONS
@@ -50,10 +50,10 @@ def update_transfer_meta_allocation(params, substep, state_history, prev_state, 
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    transfer_allocation = policy_input['transfer_allocation']
+    transfer_allocation = policy_input['u_transfer_allocation']
 
     # update logic
-    updated_utilities['transfer_allocation'] = transfer_allocation
-    updated_utilities['transfer_allocation_cum'] += transfer_allocation
+    updated_utilities['u_transfer_allocation'] = transfer_allocation
+    updated_utilities['u_transfer_allocation_cum'] += transfer_allocation
 
     return ('utilities', updated_utilities)

@@ -32,9 +32,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     # state variables
     current_month = prev_state['timestep']
     date = prev_state['date']
-    prev_cash_balance = prev_state['business_assumptions']['cash_balance']
-    buyback_from_revenue_share = prev_state['utilities']['buyback_from_revenue_share_usd']
-    product_revenue = prev_state['user_adoption']['product_revenue']
+    prev_cash_balance = prev_state['business_assumptions']['ba_cash_balance']
+    buyback_from_revenue_share = prev_state['utilities']['u_buyback_from_revenue_share_usd']
+    product_revenue = prev_state['user_adoption']['ua_product_revenue']
 
     # policy logic    
     # expenditures
@@ -87,7 +87,7 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
     buybacks = policy_input['buybacks']
 
     # update logic
-    updated_business_assumptions['buybacks_usd'] = buybacks
-    updated_business_assumptions['cash_balance'] += cash_flow
+    updated_business_assumptions['ba_buybacks_usd'] = buybacks
+    updated_business_assumptions['ba_cash_balance'] += cash_flow
 
     return ('business_assumptions', updated_business_assumptions)

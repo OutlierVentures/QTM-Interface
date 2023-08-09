@@ -41,12 +41,12 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
         locked_apr_tokens += agents[stakeholder]['a_tokens_apr_locked']
         locked_buyback_tokens += agents[stakeholder]['a_tokens_buyback_locked']
     
-    MC = liquidity_pool['token_price'] * circulating_tokens
-    FDV_MC = liquidity_pool['token_price'] * total_token_supply
+    MC = liquidity_pool['lp_token_price'] * circulating_tokens
+    FDV_MC = liquidity_pool['lp_token_price'] * total_token_supply
 
-    return {'total_token_supply': total_token_supply, 'selling_perc': selling_perc, 'utility_perc': utility_perc, 'holding_perc': holding_perc,
-            'remove_perc': remove_perc, 'circulating_supply': circulating_tokens, 'MC': MC, 'FDV_MC': FDV_MC, 'tokens_apr_locked': locked_apr_tokens,
-            'tokens_buyback_locked': locked_buyback_tokens}
+    return {'total_token_supply': total_token_supply, 'te_selling_perc': selling_perc, 'te_utility_perc': utility_perc, 'te_holding_perc': holding_perc,
+            'te_remove_perc': remove_perc, 'te_circulating_supply': circulating_tokens, 'te_MC': MC, 'te_FDV_MC': FDV_MC, 'te_tokens_apr_locked': locked_apr_tokens,
+            'te_tokens_buyback_locked': locked_buyback_tokens}
 
 # STATE UPDATE FUNCTIONS
 def update_date(params, substep, state_history, prev_state, policy_input, **kwargs):
@@ -67,27 +67,27 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
 
     # policy inputs
     total_token_supply = policy_input['total_token_supply']
-    selling_perc = policy_input['selling_perc']
-    utility_perc = policy_input['utility_perc']
-    holding_perc = policy_input['holding_perc']
-    remove_perc = policy_input['remove_perc']
-    circulating_supply = policy_input['circulating_supply']
-    MC = policy_input['MC']
-    FDV_MC = policy_input['FDV_MC']
-    tokens_apr_locked = policy_input['tokens_apr_locked']
-    tokens_buyback_locked = policy_input['tokens_buyback_locked']
+    selling_perc = policy_input['te_selling_perc']
+    utility_perc = policy_input['te_utility_perc']
+    holding_perc = policy_input['te_holding_perc']
+    remove_perc = policy_input['te_remove_perc']
+    circulating_supply = policy_input['te_circulating_supply']
+    MC = policy_input['te_MC']
+    FDV_MC = policy_input['te_FDV_MC']
+    tokens_apr_locked = policy_input['te_tokens_apr_locked']
+    tokens_buyback_locked = policy_input['te_tokens_buyback_locked']
 
 
     # update logic
-    updated_token_economy['total_supply'] = total_token_supply
-    updated_token_economy['circulating_supply'] = circulating_supply
-    updated_token_economy['MC'] = MC
-    updated_token_economy['FDV_MC'] = FDV_MC
-    updated_token_economy['tokens_apr_locked'] = tokens_apr_locked
-    updated_token_economy['tokens_buyback_locked'] = tokens_buyback_locked
-    updated_token_economy['selling_perc'] = selling_perc
-    updated_token_economy['utility_perc'] = utility_perc
-    updated_token_economy['holding_perc'] = holding_perc
-    updated_token_economy['remove_perc'] = remove_perc
+    updated_token_economy['te_total_supply'] = total_token_supply
+    updated_token_economy['te_circulating_supply'] = circulating_supply
+    updated_token_economy['te_MC'] = MC
+    updated_token_economy['te_FDV_MC'] = FDV_MC
+    updated_token_economy['te_tokens_apr_locked'] = tokens_apr_locked
+    updated_token_economy['te_tokens_buyback_locked'] = tokens_buyback_locked
+    updated_token_economy['te_selling_perc'] = selling_perc
+    updated_token_economy['te_utility_perc'] = utility_perc
+    updated_token_economy['te_holding_perc'] = holding_perc
+    updated_token_economy['te_remove_perc'] = remove_perc
 
     return ('token_economy', updated_token_economy)

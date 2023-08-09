@@ -73,7 +73,7 @@ if __name__ == '__main__'   :
         ## TEST MOCKUPS ##
         print("\n-------------------------------------------## MOCKUP TESTS ##------------------------------------------")
         print("Testing MOCKUP implementations of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="holding_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_holding_supply', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.001)
         print("\n\n")
 
         
@@ -81,8 +81,8 @@ if __name__ == '__main__'   :
         ## TEST ADOPTION ##
         print("\n-------------------------------------------## TEST ADOPTION ##-----------------------------------------")
         print("Testing adoption of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="product_users", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=7, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="token_holders", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=8, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ua_product_users', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=7, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ua_token_holders', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=8, relative_tolerance=0.001)
 
         
         ## TEST AGENT VESTING VALUES ##
@@ -101,26 +101,26 @@ if __name__ == '__main__'   :
         ## TEST FREE SUPPLY USAGE ##
         print("\n--------------------------------------## TEST FREE SUPPLY USAGE ##-------------------------------------")
         print("Testing free supply usage of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="selling_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=45, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="utility_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=46, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="holding_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=47, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_selling_perc', data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=45, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_utility_perc', data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=46, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_holding_perc', data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=47, relative_tolerance=0.001)
 
 
         ## TEST INCENTIVISATION ##
         print("\n---------------------------------------## TEST INCENTIVISATION ##--------------------------------------")
         print("Testing incentivisation of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="minted_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=50, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="incentivised_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="incentivised_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
-        #test_timeseries(data=data, data_key="incentivised_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_minted_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=50, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_incentivised_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_incentivised_tokens_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.001)
+        #test_timeseries(data=data, data_key='te_incentivised_tokens_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.001)
 #ERROR
 
         ## TEST AIRDROPS ##
         print("\n------------------------------------------## TEST AIRDROPS ##------------------------------------------")
         print("Testing airdrops of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="airdrop_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=57, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="airdrop_tokens_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=59, relative_tolerance=0.001)
-        #test_timeseries(data=data, data_key="airdrop_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=61, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_airdrop_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=57, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_airdrop_tokens_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=59, relative_tolerance=0.001)
+        #test_timeseries(data=data, data_key='te_airdrop_tokens_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=61, relative_tolerance=0.001)
 
 
         ## TEST AGENT META BUCKET ALLOCATIONS ##
@@ -144,26 +144,26 @@ if __name__ == '__main__'   :
         ## TEST META BUCKET ALLOCATION SUMS ##
         print("\n---------------------------------## TEST META BUCKET ALLOCATION SUMS ##---------------------------------")
         print("Testing meta bucket allocation sums of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="selling_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=74, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="selling_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=75, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="utility_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=87, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="utility_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=88, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=100, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="holding_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=101, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_selling_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=74, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_selling_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=75, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_utility_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=87, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_utility_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=88, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_holding_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=100, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='te_holding_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=101, relative_tolerance=0.001, timestep_cut_off=1)
 
         
         ## TEST META UTILITY SHARE ALLOCATIONS ##
         print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")
         print("Testing meta utility share allocations of radCad timeseries simulation against QTM data tables...")
         # staking: revenue share
-        test_timeseries(data=data, data_key="staking_revenue_share_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="staking_revenue_share_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=110, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_revenue_share_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_revenue_share_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=110, relative_tolerance=0.001, timestep_cut_off=1)
         # liquidity mining
-        test_timeseries(data=data, data_key="liquidity_mining_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=105, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="liquidity_mining_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=111, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_liquidity_mining_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=105, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_liquidity_mining_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=111, relative_tolerance=0.001, timestep_cut_off=1)
         # burning
-        test_timeseries(data=data, data_key="burning_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=106, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="burning_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_burning_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=106, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_burning_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
 
         # holding, no cum, already assessed in holding supply
         test_timeseries(data=data, data_key="u_holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
@@ -172,78 +172,78 @@ if __name__ == '__main__'   :
         ## TEST ADOPTION 2 ##
         print("\n------------------------------------------## TEST ADOPTION 2 ##-----------------------------------------")
         print("Testing product revenue and token_buys of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="product_revenue", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=117, relative_tolerance=0.001)
-        test_timeseries(data=data, data_key="token_buys", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=119, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ua_product_revenue', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=117, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ua_token_buys', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=119, relative_tolerance=0.001)
 
         
         ## TEST TOKEN ALLOCATION REMOVAL PERCENTAGE ##
         print("\n-------------------------------## TEST TOKEN UTILITY REMOVAL PERCENTAGE ##------------------------------")
         print("Testing token utility removal percentage of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="remove_perc", data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=123, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_remove_perc', data_row_multiplier=100, QTM_data_tables=QTM_data_tables, QTM_row=123, relative_tolerance=0.001)
 
         
         ## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##
         print("\n----------------------------## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##---------------------------")
         print("Testing token utility removal percentage of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="buyback_from_revenue_share_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=133, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='u_buyback_from_revenue_share_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=133, relative_tolerance=0.001)
 
         
         ## TEST SUM OF BUYBACKS ##
         print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
         print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="buybacks_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ba_buybacks_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
 
 
         ## TEST PROTOCOL BUCKET BURN ##
         print("\n----------------------------------------## TEST PROTOCOL BUCKET BURN ##--------------------------------------")
         print("Testing protocol bucket burn of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="tokens_burned", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=138, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='te_tokens_burned', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=138, relative_tolerance=0.001)
 
 
         ## TEST LIQUIDITY POOL TRANSACTIONS ##
         print("\n-------------------------------------## TEST LIQUIDITY POOL TRANSACTIONS ##-----------------------------------")
         print("Testing liquidity pool transactions of radCad timeseries simulation against QTM data tables...")
         print("Tx1 - after adoption..")
-        test_timeseries(data=data_tx1, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=141, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx1, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=142, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx1, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=143, relative_tolerance=0.01, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key='lp_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=141, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key='lp_usdc', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=142, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx1, data_key='lp_token_price', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=143, relative_tolerance=0.01, timestep_cut_off=1)
         print("Tx2 - after vesting sell..")
-        test_timeseries(data=data_tx2, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=144, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx2, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=145, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx2, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=146, relative_tolerance=0.01, timestep_cut_off=1)
+        test_timeseries(data=data_tx2, data_key='lp_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=144, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx2, data_key='lp_usdc', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=145, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx2, data_key='lp_token_price', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=146, relative_tolerance=0.01, timestep_cut_off=1)
         print("Tx3 - after liquidity addition..")
-        test_timeseries(data=data_tx3, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=147, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx3, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=148, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx3, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=149, relative_tolerance=0.01, timestep_cut_off=1)
+        test_timeseries(data=data_tx3, data_key='lp_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=147, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx3, data_key='lp_usdc', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=148, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx3, data_key='lp_token_price', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=149, relative_tolerance=0.01, timestep_cut_off=1)
         print("Tx4 - after buyback..")
-        test_timeseries(data=data_tx4, data_key="tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=150, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx4, data_key="usdc", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=151, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data_tx4, data_key="token_price", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=152, relative_tolerance=0.01, timestep_cut_off=1)
+        test_timeseries(data=data_tx4, data_key='lp_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=150, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx4, data_key='lp_usdc', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=151, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data_tx4, data_key='lp_token_price', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=152, relative_tolerance=0.01, timestep_cut_off=1)
 
 
         ## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##
         print("\n-------------------------------## TEST LIQUIDITY POOL VALUATION AND VOLATILITY ##------------------------------")
         print("Testing liquidity pool valuation and volatility of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key="lp_valuation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=154, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="volatility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=156, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="lp_volatility", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=156, relative_tolerance=0.001, timestep_cut_off=1)
 
         
         ## TEST CASH BALANCE ##
         print("\n-----------------------------------------## TEST CASH BALANCE ##----------------------------------------")
         print("Testing cash balance of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="cash_balance", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=184, relative_tolerance=0.001)
+        test_timeseries(data=data, data_key='ba_cash_balance', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=184, relative_tolerance=0.001)
 
 
         """ ## TEST A SUPPLY ##
         print("\n-------------------------------------## TEST CIRCULATING SUPPLY ##-------------------------------------")
         print("Testing circulating supply of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="circulating_supply", QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)"""
+        test_timeseries(data=data, data_key='te_circulating_supply', QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001)"""
         
         
       ## TEST APR ##
         print("\n---------------------------------------## Rewards apr ##--------------------------------------")
         print("Testing apr of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key="staking_rewards", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001, timestep_cut_off=1)
        #NOT READY TO TEST YET ->    test_timeseries(data=data, data_key="apr_tokens_usd", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=166, relative_tolerance=0.001)
 
         ### END OF TESTS ###
@@ -254,8 +254,8 @@ if __name__ == '__main__'   :
     else:
 
     # holding
-        test_timeseries(data=data, data_key="transfer_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
-        test_timeseries(data=data, data_key="transfer_allocation_cum", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_transfer_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_transfer_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
 
 
 

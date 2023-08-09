@@ -47,7 +47,7 @@ def update_holding_agent_allocation(params, substep, state_history, prev_state, 
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['a_tokens_held'] = agents_holding_allocations[agent]
+        updated_agents[agent]['a_tokens'] += agents_holding_allocations[agent]
 
     return ('agents', updated_agents)
 

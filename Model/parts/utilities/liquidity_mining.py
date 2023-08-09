@@ -17,7 +17,7 @@ def staking_liquidity_mining_agent_allocation(params, substep, state_history, pr
         agents_liquidity_mining_allocations[agent] = utility_tokens * liquidity_mining_share
         agent_utility_sum += agents_liquidity_mining_allocations[agent]
     
-    return {'liquidity_mining_allocation': agent_utility_sum, 'agents_liquidity_mining_allocations': agents_liquidity_mining_allocations}
+    return {'u_liquidity_mining_allocation': agent_utility_sum, 'agents_liquidity_mining_allocations': agents_liquidity_mining_allocations}
 
 
 # STATE UPDATE FUNCTIONS
@@ -50,10 +50,10 @@ def update_liquidity_mining_meta_allocation(params, substep, state_history, prev
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    liquidity_mining_allocation = policy_input['liquidity_mining_allocation']
+    liquidity_mining_allocation = policy_input['u_liquidity_mining_allocation']
 
     # update logic
-    updated_utilities['liquidity_mining_allocation'] = liquidity_mining_allocation
-    updated_utilities['liquidity_mining_allocation_cum'] += liquidity_mining_allocation
+    updated_utilities['u_liquidity_mining_allocation'] = liquidity_mining_allocation
+    updated_utilities['u_liquidity_mining_allocation_cum'] += liquidity_mining_allocation
 
     return ('utilities', updated_utilities)
