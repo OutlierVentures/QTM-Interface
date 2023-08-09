@@ -22,12 +22,15 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     # reward logic
 
 
-    #liquidity_pool_allocation = 'Fund Raising'!$D$41 = liquidity pool allocation
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     token_payout_apr = params['holding_apr']
-    
 
+    liquidity_pool = prev_state['liquidity_pool'].copy()
+    lp_tokens = liquidity_pool['lp_tokens']
     holding_allocation = prev_state['utilities']['u_holding_allocation']
+
+    #WILL NEED TO ADJUST SUBSTEPS TO PUT THIS ONE RIGHT AFTER ADOPTION
+
     #=(holding_allocation+(initial_lp_token_allocation-token_after_adoption)+agent_utility_sum)*token_payout_apr/100/12
     return {'u_holding_allocation': agent_utility_sum, 'agents_holding_allocations': agents_holding_allocations}
 
