@@ -31,11 +31,11 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, 
               tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float,
               tokens_incentivised_cum: float, tokens_apr_locked: float, tokens_apr_locked_cum: float,
-              tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
-              tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float, tokens_transferred: float,
-              tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
-              selling_tokens: float, utility_tokens: float, holding_tokens: float, actions: dict,
-              current_action: str) -> dict:
+              tokens_apr_locked_remove: float, tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
+              tokens_buyback_locked_remove: float, tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float,
+              tokens_liquidity_mining_remove: float, tokens_transferred: float, tokens_transferred_cum: float,
+              tokens_burned: float, tokens_burned_cum: float, selling_tokens: float, utility_tokens: float,
+              holding_tokens: float, actions: dict, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -52,10 +52,13 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_incentivised_cum': tokens_incentivised_cum, # amount of incentivised tokens cumulatively
              'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
              'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
+             'a_tokens_apr_locked_remove': tokens_apr_locked_remove, # amount of tokens removed from staking for base apr
              'a_tokens_buyback_locked': tokens_buyback_locked, # amount of tokens locked for buyback per timestep
              'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum, # amount of tokens locked for buyback cumulatively
+             'a_tokens_buyback_locked_remove': tokens_buyback_locked_remove, # amount of tokens removed from staking for buyback share
              'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens locked for liquidity mining per timestep
              'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens locked for liquidity mining cumulatively
+             'a_tokens_liquidity_mining_remove': tokens_liquidity_mining_remove, # amount of tokens removed from liquidity mining
              'a_tokens_transferred': tokens_transferred, # amount of tokens transferred per timestep
              'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
              'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
@@ -87,10 +90,13 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_incentivised_cum = 0,
                                     tokens_apr_locked = 0,
                                     tokens_apr_locked_cum = 0,
+                                    tokens_apr_locked_remove = 0,
                                     tokens_buyback_locked = 0,
                                     tokens_buyback_locked_cum = 0,
+                                    tokens_buyback_locked_remove = 0,
                                     tokens_liquidity_mining = 0,
                                     tokens_liquidity_mining_cum = 0,
+                                    tokens_liquidity_mining_remove = 0,
                                     tokens_transferred = 0,
                                     tokens_transferred_cum = 0,
                                     tokens_burned = 0,
@@ -208,8 +214,6 @@ def generate_initial_token_economy_metrics():
         'te_selling_allocation_cum': 0, # from vesting + airdrops + incentivisation
         'te_utility_allocation_cum': 0, # from vesting + airdrops + incentivisation
         'te_holding_allocation_cum': 0, # from vesting + airdrops + incentivisation
-        'te_tokens_apr_locked' : 0, # tokens locked for APR
-        'te_tokens_buyback_locked' : 0, # tokens locked for buyback
         'te_tokens_vested_cum': 0, # tokens vested cumulatively
         'te_tokens_burned': 0, # tokens burned
         'te_tokens_burned_cum': 0, # tokens burned cumulatively
@@ -245,8 +249,8 @@ def initialize_business_assumptions():
     Initialize the business assumptions metrics.
     """
     business_assumptions = {
-    'ba_cash_balance': 0, ## Row 184 in model
-    'ba_buybacks_usd': 0 ## Row 134 in model
+    'ba_cash_balance': 0, ## Row 184 in model, cash balance of the company
+    'ba_buybacks_usd': 0 ## Row 134 in model, buybacks in USD per month
     }
 
     return business_assumptions
@@ -254,23 +258,26 @@ def initialize_business_assumptions():
 
 def initialize_utilities():
     """
-    Initialize the staking base apr metrics.
+    Initialize the utility meta bucket metrics.
     """
     utilities = {
-    'u_staking_rewards': 0,
-    'u_staking_base_apr_cum':0,
-    'u_staking_base_apr':0,
-    'u_buyback_from_revenue_share_usd': 0,
-    'u_staking_revenue_share_allocation': 0,
-    'u_staking_revenue_share_allocation_cum': 0,
-    'u_liquidity_mining_allocation': 0,
-    'u_liquidity_mining_allocation_cum': 0,
-    'u_burning_allocation': 0,
-    'u_burning_allocation_cum': 0,
-    'u_holding_allocation': 0, #added u for utility because of the metabucket with the same name
-    'u_holding_allocation_cum': 0,
-    'u_transfer_allocation':0,
-    'u_transfer_allocation_cum': 0,
+    'u_staking_rewards': 0, # staking token rewards
+    'u_staking_base_apr':0, # staking base apr allocation per timestep
+    'u_staking_base_apr_cum':0, # staking base apr allocation cumulatively
+    'u_staking_base_apr_remove':0, # staking base apr token removal
+    'u_buyback_from_revenue_share_usd': 0, # buyback from revenue share in USD
+    'u_staking_revenue_share_allocation': 0, # staking revenue share token allocation per timestep
+    'u_staking_revenue_share_allocation_cum': 0, # staking revenue share token allocation cumulatively
+    'u_staking_revenue_share_remove': 0, # staking revenue share token removal
+    'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
+    'u_liquidity_mining_allocation_cum': 0, # liquidity mining token allocation cumulatively
+    'u_liquidity_mining_allocation_remove': 0, # liquidity mining token removal
+    'u_burning_allocation': 0, # burning token allocation per timestep
+    'u_burning_allocation_cum': 0, # burning token allocation cumulatively
+    'u_holding_allocation': 0, # holding token allocation per timestep from utility bucket
+    'u_holding_allocation_cum': 0, # holding token allocation cumulatively from utility bucket
+    'u_transfer_allocation':0, # transfer token allocation per timestep
+    'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
     }
 
     return utilities

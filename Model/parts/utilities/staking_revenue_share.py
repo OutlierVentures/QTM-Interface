@@ -1,5 +1,5 @@
 # POLICY FUNCTIONS
-def staking_revenue_share_buyback_agent_allocation(params, substep, state_history, prev_state, **kwargs):
+def staking_revenue_share_buyback_allocation(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to calculate the agent staking allocation for token buybacks from the revenue share
     """

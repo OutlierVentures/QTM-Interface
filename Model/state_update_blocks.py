@@ -119,10 +119,11 @@ state_update_block = [
     {
         # substep 11: utilities/staking_base_apr.py
         'policies': {
-            'apr': apr,
+            'staking_apr_allocation': staking_apr_allocation,
         },
         'variables': {
             'utilities': update_utilties_after_apr,
+            'agents': update_agents_after_apr,
         },
     },
     {
@@ -137,7 +138,7 @@ state_update_block = [
     {
         # substep 13: utilities/staking_revenue_share.py
         'policies': {
-            'staking_revenue_share_buyback_agent_allocation': staking_revenue_share_buyback_agent_allocation,
+            'staking_revenue_share_buyback_allocation': staking_revenue_share_buyback_allocation,
         },
         'variables': {
             'agents': update_staking_revenue_share_buyback_agent_allocation,
