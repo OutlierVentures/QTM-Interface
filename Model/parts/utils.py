@@ -276,6 +276,7 @@ def initialize_utilities():
     'u_burning_allocation_cum': 0, # burning token allocation cumulatively
     'u_holding_allocation': 0, # holding token allocation per timestep from utility bucket
     'u_holding_allocation_cum': 0, # holding token allocation cumulatively from utility bucket
+    'u_holding_rewards':0, # holding token rewards
     'u_transfer_allocation':0, # transfer token allocation per timestep
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
     }

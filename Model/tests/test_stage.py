@@ -52,7 +52,7 @@ if __name__ == '__main__'   :
     df = pd.DataFrame(result)
 
     # post processing
-    data_tx1 = postprocessing(df, substep=19) # after adoption buy lp tx
+    data_tx1 = postprocessing(df, substep=18) # after adoption buy lp tx
     data_tx2 = postprocessing(df, substep=20) # after vesting sell lp tx
     data_tx3 = postprocessing(df, substep=21) # after vesting sell lp tx
     data_tx4 = postprocessing(df, substep=22) # after vesting sell lp tx
@@ -155,6 +155,11 @@ if __name__ == '__main__'   :
         ## TEST META UTILITY SHARE ALLOCATIONS ##
         print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")
         print("Testing meta utility share allocations of radCad timeseries simulation against QTM data tables...")
+        # staking: apr
+        test_timeseries(data=data, data_key='u_staking_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_base_apr', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=103, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_staking_base_apr_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=109, relative_tolerance=0.001, timestep_cut_off=1)
+        
         # staking: revenue share
         test_timeseries(data=data, data_key='u_staking_revenue_share_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key='u_staking_revenue_share_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=110, relative_tolerance=0.001, timestep_cut_off=1)
@@ -166,6 +171,8 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key='u_burning_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)
         # holding, cum comes later
         test_timeseries(data=data, data_key="u_holding_allocation", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=107, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="u_holding_rewards", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=163, relative_tolerance=0.001, timestep_cut_off=1)
+
         # transfer
         test_timeseries(data=data, data_key='u_transfer_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=108, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key='u_transfer_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=114, relative_tolerance=0.001, timestep_cut_off=1)
