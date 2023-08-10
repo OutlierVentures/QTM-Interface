@@ -174,21 +174,8 @@ state_update_block = [
             'utilities': update_transfer_meta_allocation,
         },
     },
-
     {
-        # substep 17: utilities/holding.py
-        'policies': {
-            'holding_agent_allocation': holding_agent_allocation,
-        },
-        'variables': {
-            'agents': update_holding_agent_allocation,
-            'utilities': update_holding_meta_allocation,
-        },
-    },
-
-    
-    {
-        # substep 18: business/business_assumptions.py
+        # substep 17: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
         },
@@ -197,13 +184,23 @@ state_update_block = [
         },
     },
     {
-        # substep 19: ecosystem/liquidity_pool.py
+        # substep 18: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
         'variables': {
             'agents': update_agents_tx1_after_adoption,
             'liquidity_pool': update_liquidity_pool_after_transaction,
+        },
+    },
+    {
+        # substep 19: utilities/holding.py
+        'policies': {
+            'holding_agent_allocation': holding_agent_allocation,
+        },
+        'variables': {
+            'agents': update_holding_agent_allocation,
+            'utilities': update_holding_meta_allocation,
         },
     },
     {

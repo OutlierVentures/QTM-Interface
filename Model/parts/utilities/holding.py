@@ -19,20 +19,23 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
         agent_utility_sum += agents_holding_allocations[agent]
     
 
+
     # reward logic
 
-
+        #params
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     token_payout_apr = params['holding_apr']
 
+
+        #state variables
     liquidity_pool = prev_state['liquidity_pool'].copy()
-    lp_tokens = liquidity_pool['lp_tokens']
-    holding_allocation = prev_state['utilities']['u_holding_allocation']
+    token_after_adoption = liquidity_pool['lp_tokens']
+    holding_allocation = prev_state['token_economy']['te_holding_allocation']
 
-    #WILL NEED TO ADJUST SUBSTEPS TO PUT THIS ONE RIGHT AFTER ADOPTION
-
-    #=(holding_allocation+(initial_lp_token_allocation-token_after_adoption)+agent_utility_sum)*token_payout_apr/100/12
-    return {'u_holding_allocation': agent_utility_sum, 'agents_holding_allocations': agents_holding_allocations}
+        #formula
+    u_holding_rewards =(holding_allocation+(initial_lp_token_allocation-token_after_adoption)+agent_utility_sum)*token_payout_apr/100/12
+    
+    return {'u_holding_allocation': agent_utility_sum, 'agents_holding_allocations': agents_holding_allocations,'u_holding_rewards':u_holding_rewards}
 
 
 # STATE UPDATE FUNCTIONS
@@ -70,9 +73,10 @@ def update_holding_meta_allocation(params, substep, state_history, prev_state, p
 
     # get policy input
     holding_allocation = policy_input['u_holding_allocation']
-
+    holding_rewards = policy_input['u_holding_rewards']
     # update logic
     updated_utilities['u_holding_allocation'] = holding_allocation
+    updated_utilities['u_holding_rewards'] = holding_rewards
 
     return ('utilities', updated_utilities)
 

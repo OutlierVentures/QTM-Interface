@@ -267,8 +267,9 @@ def initialize_utilities():
     'u_liquidity_mining_allocation_cum': 0,
     'u_burning_allocation': 0,
     'u_burning_allocation_cum': 0,
-    'u_holding_allocation': 0, #added u for utility because of the metabucket with the same name
+    'u_holding_allocation': 0, 
     'u_holding_allocation_cum': 0,
+    'u_holding_rewards':0,
     'u_transfer_allocation':0,
     'u_transfer_allocation_cum': 0,
     }
