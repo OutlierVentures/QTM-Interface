@@ -4,6 +4,7 @@ import numpy as np
 import os
 import sys
 import traceback
+import time
 
 # radCAD
 from radcad import Model, Simulation, Experiment
@@ -42,6 +43,8 @@ parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_d
 QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
 if __name__ == '__main__'   :
+    start_time = time.process_time()
+
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10
 
@@ -50,13 +53,16 @@ if __name__ == '__main__'   :
 
     result = simulation.run()
     df = pd.DataFrame(result)
+    simulation_end_time = time.process_time()
 
     # post processing
     data_tx1 = postprocessing(df, substep=18) # after adoption buy lp tx
     data_tx2 = postprocessing(df, substep=20) # after vesting sell lp tx
     data_tx3 = postprocessing(df, substep=21) # after vesting sell lp tx
     data_tx4 = postprocessing(df, substep=22) # after vesting sell lp tx
+    postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
+    postprocessing_all_end_time = time.process_time()
 
 
 
@@ -265,3 +271,13 @@ if __name__ == '__main__'   :
     else:
 
         pass
+
+    print("\n-------------------------------------------------------------------------------------------------------")
+    print("\n-------------------------------------------## END OF TESTS ##-------------------------------------------")
+    print("\n-------------------------------------------------------------------------------------------------------")
+    print("\n")
+    # display necessery time data
+    print("Simulation time: ", simulation_end_time - start_time, " s")
+    print("Post processing one dataframe time: ", postprocessing_all_end_time - postprocessing_one_start_time, " s")
+    print("Post processing all dataframes time: ", postprocessing_all_end_time - simulation_end_time, " s")
+    print("Whole Test time: ", time.process_time() - start_time, " s")
