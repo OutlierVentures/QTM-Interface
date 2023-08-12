@@ -279,6 +279,10 @@ def initialize_utilities():
     'u_holding_rewards':0, # holding token rewards
     'u_transfer_allocation':0, # transfer token allocation per timestep
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
+    'u_transfer_rewards': 0, # transfer token rewards
+    'u_transfer_allocation_remove':0 # Transfer token removal
+
+
     }
 
     return utilities

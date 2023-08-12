@@ -171,8 +171,8 @@ state_update_block = [
             'transfer_agent_allocation': transfer_agent_allocation,
         },
         'variables': {
-            'agents': update_transfer_agent_allocation,
-            'utilities': update_transfer_meta_allocation,
+            'agents': update_agents_after_transfer,
+            'utilities': update_utilties_after_transfer,
         },
     },
     {
