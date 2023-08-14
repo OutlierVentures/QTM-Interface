@@ -57,9 +57,9 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 Python 3.9 is recommended!
 
 - Clone this repository to your local machine by `git clone https://github.com/BlockBoy32/QTM-Interface.git`
-- Create a new Python environment in the projects directory by `python venv venv`
-- Activate the new environment by `venv\scripts\activate`
-- Install all required packages by `pip3 install -r requirements.txt`
+- Create a new Python environment in the projects directory by `python -m venv venv`
+- Activate the new environment by `source venv/bin/activate`
+- Install all required packages by `pip install -r requirements.txt`
 
 ## Usage
 
