@@ -200,8 +200,8 @@ state_update_block = [
             'holding_agent_allocation': holding_agent_allocation,
         },
         'variables': {
-            'agents': update_holding_agent_allocation,
-            'utilities': update_holding_meta_allocation,
+            'agents': update_agents_after_holding,
+            'utilities': update_utilties_after_holding,
         },
     },
     {

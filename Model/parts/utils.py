@@ -34,7 +34,8 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens_apr_locked_remove: float, tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
               tokens_buyback_locked_remove: float, tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float,
               tokens_liquidity_mining_remove: float, tokens_transferred: float, tokens_transferred_cum: float,
-              tokens_burned: float, tokens_burned_cum: float, selling_tokens: float, utility_tokens: float,
+              tokens_burned: float, tokens_burned_cum: float, tokens_held: float, tokens_held_cum: float, tokens_held_remove: float,
+              selling_tokens: float, utility_tokens: float,
               holding_tokens: float, actions: dict, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
@@ -63,6 +64,9 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
              'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
              'a_tokens_burned_cum': tokens_burned_cum, # amount of tokens burned cumulatively
+             'a_tokens_held': tokens_held, # amount of tokens held per timestep
+             'a_tokens_held_cum': tokens_held_cum, # amount of tokens held cumulatively
+             'a_tokens_held_remove': tokens_held_remove,  # amount of tokens removed from holding
              'a_selling_tokens': selling_tokens, # agent meta bucket selling allocations
              'a_utility_tokens': utility_tokens, # agent meta bucket utility allocations
              'a_holding_tokens': holding_tokens, # agent meta bucket holding allocations
@@ -101,6 +105,9 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_transferred_cum = 0,
                                     tokens_burned = 0,
                                     tokens_burned_cum = 0,
+                                    tokens_held = 0,
+                                    tokens_held_cum = 0,
+                                    tokens_held_remove = 0,
                                     selling_tokens = 0,
                                     utility_tokens = 0,
                                     holding_tokens = 0,
@@ -276,6 +283,7 @@ def initialize_utilities():
     'u_burning_allocation_cum': 0, # burning token allocation cumulatively
     'u_holding_allocation': 0, # holding token allocation per timestep from utility bucket
     'u_holding_allocation_cum': 0, # holding token allocation cumulatively from utility bucket
+    'u_holding_allocation_remove': 0, # holding tokens removed
     'u_holding_rewards':0, # holding token rewards
     'u_transfer_allocation':0, # transfer token allocation per timestep
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
