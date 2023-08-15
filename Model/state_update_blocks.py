@@ -151,8 +151,8 @@ state_update_block = [
             'staking_liquidity_mining_agent_allocation': staking_liquidity_mining_agent_allocation,
         },
         'variables': {
-            'agents': update_liquidity_mining_agent_allocation,
-            'utilities': update_liquidity_mining_meta_allocation,
+            'agents': update_agents_after_liquidity_mining,
+            'utilities': update_utilties_after_liquidity_mining,
         },
     },
     {

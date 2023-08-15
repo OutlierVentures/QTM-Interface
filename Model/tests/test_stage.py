@@ -172,6 +172,8 @@ if __name__ == '__main__'   :
         # liquidity mining
         test_timeseries(data=data, data_key='u_liquidity_mining_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=105, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key='u_liquidity_mining_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=111, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key='u_liquidity_mining_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=161, relative_tolerance=0.001, timestep_cut_off=1)
+
         # burning
         test_timeseries(data=data, data_key='u_burning_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=106, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key='u_burning_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=112, relative_tolerance=0.001, timestep_cut_off=1)

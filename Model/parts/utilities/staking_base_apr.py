@@ -62,7 +62,6 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
 
 
 
-#NEED TO BUILD AGENT ONE
 def update_agents_after_apr(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the utilities after apr

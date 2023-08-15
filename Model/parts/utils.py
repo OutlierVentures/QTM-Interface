@@ -276,6 +276,7 @@ def initialize_utilities():
     'u_staking_revenue_share_allocation': 0, # staking revenue share token allocation per timestep
     'u_staking_revenue_share_allocation_cum': 0, # staking revenue share token allocation cumulatively
     'u_staking_revenue_share_remove': 0, # staking revenue share token removal
+    'u_liquidity_mining_rewards': 0, # liquidity mining rewards
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
     'u_liquidity_mining_allocation_cum': 0, # liquidity mining token allocation cumulatively
     'u_liquidity_mining_allocation_remove': 0, # liquidity mining token removal
