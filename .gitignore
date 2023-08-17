@@ -3,3 +3,4 @@ __pycache__
 ./data/__pycache__
 ./Model/__pycache__
 ./Model/parts/__pycache__
+.ipynb_checkpoints

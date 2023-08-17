@@ -1,4 +1,4 @@
-# POLICIY FUNCTIONS
+# POLICY FUNCTIONS
 def incentivisation(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to incentivise the ecosystem

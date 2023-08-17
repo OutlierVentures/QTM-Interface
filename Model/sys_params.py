@@ -1,4 +1,3 @@
-import uuid
 from parts.utils import *
 import pandas as pd
 
@@ -53,7 +52,6 @@ liquidity_pool_initial_values = {
 }
 sys_param.update(liquidity_pool_initial_values)
 
-
 # calculating the initial values for the different agents
 stakeholder_names = [
     'angle',
@@ -74,7 +72,7 @@ stakeholder_names = [
     'airdrop_receivers',
     'incentivisation_receivers'
 ]
-#initial_stakeholder_values = generate_agents(stakeholder_names)
+# initial_stakeholder_values = generate_agents(stakeholder_names)
 
 # defining the mapping between the stakeholder names and their type categories
 stakeholder_name_mapping = {
@@ -97,10 +95,10 @@ stakeholder_name_mapping = {
     'incentivisation_receivers': 'incentivisation_receivers',
 }
 
+# generating agents from the mapping
 initial_stakeholder_values = generate_agents(stakeholder_name_mapping)
 
-
-
+# setting initial values for user adoption
 user_adoption_initial_values = {
     'initial_product_users' : [x for x in sys_param['initial_product_users']],
     'product_users_after_10y' : [x for x in sys_param['product_users_after_10y']],
@@ -119,9 +117,10 @@ user_adoption_initial_values = {
 
 }
 
+# updating parameters with user adoption data
 sys_param.update(user_adoption_initial_values)
 
-
+# setting nitial values for business assumptions
 business_assumptions_initial_values = {
     'product_income_per_month': [x for x in sys_param['product_income_per_month']],
     'royalty_income_per_month': [x for x in sys_param['royalty_income_per_month']],
@@ -145,13 +144,10 @@ business_assumptions_initial_values = {
     'burn_project_bucket': [x for x in sys_param['burn_project_bucket']]
 }
 
-
-
+# updating business assumptions parameters
 sys_param.update(business_assumptions_initial_values)
 
-
-
-
+# setting initial values for utility parameters
 utility_initial_values = {
     'lock_share': [x for x in sys_param['lock_share']],
     'lock_buyback_distribute_share': [x for x in sys_param['lock_buyback_distribute_share']],
@@ -171,5 +167,5 @@ utility_initial_values = {
     'incentivisation_payout_source': [x for x in sys_param['incentivisation_payout_source']]
 }
 
-
+# updating utility parameters
 sys_param.update(utility_initial_values)

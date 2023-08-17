@@ -17,7 +17,7 @@ from parts.utilities.transfer import *
 
 from parts.mockups import *
 
-
+# QTM logic order 
 state_update_block = [
     ## MOCKUP STATE UPDATE BLOCKS ##
     {

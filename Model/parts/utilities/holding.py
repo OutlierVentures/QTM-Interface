@@ -6,7 +6,8 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     """
     # get parameters
     holding_share = params['holding_share']/100
-        #rewards    
+
+    #rewards    
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     token_payout_apr = params['holding_apr']
 
@@ -14,7 +15,8 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     agents = prev_state['agents'].copy()
     utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
     liquidity_pool = prev_state['liquidity_pool'].copy()
-        #Rewards
+
+    #rewards
     token_after_adoption = liquidity_pool['lp_tokens_after_adoption']
     holding_allocation = prev_state['token_economy']['te_holding_allocation']
     
@@ -39,7 +41,7 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
         agent_utility_removal_sum += agents_holding_removal[agent] # sum up the total amount of tokens removed from the staking apr utility for this timestep
 
 
-            #rewards  
+        #rewards  
         agents_holding_rewards[agent] = agents_holding_allocations[agent]*token_payout_apr/100/12
         agent_utility_rewards_sum += agents_holding_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
 
@@ -57,8 +59,6 @@ def update_agents_after_holding(params, substep, state_history, prev_state, poli
     """
     Function to update agent holding allocations
     """
-
-
 
     # get parameters
     holding_payout_source = params['holding_payout_source']
@@ -94,7 +94,7 @@ def update_utilties_after_holding(params, substep, state_history, prev_state, po
     Function to update meta burning allocations
     """
     # get parameters
-
+    # TODO? 
 
     # get state variables
     updated_utilities = prev_state['utilities'].copy()

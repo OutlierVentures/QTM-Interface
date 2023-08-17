@@ -6,11 +6,9 @@ def transfer_agent_allocation(params, substep, state_history, prev_state, **kwar
     # get parameters
     transfer_share = params['transfer_share']/100
 
-
     # get state variables
     agents = prev_state['agents'].copy()
     utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
-
 
     # policy logic
     # initialize policy logic variables
@@ -28,7 +26,7 @@ def transfer_agent_allocation(params, substep, state_history, prev_state, **kwar
         agents_transfer_allocations[agent] = utility_tokens * transfer_share # calculate the amount of tokens that shall be allocated to the transfer utility from this timestep
         agents_transfer_removal[agent] = tokens_apr_locked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the transfer for this timestep based on the tokens allocated in the previous timestep
         
-        
+        # TODO?
         #NEED TO CALCULATE REWARDS
         #agents_transfer_rewards
          
@@ -36,7 +34,6 @@ def transfer_agent_allocation(params, substep, state_history, prev_state, **kwar
         agent_utility_sum += agents_transfer_allocations[agent] # sum up the total amount of tokens allocated to the transfer for this timestep
         agent_utility_removal_sum += agents_transfer_removal[agent] # sum up the total amount of tokens removed from the transfer for this timestep
         #agent_utility_rewards_sum += agents_transfer_rewards[agent] # sum up the total amount of tokens rewarded to the agent for transfer for this timestep
-
 
     return {'agents_transfer_allocations': agents_transfer_allocations,'agents_transfer_removal':agents_transfer_removal,
             'agents_transfer_rewards': agents_transfer_rewards, 'agent_utility_sum': agent_utility_sum,
@@ -66,11 +63,10 @@ def update_agents_after_transfer(params, substep, state_history, prev_state, pol
 
     agents_transfer_removal = policy_input['agents_transfer_removal']
     agents_transfer_rewards = policy_input['agents_transfer_rewards']
-    #agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
-
+    # TODO? 
+    #agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum'] 
 
     # update logic
-
     for agent in updated_agents:
         updated_agents[agent]['a_tokens_transferred'] = (agents_transfer_allocations[agent] - agents_transfer_removal[agent])
         updated_agents[agent]['a_tokens_transferred_cum'] += (agents_transfer_allocations[agent] - agents_transfer_removal[agent])
@@ -81,7 +77,6 @@ def update_agents_after_transfer(params, substep, state_history, prev_state, pol
         #if updated_agents[agent]['a_type'] == 'protocol_bucket' and transfer_destination.lower() in updated_agents[agent]['a_name'].lower():
         #    updated_agents[agent]['a_tokens'] = updated_agents[agent]['a_tokens'] + transferred_tokens_by_agent
     
-
     return ('agents', updated_agents)
 
 

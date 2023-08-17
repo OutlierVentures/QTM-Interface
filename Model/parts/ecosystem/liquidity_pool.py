@@ -282,5 +282,4 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_liquidity_buyback'] = lp_tokens
 
-
     return ('liquidity_pool', updated_liquidity_pool)

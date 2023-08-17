@@ -43,7 +43,6 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
     """
     Function to update the utilities after apr
     """
-
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
 
@@ -79,7 +78,7 @@ def update_agents_after_apr(params, substep, state_history, prev_state, policy_i
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
-
+    # TODO?
     """'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
     'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
     'a_tokens_apr_locked_remove': tokens_apr_locked_remove, # amount of tokens removed from staking for base apr """

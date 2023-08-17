@@ -74,4 +74,5 @@ def postprocessing(df, substep):
     data["From_Holding_Supply_Holding"] = data["airdrop_receivers_a_holding_tokens"].add(data["incentivisation_receivers_a_holding_tokens"])
     
     print("Postprocessing for substep: ", substep, " finished!")
+    
     return data

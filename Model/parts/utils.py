@@ -75,6 +75,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              }
     return agent
 
+
 def generate_agents(stakeholder_name_mapping: dict) -> dict:
     """
     Initialize all token ecosystem agents aka stakeholders.
@@ -294,8 +295,6 @@ def initialize_utilities():
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
     'u_transfer_rewards': 0, # transfer token rewards
     'u_transfer_allocation_remove':0 # Transfer token removal
-
-
     }
 
     return utilities

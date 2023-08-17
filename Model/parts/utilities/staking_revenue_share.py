@@ -6,7 +6,6 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
     # get parameters
     lock_buyback_distribute_share = params['lock_buyback_distribute_share']/100
 
-
     # get state variables
     agents = prev_state['agents'].copy()
     utilities = prev_state['utilities'].copy()

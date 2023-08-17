@@ -1,5 +1,7 @@
 from .utils import import_dummy_data
 
+# TODO Get parameters?
+
 # POLICY FUNCTIONS
 def MOCKUP_populate_holding_supply(params, substep, state_history, prev_state, **kwargs):
     """
@@ -14,8 +16,6 @@ def MOCKUP_populate_holding_supply(params, substep, state_history, prev_state, *
     holding_supply_i = import_dummy_data(180, current_timestep)
 
     return {'holding_supply_i': holding_supply_i}
-
-
 
 # STATE UPDATE FUNCTIONS
 def MOCKUP_update_holding_supply(params, substep, state_history, prev_state, policy_input, **kwargs):

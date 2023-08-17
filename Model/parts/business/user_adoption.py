@@ -17,24 +17,16 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
     
     """
 
-    
-
     term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825) / velocity))) * final_users + initial_users
     term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825) / velocity))) * final_users
     term3 = initial_users * (timestamp / total_days)
     term4 = final_users - (term1 - term2 - term3)
     result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
     
-
     return result
 
 
-
-
-
-
 # POLICY FUNCTIONS
-
 def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
@@ -67,9 +59,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     else:
         product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user+product_users*regular_product_revenue_per_user
 
-
-
-
     ## Token holder adoption
     initial_token_holders = params['initial_token_holders']
     token_holders_after_10y = params['token_holders_after_10y']
@@ -78,7 +67,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     regular_token_buy_per_user = params['regular_token_buy_per_user']
 
     token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
-
 
     ## Calculating Token Buys
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']
@@ -105,7 +93,6 @@ def update_user_adoption(params, substep, state_history, prev_state, policy_inpu
     product_revenue = policy_input['ua_product_revenue']
     token_buys = policy_input['ua_token_buys']
 
-    
     updated_user_adoption = {
         'ua_product_users': product_users,
         'ua_token_holders': token_holders,
