@@ -195,7 +195,7 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     
     else:
         pass
-        
+    
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 4}
 
 
@@ -269,5 +269,18 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     updated_liquidity_pool['lp_valuation'] = lp_usdc + lp_tokens * token_price
     updated_liquidity_pool['lp_volatility'] = ((updated_liquidity_pool['lp_token_price_max'] - updated_liquidity_pool['lp_token_price_min'])
                                             / updated_liquidity_pool['lp_token_price_max'] * 100)
+
+
+
+
+    #Special 2 variables
+    tx = policy_input['tx']  
+    if tx == 1:
+        updated_liquidity_pool['lp_tokens_after_adoption'] = lp_tokens
+    elif tx == 3:
+        updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
+    elif tx == 4:
+        updated_liquidity_pool['lp_tokens_after_liquidity_buyback'] = lp_tokens
+
 
     return ('liquidity_pool', updated_liquidity_pool)

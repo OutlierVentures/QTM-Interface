@@ -15,7 +15,7 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
     liquidity_pool = prev_state['liquidity_pool'].copy()
         #Rewards
-    token_after_adoption = liquidity_pool['lp_tokens']
+    token_after_adoption = liquidity_pool['lp_tokens_after_adoption']
     holding_allocation = prev_state['token_economy']['te_holding_allocation']
     
     # policy logic

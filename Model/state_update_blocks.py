@@ -136,17 +136,7 @@ state_update_block = [
         },
     },
     {
-        # substep 13: utilities/staking_revenue_share.py
-        'policies': {
-            'staking_revenue_share_buyback_allocation': staking_revenue_share_buyback_allocation,
-        },
-        'variables': {
-            'agents': update_staking_revenue_share_buyback_agent_allocation,
-            'utilities': update_staking_revenue_share_buyback_meta_allocation,
-        },
-    },
-    {
-        # substep 14: utilities/liquidity_mining.py
+        # substep 13: utilities/liquidity_mining.py
         'policies': {
             'staking_liquidity_mining_agent_allocation': staking_liquidity_mining_agent_allocation,
         },
@@ -156,7 +146,7 @@ state_update_block = [
         },
     },
     {
-        # substep 15: utilities/burning.py
+        # substep 14: utilities/burning.py
         'policies': {
             'burning_agent_allocation': burning_agent_allocation,
         },
@@ -166,7 +156,7 @@ state_update_block = [
         },
     },
     {
-        # substep 16: utilities/transfer.py
+        # substep 15: utilities/transfer.py
         'policies': {
             'transfer_agent_allocation': transfer_agent_allocation,
         },
@@ -176,7 +166,7 @@ state_update_block = [
         },
     },
     {
-        # substep 17: business/business_assumptions.py
+        # substep 16: business/business_assumptions.py
         'policies': {
             'business_assumption_metrics': business_assumption_metrics,
         },
@@ -185,7 +175,7 @@ state_update_block = [
         },
     },
     {
-        # substep 18: ecosystem/liquidity_pool.py
+        # substep 17: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx1_after_adoption': liquidity_pool_tx1_after_adoption,
         },
@@ -195,7 +185,7 @@ state_update_block = [
         },
     },
     {
-        # substep 19: utilities/holding.py
+        # substep 18: utilities/holding.py
         'policies': {
             'holding_agent_allocation': holding_agent_allocation,
         },
@@ -205,7 +195,7 @@ state_update_block = [
         },
     },
     {
-        # substep 20: ecosystem/liquidity_pool.py
+        # substep 19: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx2_after_vesting_sell': liquidity_pool_tx2_after_vesting_sell,
         },
@@ -214,7 +204,7 @@ state_update_block = [
         },
     },
     {
-        # substep 21: ecosystem/liquidity_pool.py
+        # substep 20: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx3_after_liquidity_addition': liquidity_pool_tx3_after_liquidity_addition,
         },
@@ -223,12 +213,22 @@ state_update_block = [
         },
     },
     {
-        # substep 22: ecosystem/liquidity_pool.py
+        # substep 21: ecosystem/liquidity_pool.py
         'policies': {
             'liquidity_pool_tx4_after_buyback': liquidity_pool_tx4_after_buyback,
         },
         'variables': {
             'liquidity_pool': update_liquidity_pool_after_transaction,
+        },
+    },
+    {
+        # substep 22: utilities/staking_revenue_share.py
+        'policies': {
+            'staking_revenue_share_buyback_allocation': staking_revenue_share_buyback_allocation,
+        },
+        'variables': {
+            'agents': update_agents_after_staking_revenue_share_buyback,
+            'utilities': update_utilities_after_staking_revenue_share_buyback,
         },
     },
     {
