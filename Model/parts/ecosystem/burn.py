@@ -1,6 +1,6 @@
 import pandas as pd
 
-# POLICIY FUNCTIONS
+# POLICY FUNCTIONS
 def burn_from_protocol_bucket(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to incentivise the ecosystem

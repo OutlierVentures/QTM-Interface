@@ -3,7 +3,6 @@ def staking_liquidity_mining_agent_allocation(params, substep, state_history, pr
     """
     Policy function to calculate the agent liquidity mining
     """
-   
     # get parameters
     liquidity_mining_apr = params['liquidity_mining_apr']/100
     liquidity_mining_share = params['lock_share']/100
@@ -45,7 +44,7 @@ def update_agents_after_liquidity_mining(params, substep, state_history, prev_st
     """
     Function to update agent liquidity mining allocations
     """
- # get parameters
+    # get parameters
     liquidity_mining_payout_source = params['liquidity_mining_payout_source']
 
     # get state variables
@@ -58,8 +57,6 @@ def update_agents_after_liquidity_mining(params, substep, state_history, prev_st
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
-
-
     for agent in updated_agents:
         updated_agents[agent]['a_tokens_liquidity_mining'] = (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
         updated_agents[agent]['a_tokens_liquidity_mining_cum'] += (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
@@ -78,8 +75,6 @@ def update_utilties_after_liquidity_mining(params, substep, state_history, prev_
     """
     Function to update meta liquidity mining allocations
     """
-   
-
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
 

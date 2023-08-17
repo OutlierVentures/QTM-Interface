@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+# TODO Write comments for functions
+
 def plot_stacked_area_graph(df):
     # pivot the dataframe to create a multi-level index with Investor_Name and timestep
 
@@ -29,7 +31,7 @@ def plot_stacked_area_graph(df):
     plt.show()
 
 
-
+# 
 def effective_token_price_plot(df):
     data = []
     for investor, values in df['investors'][0].items():
@@ -46,6 +48,7 @@ def effective_token_price_plot(df):
     plt.ylabel('Effective Token Price')
     plt.show()
 
+# 
 def extract_allocation(df):
     investors_df = pd.DataFrame(columns=['Investor_Name', 'current_allocation', 'timestep'])
     for index, row in df.iterrows():
@@ -61,10 +64,9 @@ def extract_allocation(df):
     investors_df['current_allocation'] = investors_df['current_allocation'].astype(float)
     investors_df['timestep'] = investors_df['timestep'].astype(int)
 
-
     return investors_df
 
-
+#
 def initial_allocation_pie(df):
     sum = 0
     percentages = []
@@ -81,12 +83,7 @@ def initial_allocation_pie(df):
     plt.pie(percentages, labels=labels, normalize=True)
     plt.show()
 
-
-
-
-
-
-
+# 
 def aggregate_runs(df,aggregate_dimension):
     '''
     Function to aggregate the monte carlo runs along a single dimension.
@@ -106,6 +103,7 @@ def aggregate_runs(df,aggregate_dimension):
 
     return mean_df,median_df,std_df,min_df
 
+# 
 def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
     '''
     A function that generates timeseries plot of Monte Carlo runs.
@@ -133,10 +131,7 @@ def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
     title_text = 'Performance of ' + y + ' over ' + str(runs) + ' Monte Carlo Runs'
     plt.title(title_text)
 
-
-
-
-
+#
 def plot_line_chart(dataframe, x_column, y_columns, title=''):
     """
     Plots a simple line chart using the specified columns from a dataframe.
