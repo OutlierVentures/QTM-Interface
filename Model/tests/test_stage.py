@@ -56,10 +56,10 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, substep=18) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=20) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=21) # after vesting sell lp tx
-    data_tx4 = postprocessing(df, substep=22) # after vesting sell lp tx
+    data_tx1 = postprocessing(df, substep=17) # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=19) # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=20) # after vesting sell lp tx
+    data_tx4 = postprocessing(df, substep=21) # after vesting sell lp tx
     postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
@@ -208,6 +208,11 @@ if __name__ == '__main__'   :
         print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
         print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
         test_timeseries(data=data, data_key='ba_buybacks_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.001)
+
+        ## TEST rewards OF BUYBACKS ##
+        print("\n----------------------------------------## TEST SUM OF BUYBACKS ##--------------------------------------")
+        print("Testing sum of buybacks of radCad timeseries simulation against QTM data tables...")
+        test_timeseries(data=data, data_key='u_staking_revenue_share_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=160, relative_tolerance=0.001, timestep_cut_off=1)
 
 
         ## TEST PROTOCOL BUCKET BURN ##

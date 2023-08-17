@@ -196,7 +196,10 @@ def initialize_dex_liquidity():
         'lp_valuation': 0, # valuation of LP tokens
         'lp_volatility': 0, # volatility of LP tokens
         'lp_token_price_max': 0, # max price of LP token
-        'lp_token_price_min': 0 # min price of LP token
+        'lp_token_price_min': 0, # min price of LP token
+        'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
+        'lp_tokens_after_liquidity_buyback': 0, # tokens after buy back tx 4
+        'lp_tokens_after_liquidity_addition':0 # Token after liquidity addition tx 3
     }
 
     return liquidity_pool
@@ -276,6 +279,7 @@ def initialize_utilities():
     'u_staking_revenue_share_allocation': 0, # staking revenue share token allocation per timestep
     'u_staking_revenue_share_allocation_cum': 0, # staking revenue share token allocation cumulatively
     'u_staking_revenue_share_remove': 0, # staking revenue share token removal
+    'u_staking_revenue_share_rewards':0, # revenue sharing rewards
     'u_liquidity_mining_rewards': 0, # liquidity mining rewards
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
     'u_liquidity_mining_allocation_cum': 0, # liquidity mining token allocation cumulatively
