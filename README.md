@@ -31,7 +31,6 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the user adoption policies
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test protocol bucket allocations
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build and test the rest of token ecosystem KPIs / metrics
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add all remaining plot functionallities
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
