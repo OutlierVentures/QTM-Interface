@@ -268,6 +268,16 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key='u_staking_base_apr_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=109, relative_tolerance=0.001, timestep_cut_off=1)
 
 
+        ## Testing agent end balances ##
+
+        test_timeseries(data=data, data_key="reserve_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=174, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="community_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=175, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="foundation_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=176, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="incentivisation_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=177, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="placeholder_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=178, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="lp_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=179, relative_tolerance=0.001, timestep_cut_off=1)
+
+
 
         ### END OF TESTS ###
         print("\n")
