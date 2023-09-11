@@ -22,6 +22,7 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
         token_price = required_usdc / required_tokens
 
         # initialize the liquidity pool from the system parameters
+        liquidity_pool['lp_init'] = required_tokens
         liquidity_pool['lp_tokens'] = required_tokens
         liquidity_pool['lp_usdc'] = required_usdc
         liquidity_pool['lp_constant_product'] = constant_product
@@ -281,5 +282,7 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_liquidity_buyback'] = lp_tokens
+    elif tx == 0:
+        updated_liquidity_pool['lp_init'] = lp_tokens
 
     return ('liquidity_pool', updated_liquidity_pool)

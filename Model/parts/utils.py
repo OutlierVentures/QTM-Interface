@@ -198,6 +198,7 @@ def initialize_dex_liquidity():
         'lp_volatility': 0, # volatility of LP tokens
         'lp_token_price_max': 0, # max price of LP token
         'lp_token_price_min': 0, # min price of LP token
+        'lp_init': 0,
         'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
         'lp_tokens_after_liquidity_buyback': 0, # tokens after buy back tx 4
         'lp_tokens_after_liquidity_addition':0 # Token after liquidity addition tx 3
@@ -212,6 +213,7 @@ def generate_initial_token_economy_metrics():
     token_economy = {
         'te_total_supply' : 0, # total token supply in existence
         'te_circulating_supply' : 0, # circulating token supply
+        'te_unvested_supply': 0, # unvested token tupply
         'te_holding_supply' : 0, # supply of tokens held by agents
         'te_MC' : 0, # market capitalization
         'te_FDV_MC' : 0, # fully diluted market capitalization
