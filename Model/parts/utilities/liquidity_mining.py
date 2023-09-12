@@ -51,17 +51,17 @@ def update_agents_after_liquidity_mining(params, substep, state_history, prev_st
     updated_agents = prev_state['agents'].copy()
 
     # get policy input
-    agents_staking_apr_allocations = policy_input['agents_liquidity_mining_allocations']
-    agents_staking_apr_removal = policy_input['agents_liquidity_mining_removal']
-    agents_staking_apr_rewards = policy_input['agents_liquidity_mining_rewards']
+    agents_liquidity_mining_allocations = policy_input['agents_liquidity_mining_allocations']
+    agents_liquidity_mining_removal = policy_input['agents_liquidity_mining_removal']
+    agents_liquidity_mining_rewards = policy_input['agents_liquidity_mining_rewards']
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['a_tokens_liquidity_mining'] = (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
-        updated_agents[agent]['a_tokens_liquidity_mining_cum'] += (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
-        updated_agents[agent]['a_tokens_liquidity_mining_remove'] = agents_staking_apr_removal[agent]
-        updated_agents[agent]['a_tokens'] += agents_staking_apr_rewards[agent]
+        updated_agents[agent]['a_tokens_liquidity_mining'] = (agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent])
+        updated_agents[agent]['a_tokens_liquidity_mining_cum'] += (agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent])
+        updated_agents[agent]['a_tokens_liquidity_mining_remove'] = agents_liquidity_mining_removal[agent]
+        updated_agents[agent]['a_tokens'] += agents_liquidity_mining_rewards[agent]
 
         # subtract tokens from payout source agent
         if updated_agents[agent]['a_name'].lower() in liquidity_mining_payout_source.lower():

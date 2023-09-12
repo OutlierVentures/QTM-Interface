@@ -7,7 +7,6 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
     """
     Function to initialize the liquidity pool in the first timestep
     """
-
     # parameters
     required_usdc = params['initial_required_usdc']
     required_tokens = params['initial_lp_token_allocation']
@@ -16,13 +15,12 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
     current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool']
 
-    if current_month == 1:
+    if current_month == 0:
         print('Initializing the liquidity pool...')
         constant_product = required_usdc * required_tokens
         token_price = required_usdc / required_tokens
 
         # initialize the liquidity pool from the system parameters
-        liquidity_pool['lp_init'] = required_tokens
         liquidity_pool['lp_tokens'] = required_tokens
         liquidity_pool['lp_usdc'] = required_usdc
         liquidity_pool['lp_constant_product'] = constant_product
@@ -226,7 +224,8 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
     old_lp_tokens = liquidity_pool['lp_tokens']
 
     # update logic
-    bought_tokens = new_lp_tokens - old_lp_tokens
+    bought_tokens = old_lp_tokens - new_lp_tokens
+
     # distribute the bought tokens to the market_investors agents
     market_investors = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'market_investors')])
     for agent in updated_agents:
@@ -282,7 +281,5 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_liquidity_buyback'] = lp_tokens
-    elif tx == 0:
-        updated_liquidity_pool['lp_init'] = lp_tokens
 
     return ('liquidity_pool', updated_liquidity_pool)

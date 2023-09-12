@@ -64,9 +64,6 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
              'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
              'a_tokens_burned_cum': tokens_burned_cum, # amount of tokens burned cumulatively
-             'a_tokens_held': tokens_held, # amount of tokens held per timestep
-             'a_tokens_held_cum': tokens_held_cum, # amount of tokens held cumulatively
-             'a_tokens_held_remove': tokens_held_remove,  # amount of tokens removed from holding
              'a_selling_tokens': selling_tokens, # agent meta bucket selling allocations
              'a_utility_tokens': utility_tokens, # agent meta bucket utility allocations
              'a_holding_tokens': holding_tokens, # agent meta bucket holding allocations
@@ -198,7 +195,6 @@ def initialize_dex_liquidity():
         'lp_volatility': 0, # volatility of LP tokens
         'lp_token_price_max': 0, # max price of LP token
         'lp_token_price_min': 0, # min price of LP token
-        'lp_init': 0,
         'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
         'lp_tokens_after_liquidity_buyback': 0, # tokens after buy back tx 4
         'lp_tokens_after_liquidity_addition':0 # Token after liquidity addition tx 3

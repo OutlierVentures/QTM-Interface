@@ -3,7 +3,6 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to vest tokens for each stakeholder.
     """
-    
     agents = prev_state['agents']
     token_economy = prev_state['token_economy']
     total_token_supply = params['initial_total_supply']

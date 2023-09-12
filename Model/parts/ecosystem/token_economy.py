@@ -26,6 +26,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     utility_perc = params['avg_token_utility_allocation']
     holding_perc = params['avg_token_holding_allocation']
     remove_perc = params['avg_token_utility_removal']
+    initial_lp_tokens = params['initial_lp_token_allocation']
 
     # state variables
     liquidity_pool = prev_state['liquidity_pool']
@@ -33,39 +34,34 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     token_economy = prev_state['token_economy']
     utilities = prev_state['utilities']
 
-        # circulating supply variable
+    # circulating supply variable
     circulating_tokens = 0
-    te_holding_supply = token_economy['te_holding_supply']
     lp_tokens = liquidity_pool['lp_tokens']
-    te_holding_supply = token_economy['te_holding_supply']
     u_staking_base_apr_cum = utilities['u_staking_base_apr_cum']
     u_staking_revenue_share_allocation_cum = utilities['u_staking_revenue_share_allocation_cum']
 
-        # unvested supply variable
+    # unvested supply variable
     te_airdrop_tokens_cum = token_economy['te_airdrop_tokens_cum']
 
-
+    protocol_bucket_tokens = 0
+    held_tokens = 0
     for stakeholder in agents:
+        # calculate protocol bucket tokens
         if agents[stakeholder]['a_type'] == 'protocol_bucket':
-            circulating_tokens += agents[stakeholder]['a_tokens'] # this needs to be changed as the circulating supply should be calculated from the emitted and burned ecosystem tokens
+            protocol_bucket_tokens += agents[stakeholder]['a_tokens']
+        # calculate protocol bucket tokens
+        if agents[stakeholder]['a_type'] != 'protocol_bucket':
+            held_tokens += agents[stakeholder]['a_tokens']
 
-
-    circulating_tokens += te_holding_supply + lp_tokens # Missing from protocol buckets
+    circulating_tokens += protocol_bucket_tokens + held_tokens + lp_tokens
     circulating_tokens += u_staking_base_apr_cum + u_staking_revenue_share_allocation_cum
     
 
     vested_cum = 0 
     for stakeholder in agents:
         vested_cum += agents[stakeholder]['a_tokens_vested_cum']
-
-
-    #='Fund Raising'!$C$10-'Data Tables'!D43-D59
-
-        #initial LP token supply for now, this will need to be adjusted for future data rows
-    lp_init = liquidity_pool['lp_init']
-
-    unvested_tokens = total_token_supply-vested_cum-te_airdrop_tokens_cum-lp_init
-
+    
+    unvested_tokens = total_token_supply-vested_cum-te_airdrop_tokens_cum-initial_lp_tokens
 
 
     MC = liquidity_pool['lp_token_price'] * circulating_tokens
@@ -73,7 +69,8 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
 
 
     return {'total_token_supply': total_token_supply, 'te_selling_perc': selling_perc, 'te_utility_perc': utility_perc, 'te_holding_perc': holding_perc,
-            'te_remove_perc': remove_perc, 'te_circulating_supply': circulating_tokens,'te_unvested_supply':unvested_tokens, 'te_MC': MC, 'te_FDV_MC': FDV_MC}
+            'te_remove_perc': remove_perc, 'te_circulating_supply': circulating_tokens,'te_unvested_supply':unvested_tokens, 'te_MC': MC, 'te_FDV_MC': FDV_MC,
+            'te_holding_supply': held_tokens}
 
 # STATE UPDATE FUNCTIONS
 def update_date(params, substep, state_history, prev_state, policy_input, **kwargs):
@@ -102,6 +99,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     unvested_tokens = policy_input['te_unvested_supply']
     MC = policy_input['te_MC']
     FDV_MC = policy_input['te_FDV_MC']
+    held_supply = policy_input['te_holding_supply']
 
 
     # update logic
@@ -114,9 +112,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_utility_perc'] = utility_perc
     updated_token_economy['te_holding_perc'] = holding_perc
     updated_token_economy['te_remove_perc'] = remove_perc
-
-
-
+    updated_token_economy['te_holding_supply'] = held_supply
 
     return ('token_economy', updated_token_economy)
 

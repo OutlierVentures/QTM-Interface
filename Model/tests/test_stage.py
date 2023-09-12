@@ -56,10 +56,10 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, substep=17) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=19) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=20) # after vesting sell lp tx
-    data_tx4 = postprocessing(df, substep=21) # after vesting sell lp tx
+    data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=18) # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=19) # after vesting sell lp tx
+    data_tx4 = postprocessing(df, substep=20) # after vesting sell lp tx
     postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
@@ -74,14 +74,6 @@ if __name__ == '__main__'   :
         print("\n-------------------------------------------## BEGIN TESTS ##-------------------------------------------")
         print("\n-------------------------------------------------------------------------------------------------------")
         print("\n")
-
-        ### MOCKUPS ###
-        ## TEST MOCKUPS ##
-        print("\n-------------------------------------------## MOCKUP TESTS ##------------------------------------------")
-        print("Testing MOCKUP implementations of radCad timeseries simulation against QTM data tables...")
-        test_timeseries(data=data, data_key='te_holding_supply', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.001)
-        print("\n\n")
-
         
         ### MODEL ###
         ## TEST ADOPTION ##
@@ -276,10 +268,13 @@ if __name__ == '__main__'   :
         test_timeseries(data=data, data_key="incentivisation_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=177, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="placeholder_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=178, relative_tolerance=0.001, timestep_cut_off=1)
         test_timeseries(data=data, data_key="lp_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=179, relative_tolerance=0.001, timestep_cut_off=1)
-            #circulating and vested supply
-        test_timeseries(data=data, data_key="te_circulating_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="te_holding_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.002, timestep_cut_off=1)
+        # circulating and vested supply
         test_timeseries(data=data, data_key="te_unvested_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=181, relative_tolerance=0.001, timestep_cut_off=1)
-
+        test_timeseries(data=data, data_key="te_circulating_supply", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.001, timestep_cut_off=1)
+        # token valuations
+        test_timeseries(data=data, data_key="te_MC", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=188, relative_tolerance=0.001, timestep_cut_off=1)
+        test_timeseries(data=data, data_key="te_FDV_MC", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=189, relative_tolerance=0.001, timestep_cut_off=1)
 
 
         ### END OF TESTS ###

@@ -1,4 +1,4 @@
-from .utils import import_dummy_data
+from ..Model.parts.utils import import_dummy_data
 
 # TODO Get parameters?
 
