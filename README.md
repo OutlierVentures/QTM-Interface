@@ -26,16 +26,16 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the incentivisation module
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the airdrop module
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the static agent behavior
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the utility policies
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the liquidity pool interactions
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the utility policies
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the liquidity pool interactions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the user adoption policies
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test protocol bucket allocations
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build and test the rest of token ecosystem KPIs / metrics
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test protocol bucket allocations
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build and test the rest of token ecosystem KPIs / metrics
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Update the postprocessing w.r.t. the new implemented policies and corresponding state variables
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add all remaining plot functionallities
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Web based UI for outputs
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Test and improve the robustness of all functions -> unit tests
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Staging tests of the whole model
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Staging tests of the whole model
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Case studies & publishing first results in an article
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Write the documentation for the QTM and radCAD integration
