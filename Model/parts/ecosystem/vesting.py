@@ -3,8 +3,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to vest tokens for each stakeholder.
     """
-    agents = prev_state['agents']
-    token_economy = prev_state['token_economy']
+    agents = prev_state['agents'].copy()
     total_token_supply = params['initial_total_supply']
     current_month = prev_state['timestep']
     
@@ -12,7 +11,6 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     for key, agent in agents.items():
         # Get all invesotor info
         agent_type = agent['a_name']
-        agent_tokens_vested = agent['a_tokens_vested']
         agent_token_allocation = [params[agent_type+"_token_allocation"] if agent_type+"_token_allocation" in params else 0][0]
         agent_initial_vesting_perc = [params[agent_type+"_initial_vesting"] if agent_type+"_initial_vesting" in params else 0][0]
         agent_cliff_months = [params[agent_type+"_cliff"] if agent_type+"_cliff" in params else 0][0]

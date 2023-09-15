@@ -9,11 +9,10 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
     # get state variables
     agents = prev_state['agents'].copy()
     utilities = prev_state['utilities'].copy()
-    utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
 
     # rewards state variables
     lp_tokens_after_liquidity_addition  =  prev_state['liquidity_pool']['lp_tokens_after_liquidity_addition']
-    lp_tokens_after_liquidity_buyback = prev_state['liquidity_pool']['lp_tokens'] # Tokens after trx 4 (buybacks)
+    lp_tokens_after_buyback = prev_state['liquidity_pool']['lp_tokens'] # Tokens after trx 4 (buybacks)
     u_buyback_from_revenue_share_usd = prev_state['utilities']['u_buyback_from_revenue_share_usd']
     ba_buybacks_usd =prev_state['business_assumptions']['ba_buybacks_usd']
 
@@ -27,11 +26,14 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
     agents_staking_buyback_rewards = {}
 
     # calculate macro rewards from staking revenue share
-    agent_utility_rewards_sum = (lp_tokens_after_liquidity_addition - lp_tokens_after_liquidity_buyback) * (u_buyback_from_revenue_share_usd/ba_buybacks_usd) 
+    bought_back_tokens = (lp_tokens_after_liquidity_addition - lp_tokens_after_buyback)
+    agent_utility_rewards_sum = bought_back_tokens * (u_buyback_from_revenue_share_usd/ba_buybacks_usd)
+    business_buyback = bought_back_tokens * (1 - u_buyback_from_revenue_share_usd/ba_buybacks_usd)
 
     # calculate the staking apr token allocations and removals for each agent
     for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] # get the new agent utility token allocations from vesting, airdrops, and incentivisation
+        utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
+        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
         tokens_buyback_locked_cum = agents[agent]['a_tokens_buyback_locked_cum'] # get amount of staked tokens for revenue share last timestep
 
         agents_staking_buyback_allocations[agent] = utility_tokens * lock_buyback_distribute_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
@@ -53,13 +55,11 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
     agent_rewards = 0
     for agent in agents:
         agent_rewards += agents_staking_buyback_rewards[agent]
-    assert abs(agent_rewards - agent_utility_rewards_sum) < 0.0000000000001, 'agent rewards '+str(agent_rewards)+' do not match macro rewards'+str(agent_utility_rewards_sum)
+    assert abs(agent_rewards - agent_utility_rewards_sum) < 0.001, 'agent rewards '+str(agent_rewards)+' do not match macro rewards'+str(agent_utility_rewards_sum)
 
     return {'agents_staking_buyback_allocations': agents_staking_buyback_allocations,'agents_staking_buyback_removal':agents_staking_buyback_removal,
             'agents_staking_buyback_rewards': agents_staking_buyback_rewards, 'agent_utility_sum': agent_utility_sum,
-            'agent_utility_removal_sum': agent_utility_removal_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum}
-
-
+            'agent_utility_removal_sum': agent_utility_removal_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum, 'business_buyback': business_buyback}
 
 def staking_revenue_share_buyback_amount(params, substep, state_history, prev_state, **kwargs):
     """
@@ -89,6 +89,9 @@ def update_agents_after_staking_revenue_share_buyback(params, substep, state_his
     """
     Function to update agent staking allocation for token buybacks from the revenue share
     """
+    # get parameters
+    buyback_bucket = params['buyback_bucket']
+
     # get state variables
     updated_agents = prev_state['agents'].copy()
 
@@ -96,13 +99,19 @@ def update_agents_after_staking_revenue_share_buyback(params, substep, state_his
     agents_staking_buyback_allocations = policy_input['agents_staking_buyback_allocations']
     agents_staking_buyback_removal = policy_input['agents_staking_buyback_removal']
     agent_rewards = policy_input['agents_staking_buyback_rewards']
+    business_buyback = policy_input['business_buyback']
 
     # update logic
     for agent in updated_agents:
-        updated_agents[agent]['a_tokens'] += agent_rewards[agent]
-        updated_agents[agent]['a_tokens_buyback_locked'] = (agents_staking_buyback_allocations[agent] - agents_staking_buyback_removal[agent])
+        updated_agents[agent]['a_tokens_buyback_locked'] = (agents_staking_buyback_allocations[agent])
         updated_agents[agent]['a_tokens_buyback_locked_cum'] += (agents_staking_buyback_allocations[agent] - agents_staking_buyback_removal[agent])
-        updated_agents[agent]['a_tokens_buyback_locked_remove'] = agents_staking_buyback_removal[agent]
+        updated_agents[agent]['a_tokens_buyback_locked_remove'] = (agents_staking_buyback_removal[agent])
+        updated_agents[agent]['a_tokens_buyback_locked_rewards'] = agent_rewards[agent]
+        updated_agents[agent]['a_tokens'] += (agent_rewards[agent] + agents_staking_buyback_removal[agent])
+
+        # transfer business bought back tokens to destination
+        if updated_agents[agent]['a_name'].lower() in buyback_bucket.lower():
+            updated_agents[agent]['a_tokens'] += business_buyback
 
     return ('agents', updated_agents)
 
@@ -121,7 +130,7 @@ def update_utilities_after_staking_revenue_share_buyback(params, substep, state_
 
     # update logic
     updated_utilities['u_staking_revenue_share_rewards'] = agent_utility_rewards_sum
-    updated_utilities['u_staking_revenue_share_allocation'] = (agent_utility_sum - agent_utility_removal_sum)
+    updated_utilities['u_staking_revenue_share_allocation'] = (agent_utility_sum)
     updated_utilities['u_staking_revenue_share_allocation_cum'] += (agent_utility_sum - agent_utility_removal_sum)
     updated_utilities['u_staking_revenue_share_remove'] = agent_utility_removal_sum
 

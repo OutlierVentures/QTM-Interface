@@ -31,12 +31,12 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, 
               tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float,
               tokens_incentivised_cum: float, tokens_apr_locked: float, tokens_apr_locked_cum: float,
-              tokens_apr_locked_remove: float, tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
-              tokens_buyback_locked_remove: float, tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float,
-              tokens_liquidity_mining_remove: float, tokens_transferred: float, tokens_transferred_cum: float,
+              tokens_apr_locked_remove: float, tokens_apr_locked_rewards: float, tokens_buyback_locked: float, tokens_buyback_locked_cum: float,
+              tokens_buyback_locked_remove: float, tokens_buyback_locked_rewards: float, tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float,
+              tokens_liquidity_mining_remove: float, tokens_liquidity_mining_rewards: float, tokens_transferred: float, tokens_transferred_cum: float,
               tokens_burned: float, tokens_burned_cum: float, tokens_held: float, tokens_held_cum: float, tokens_held_remove: float,
-              selling_tokens: float, utility_tokens: float,
-              holding_tokens: float, actions: dict, current_action: str) -> dict:
+              selling_tokens: float, utility_tokens: float, selling_from_holding_tokens: float, utility_from_holding_tokens: float,
+              holding_from_holding_tokens: float, holding_tokens: float, actions: dict, current_action: str) -> dict:
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
@@ -54,12 +54,15 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
              'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
              'a_tokens_apr_locked_remove': tokens_apr_locked_remove, # amount of tokens removed from staking for base apr
+             'a_tokens_apr_locked_rewards': tokens_apr_locked_rewards, # amount of token rewards for staking for base apr
              'a_tokens_buyback_locked': tokens_buyback_locked, # amount of tokens locked for buyback per timestep
              'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum, # amount of tokens locked for buyback cumulatively
              'a_tokens_buyback_locked_remove': tokens_buyback_locked_remove, # amount of tokens removed from staking for buyback share
+             'a_tokens_buyback_locked_rewards': tokens_buyback_locked_rewards, # amount of token rewards for staking for buyback share
              'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens locked for liquidity mining per timestep
              'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens locked for liquidity mining cumulatively
              'a_tokens_liquidity_mining_remove': tokens_liquidity_mining_remove, # amount of tokens removed from liquidity mining
+             'a_tokens_liquidity_mining_rewards': tokens_liquidity_mining_rewards, # amount of token rewards for liquidity mining
              'a_tokens_transferred': tokens_transferred, # amount of tokens transferred per timestep
              'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
              'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
@@ -67,6 +70,9 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_selling_tokens': selling_tokens, # agent meta bucket selling allocations
              'a_utility_tokens': utility_tokens, # agent meta bucket utility allocations
              'a_holding_tokens': holding_tokens, # agent meta bucket holding allocations
+             'a_selling_from_holding_tokens': selling_from_holding_tokens, # selling from holding allocations
+             'a_utility_from_holding_tokens': utility_from_holding_tokens, # utility from holding allocations
+             'a_holding_from_holding_tokens': holding_from_holding_tokens, # holding from holding allocations
              'a_actions': actions, # dictionary of actions taken by this stakeholder
              'a_current_action': current_action # current action taken by this stakeholder
              }
@@ -93,12 +99,15 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_apr_locked = 0,
                                     tokens_apr_locked_cum = 0,
                                     tokens_apr_locked_remove = 0,
+                                    tokens_apr_locked_rewards = 0,
                                     tokens_buyback_locked = 0,
                                     tokens_buyback_locked_cum = 0,
                                     tokens_buyback_locked_remove = 0,
+                                    tokens_buyback_locked_rewards = 0,
                                     tokens_liquidity_mining = 0,
                                     tokens_liquidity_mining_cum = 0,
                                     tokens_liquidity_mining_remove = 0,
+                                    tokens_liquidity_mining_rewards = 0,
                                     tokens_transferred = 0,
                                     tokens_transferred_cum = 0,
                                     tokens_burned = 0,
@@ -109,6 +118,9 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     selling_tokens = 0,
                                     utility_tokens = 0,
                                     holding_tokens = 0,
+                                    selling_from_holding_tokens = 0,
+                                    utility_from_holding_tokens = 0,
+                                    holding_from_holding_tokens = 0,
                                     actions = {},
                                     current_action = 'hold')
     return initial_agents
@@ -196,8 +208,8 @@ def initialize_dex_liquidity():
         'lp_token_price_max': 0, # max price of LP token
         'lp_token_price_min': 0, # min price of LP token
         'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
-        'lp_tokens_after_liquidity_buyback': 0, # tokens after buy back tx 4
-        'lp_tokens_after_liquidity_addition':0 # Token after liquidity addition tx 3
+        'lp_tokens_after_liquidity_addition':0, # Token after liquidity addition tx 3
+        'lp_tokens_after_buyback': 0 # tokens after buy back tx 4
     }
 
     return liquidity_pool
@@ -287,28 +299,26 @@ def initialize_utilities():
     'u_burning_allocation_cum': 0, # burning token allocation cumulatively
     'u_holding_allocation': 0, # holding token allocation per timestep from utility bucket
     'u_holding_allocation_cum': 0, # holding token allocation cumulatively from utility bucket
-    'u_holding_allocation_remove': 0, # holding tokens removed
     'u_holding_rewards':0, # holding token rewards
     'u_transfer_allocation':0, # transfer token allocation per timestep
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
-    'u_transfer_rewards': 0, # transfer token rewards
-    'u_transfer_allocation_remove':0 # Transfer token removal
+    'u_transfer_rewards': 0 # transfer token rewards
     }
 
     return utilities
 
 
 ### TEST FUNCTIONS ###
-def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_row, relative_tolerance=0.001, timestep_cut_off=0):
+def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_row, relative_tolerance=0.001, timestep_cut_off=0, shift=0):
     # get amount of accounted for timesteps
-    n_timesteps = len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]) - [len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])-timestep_cut_off if timestep_cut_off > 0 else 0][0]
+    n_timesteps = len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]) - [len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])-timestep_cut_off if timestep_cut_off > 0 else 0][0] - shift
 
     print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+") for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps...")
     
     for i in range(n_timesteps):
         # get testing values
         QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
-        radCAD_value = float(data[data_key].values[i]) * data_row_multiplier
+        radCAD_value = float(data[data_key].values[i+shift]) * data_row_multiplier
 
         # assert the values
         error_message = ("radCad simulation value "+data_key+" = "+ str(radCAD_value)
@@ -316,7 +326,14 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
         +" and date "+str(QTM_data_tables.iloc[3].values[2:-1][i])+". The difference is "+str(radCAD_value - QTM_data_table_value)+" or "
         +str([radCAD_value/QTM_data_table_value * 100 if QTM_data_table_value!= 0 else "NaN"][0])+"%.")
 
-        np.testing.assert_allclose(radCAD_value, QTM_data_table_value, rtol=relative_tolerance, err_msg=error_message)
+        if QTM_data_table_value == 0:
+            if np.abs(radCAD_value) < relative_tolerance:
+                pass
+        elif radCAD_value == 0:
+            if np.abs(QTM_data_table_value) < relative_tolerance:
+                pass
+        else:
+            np.testing.assert_allclose(radCAD_value, QTM_data_table_value, rtol=relative_tolerance, err_msg=error_message)
     if n_timesteps == len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]):
         print(u'\u2713'+" Test passed!")
     else:

@@ -13,7 +13,7 @@ def burning_agent_allocation(params, substep, state_history, prev_state, **kwarg
     agent_utility_sum = 0
     agents_burning_allocations = {}
     for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens']
+        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens']
         agents_burning_allocations[agent] = utility_tokens * burning_share
         agent_utility_sum += agents_burning_allocations[agent]
     

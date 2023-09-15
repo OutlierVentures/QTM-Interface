@@ -69,9 +69,7 @@ def postprocessing(df, substep):
         data[key] = key_values
     
     ## AGGREGATED METRICS ##
-    data["From_Holding_Supply_Selling"] = data["airdrop_receivers_a_selling_tokens"].add(data["incentivisation_receivers_a_selling_tokens"])
-    data["From_Holding_Supply_Utility"] = data["airdrop_receivers_a_utility_tokens"].add(data["incentivisation_receivers_a_utility_tokens"])
-    data["From_Holding_Supply_Holding"] = data["airdrop_receivers_a_holding_tokens"].add(data["incentivisation_receivers_a_holding_tokens"])
+    
     
     print("Postprocessing for substep: ", substep, " finished!")
     

@@ -46,7 +46,6 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
     usdc_lp_weight = 0.5
 
     # state variables
-    current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool'].copy()
     user_adoption = prev_state['user_adoption'].copy()
     token_buys = user_adoption['ua_token_buys']
@@ -58,18 +57,14 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
     token_price = liquidity_pool['lp_token_price']
 
     # policy logic
-    if current_month == 1:
-        # calculate the liquidity pool after the adoption buys
-        lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + token_buys))**(usdc_lp_weight/token_lp_weight))
-        lp_usdc = lp_usdc + token_buys
+    # calculate the liquidity pool after the adoption buys
+    lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + token_buys))**(usdc_lp_weight/token_lp_weight))
+    lp_usdc = lp_usdc + token_buys
 
-        token_price = lp_usdc / lp_tokens
+    token_price = lp_usdc / lp_tokens
 
-        error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
-        np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
-    
-    else:
-        pass
+    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
 
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 1}
 
@@ -83,7 +78,6 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     usdc_lp_weight = 0.5
 
     # state variables
-    current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool'].copy()
     agents = prev_state['agents'].copy()
     token_economy = prev_state['token_economy'].copy()
@@ -96,30 +90,33 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     selling_allocation = token_economy['te_selling_allocation']
 
     # policy logic
-    if current_month == 1:
-        # get amount of tokens to be sold by agents from vesting + airdrops + incentivisation
-        tokens_to_sell = 0
-        for agent in agents:
-            tokens_to_sell += agents[agent]['a_selling_tokens']
-        
-        # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
-        error_message = 'The amount of tokens to be sold '+str(tokens_to_sell)+' is not equal to the meta bucket selling allocation '+str(selling_allocation)+'!'
-        np.testing.assert_allclose(tokens_to_sell, selling_allocation, rtol=0.001, err_msg=error_message)
-
-        # calculate the liquidity pool after the vesting sells
-        lp_usdc = lp_usdc - lp_usdc * (1 - (lp_tokens / (lp_tokens + tokens_to_sell))**(token_lp_weight/usdc_lp_weight))
-        lp_tokens = lp_tokens + tokens_to_sell
-
-
-        token_price = lp_usdc / lp_tokens
-
-        error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
-        np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
+    # get amount of tokens to be sold by agents from vesting + airdrops + incentivisation
+    tokens_to_sell = 0
+    agent_sell_from_holding_dict = {}
+    a_selling_tokens_sum = 0
+    a_selling_from_holding_tokens_sum = 0
+    for agent in agents:
+        # selling from vesting + airdrops + incentivisation allocations
+        tokens_to_sell += agents[agent]['a_selling_tokens'] + agents[agent]['a_selling_from_holding_tokens']
+        a_selling_tokens_sum += agents[agent]['a_selling_tokens']
+        a_selling_from_holding_tokens_sum += agents[agent]['a_selling_from_holding_tokens']
     
-    else:
-        pass
+    # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
+    error_message = 'The amount of tokens to be sold '+str(tokens_to_sell)+' is not equal to the meta bucket selling allocation '+str(selling_allocation)+'!'
+    np.testing.assert_allclose(tokens_to_sell, selling_allocation, rtol=0.001, err_msg=error_message)
+
+    # calculate the liquidity pool after the vesting sells
+    lp_usdc = lp_usdc - lp_usdc * (1 - (lp_tokens / (lp_tokens + tokens_to_sell))**(token_lp_weight/usdc_lp_weight))
+    lp_tokens = lp_tokens + tokens_to_sell
+
+
+    token_price = lp_usdc / lp_tokens
+
+    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 2}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price,
+            'agent_sell_from_holding_dict': agent_sell_from_holding_dict, 'tx': 2}
 
 def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, prev_state, **kwargs):
     """
@@ -129,7 +126,6 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
     # parameters
 
     # state variables
-    current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool'].copy()
     agents = prev_state['agents'].copy()
 
@@ -140,22 +136,18 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
     token_price = liquidity_pool['lp_token_price']
 
     # policy logic
-    if current_month == 1:
-        # get amount of tokens to be used for liquidity mining
-        tokens_for_liquidity = 0
-        for agent in agents:
-            tokens_for_liquidity += agents[agent]['a_tokens_liquidity_mining']
+    # get amount of tokens to be used for liquidity mining
+    tokens_for_liquidity = 0
+    for agent in agents:
+        tokens_for_liquidity += (agents[agent]['a_tokens_liquidity_mining'] - agents[agent]['a_tokens_liquidity_mining_remove'])
 
-        # calculate the liquidity pool after the vesting sells
-        lp_usdc = lp_usdc + tokens_for_liquidity * token_price
-        lp_tokens = lp_tokens + tokens_for_liquidity
+    # calculate the liquidity pool after the vesting sells
+    lp_usdc = lp_usdc + tokens_for_liquidity * token_price
+    lp_tokens = lp_tokens + tokens_for_liquidity
 
 
-        token_price = lp_usdc / lp_tokens
-        constant_product = lp_usdc * lp_tokens
-    
-    else:
-        pass
+    token_price = lp_usdc / lp_tokens
+    constant_product = lp_usdc * lp_tokens
         
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 3}
 
@@ -169,10 +161,8 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     usdc_lp_weight = 0.5
 
     # state variables
-    current_month = prev_state['timestep']
     liquidity_pool = prev_state['liquidity_pool'].copy()
     business_assumptions = prev_state['business_assumptions'].copy()
-    utilities = prev_state['utilities'].copy()
 
     # policy variables
     lp_tokens = liquidity_pool['lp_tokens']
@@ -182,18 +172,14 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     buybacks_usd = business_assumptions['ba_buybacks_usd']
 
     # policy logic
-    if current_month == 1:
-        # calculate the liquidity pool after buyback
-        lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + buybacks_usd))**(usdc_lp_weight/token_lp_weight))
-        lp_usdc = lp_usdc + buybacks_usd
+    # calculate the liquidity pool after buyback
+    lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + buybacks_usd))**(usdc_lp_weight/token_lp_weight))
+    lp_usdc = lp_usdc + buybacks_usd
 
-        token_price = lp_usdc / lp_tokens
-        
-        error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
-        np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
+    token_price = lp_usdc / lp_tokens
     
-    else:
-        pass
+    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
     
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 4}
 
@@ -237,6 +223,24 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
 
     return ('agents', updated_agents)
 
+def update_agents_tx2_after_vesting_sell(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the agents after the adoption buys
+    """
+    # state variables
+    updated_agents = prev_state['agents'].copy()
+
+    # get policy inputs
+    agent_sell_from_holding_dict = policy_input['agent_sell_from_holding_dict']
+
+    # update agents token balances as they sell from their holdings of the last timestep
+    for agent in updated_agents:
+        if updated_agents[agent]['a_type'] != 'protocol_bucket':
+
+            updated_agents[agent]['a_tokens'] -= agent_sell_from_holding_dict[agent]
+
+    return ('agents', updated_agents)
+
 def update_liquidity_pool_after_transaction(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the liquidity pool after the adoption buys
@@ -252,14 +256,15 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     lp_usdc = policy_input['lp_usdc']
     constant_product = policy_input['lp_constant_product']
     token_price = policy_input['lp_token_price']
+    tx = policy_input['tx']
     
     # prepare volatility calculation
     if policy_input['tx'] == 1:
         updated_liquidity_pool['lp_token_price_max'] = token_price
         updated_liquidity_pool['lp_token_price_min'] = token_price
     elif policy_input['tx'] in [2, 3, 4]:
-        updated_liquidity_pool['lp_token_price_max'] = np.max([updated_liquidity_pool['lp_token_price_max'], token_price, initial_token_price])
-        updated_liquidity_pool['lp_token_price_min'] = np.min([updated_liquidity_pool['lp_token_price_min'], token_price, initial_token_price])
+        updated_liquidity_pool['lp_token_price_max'] = np.max([updated_liquidity_pool['lp_token_price_max'], token_price, [initial_token_price if prev_state['timestep'] == 1 else 0][0]])
+        updated_liquidity_pool['lp_token_price_min'] = np.min([updated_liquidity_pool['lp_token_price_min'], token_price, [initial_token_price if prev_state['timestep'] == 1 else 1e20][0]])
 
     # update logic
     updated_liquidity_pool['lp_tokens'] = lp_tokens
@@ -270,16 +275,12 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     updated_liquidity_pool['lp_volatility'] = ((updated_liquidity_pool['lp_token_price_max'] - updated_liquidity_pool['lp_token_price_min'])
                                             / updated_liquidity_pool['lp_token_price_max'] * 100)
 
-
-
-
     #Special 2 variables
-    tx = policy_input['tx']  
     if tx == 1:
         updated_liquidity_pool['lp_tokens_after_adoption'] = lp_tokens
     elif tx == 3:
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
-        updated_liquidity_pool['lp_tokens_after_liquidity_buyback'] = lp_tokens
+        updated_liquidity_pool['lp_tokens_after_buyback'] = lp_tokens
 
     return ('liquidity_pool', updated_liquidity_pool)

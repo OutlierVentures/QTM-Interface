@@ -6,10 +6,8 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     """
     # get parameters
     holding_share = params['holding_share']/100
-
-    #rewards    
     initial_lp_token_allocation = params['initial_lp_token_allocation']
-    token_payout_apr = params['holding_apr']
+    token_payout_apr = params['holding_apr'] / 100
 
     # get state variables
     agents = prev_state['agents'].copy()
@@ -17,7 +15,6 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
 
     #rewards
     token_after_adoption = liquidity_pool['lp_tokens_after_adoption']
-    holding_allocation = prev_state['token_economy']['te_holding_allocation']
     
     # policy logic
     # initialize policy logic variables
@@ -28,20 +25,17 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
 
     # calculate the staking apr token allocations and removals for each agent
     for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] # get the new agent utility token allocations from vesting, airdrops, and incentivisation
+        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and previous timestep holdings
 
         agents_holding_allocations[agent] = utility_tokens * holding_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
 
         agent_utility_sum += agents_holding_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
 
-
-        #rewards  
-        agents_holding_rewards[agent] = agents_holding_allocations[agent]*token_payout_apr/100/12
+        #rewards
+        agents_holding_rewards[agent] = [(agents[agent]['a_tokens'] - agents[agent]['a_tokens_apr_locked_rewards'] - agents[agent]['a_tokens_apr_locked_remove']
+                                          + agents_holding_allocations[agent]) * token_payout_apr/12 if agents[agent]['a_type'] != 'protocol_bucket' else 0][0] # calculate the amount of tokens that shall be rewarded to the agent for staking for this timestep
+        
         agent_utility_rewards_sum += agents_holding_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
-
-    agent_utility_rewards_sum += (holding_allocation+(initial_lp_token_allocation-token_after_adoption))*token_payout_apr/100/12
-
-
 
     return {'agents_holding_allocations': agents_holding_allocations, 'agents_holding_rewards': agents_holding_rewards,
             'agent_utility_sum': agent_utility_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum}
@@ -82,7 +76,6 @@ def update_utilties_after_holding(params, substep, state_history, prev_state, po
     Function to update meta burning allocations
     """
     # get parameters
-    # TODO? 
 
     # get state variables
     updated_utilities = prev_state['utilities'].copy()

@@ -37,7 +37,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     launchDate = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
 
     current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
-    #current_day = current_month*30.437 #need to adjust it to being months
 
     # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
     total_days = 3653                        

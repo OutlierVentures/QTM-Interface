@@ -9,7 +9,6 @@ def staking_apr_allocation(params, substep, state_history, prev_state, **kwargs)
     
     # get state variables
     agents = prev_state['agents'].copy()
-    utility_removal_perc = prev_state['token_economy']['te_remove_perc']/100
 
     # policy logic
     # initialize policy logic variables
@@ -22,12 +21,13 @@ def staking_apr_allocation(params, substep, state_history, prev_state, **kwargs)
 
     # calculate the staking apr token allocations and removals for each agent
     for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] # get the new agent utility token allocations from vesting, airdrops, and incentivisation
+        utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
+        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
         tokens_apr_locked_cum = agents[agent]['a_tokens_apr_locked_cum'] # get amount of staked tokens for base apr from last timestep
         
         agents_staking_apr_allocations[agent] = utility_tokens * lock_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
         agents_staking_apr_removal[agent] = tokens_apr_locked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking apr utility for this timestep based on the tokens allocated in the previous timestep
-        agents_staking_apr_rewards[agent] = agents_staking_apr_allocations[agent] * lock_apr/12 # calculate the amount of tokens that shall be rewarded to the agent for staking
+        agents_staking_apr_rewards[agent] = (tokens_apr_locked_cum + agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent]) * lock_apr/12 # calculate the amount of tokens that shall be rewarded to the agent for staking
         
         agent_utility_sum += agents_staking_apr_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
         agent_utility_removal_sum += agents_staking_apr_removal[agent] # sum up the total amount of tokens removed from the staking apr utility for this timestep
@@ -53,10 +53,10 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
 
     # update logic
     updated_utilities['u_staking_rewards'] = agent_utility_rewards_sum
-    updated_utilities['u_staking_base_apr'] = (agent_utility_sum - agent_utility_removal_sum)
+    updated_utilities['u_staking_base_apr'] = (agent_utility_sum)
     updated_utilities['u_staking_base_apr_cum'] += (agent_utility_sum - agent_utility_removal_sum)
     updated_utilities['u_staking_base_apr_remove'] = agent_utility_removal_sum
-
+    
     return ('utilities', updated_utilities)
 
 
@@ -79,15 +79,12 @@ def update_agents_after_apr(params, substep, state_history, prev_state, policy_i
 
     # update logic
     # TODO?
-    """'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
-    'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
-    'a_tokens_apr_locked_remove': tokens_apr_locked_remove, # amount of tokens removed from staking for base apr """
-
     for agent in updated_agents:
-        updated_agents[agent]['a_tokens_apr_locked'] = (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
+        updated_agents[agent]['a_tokens_apr_locked'] = (agents_staking_apr_allocations[agent])
         updated_agents[agent]['a_tokens_apr_locked_cum'] += (agents_staking_apr_allocations[agent] - agents_staking_apr_removal[agent])
         updated_agents[agent]['a_tokens_apr_locked_remove'] = agents_staking_apr_removal[agent]
-        updated_agents[agent]['a_tokens'] += agents_staking_apr_rewards[agent]
+        updated_agents[agent]['a_tokens_apr_locked_rewards'] = agents_staking_apr_rewards[agent]
+        updated_agents[agent]['a_tokens'] += (agents_staking_apr_rewards[agent] + agents_staking_apr_removal[agent])
 
         # subtract tokens from payout source agent
         if updated_agents[agent]['a_name'].lower() in lock_payout_source.lower():

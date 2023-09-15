@@ -43,7 +43,7 @@ def update_agents_after_incentivisation(params, substep, state_history, prev_sta
     # subtract vested incentivisation tokens from protocol bucket
     for agent in updated_agents:
         if updated_agents[agent]['a_type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in updated_agents[agent]['a_name'].lower():
-            updated_agents[agent]['a_tokens'] = updated_agents[agent]['a_tokens'] - vested_incentivisation_tokens
+            updated_agents[agent]['a_tokens'] -= vested_incentivisation_tokens
 
     # add vested incentivisation tokens to market participants
     # count amount of market_investors and early_investors in updated_agents
@@ -79,7 +79,6 @@ def update_token_economy_after_incentivisation(params, substep, state_history, p
     updated_token_economy['te_minted_tokens_cum'] += minted_incentivisation_tokens
     updated_token_economy['te_minted_tokens_cum'] = minted_incentivisation_tokens  * liquidity_pool['lp_token_price']
     updated_token_economy['te_incentivised_tokens'] = incentivisation_tokens
-    updated_token_economy['te_incentivised_tokens_usd'] = incentivisation_tokens * liquidity_pool['lp_token_price']
     updated_token_economy['te_incentivised_tokens_cum'] += incentivisation_tokens
 
     return ('token_economy', updated_token_economy)

@@ -63,7 +63,6 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     
     unvested_tokens = total_token_supply-vested_cum-te_airdrop_tokens_cum-initial_lp_tokens
 
-
     MC = liquidity_pool['lp_token_price'] * circulating_tokens
     FDV_MC = liquidity_pool['lp_token_price'] * total_token_supply
 
@@ -88,6 +87,8 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     """
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
+    agents = prev_state['agents'].copy()
+    lp = prev_state['liquidity_pool'].copy()
 
     # policy inputs
     total_token_supply = policy_input['total_token_supply']
@@ -113,6 +114,9 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_holding_perc'] = holding_perc
     updated_token_economy['te_remove_perc'] = remove_perc
     updated_token_economy['te_holding_supply'] = held_supply
+    updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
+
 
     return ('token_economy', updated_token_economy)
 
