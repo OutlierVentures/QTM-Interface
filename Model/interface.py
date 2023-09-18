@@ -1,38 +1,27 @@
-from flask import Flask, render_template, request
-import plotly.graph_objs as go
-import pandas as pd
+import streamlit as st
+import os
 
-## Still need to fully build this out
+st.title('QTM File Upload')
 
-app = Flask(__name__)
+st.markdown("Using the original Excel file, upload only the input file as a CSV.")
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        # get the form data
-        data = request.form['data']
-        timestep_column = request.form['timestep_column']
-        investor_column = request.form['investor_column']
-        allocation_column = request.form['allocation_column']
+uploaded_file = st.file_uploader("Choose a file")
 
-        # create a dataframe from the form data
-        df = pd.read_json(data)
+if uploaded_file is not None:
+    # Create the directory structure if it doesn't exist
+    os.makedirs('data/test_data', exist_ok=True)
+    
+        
+    # Get the file name and construct the full path
+    file_path = os.path.join('data/test_data', uploaded_file.name)
+    
+    # Check if the file already exists
+    if os.path.exists(file_path):
+        st.write(f"File '{uploaded_file.name}' already exists, overwriting...")
+    
+    # Write the uploaded file's content to the destination file
+    with open(file_path, 'wb') as f:
+        f.write(uploaded_file.getvalue())
+    
+    st.write(f"File '{uploaded_file.name}' uploaded successfully!")
 
-        # plot the stacked area graph
-        fig = go.Figure()
-        for investor in df[investor_column].unique():
-            fig.add_trace(go.Scatter(x=df[timestep_column], y=df[df[investor_column] == investor][allocation_column],
-                                     mode='lines', name=investor))
-        fig.update_layout(title='Investor Allocation Over Time', xaxis_title='Time Step', yaxis_title='Token Allocation')
-
-        # generate the HTML for the plotly graph
-        plot_html = fig.to_html(full_html=False)
-
-        # render the template with the plotly graph
-        return render_template('index.html', plot_html=plot_html)
-
-    # render the form template on a GET request
-    return render_template('index.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
