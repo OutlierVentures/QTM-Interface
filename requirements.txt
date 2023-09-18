@@ -4,7 +4,6 @@ ipykernel==5.5.3
 matplotlib==3.3.4
 plotly==4.14.3
 stochastic==0.6.0
-typing_extensions==3.7.4.3
 black==20.8b1
 ipython-autotime==0.3.1
 jupyter-dash==0.4.0
@@ -24,3 +23,5 @@ tqdm==4.61.0
 diskcache==5.2.1
 pylint==2.8.3
 jupyterlab-spellchecker==0.6.0
+streamlit==1.14.0
+altair<5

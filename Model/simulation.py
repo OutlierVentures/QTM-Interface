@@ -64,10 +64,6 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, substep=15) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=18) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=19) # after vesting sell lp tx
-    data_tx4 = postprocessing(df, substep=20) # after vesting sell lp tx
     postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()

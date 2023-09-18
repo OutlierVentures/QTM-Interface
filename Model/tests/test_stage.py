@@ -40,7 +40,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go two folders up
 parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
 
-QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
+QTM_data_tables = pd.read_csv(parent_dir+'/data/tests/Quantitative_Token_Model_V1.88_radCad_integration - Data Tables.csv')
 
 if __name__ == '__main__'   :
     start_time = time.process_time()
