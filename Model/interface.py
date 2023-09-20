@@ -1,7 +1,8 @@
 import streamlit as st
 import os
 import subprocess
-
+import pandas as pd
+import sqlite3
 
 st.title('QTM File Upload')
 
@@ -11,11 +12,11 @@ uploaded_file = st.file_uploader("Choose a file")
 
 if uploaded_file is not None:
     # Create the directory structure if it doesn't exist
-    os.makedirs('data/test_data', exist_ok=True)
+    os.makedirs('test_data', exist_ok=True)
     
         
     # Get the file name and construct the full path
-    file_path = os.path.join('data/test_data', uploaded_file.name)
+    file_path = os.path.join('test_data', uploaded_file.name)
     
     # Check if the file already exists
     if os.path.exists(file_path):
@@ -28,9 +29,8 @@ if uploaded_file is not None:
     st.write(f"File '{uploaded_file.name}' uploaded successfully!")
 
 
-
-
-
+if 'run_simulation_clicked' not in st.session_state:
+    st.session_state['run_simulation_clicked'] = False
 
 
 if st.button('Run Simulation'):
@@ -58,3 +58,19 @@ if st.session_state.run_simulation_clicked:
     
     # Reset the session state variable after running the simulation
     st.session_state.run_simulation_clicked = False
+
+
+    # Connect to the SQLite database
+    conn = sqlite3.connect('interfaceData.db')
+    
+    # Read the data from the SQLite table into a DataFrame
+    df = pd.read_sql('SELECT * FROM simulation_data', conn)
+    
+    # Close the connection
+    conn.close()
+    
+    # Now `df` holds your data as a Pandas DataFrame, and you can work with it in your Streamlit app
+    st.write(df)
+    print(df)
+
+
