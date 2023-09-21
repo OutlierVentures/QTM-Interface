@@ -28,11 +28,6 @@ if uploaded_file is not None:
     st.write(f"File '{uploaded_file.name}' uploaded successfully!")
 
 
-
-
-
-
-
 if st.button('Run Simulation'):
     # Set a session state variable to indicate the button has been clicked
     st.session_state.run_simulation_clicked = True
@@ -51,10 +46,10 @@ if st.session_state.run_simulation_clicked:
     
     if result.returncode == 0:
         st.markdown("<div style='background-color:green; padding:10px; border-radius:5px;'>Simulation completed successfully!</div>", unsafe_allow_html=True)
-        st.write(result.stdout.decode('utf-8'))
+        #st.write(result.stdout.decode('utf-8'))
     else:
         st.markdown("<div style='background-color:red; padding:10px; border-radius:5px;'>Simulation encountered an error.</div>", unsafe_allow_html=True)
-        st.write(result.stderr.decode('utf-8'))
+        #st.write(result.stderr.decode('utf-8'))
     
     # Reset the session state variable after running the simulation
     st.session_state.run_simulation_clicked = False
