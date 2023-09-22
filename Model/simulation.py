@@ -45,25 +45,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
 
-
-def convert_to_json(x):
-    try:
-        return json.dumps(x)
-    except:
-        return x
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__'   :
     start_time = time.process_time()
 
@@ -88,9 +69,6 @@ if __name__ == '__main__'   :
     print("Post processing one dataframe time: ", postprocessing_all_end_time - postprocessing_one_start_time, " s")
     print("Post processing all dataframes time: ", postprocessing_all_end_time - simulation_end_time, " s")
     print("Whole Test time: ", time.process_time() - start_time, " s")
-
-
-
 
 
     # Apply the conversion function to each column in the DataFrame
