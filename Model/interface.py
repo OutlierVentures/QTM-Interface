@@ -45,25 +45,6 @@ if 'button_plot_clicked' not in st.session_state:
 if st.button('Plot Results'):
     st.session_state.button_plot_clicked = True
 
-
-
-def plot_results(x, y_columns, run):
-    # Connect to the SQLite database
-    conn = sqlite3.connect('interfaceData.db')
-    # Read the data from the SQLite table into a DataFrame
-    df = pd.read_sql('SELECT * FROM simulation_data', conn)
-
-    # Close the connection
-    conn.close()
-
-    # example for Monte Carlo plots
-    #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
-
-    # example for line plots of different outputs in one figure
-    line_plot_st(df,x, y_columns, run)
-
-
-
 if st.session_state.button_clicked:
     
     st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Simulation running...</div>", unsafe_allow_html=True)

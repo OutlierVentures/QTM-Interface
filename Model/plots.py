@@ -2,8 +2,29 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 import numpy as np
+import sqlite3
 
 # TODO Write comments for functions
+
+def get_simulation_data(db, dataset_name):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db)
+    # Read the data from the SQLite table into a DataFrame
+    df = pd.read_sql(f'SELECT * FROM {dataset_name}', conn)
+
+    # Close the connection
+    conn.close()
+    return df
+
+def plot_results(x, y_columns, run):
+
+    df = get_simulation_data('interfaceData.db', 'simulation_data')
+
+    # example for Monte Carlo plots
+    #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
+
+    # example for line plots of different outputs in one figure
+    line_plot_st(df,x, y_columns, run)
 
 def plot_stacked_area_graph(df):
     # pivot the dataframe to create a multi-level index with Investor_Name and timestep
