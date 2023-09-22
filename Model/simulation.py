@@ -52,18 +52,6 @@ def convert_to_json(x):
     except:
         return x
 
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__'   :
     start_time = time.process_time()
 

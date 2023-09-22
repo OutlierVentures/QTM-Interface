@@ -21,7 +21,8 @@ def burn_from_protocol_bucket(params, substep, state_history, prev_state, **kwar
     else:
         burn_token_amount = 0
 
-    return {'burn_token_amount': burn_token_amount}
+    # ensure that we never burn negative tokens
+    return {'burn_token_amount': max(burn_token_amount, 0)}
 
 # STATE UPDATE FUNCTIONS
 def update_protocol_bucket_agent_after_burn(params, substep, state_history, prev_state, policy_input, **kwargs):
