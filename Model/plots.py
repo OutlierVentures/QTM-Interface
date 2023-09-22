@@ -1,8 +1,30 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import streamlit as st
+import numpy as np
+import sqlite3
 
 # TODO Write comments for functions
+
+def get_simulation_data(db, dataset_name):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db)
+    # Read the data from the SQLite table into a DataFrame
+    df = pd.read_sql(f'SELECT * FROM {dataset_name}', conn)
+
+    # Close the connection
+    conn.close()
+    return df
+
+def plot_results(x, y_columns, run):
+
+    df = get_simulation_data('interfaceData.db', 'simulation_data')
+
+    # example for Monte Carlo plots
+    #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
+
+    # example for line plots of different outputs in one figure
+    line_plot_st(df,x, y_columns, run)
 
 def plot_stacked_area_graph(df):
     # pivot the dataframe to create a multi-level index with Investor_Name and timestep
@@ -83,7 +105,7 @@ def initial_allocation_pie(df):
     plt.show()
 
 # 
-def aggregate_runs(df,aggregate_dimension):
+def aggregate_runs(df,aggregate_dimension,x,y):
     '''
     Function to aggregate the monte carlo runs along a single dimension.
 
@@ -94,11 +116,11 @@ def aggregate_runs(df,aggregate_dimension):
     Example run:
     mean_df,median_df,std_df,min_df = aggregate_runs(df,'timestep')
     '''
-
-    mean_df = df.groupby(aggregate_dimension).mean().reset_index()
-    median_df = df.groupby(aggregate_dimension).median().reset_index()
-    std_df = df.groupby(aggregate_dimension).std().reset_index()
-    min_df = df.groupby(aggregate_dimension).min().reset_index()
+    df = df[[x,y]].copy()
+    mean_df = df.astype(float).groupby(aggregate_dimension).mean().reset_index()
+    median_df = df.astype(float).groupby(aggregate_dimension).median().reset_index()
+    std_df = df.astype(float).groupby(aggregate_dimension).std().reset_index()
+    min_df = df.astype(float).groupby(aggregate_dimension).min().reset_index()
 
     return mean_df,median_df,std_df,min_df
 
@@ -117,12 +139,13 @@ def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
     Example run:
     monte_carlo_plot(df,'timestep','timestep','revenue',run_count=100)
     '''
-    mean_df,median_df,std_df,min_df = aggregate_runs(df,aggregate_dimension)
+    mean_df,median_df,std_df,min_df = aggregate_runs(df,aggregate_dimension,x,y)
 
     plt.figure(figsize=(10,6))
     for r in range(1,runs+1):
         legend_name = 'Run ' + str(r)
         plt.plot(df[df.run==r].timestep, df[df.run==r][y], label = legend_name )
+    
     plt.plot(mean_df[x], mean_df[y], label = 'Mean', color = 'black')
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.xlabel(x)
@@ -130,7 +153,50 @@ def monte_carlo_plot(df,aggregate_dimension,x,y,runs):
     title_text = 'Performance of ' + y + ' over ' + str(runs) + ' Monte Carlo Runs'
     plt.title(title_text)
 
-#
+def monte_carlo_plot_st(df,aggregate_dimension,x,y,runs):
+    '''
+    A function that generates timeseries plot of Monte Carlo runs.
+
+    Parameters:
+    df: dataframe name
+    aggregate_dimension: the dimension you would like to aggregate on, the standard one is timestep.
+    x = x axis variable for plotting
+    y = y axis variable for plotting
+    run_count = the number of monte carlo simulations
+
+    Example run:
+    monte_carlo_plot(df,'timestep','timestep','revenue',run_count=100)
+    '''
+    fig = plt.figure(figsize=(10,6))
+    if runs > 1:
+        for r in range(1,runs+1):
+            legend_name = 'Run ' + str(r)
+            plt.plot(np.asarray(df[df['run'].astype(int)==r].timestep, float), np.asarray(df[df['run'].astype(int)==r][y], float), label = legend_name )
+        mean_df,median_df,std_df,min_df = aggregate_runs(df,aggregate_dimension,x,y)
+        plt.plot(np.asarray(mean_df[x], float), np.asarray(mean_df[y], float), label = 'Mean', color = 'black')
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    
+    else:
+        plt.plot(np.asarray(df[df['run'].astype(int)==1].timestep, float), np.asarray(df[df['run'].astype(int)==1][y], float))
+    plt.xlabel(x)
+    plt.ylabel(y)
+    title_text = 'Performance of ' + y + ' over ' + str(runs) + ' Monte Carlo Runs'
+    plt.title(title_text)
+
+    st.pyplot(fig)
+
+def line_plot_st(df,x,y_series,run):
+    '''
+    A function that generates a line plot from a series of data series in a frame in streamlit
+    '''
+    fig = plt.figure(figsize=(10,6))
+    plt.plot(np.asarray(df[df['run'].astype(int)==run][x], float), np.asarray(df[df['run'].astype(int)==run][y_series], float), label = y_series)
+    plt.xlabel(x)
+    #plt.ylabel(y_series)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+    st.pyplot(fig)
+
 def plot_line_chart(dataframe, x_column, y_columns, title=''):
     """
     Plots a simple line chart using the specified columns from a dataframe.

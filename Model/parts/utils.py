@@ -7,6 +7,8 @@ import os
 from datetime import datetime
 from typing import *
 import pandas as pd
+import json
+import sqlite3
 
 # Helper Functions
 def convert_date(sys_param):
@@ -340,10 +342,6 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
         print("("+u'\u2713'+") Test passed for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps!")
     print("------------------------------------")
 
-
-
-
-
 def import_dummy_data(row, timestep):
     # Get the current directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -358,3 +356,8 @@ def import_dummy_data(row, timestep):
     
     return  QTM_data_table_value
 
+def convert_to_json(x):
+    try:
+        return json.dumps(x)
+    except:
+        return x

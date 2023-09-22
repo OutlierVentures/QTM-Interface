@@ -4,7 +4,7 @@ import subprocess
 import pandas as pd
 import sqlite3
 import time
-
+from plots import *
 
 st.title('QTM File Upload')
 
@@ -30,11 +30,8 @@ if uploaded_file is not None:
     
     st.write(f"File '{uploaded_file.name}' uploaded successfully!")
 
-
-
 script_dir = os.path.dirname(os.path.abspath(__file__))
 script_path = os.path.join(script_dir, 'simulation.py')
-    
 
 if 'button_clicked' not in st.session_state:
     st.session_state.button_clicked = False
@@ -42,18 +39,18 @@ if 'button_clicked' not in st.session_state:
 if st.button('Run Simulation'):
     st.session_state.button_clicked = True
 
-if st.session_state.button_clicked:
-    buttonS = time.process_time()
+if 'button_plot_clicked' not in st.session_state:
+    st.session_state.button_plot_clicked = False
 
-    markS = time.process_time()
+if st.button('Plot Results'):
+    st.session_state.button_plot_clicked = True
+
+if st.session_state.button_clicked:
     
     st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Simulation running...</div>", unsafe_allow_html=True)
     
     # Run the simulation.py script
     result = subprocess.run(['python', script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    markE = time.process_time()
-    print("Script Run Time:", markE - markS)
 
     if result.returncode == 0:
         st.markdown("<div style='background-color:green; padding:10px; border-radius:5px;'>Simulation completed successfully!</div>", unsafe_allow_html=True)
@@ -62,35 +59,21 @@ if st.session_state.button_clicked:
         st.markdown("<div style='background-color:red; padding:10px; border-radius:5px;'>Simulation encountered an error.</div>", unsafe_allow_html=True)
         st.write(result.stderr.decode('utf-8'))
 
-    dataStart = time.process_time()
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect('interfaceData.db')
-    # Read the data from the SQLite table into a DataFrame
-    df = pd.read_sql('SELECT * FROM simulation_data', conn)
-
-
-    dataEnd = time.process_time()
-
-    print("Data Run Time", dataEnd - dataStart)
-
-    # Close the connection
-    conn.close()
-
-    # Now `df` holds your data as a Pandas DataFrame, and you can work with it in your Streamlit app
-    dataWriteS = time.process_time()
-    st.write(df)
-    dataWriteE = time.process_time()
-    print("Write Run Time", dataWriteE - dataWriteS)
-
-    buttonE = time.process_time()
-    print("Full Button Run Time", buttonE - buttonS)
+    plot_results('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum'], 1)
 
     # Reset the session state variable after running the simulation
     st.session_state.button_clicked = False
 
 
 
+if st.session_state.button_plot_clicked:
+    
+    st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Plotting Results...</div>", unsafe_allow_html=True)
+
+    plot_results('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
+
+    # Reset the session state variable after running the simulation
+    st.session_state.button_plot_clicked = False
  
 
  
