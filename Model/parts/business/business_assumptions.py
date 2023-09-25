@@ -41,17 +41,20 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     Expenditures = (salaries_per_month + license_costs_per_month
                             + other_monthly_costs)
     
-    # revenues
-    Revenue_Streams = (royalty_income_per_month + other_income_per_month
-                                + treasury_income_per_month)
+    # Ensure that revenue from royalties etc, is never negative
+    Revenue_Streams = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
+
 
     # buybacks
     buybacks = buyback_from_revenue_share
+
     if buyback_start <= date and buyback_end > date:
         if buyback_type == "Fixed":
             buybacks += buyback_fixed_per_month
+
         elif buyback_type == "Percentage":
             buybacks += prev_cash_balance * buyback_perc_per_month / 100
+            
         else:
             raise ValueError('The buyback type is not defined!')
 
@@ -63,13 +66,13 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     # calculate the cash flow for the month
     if current_month == 1:
-        cash_flow = sum_of_raised_capital - required_liquidity_pool_fund_allocation + Revenue_Streams + product_revenue - (Expenditures + one_time_payments_1 + one_time_payments_2 + buybacks)
+        cash_flow = (sum_of_raised_capital - required_liquidity_pool_fund_allocation + Revenue_Streams +
+                      product_revenue - (Expenditures + one_time_payments_1 + one_time_payments_2 + buybacks))
 
     elif current_month > 1:
         cash_flow = Revenue_Streams + product_revenue - (Expenditures + buybacks)
 
     return {'cash_flow': cash_flow, 'buybacks': buybacks}
-
 
 
 # STATE UPDATE FUNCTIONS

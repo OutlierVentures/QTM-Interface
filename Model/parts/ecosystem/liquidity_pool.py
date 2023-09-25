@@ -30,7 +30,8 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
         sum_of_raised_capital = calculate_raised_capital(params)
 
         if required_usdc > sum_of_raised_capital:
-            raise ValueError('The required funds to seed the DEX liquidity are '+str(required_usdc)+' and higher than the sum of raised capital '+str(sum_of_raised_capital)+'!')
+            raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
+                             f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
         
         return {'liquidity_pool': liquidity_pool}
     else:
@@ -63,7 +64,10 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
 
     token_price = lp_usdc / lp_tokens
 
-    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    error_message = (
+    f'The constant product is not allowed to change after adoption buys! '
+    f'Old constant product: {constant_product} New constant product: {lp_usdc * lp_tokens}')
+    
     np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
 
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 1}
@@ -102,7 +106,10 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
         a_selling_from_holding_tokens_sum += agents[agent]['a_selling_from_holding_tokens']
     
     # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
-    error_message = 'The amount of tokens to be sold '+str(tokens_to_sell)+' is not equal to the meta bucket selling allocation '+str(selling_allocation)+'!'
+    error_message = (
+    f'The amount of tokens to be sold {tokens_to_sell} '
+    f'is not equal to the meta bucket selling allocation {selling_allocation}!')
+    
     np.testing.assert_allclose(tokens_to_sell, selling_allocation, rtol=0.001, err_msg=error_message)
 
     # calculate the liquidity pool after the vesting sells
@@ -112,7 +119,10 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
 
     token_price = lp_usdc / lp_tokens
 
-    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    error_message = (
+    f'The constant product is not allowed to change after adoption buys! '
+    f'Old constant product: {constant_product} New constant product: {lp_usdc * lp_tokens}')
+    
     np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
         
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price,
@@ -145,8 +155,8 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
     lp_usdc = lp_usdc + tokens_for_liquidity * token_price
     lp_tokens = lp_tokens + tokens_for_liquidity
 
-
-    token_price = lp_usdc / lp_tokens
+    # ensure that token price can never be negative
+    token_price = max(lp_usdc / lp_tokens, 0)
     constant_product = lp_usdc * lp_tokens
         
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 3}
@@ -178,7 +188,10 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
 
     token_price = lp_usdc / lp_tokens
     
-    error_message = 'The constant product is not allowed to change after adoption buys! Old constant product: '+str(constant_product)+' New constant product: '+str(lp_usdc * lp_tokens)
+    error_message = (
+    f'The constant product is not allowed to change after adoption buys! '
+    f'Old constant product: {constant_product} New constant product: {lp_usdc * lp_tokens}')
+    
     np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
     
     return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 4}

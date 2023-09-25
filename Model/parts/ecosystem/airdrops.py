@@ -29,7 +29,8 @@ def airdrops(params, substep, state_history, prev_state, **kwargs):
     if current_date <= airdrop_date3 and current_date+pd.DateOffset(months=1) > airdrop_date3:
         airdrop_tokens += total_token_supply * airdrop_allocation/100 * airdrop_amount3/100
 
-    return {'te_airdrop_tokens': airdrop_tokens}
+    # ensuring that the number of airdrop tokens is never negative
+    return {'te_airdrop_tokens': max(airdrop_tokens, 0)}
 
 # STATE UPDATE FUNCTIONS
 def update_agents_after_airdrops(params, substep, state_history, prev_state, policy_input, **kwargs):

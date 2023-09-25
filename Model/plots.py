@@ -53,7 +53,6 @@ def plot_stacked_area_graph(df):
     plt.show()
 
 
-# 
 def effective_token_price_plot(df):
     data = []
     for investor, values in df['investors'][0].items():
