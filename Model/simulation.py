@@ -44,8 +44,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go two folders up
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-
-if __name__ == '__main__'   :
+def simulation():
     start_time = time.process_time()
 
     MONTE_CARLO_RUNS = 1
@@ -82,3 +81,4 @@ if __name__ == '__main__'   :
     
     # Close the connection
     conn.close()
+    return 0

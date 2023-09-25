@@ -5,6 +5,7 @@ import pandas as pd
 import sqlite3
 import time
 from plots import *
+from simulation import simulation
 
 st.title('QTM File Upload')
 
@@ -45,14 +46,16 @@ if 'button_plot_clicked' not in st.session_state:
 if st.button('Plot Results'):
     st.session_state.button_plot_clicked = True
 
+
+
 if st.session_state.button_clicked:
     
     st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Simulation running...</div>", unsafe_allow_html=True)
     
     # Run the simulation.py script
-    result = subprocess.run(['python', script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = simulation()
 
-    if result.returncode == 0:
+    if result == 0:
         st.markdown("<div style='background-color:green; padding:10px; border-radius:5px;'>Simulation completed successfully!</div>", unsafe_allow_html=True)
         #st.write(result.stdout.decode('utf-8'))
     else:
