@@ -52,9 +52,9 @@ def update_utilties_after_apr(params, substep, state_history, prev_state, policy
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
-    updated_utilities['u_staking_rewards'] = agent_utility_rewards_sum
-    updated_utilities['u_staking_base_apr'] = (agent_utility_sum)
-    updated_utilities['u_staking_base_apr_cum'] += (agent_utility_sum - agent_utility_removal_sum)
+    updated_utilities['u_staking_base_apr_rewards'] = agent_utility_rewards_sum
+    updated_utilities['u_staking_base_apr_allocation'] = (agent_utility_sum)
+    updated_utilities['u_staking_base_apr_allocation_cum'] += (agent_utility_sum - agent_utility_removal_sum)
     updated_utilities['u_staking_base_apr_remove'] = agent_utility_removal_sum
     
     return ('utilities', updated_utilities)

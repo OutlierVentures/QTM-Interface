@@ -37,7 +37,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     # circulating supply variable
     circulating_tokens = 0
     lp_tokens = liquidity_pool['lp_tokens']
-    u_staking_base_apr_cum = utilities['u_staking_base_apr_cum']
+    u_staking_base_apr_allocation_cum = utilities['u_staking_base_apr_allocation_cum']
     u_staking_revenue_share_allocation_cum = utilities['u_staking_revenue_share_allocation_cum']
 
     # unvested supply variable
@@ -54,7 +54,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
             held_tokens += agents[stakeholder]['a_tokens']
 
     circulating_tokens += protocol_bucket_tokens + held_tokens + lp_tokens
-    circulating_tokens += u_staking_base_apr_cum + u_staking_revenue_share_allocation_cum
+    circulating_tokens += u_staking_base_apr_allocation_cum + u_staking_revenue_share_allocation_cum
     
 
     vested_cum = 0 

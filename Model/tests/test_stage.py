@@ -142,9 +142,9 @@ if __name__ == '__main__'   :
     print("\n--------------------------------## TEST META UTILITY SHARE ALLOCATIONS ##-------------------------------")
     print("Testing meta utility share allocations of radCad timeseries simulation against QTM data tables...")
     # staking: apr
-    test_timeseries(data=data, data_key='u_staking_base_apr', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=103, relative_tolerance=0.003)
-    test_timeseries(data=data, data_key='u_staking_base_apr_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=109, relative_tolerance=0.003)
-    test_timeseries(data=data, data_key='u_staking_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key='u_staking_base_apr_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=103, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key='u_staking_base_apr_allocation_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=109, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key='u_staking_base_apr_rewards', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=159, relative_tolerance=0.003)
     
     # staking: revenue share
     test_timeseries(data=data, data_key='u_staking_revenue_share_allocation', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=104, relative_tolerance=0.003)
