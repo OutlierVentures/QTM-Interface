@@ -36,14 +36,13 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     buyback_from_revenue_share = prev_state['utilities']['u_buyback_from_revenue_share_usd']
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
 
-    # policy logic    
+    # policy logic
     # expenditures
     Expenditures = (salaries_per_month + license_costs_per_month
                             + other_monthly_costs)
     
     # Ensure that revenue from royalties etc, is never negative
     Revenue_Streams = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
-
 
     # buybacks
     buybacks = buyback_from_revenue_share
@@ -57,6 +56,7 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
             
         else:
             raise ValueError('The buyback type is not defined!')
+
 
     # liquidity capital requirement
     required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price

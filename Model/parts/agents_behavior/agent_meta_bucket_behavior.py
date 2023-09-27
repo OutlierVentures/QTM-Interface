@@ -75,7 +75,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                     'remove_locked_tokens': 0,
                     'incentivise': 0
                 },
-                'placeholder': {
+                'staking_vesting': {
                     'trade': 0,
                     'hold': 100,
                     'utility': 0,

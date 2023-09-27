@@ -50,12 +50,6 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
                 / (utilities['u_staking_revenue_share_allocation_cum'] + agent_utility_sum - agent_utility_removal_sum))
         else:
             agents_staking_buyback_rewards[agent] = 0
-    
-    # consistency check (remove later for better performance)
-    agent_rewards = 0
-    for agent in agents:
-        agent_rewards += agents_staking_buyback_rewards[agent]
-    assert abs(agent_rewards - agent_utility_rewards_sum) < 0.001, 'agent rewards '+str(agent_rewards)+' do not match macro rewards'+str(agent_utility_rewards_sum)
 
     return {'agents_staking_buyback_allocations': agents_staking_buyback_allocations,'agents_staking_buyback_removal':agents_staking_buyback_removal,
             'agents_staking_buyback_rewards': agents_staking_buyback_rewards, 'agent_utility_sum': agent_utility_sum,

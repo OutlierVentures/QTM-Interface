@@ -14,7 +14,7 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 
 from data.not_iterable_variables import *
-QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - radCAD_inputs.csv')
+QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv')
 
 # System parameters
 sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
@@ -34,7 +34,7 @@ agent_token_allocation = {
     'community_token_allocation' : [x / 100 for x in sys_param['community_allocation']],
     'foundation_token_allocation' : [x / 100 for x in sys_param['foundation_allocation']],
     'incentivisation_token_allocation' : [x / 100 for x in sys_param['incentivisation_allocation']],
-    'placeholder_token_allocation' : [x / 100 for x in sys_param['placeholder_allocation']],
+    'staking_vesting_token_allocation' : [x / 100 for x in sys_param['staking_vesting_allocation']],
     'airdrop_token_allocation' : [x / 100 for x in sys_param['airdrop_allocation']],
     'market_token_allocation' : [0],
     'airdrop_receivers_token_allocation' : [0],
@@ -66,7 +66,7 @@ stakeholder_names = [
     'community',
     'foundation',
     'incentivisation',
-    'placeholder',
+    'staking_vesting',
     'market_investors',
     'airdrop_receivers',
     'incentivisation_receivers'
@@ -88,7 +88,7 @@ stakeholder_name_mapping = {
     'community': 'protocol_bucket',
     'foundation': 'protocol_bucket',
     'incentivisation': 'protocol_bucket',
-    'placeholder': 'protocol_bucket',
+    'staking_vesting': 'protocol_bucket',
     'market_investors': 'market_investors',
     'airdrop_receivers': 'airdrop_receivers',
     'incentivisation_receivers': 'incentivisation_receivers',

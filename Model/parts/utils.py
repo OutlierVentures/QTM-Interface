@@ -43,7 +43,7 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
 
-    agent = {'a_name': stakeholder_name, # seed, advisor, reserve, incentivisation, placeholder, market_investors, etc.
+    agent = {'a_name': stakeholder_name, # seed, advisor, reserve, incentivisation, staking_vesting, market_investors, etc.
              'a_type': stakeholder_type, # early_investor, protocol_bucket, market_investors, airdrop_receiver, incentivisation_receiver
              'a_usd_funds': usd_funds, # amount of USD funds available to this stakeholder (not applicalbe/used in the current version)
              'a_tokens': tokens, # amount of held tokens by this stakeholder group
@@ -277,8 +277,8 @@ def initialize_business_assumptions():
     Initialize the business assumptions metrics.
     """
     business_assumptions = {
-    'ba_cash_balance': 0, ## Row 184 in model, cash balance of the company
-    'ba_buybacks_usd': 0 ## Row 134 in model, buybacks in USD per month
+    'ba_cash_balance': 0, ## cash balance of the company
+    'ba_buybacks_usd': 0 ## buybacks in USD per month
     }
 
     return business_assumptions
@@ -313,7 +313,6 @@ def initialize_utilities():
     'u_holding_rewards':0, # holding token rewards
     'u_transfer_allocation':0, # transfer token allocation per timestep
     'u_transfer_allocation_cum': 0, # transfer token allocation cumulatively
-    'u_transfer_rewards': 0 # transfer token rewards
     }
 
     return utilities

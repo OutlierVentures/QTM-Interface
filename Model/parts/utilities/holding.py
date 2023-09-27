@@ -33,6 +33,7 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
 
         #rewards
         agents_holding_rewards[agent] = [(agents[agent]['a_tokens'] - agents[agent]['a_tokens_apr_locked_rewards'] - agents[agent]['a_tokens_apr_locked_remove']
+                                          - agents[agent]['a_tokens_staking_vesting_locked_rewards'] - agents[agent]['a_tokens_staking_vesting_locked_remove']
                                           + agents_holding_allocations[agent]) * token_payout_apr/12 if agents[agent]['a_type'] != 'protocol_bucket' else 0][0] # calculate the amount of tokens that shall be rewarded to the agent for staking for this timestep
         
         agent_utility_rewards_sum += agents_holding_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep

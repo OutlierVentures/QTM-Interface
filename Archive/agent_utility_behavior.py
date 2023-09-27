@@ -73,7 +73,7 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
                 'remove_locked_tokens': 0,
                 'incentivise': 0
             },
-            'placeholder': {
+            'staking_vesting_allocation': {
                 'trade': 0,
                 'hold': 100,
                 'utility': 0,
