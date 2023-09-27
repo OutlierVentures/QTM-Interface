@@ -14,7 +14,7 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 
 from data.not_iterable_variables import *
-QTM_inputs = pd.read_csv(parent_dir+'/data/tests/Quantitative_Token_Model_V1.88_radCad_integration - radCAD_inputs.csv')
+QTM_inputs = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.88_radCad_integration - radCAD_inputs.csv')
 
 # System parameters
 sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
