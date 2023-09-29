@@ -67,7 +67,7 @@ def simulation():
     print("Simulation time: ", simulation_end_time - start_time, " s")
     print("Post processing one dataframe time: ", postprocessing_all_end_time - postprocessing_one_start_time, " s")
     print("Post processing all dataframes time: ", postprocessing_all_end_time - simulation_end_time, " s")
-    print("Whole Test time: ", time.process_time() - start_time, " s")
+    print("Whole simulation + post processing time: ", time.process_time() - start_time, " s")
 
 
     # Apply the conversion function to each column in the DataFrame
