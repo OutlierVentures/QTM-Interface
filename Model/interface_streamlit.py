@@ -40,12 +40,6 @@ if 'button_clicked' not in st.session_state:
 if st.button('Run Simulation'):
     st.session_state['button_clicked'] = True
 
-if 'button_plot_clicked' not in st.session_state:
-    st.session_state['button_plot_clicked'] = False
-
-if st.button('Plot Results'):
-    st.session_state['button_plot_clicked'] = True
-
 if st.session_state['button_clicked']:
     
     st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Simulation running...</div>", unsafe_allow_html=True)
@@ -67,6 +61,18 @@ if st.session_state['button_clicked']:
 
 
 
+
+
+
+
+if 'button_plot_clicked' not in st.session_state:
+    st.session_state['button_plot_clicked'] = False
+
+if st.button('Plot Results'):
+    st.session_state['button_plot_clicked'] = True
+
+
+
 if st.session_state['button_plot_clicked']:
     
     st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Plotting Results...</div>", unsafe_allow_html=True)
@@ -77,5 +83,30 @@ if st.session_state['button_plot_clicked']:
     st.session_state['button_plot_clicked'] = False
  
 
+
+
+
+
+
+if 'plot_all' not in st.session_state:
+    st.session_state['plot_all'] = False
+
+if st.button('Plot All Results'):
+    st.session_state['plot_all'] = True
+
+
+
+
+
+if st.session_state['plot_all']:
+    
+    st.markdown("<div style='background-color:blue; padding:10px; border-radius:5px;'>Plotting All Results...</div>", unsafe_allow_html=True)
+
+    plot_all()
+    # Reset the session state variable after running the simulation
+    st.session_state['plot_all'] = False
  
+
+
+
 

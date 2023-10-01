@@ -1,5 +1,6 @@
 from parts.utils import *
 import pandas as pd
+import sqlite3
 
 import sys
 import os
@@ -168,3 +169,15 @@ utility_initial_values = {
 
 # updating utility parameters
 sys_param.update(utility_initial_values)
+
+
+
+conn = sqlite3.connect('interfaceData.db')
+    # Save the DataFrame to a new SQLite table
+
+data = pd.DataFrame(sys_param)
+
+data.to_sql('sys_param', conn, if_exists='replace', index=False)
+conn.close()
+
+    

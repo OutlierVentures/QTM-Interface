@@ -8,7 +8,7 @@ import time
 import streamlit as st
 import pandas as pd
 import sqlite3
-import json
+from plots import pie_plot_st
 
 # radCAD
 from radcad import Model, Simulation, Experiment
@@ -82,3 +82,5 @@ def simulation():
     # Close the connection
     conn.close()
     return 0
+
+

@@ -3,8 +3,11 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import sqlite3
+from sys_params import sys_param
+
 
 # TODO Write comments for functions
+
 
 def get_simulation_data(db, dataset_name):
     # Connect to the SQLite database
@@ -88,21 +91,23 @@ def extract_allocation(df):
     return investors_df
 
 #
-def initial_allocation_pie(df):
-    sum = 0
-    percentages = []
-    labels = []
-    for i, investor in df['investors'][0].items():
-        percentage = investor['percentage_allocation']
-        labels.append(i+": "+str((round(percentage*100, 2)))+"%")
-        percentages.append(percentage)
-        sum += percentage
+def pie_plot_st(values_list):
+    # Check if the values in values_list exist in the DataFrame
+    
+    sys_param = get_simulation_data('interfaceData.db', 'sys_param')
 
-    labels.append("Blank")
-    percentages.append(1-sum)
-
-    plt.pie(percentages, labels=labels, normalize=True)
+    
+    sums = sys_param[values_list].sum()
+    
+    # Create a pie chart
+    fig, ax = plt.subplots()
+    ax.pie(sums, labels=sums.index, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    
     plt.show()
+
+
+
 
 # 
 def aggregate_runs(df,aggregate_dimension,x,y):
@@ -197,6 +202,10 @@ def line_plot_st(df,x,y_series,run):
 
     st.pyplot(fig)
 
+
+
+
+
 def plot_line_chart(dataframe, x_column, y_columns, title=''):
     """
     Plots a simple line chart using the specified columns from a dataframe.
@@ -219,3 +228,40 @@ def plot_line_chart(dataframe, x_column, y_columns, title=''):
     plt.grid(True)
     plt.legend()
     plt.show()
+
+
+
+def plot_all():    
+
+    ##FUNDRAISING TAB
+    plot_results('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
+        ##NEED EFFECTIVE TOKEN PRICE
+        ##NEED PIE CHART OF INITIAL ALLOCATION
+    
+
+    ##INPUTS TAB
+    plot_results('timestep', ['ua_product_users','ua_token_holders'], 1)
+    plot_results('timestep', ['ua_product_revenue'], 1)
+    plot_results('timestep', ['ua_token_buys'], 1)
+    plot_results('timestep', ['ba_cash_balance'], 1)
+
+
+    ##UTILITIES TAB
+
+        ## PIE CHART FOR SHAR OF UTILITIES
+    pie_plot_st(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+
+
+    ##ANALYSIS TAB
+
+    plot_results('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
+
+    plot_results('timestep', ['lp_token_price','lp_volatility'], 1)
+
+    plot_results('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
+
+
+    plot_results('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
+
+
+    plot_results('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
