@@ -44,6 +44,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 ### V.2
 
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Build a web-based UI to create another input option
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add more dynamic agent (behavior) policies
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Stochastic agents
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents I: Hard coded logics
