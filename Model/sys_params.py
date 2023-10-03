@@ -170,7 +170,12 @@ utility_initial_values = {
 # updating utility parameters
 sys_param.update(utility_initial_values)
 
-
+agent_effective_price = {
+    'angle_token_allocation': [x/100 for x in sys_param['equity_external_shareholders_perc']],
+    'seed_token_allocation' : calculate_investor_effective_token_price(sys_param, "seed"),
+    'presale_1_token_allocation' : calculate_investor_effective_token_price(sys_param, "presale_1"),
+    'presale_2_token_allocation' : calculate_investor_effective_token_price(sys_param, "presale_2"),
+}
 
 conn = sqlite3.connect('interfaceData.db')
     # Save the DataFrame to a new SQLite table

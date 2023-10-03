@@ -55,40 +55,20 @@ def plot_stacked_area_graph(df):
     plt.legend()
     plt.show()
 
+def bar_plot_st(values_list):
+    # Check if the values in values_list exist in the DataFrame
+    
+    sys_param = get_simulation_data('interfaceData.db', 'sys_param')
 
-def effective_token_price_plot(df):
-    data = []
-    for investor, values in df['investors'][0].items():
-        name = investor
-        price = values['effective_token_price']
-        data.append((name, price))
-    data = pd.DataFrame(data, columns=['Name', 'effective_token_price'])
+    sums = sys_param[values_list].sum()
+    
+    # Create a bar chart
+    fig, ax = plt.subplots()
+    ax.bar(sums.index, sums, color='blue')  # You can specify a color, or remove the color argument to use default colors
+    
+    st.pyplot(fig)
 
-    df_filtered = data[data['effective_token_price'] != 0]
-    df_filtered = df_filtered.sort_values(by='effective_token_price', ascending=False)
-    df_filtered[['effective_token_price']].plot(kind='bar', rot=0)
-    plt.title('Effective Token Price by Investor Type')
-    plt.xlabel('Investor Type')
-    plt.ylabel('Effective Token Price')
-    plt.show()
 
-# 
-def extract_allocation(df):
-    investors_df = pd.DataFrame(columns=['Investor_Name', 'current_allocation', 'timestep'])
-    for index, row in df.iterrows():
-        timestep = row['timestep']
-        investors_dict = row['investors']
-        for investor_name, investor_data in investors_dict.items():
-            allocation = investor_data['current_allocation']
-            investors_df = pd.concat([investors_df,
-                                      pd.DataFrame({'Investor_Name': [investor_name],
-                                                    'current_allocation': [allocation],
-                                                    'timestep': [timestep]})])
-    investors_df.reset_index(drop=True, inplace=True)
-    investors_df['current_allocation'] = investors_df['current_allocation'].astype(float)
-    investors_df['timestep'] = investors_df['timestep'].astype(int)
-
-    return investors_df
 
 #
 def pie_plot_st(values_list):
@@ -104,7 +84,7 @@ def pie_plot_st(values_list):
     ax.pie(sums, labels=sums.index, autopct='%1.1f%%', startangle=90)
     ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     
-    plt.show()
+    st.pyplot(fig)
 
 
 
@@ -236,7 +216,34 @@ def plot_all():
     ##FUNDRAISING TAB
     plot_results('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
         ##NEED EFFECTIVE TOKEN PRICE
+    bar_plot_st([
+        'angle_token_allocation',
+        'seed_token_allocation',
+        'presale_1_token_allocation',
+        'presale_2_token_allocation'
+    ])
         ##NEED PIE CHART OF INITIAL ALLOCATION
+    pie_plot_st([
+        'angle_token_allocation',
+        'seed_token_allocation',
+        'presale_1_token_allocation',
+        'presale_2_token_allocation',
+        'public_sale_token_allocation',
+        'team_token_allocation',
+        'ov_token_allocation',
+        'advisor_token_allocation',
+        'strategic_partners_token_allocation',
+        'reserve_token_allocation',
+        'community_token_allocation',
+        'foundation_token_allocation',
+        'incentivisation_token_allocation',
+        'staking_vesting_token_allocation',
+        'airdrop_token_allocation',
+        'market_token_allocation',
+        'airdrop_receivers_token_allocation',
+        'incentivisation_receivers_token_allocation'
+    ])
+
     
 
     ##INPUTS TAB
@@ -248,7 +255,6 @@ def plot_all():
 
     ##UTILITIES TAB
 
-        ## PIE CHART FOR SHAR OF UTILITIES
     pie_plot_st(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
 

@@ -180,8 +180,17 @@ def calculate_investor_allocation(sys_param, stakeholder_name):
     effective_token_price = [np.min([x / (1+y/100), z / a]) for x in token_launch_price for y in sys_param[stakeholder_name+"_bonus"] for z in sys_param[stakeholder_name+"_valuation"] for a in sys_param["initial_total_supply"] for a in sys_param["initial_total_supply"]]
     tokens = [x / y for x in sys_param[stakeholder_name+"_raised"] for y in effective_token_price]
     allocation = [x / y for x in tokens for y in sys_param['initial_total_supply']]
-    
+    3
     return allocation
+
+
+def calculate_investor_effective_token_price(sys_param, stakeholder_name):
+    """
+    Calculate the initial token allocation of a specific stakeholder considering bonus amounts.
+    """
+    token_launch_price = [x / y for x in sys_param["public_sale_valuation"] for y in sys_param["initial_total_supply"]]
+    effective_token_price = [np.min([x / (1+y/100), z / a]) for x in token_launch_price for y in sys_param[stakeholder_name+"_bonus"] for z in sys_param[stakeholder_name+"_valuation"] for a in sys_param["initial_total_supply"] for a in sys_param["initial_total_supply"]]
+    return effective_token_price
 
 def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     """
