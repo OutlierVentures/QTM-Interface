@@ -175,7 +175,8 @@ def line_plot_st(df,x,y_series,run):
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
     fig = plt.figure(figsize=(10,6))
-    plt.plot(np.asarray(df[df['run'].astype(int)==run][x], float), np.asarray(df[df['run'].astype(int)==run][y_series], float), label = y_series)
+    for y in y_series:
+        plt.plot(np.asarray(df[df['run'].astype(int)==run][x], float), np.asarray(df[df['run'].astype(int)==run][y], float), label = y)
     plt.xlabel(x)
     #plt.ylabel(y_series)
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
