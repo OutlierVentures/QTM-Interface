@@ -296,7 +296,7 @@ def plot_all_st():
         'presale_2_token_allocation'
     ])
     ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot([
+    pie_plot_plotly([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
@@ -324,7 +324,7 @@ def plot_all_st():
     plot_results_st('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
     ##ANALYSIS TAB
     plot_results_st('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)

@@ -33,7 +33,7 @@ if uploaded_file is not None:
     with open(input_file_path, 'wb') as f:
         f.write(uploaded_file.getvalue())
     
-    st.write(f"File '{uploaded_file.name}' uploaded successfully!")
+    st.write(f"File '{uploaded_file.name}' uploaded successfully! Run the simulation again!")
 else:
     input_file_name = 'Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv'
     input_file_path = input_file_base_path + input_file_name
@@ -49,6 +49,7 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     st.markdown("Use "+input_file_name+" as input file for the simulation...")
     # Run the simulation.py script
     result = simulation(input_file_path)
+    st.write(f"Simulation finished!")
     # Reset the session state variable after running the simulation
     st.session_state['button_clicked'] = False
 
