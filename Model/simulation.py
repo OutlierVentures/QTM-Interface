@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 from plots import pie_plot_st
+import streamlit as st
 
 # radCAD
 from radcad import Model, Simulation, Experiment
@@ -25,10 +26,9 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from sys_params import *
+from state_variables import get_initial_state
 import state_variables
 import state_update_blocks
-import sys_params
 from parts.utils import *
 from plots import *
 from post_processing import *
@@ -36,7 +36,6 @@ from post_processing import *
 import importlib
 importlib.reload(state_variables)
 importlib.reload(state_update_blocks)
-importlib.reload(sys_params)
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -44,13 +43,19 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go two folders up
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-def simulation():
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
+
+@st.experimental_memo
+def simulation(input_file):
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names = get_initial_state(input_file)
+    
     start_time = time.process_time()
 
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10
 
-    model = Model(initial_state=state_variables.initial_state, params=sys_params.sys_param, state_update_blocks=state_update_blocks.state_update_block)
+    model = Model(initial_state=initial_state, params=sys_param, state_update_blocks=state_update_blocks.state_update_block)
     simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
 
     result = simulation.run()
@@ -60,7 +65,7 @@ def simulation():
      # post processing
 
     postprocessing_one_start_time = time.process_time()
-    data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
+    data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
 
     # display necessery time data
@@ -83,4 +88,5 @@ def simulation():
     conn.close()
     return 0
 
-
+if __name__ == '__main__':
+    simulation(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv')

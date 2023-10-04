@@ -2,9 +2,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 import numpy as np
+import sys, os
 import sqlite3
-from sys_params import sys_param
+from sys_params import get_sys_param
 
+# Get the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Go up one folder
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
+
+sys_param, stakeholder_name_mapping, stakeholder_names = get_sys_param(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv')
 
 # TODO Write comments for functions
 
@@ -209,7 +220,6 @@ def plot_line_chart(dataframe, x_column, y_columns, title=''):
     plt.grid(True)
     plt.legend()
     plt.show()
-
 
 
 def plot_all():    

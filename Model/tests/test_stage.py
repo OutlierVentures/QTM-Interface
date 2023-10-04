@@ -21,18 +21,14 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from sys_params import *
-import state_variables
+from state_variables import get_initial_state
 import state_update_blocks
-import sys_params
 from parts.utils import *
 from plots import *
 from post_processing import *
 
 import importlib
-importlib.reload(state_variables)
 importlib.reload(state_update_blocks)
-importlib.reload(sys_params)
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -41,14 +37,16 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
 
 QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables.csv')
+input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv'
 
 if __name__ == '__main__'   :
     start_time = time.process_time()
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names = get_initial_state(input_file)
 
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10
 
-    model = Model(initial_state=state_variables.initial_state, params=sys_params.sys_param, state_update_blocks=state_update_blocks.state_update_block)
+    model = Model(initial_state=initial_state, params=sys_param, state_update_blocks=state_update_blocks.state_update_block)
     simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
 
     result = simulation.run()
@@ -56,12 +54,12 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, substep=16) # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=19) # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=20) # after liquidity addition lp tx
-    data_tx4 = postprocessing(df, substep=21) # after buyback lp tx
+    data_tx1 = postprocessing(df, substep=16, category="all") # after adoption buy lp tx
+    data_tx2 = postprocessing(df, substep=19, category="all") # after vesting sell lp tx
+    data_tx3 = postprocessing(df, substep=20, category="all") # after liquidity addition lp tx
+    data_tx4 = postprocessing(df, substep=21, category="all") # after buyback lp tx
     postprocessing_one_start_time = time.process_time()
-    data = postprocessing(df, substep=df.substep.max()) # at the end of the timestep = last substep
+    data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
 
 
