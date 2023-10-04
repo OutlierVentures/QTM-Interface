@@ -54,13 +54,26 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
 
 
 
-# Plot Results
-if 'button_plot_clicked' not in st.session_state:
-    st.session_state['button_plot_clicked'] = False
-if st.button('Plot All Results'):
-    st.session_state['button_plot_clicked'] = True
-if 'button_plot_clicked' in st.session_state and st.session_state['button_plot_clicked']:
+# Plot Results w/ Streamlit
+if 'button_stplot_clicked' not in st.session_state:
+    st.session_state['button_stplot_clicked'] = False
+if st.button('Plot All Results w/ Streamlit'):
+    st.session_state['button_stplot_clicked'] = True
+if 'button_stplot_clicked' in st.session_state and st.session_state['button_stplot_clicked']:
     # Plot all results
-    plot_all()
+    plot_all_st()
     # Reset the session state variable after running the simulation
-    st.session_state['button_plot_clicked'] = False
+    st.session_state['button_stplot_clicked'] = False
+
+
+
+# Plot Results w/ PyPlot
+if 'button_pyplot_clicked' not in st.session_state:
+    st.session_state['button_pyplot_clicked'] = False
+if st.button('Plot All Results w/ PyPlot'):
+    st.session_state['button_pyplot_clicked'] = True
+if 'button_pyplot_clicked' in st.session_state and st.session_state['button_pyplot_clicked']:
+    # Plot all results
+    plot_all_pyplot()
+    # Reset the session state variable after running the simulation
+    st.session_state['button_pyplot_clicked'] = False
