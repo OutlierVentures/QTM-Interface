@@ -50,7 +50,7 @@ def plot_results_st(x, y_columns, run):
     # example for line plots of different outputs in one figure
     line_plot_st(df,x, y_columns, run)
 
-def plot_results_pyplot(x, y_columns, run):
+def plot_results_plotly(x, y_columns, run):
 
     df = get_simulation_data('interfaceData.db', 'simulation_data')
 
@@ -58,7 +58,7 @@ def plot_results_pyplot(x, y_columns, run):
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    line_plot_pyplot(df,x, y_columns, run)
+    line_plot_plotly(df,x, y_columns, run)
 
 def plot_stacked_area_graph(df):
     # pivot the dataframe to create a multi-level index with Investor_Name and timestep
@@ -334,7 +334,7 @@ def plot_all_st():
     plot_results_st('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
 
 
-def line_plot_pyplot(df,x,y_series,run):
+def line_plot_plotly(df,x,y_series,run):
     '''
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
@@ -345,19 +345,44 @@ def line_plot_pyplot(df,x,y_series,run):
 
     st.plotly_chart(fig, use_container_width=True)
 
-def plot_all_pyplot():    
+def bar_plot_plotly(values_list):
+    # Check if the values in values_list exist in the DataFrame
+    
+    sys_param = get_simulation_data('interfaceData.db', 'sys_param')
+
+    df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
+    
+    fig = px.bar(df, x='Parameter', y='Value')
+
+    st.plotly_chart(fig, use_container_width=True)
+
+def pie_plot_plotly(values_list):
+    # Check if the values in values_list exist in the DataFrame
+    
+    sys_param = get_simulation_data('interfaceData.db', 'sys_param')
+
+    df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
+    
+    # drop zero parameters
+    df = df[df['Value'] != 0]
+    
+    fig = px.pie(df, values='Value', names='Parameter')
+
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_all_plotly():    
 
     ##FUNDRAISING TAB
-    plot_results_pyplot('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
+    plot_results_plotly('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
         ##NEED EFFECTIVE TOKEN PRICE
-    """     bar_plot_st([
+    bar_plot_st([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
         'presale_2_token_allocation'
     ])
         ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot([
+    pie_plot_plotly([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
@@ -376,20 +401,20 @@ def plot_all_pyplot():
         'market_token_allocation',
         'airdrop_receivers_token_allocation',
         'incentivisation_receivers_token_allocation'
-    ]) """
+    ])
 
     ##INPUTS TAB
-    plot_results_pyplot('timestep', ['ua_product_users','ua_token_holders'], 1)
-    plot_results_pyplot('timestep', ['ua_product_revenue'], 1)
-    plot_results_pyplot('timestep', ['ua_token_buys'], 1)
-    plot_results_pyplot('timestep', ['ba_cash_balance'], 1)
+    plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1)
+    plot_results_plotly('timestep', ['ua_product_revenue'], 1)
+    plot_results_plotly('timestep', ['ua_token_buys'], 1)
+    plot_results_plotly('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    #pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
     ##ANALYSIS TAB
-    plot_results_pyplot('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
-    plot_results_pyplot('timestep', ['lp_token_price','lp_volatility'], 1)
-    plot_results_pyplot('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
-    plot_results_pyplot('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
-    plot_results_pyplot('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
+    plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
+    plot_results_plotly('timestep', ['lp_token_price','lp_volatility'], 1)
+    plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
+    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
+    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
