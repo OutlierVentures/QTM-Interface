@@ -8,7 +8,6 @@ import time
 import streamlit as st
 import pandas as pd
 import sqlite3
-from plots import pie_plot_st
 import streamlit as st
 
 # radCAD

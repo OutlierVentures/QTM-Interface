@@ -102,7 +102,7 @@ def bar_plot_st(values_list):
 
 
 #
-def pie_plot_st(values_list):
+def pie_plot(values_list):
     # Check if the values in values_list exist in the DataFrame
     
     sys_param = get_simulation_data('interfaceData.db', 'sys_param')
@@ -227,7 +227,7 @@ def plot_all():
         'presale_2_token_allocation'
     ])
         ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot_st([
+    pie_plot([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
@@ -255,7 +255,7 @@ def plot_all():
     plot_results('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    pie_plot_st(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
     ##ANALYSIS TAB
     plot_results('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
@@ -274,19 +274,29 @@ def line_plot_st(df,x,y_series,run):
 
     st.line_chart(chart_data, x=x, y=y_series)
 
+def bar_plot_st(values_list):
+    # Check if the values in values_list exist in the DataFrame
+    
+    sys_param = get_simulation_data('interfaceData.db', 'sys_param')
+
+    df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
+    
+    st.bar_chart(df, x="Parameter", y="Value")
+
+
 def plot_all_st():    
 
     ##FUNDRAISING TAB
     plot_results_st('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
         ##NEED EFFECTIVE TOKEN PRICE
-    """     bar_plot_st([
+    bar_plot_st([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
         'presale_2_token_allocation'
     ])
-        ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot_st([
+    ##NEED PIE CHART OF INITIAL ALLOCATION
+    pie_plot([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
@@ -305,7 +315,7 @@ def plot_all_st():
         'market_token_allocation',
         'airdrop_receivers_token_allocation',
         'incentivisation_receivers_token_allocation'
-    ]) """
+    ])
 
     ##INPUTS TAB
     plot_results_st('timestep', ['ua_product_users','ua_token_holders'], 1)
@@ -314,7 +324,7 @@ def plot_all_st():
     plot_results_st('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    #pie_plot_st(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
     ##ANALYSIS TAB
     plot_results_st('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
@@ -347,7 +357,7 @@ def plot_all_pyplot():
         'presale_2_token_allocation'
     ])
         ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot_st([
+    pie_plot([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',
@@ -375,7 +385,7 @@ def plot_all_pyplot():
     plot_results_pyplot('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    #pie_plot_st(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    #pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
 
     ##ANALYSIS TAB
     plot_results_pyplot('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
