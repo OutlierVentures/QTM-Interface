@@ -1,22 +1,22 @@
-from parts.ecosystem.vesting import *
-from parts.ecosystem.incentivisation import *
-from parts.ecosystem.airdrops import *
-from parts.ecosystem.burn import *
-from parts.ecosystem.liquidity_pool import *
-from parts.ecosystem.token_economy import *
-from parts.business.user_adoption import *
-from parts.business.business_assumptions import *
-from parts.agents_behavior.agent_meta_bucket_behavior import *
-from parts.utilities.staking_base_apr import *
-from parts.utilities.staking_revenue_share import *
-from parts.utilities.staking_vesting import *
-from parts.utilities.liquidity_mining import *
-from parts.utilities.burning import *
-from parts.utilities.holding import *
-from parts.utilities.transfer import *
+from Model.parts.ecosystem.vesting import *
+from Model.parts.ecosystem.incentivisation import *
+from Model.parts.ecosystem.airdrops import *
+from Model.parts.ecosystem.burn import *
+from Model.parts.ecosystem.liquidity_pool import *
+from Model.parts.ecosystem.token_economy import *
+from Model.parts.business.user_adoption import *
+from Model.parts.business.business_assumptions import *
+from Model.parts.agents_behavior.agent_meta_bucket_behavior import *
+from Model.parts.utilities.staking_base_apr import *
+from Model.parts.utilities.staking_revenue_share import *
+from Model.parts.utilities.staking_vesting import *
+from Model.parts.utilities.liquidity_mining import *
+from Model.parts.utilities.burning import *
+from Model.parts.utilities.holding import *
+from Model.parts.utilities.transfer import *
 
 # QTM logic order 
-state_update_block = [
+state_update_blocks = [
     ## MODEL STATE UPDATE BLOCKS ##
     {
         # substep 1: ecosystem/liquidity_pool.py

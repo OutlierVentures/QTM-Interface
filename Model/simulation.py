@@ -18,32 +18,16 @@ from radcad.engine import Engine, Backend
 # Project dependences
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
 # Go up one folder
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from state_variables import get_initial_state
-import state_variables
-import state_update_blocks
-from parts.utils import *
-from plots import *
-from post_processing import *
 
-import importlib
-importlib.reload(state_variables)
-importlib.reload(state_update_blocks)
-
-# Get the current directory
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Go two folders up
-parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-
-# Append the parent directory to sys.path
-sys.path.append(parent_dir)
+from Model.state_variables import get_initial_state
+from Model.state_update_blocks import state_update_blocks
+from Model.parts.utils import *
+from Model.post_processing import *
 
 @st.experimental_memo
 def simulation(input_file):
@@ -54,15 +38,14 @@ def simulation(input_file):
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10
 
-    model = Model(initial_state=initial_state, params=sys_param, state_update_blocks=state_update_blocks.state_update_block)
+    model = Model(initial_state=initial_state, params=sys_param, state_update_blocks=state_update_blocks)
     simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)
 
     result = simulation.run()
     df = pd.DataFrame(result)
     simulation_end_time = time.process_time()
 
-     # post processing
-
+    # post processing
     postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
@@ -86,6 +69,3 @@ def simulation(input_file):
     # Close the connection
     conn.close()
     return 0
-
-if __name__ == '__main__':
-    simulation(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv')

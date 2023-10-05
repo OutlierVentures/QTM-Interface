@@ -1,4 +1,4 @@
-from parts.utils import *
+from Model.parts.utils import *
 import pandas as pd
 import sqlite3
 

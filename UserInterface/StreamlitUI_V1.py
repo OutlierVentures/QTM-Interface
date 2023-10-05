@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
-from plots import *
-from simulation import simulation
+import os, sys
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,6 +9,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
+from plots import *
+from Model.simulation import simulation
+
 input_file_base_path = parent_dir+'/data/'
 
 st.title('Quantitative Token Model')
@@ -46,26 +47,13 @@ if 'button_clicked' not in st.session_state:
 if st.button('Run Simulation'):
     st.session_state['button_clicked'] = True
 if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
-    st.markdown("Use "+input_file_name+" as input file for the simulation...")
+    st.markdown("Use "+input_file_name+" as input file for the simulation with these parameters:")
+    st.dataframe(get_simulation_data('interfaceData.db', 'sys_param'))
     # Run the simulation.py script
     result = simulation(input_file_path)
     st.write(f"Simulation finished!")
     # Reset the session state variable after running the simulation
     st.session_state['button_clicked'] = False
-
-
-
-# Plot Results w/ Streamlit
-if 'button_stplot_clicked' not in st.session_state:
-    st.session_state['button_stplot_clicked'] = False
-if st.button('Plot All Results w/ Streamlit'):
-    st.session_state['button_stplot_clicked'] = True
-if 'button_stplot_clicked' in st.session_state and st.session_state['button_stplot_clicked']:
-    # Plot all results
-    plot_all_st()
-    # Reset the session state variable after running the simulation
-    st.session_state['button_stplot_clicked'] = False
-
 
 
 # Plot Results w/ PyPlot

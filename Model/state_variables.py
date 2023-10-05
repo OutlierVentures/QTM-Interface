@@ -1,5 +1,5 @@
-from sys_params import get_sys_param
-from parts.utils import *
+from Model.sys_params import get_sys_param
+from Model.parts.utils import *
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))

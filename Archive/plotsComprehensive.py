@@ -4,7 +4,6 @@ import streamlit as st
 import numpy as np
 import sys, os
 import sqlite3
-from sys_params import get_sys_param
 import plotly.figure_factory as ff
 import plotly.express as px
 
@@ -86,7 +85,7 @@ def plot_stacked_area_graph(df):
     plt.legend()
     plt.show()
 
-def bar_plot_st(values_list):
+def bar_plot_pyplot(values_list):
     # Check if the values in values_list exist in the DataFrame
     
     sys_param = get_simulation_data('interfaceData.db', 'sys_param')
@@ -375,7 +374,7 @@ def plot_all_plotly():
     ##FUNDRAISING TAB
     plot_results_plotly('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
         ##NEED EFFECTIVE TOKEN PRICE
-    bar_plot_st([
+    bar_plot_plotly([
         'angle_token_allocation',
         'seed_token_allocation',
         'presale_1_token_allocation',

@@ -1,6 +1,6 @@
 import numpy as np
 
-from parts.utils import *
+from Model.parts.utils import *
 
 # POLICY FUNCTIONS
 def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwargs):
