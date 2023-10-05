@@ -13,14 +13,20 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
-from data.not_iterable_variables import *
+from data.not_iterable_variables import parameter_list
 
-def get_sys_param(input_file):
+def get_sys_param(input_file, adjusted_params):
 
     QTM_inputs = pd.read_csv(input_file)
 
     # System parameters
     sys_param = compose_initial_parameters(QTM_inputs, parameter_list)
+
+    # adjusting parameters w.r.t. adjusted_params dictionary
+    if len(adjusted_params) > 0:
+        for key, value in adjusted_params.items():
+            print("Changed parameter: " + key + " to " + str(value))
+            sys_param[key] = [value]
 
     # calculating the token allocations for different agents
     agent_token_allocation = {
@@ -175,6 +181,7 @@ def get_sys_param(input_file):
         'presale_2_token_allocation' : calculate_investor_effective_token_price(sys_param, "presale_2"),
     }
 
+    # save parameter to sqlite db
     conn = sqlite3.connect('interfaceData.db')
         # Save the DataFrame to a new SQLite table
 

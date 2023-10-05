@@ -29,9 +29,9 @@ from Model.state_update_blocks import state_update_blocks
 from Model.parts.utils import *
 from Model.post_processing import *
 
-@st.experimental_memo
-def simulation(input_file):
-    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names = get_initial_state(input_file)
+@st.cache_data
+def simulation(input_file, adjusted_params):
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names = get_initial_state(input_file, adjusted_params)
     
     start_time = time.process_time()
 

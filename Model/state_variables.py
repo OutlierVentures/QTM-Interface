@@ -10,8 +10,8 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
-def get_initial_state(input_file):
-    sys_param, stakeholder_name_mapping, stakeholder_names = get_sys_param(input_file)
+def get_initial_state(input_file, adjusted_params):
+    sys_param, stakeholder_name_mapping, stakeholder_names = get_sys_param(input_file, adjusted_params)
 
     # initialize the initial stakeholders
     initial_stakeholders = generate_agents(stakeholder_name_mapping)
