@@ -11,7 +11,7 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 
 def get_initial_state(input_file, adjusted_params):
-    sys_param, stakeholder_name_mapping, stakeholder_names = get_sys_param(input_file, adjusted_params)
+    sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id = get_sys_param(input_file, adjusted_params)
 
     # initialize the initial stakeholders
     initial_stakeholders = generate_agents(stakeholder_name_mapping)
@@ -42,4 +42,4 @@ def get_initial_state(input_file, adjusted_params):
         'utilities': utilities 
     }
 
-    return initial_state, sys_param, stakeholder_name_mapping, stakeholder_names
+    return initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id

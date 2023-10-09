@@ -32,11 +32,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
 QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables.csv')
-input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv'
+#input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_1000x_supply.csv'
+input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs.csv'
+#input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_2.75_public_sale_perc.csv'
 
 if __name__ == '__main__'   :
     start_time = time.process_time()
-    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names = get_initial_state(input_file)
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id = get_initial_state(input_file, {})
 
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10

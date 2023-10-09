@@ -2,6 +2,7 @@ from Model.parts.utils import *
 import pandas as pd
 import sqlite3
 
+from collections import Counter
 import sys
 import os
 
@@ -182,14 +183,41 @@ def get_sys_param(input_file, adjusted_params):
     }
 
     # save parameter to sqlite db
-    conn = sqlite3.connect('interfaceData.db')
-        # Save the DataFrame to a new SQLite table
+    conn = sqlite3.connect('simulationData.db')
+    # Save the sys_param DataFrame to a new SQLite table if these parameter combination does not exist yet
+    # check if sys_param table exists
+    cur = conn.cursor()
+    listOfTables = cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='sys_param' ''')
+    if listOfTables.fetchall()[0][0] == 0:
+        # create unique identifier for this parameter set
+        param_id = str(uuid.uuid4()).replace("-", "")
+        sys_param['id'] = [param_id]
+        sys_param_df = pd.DataFrame(sys_param)
+        sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
+        print(sys_param_df.head(10))
+        print("Create new table!")
+    else:
+        print("Table already exists!")
+        print("Get parameter data from table..")
+        df = pd.read_sql(f'SELECT * FROM sys_param', conn)
+        df_old = df.loc[:, df.columns != 'id']
+        df_new = pd.DataFrame(sys_param)
 
-    data = pd.DataFrame(sys_param)
+        # comparing dataframes
+        if not df_new[df_new.columns].values[0].tolist() in df_old[df_old.columns].values[:].tolist():
+            print("New parameter set detected!")
+            param_id = str(uuid.uuid4()).replace("-", "")
+            sys_param['id'] = [param_id]
+            sys_param_df = pd.concat([df, pd.DataFrame(sys_param)])
+            sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
+        else:
+            print("Already existing parameter set detected! Getting its id..")
+            # get id of already existing parameter set that equals to the current one
+            same_row_idx = [i for i, x in enumerate(list(df_old[df_old.columns].values[:])) if Counter(x) == Counter(list(df_new[df_new.columns].values[0]))][0]
+            param_id = df.iloc[same_row_idx]['id']
 
-    data.to_sql('sys_param', conn, if_exists='replace', index=False)
-    conn.close()
+    print("Parameter ID of current simulation: ", param_id)
 
-    return sys_param, stakeholder_name_mapping, stakeholder_names
+    return sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id
 
     
