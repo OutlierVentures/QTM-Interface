@@ -24,7 +24,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
     else:
         sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
-        sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
+        if len(sys_param_df[sys_param_df['id'] == parameter_id_choice])<1:
+            sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
+        else:
+            sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
 
     with col11:
         supply_type = st.radio('Supply Type',('Fixed', 'Inflationary'), index=['Fixed', 'Inflationary'].index(sys_param['supply_type'][0]), key='supply_type_radio', help="Determines if a minting functionallity is allowed.")
