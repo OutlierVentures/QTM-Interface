@@ -735,3 +735,181 @@ ua_product_revenue,Ua Product Revenue,simulation_data
 ua_token_buys,Ua Token Buys,simulation_data
 ba_cash_balance,Ba Cash Balance,simulation_data
 ba_buybacks_usd,Ba Buybacks Usd,simulation_data
+supply_type,Supply Type,sys_param
+initial_total_supply,Initial Total Supply,sys_param
+launch_date,Launch Date,sys_param
+public_sale_supply_perc,Public Sale Supply Perc,sys_param
+public_sale_valuation,Public Sale Valuation,sys_param
+equity_external_shareholders_perc,Equity External Shareholders Perc,sys_param
+angle_raised,Angle Raised,sys_param
+seed_raised,Seed Raised,sys_param
+presale_1_raised,Presale 1 Raised,sys_param
+presale_2_raised,Presale 2 Raised,sys_param
+public_sale_raised,Public Sale Raised,sys_param
+raised_capital_sum,Raised Capital Sum,sys_param
+angle_valuation,Angle Valuation,sys_param
+seed_valuation,Seed Valuation,sys_param
+presale_1_valuation,Presale 1 Valuation,sys_param
+presale_2_valuation,Presale 2 Valuation,sys_param
+angle_bonus,Angle Bonus,sys_param
+seed_bonus,Seed Bonus,sys_param
+presale_1_bonus,Presale 1 Bonus,sys_param
+presale_2_bonus,Presale 2 Bonus,sys_param
+team_allocation,Team Allocation,sys_param
+ov_allocation,Ov Allocation,sys_param
+advisor_allocation,Advisor Allocation,sys_param
+strategic_partners_allocation,Strategic Partners Allocation,sys_param
+reserve_allocation,Reserve Allocation,sys_param
+community_allocation,Community Allocation,sys_param
+foundation_allocation,Foundation Allocation,sys_param
+incentivisation_allocation,Incentivisation Allocation,sys_param
+staking_vesting_allocation,Staking Vesting Allocation,sys_param
+liquidity_pool_allocation,Liquidity Pool Allocation,sys_param
+airdrop_allocation,Airdrop Allocation,sys_param
+airdrop_date1,Airdrop Date1,sys_param
+airdrop_amount1,Airdrop Amount1,sys_param
+airdrop_date2,Airdrop Date2,sys_param
+airdrop_amount2,Airdrop Amount2,sys_param
+airdrop_date3,Airdrop Date3,sys_param
+airdrop_amount3,Airdrop Amount3,sys_param
+angle_initial_vesting,Angle Initial Vesting,sys_param
+seed_initial_vesting,Seed Initial Vesting,sys_param
+presale_1_initial_vesting,Presale 1 Initial Vesting,sys_param
+presale_2_initial_vesting,Presale 2 Initial Vesting,sys_param
+public_sale_initial_vesting,Public Sale Initial Vesting,sys_param
+team_initial_vesting,Team Initial Vesting,sys_param
+ov_initial_vesting,Ov Initial Vesting,sys_param
+advisor_initial_vesting,Advisor Initial Vesting,sys_param
+strategic_partners_initial_vesting,Strategic Partners Initial Vesting,sys_param
+reserve_initial_vesting,Reserve Initial Vesting,sys_param
+community_initial_vesting,Community Initial Vesting,sys_param
+foundation_initial_vesting,Foundation Initial Vesting,sys_param
+incentivisation_initial_vesting,Incentivisation Initial Vesting,sys_param
+staking_vesting_initial_vesting,Staking Vesting Initial Vesting,sys_param
+liquidity_pool_initial_vesting,Liquidity Pool Initial Vesting,sys_param
+angle_cliff,Angle Cliff,sys_param
+seed_cliff,Seed Cliff,sys_param
+presale_1_cliff,Presale 1 Cliff,sys_param
+presale_2_cliff,Presale 2 Cliff,sys_param
+public_sale_cliff,Public Sale Cliff,sys_param
+team_cliff,Team Cliff,sys_param
+ov_cliff,Ov Cliff,sys_param
+advisor_cliff,Advisor Cliff,sys_param
+strategic_partners_cliff,Strategic Partners Cliff,sys_param
+reserve_cliff,Reserve Cliff,sys_param
+community_cliff,Community Cliff,sys_param
+foundation_cliff,Foundation Cliff,sys_param
+incentivisation_cliff,Incentivisation Cliff,sys_param
+staking_vesting_cliff,Staking Vesting Cliff,sys_param
+angle_vesting_duration,Angle Vesting Duration,sys_param
+seed_vesting_duration,Seed Vesting Duration,sys_param
+presale_1_vesting_duration,Presale 1 Vesting Duration,sys_param
+presale_2_vesting_duration,Presale 2 Vesting Duration,sys_param
+public_sale_vesting_duration,Public Sale Vesting Duration,sys_param
+team_vesting_duration,Team Vesting Duration,sys_param
+ov_vesting_duration,Ov Vesting Duration,sys_param
+advisor_vesting_duration,Advisor Vesting Duration,sys_param
+strategic_partner_vesting_duration,Strategic Partner Vesting Duration,sys_param
+reserve_vesting_duration,Reserve Vesting Duration,sys_param
+community_vesting_duration,Community Vesting Duration,sys_param
+foundation_vesting_duration,Foundation Vesting Duration,sys_param
+incentivisation_vesting_duration,Incentivisation Vesting Duration,sys_param
+staking_vesting_vesting_duration,Staking Vesting Vesting Duration,sys_param
+initial_product_users,Initial Product Users,sys_param
+product_users_after_10y,Product Users After 10y,sys_param
+product_adoption_velocity,Product Adoption Velocity,sys_param
+one_time_product_revenue_per_user,One Time Product Revenue Per User,sys_param
+regular_product_revenue_per_user,Regular Product Revenue Per User,sys_param
+initial_token_holders,Initial Token Holders,sys_param
+token_holders_after_10y,Token Holders After 10y,sys_param
+token_adoption_velocity,Token Adoption Velocity,sys_param
+one_time_token_buy_per_user,One Time Token Buy Per User,sys_param
+regular_token_buy_per_user,Regular Token Buy Per User,sys_param
+avg_token_utility_allocation,Avg Token Utility Allocation,sys_param
+avg_token_holding_allocation,Avg Token Holding Allocation,sys_param
+avg_token_selling_allocation,Avg Token Selling Allocation,sys_param
+avg_token_utility_removal,Avg Token Utility Removal,sys_param
+product_income_per_month,Product Income Per Month,sys_param
+royalty_income_per_month,Royalty Income Per Month,sys_param
+other_income_per_month,Other Income Per Month,sys_param
+treasury_income_per_month,Treasury Income Per Month,sys_param
+regular_income_sum,Regular Income Sum,sys_param
+one_time_payments_1,One Time Payments 1,sys_param
+one_time_payments_2,One Time Payments 2,sys_param
+salaries_per_month,Salaries Per Month,sys_param
+license_costs_per_month,License Costs Per Month,sys_param
+other_monthly_costs,Other Monthly Costs,sys_param
+buyback_type,Buyback Type,sys_param
+buyback_perc_per_month,Buyback Perc Per Month,sys_param
+buyback_fixed_per_month,Buyback Fixed Per Month,sys_param
+buyback_bucket,Buyback Bucket,sys_param
+buyback_start,Buyback Start,sys_param
+buyback_end,Buyback End,sys_param
+burn_per_month,Burn Per Month,sys_param
+burn_start,Burn Start,sys_param
+burn_end,Burn End,sys_param
+burn_project_bucket,Burn Project Bucket,sys_param
+regular_expenditures_per_month,Regular Expenditures Per Month,sys_param
+cash_reserves_after_launch,Cash Reserves After Launch,sys_param
+cashflow_balance,Cashflow Balance,sys_param
+lock_share,Lock Share,sys_param
+lock_buyback_distribute_share,Lock Buyback Distribute Share,sys_param
+lock_vesting_share,Lock Vesting Share,sys_param
+liquidity_mining_share,Liquidity Mining Share,sys_param
+burning_share,Burning Share,sys_param
+holding_share,Holding Share,sys_param
+transfer_share,Transfer Share,sys_param
+lock_apr,Lock Apr,sys_param
+lock_payout_source,Lock Payout Source,sys_param
+lock_buyback_from_revenue_share,Lock Buyback From Revenue Share,sys_param
+liquidity_mining_apr,Liquidity Mining Apr,sys_param
+liquidity_mining_payout_source,Liquidity Mining Payout Source,sys_param
+holding_apr,Holding Apr,sys_param
+holding_payout_source,Holding Payout Source,sys_param
+transfer_destination,Transfer Destination,sys_param
+mint_incentivisation,Mint Incentivisation,sys_param
+incentivisation_payout_source,Incentivisation Payout Source,sys_param
+off_chain_point_system_flag,Off Chain Point System Flag,sys_param
+avg_point_issuance_per_user,Avg Point Issuance Per User,sys_param
+avg_point_issuance_per_user_per_month,Avg Point Issuance Per User Per Month,sys_param
+allow_point_conversion,Allow Point Conversion,sys_param
+point_to_token_conversion_rate,Point To Token Conversion Rate,sys_param
+multiplier_points_per_token_staked,Multiplier Points Per Token Staked,sys_param
+multiplier_cap,Multiplier Cap,sys_param
+conversion_bucket,Conversion Bucket,sys_param
+none,None,sys_param
+implied_fdv_after_3y,Implied Fdv After 3y,sys_param
+speculation_factor,Speculation Factor,sys_param
+aav_exponent,Aav Exponent,sys_param
+max_vesting_rate,Max Vesting Rate,sys_param
+min_vesting_rate,Min Vesting Rate,sys_param
+avg_trading_fund_usage,Avg Trading Fund Usage,sys_param
+avg_token_lock,Avg Token Lock,sys_param
+avg_token_remove,Avg Token Remove,sys_param
+avg_token_incentivisation,Avg Token Incentivisation,sys_param
+token_incentivisation_exponent,Token Incentivisation Exponent,sys_param
+team_vesting_weight,Team Vesting Weight,sys_param
+foundation_vesting_weight,Foundation Vesting Weight,sys_param
+investor_vesting_weight,Investor Vesting Weight,sys_param
+agent_behavior,Agent Behavior,sys_param
+angle_token_allocation,Angle Token Allocation,sys_param
+seed_token_allocation,Seed Token Allocation,sys_param
+presale_1_token_allocation,Presale 1 Token Allocation,sys_param
+presale_2_token_allocation,Presale 2 Token Allocation,sys_param
+public_sale_token_allocation,Public Sale Token Allocation,sys_param
+team_token_allocation,Team Token Allocation,sys_param
+ov_token_allocation,Ov Token Allocation,sys_param
+advisor_token_allocation,Advisor Token Allocation,sys_param
+strategic_partners_token_allocation,Strategic Partners Token Allocation,sys_param
+reserve_token_allocation,Reserve Token Allocation,sys_param
+community_token_allocation,Community Token Allocation,sys_param
+foundation_token_allocation,Foundation Token Allocation,sys_param
+incentivisation_token_allocation,Incentivisation Token Allocation,sys_param
+staking_vesting_token_allocation,Staking Vesting Token Allocation,sys_param
+airdrop_token_allocation,Airdrop Token Allocation,sys_param
+market_token_allocation,Market Token Allocation,sys_param
+airdrop_receivers_token_allocation,Airdrop Receivers Token Allocation,sys_param
+incentivisation_receivers_token_allocation,Incentivisation Receivers Token Allocation,sys_param
+initial_token_price,Initial Token Price,sys_param
+initial_lp_token_allocation,Initial Lp Token Allocation,sys_param
+initial_required_usdc,Initial Required Usdc,sys_param
