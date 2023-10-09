@@ -9,6 +9,11 @@ import plotly.express as px
 
 # TODO Write comments for functions
 
+
+df = pd.read_csv("data/all_headers_and_friendly_names.csv")
+
+
+
 def get_simulation_data(db, dataset_name):
     # Connect to the SQLite database
     conn = sqlite3.connect(db)
