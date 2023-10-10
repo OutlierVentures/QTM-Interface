@@ -225,14 +225,18 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
     # update logic
     bought_tokens = old_lp_tokens - new_lp_tokens
 
-    # distribute the bought tokens to the market_investors agents
-    market_investors = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'market_investors')])
-    for agent in updated_agents:
-        if updated_agents[agent]['a_type'] == 'market_investors':
-            
-            bought_tokens_per_market_investor = bought_tokens / market_investors
+    if bought_tokens > 0:
+        # distribute the bought tokens to the market_investors agents
+        market_investors = sum([1 for agent in updated_agents if (updated_agents[agent]['a_type'] == 'market_investors')])
+        if market_investors == 0:
+            raise ValueError("No market investors found. Please add at least one market investor in the stakeholder agents if you plan to buy tokens from the open market dex liquidity with agents.")
+        
+        for agent in updated_agents:
+            if updated_agents[agent]['a_type'] == 'market_investors':
+                
+                bought_tokens_per_market_investor = bought_tokens / market_investors
 
-            updated_agents[agent]['a_tokens'] += bought_tokens_per_market_investor
+                updated_agents[agent]['a_tokens'] += bought_tokens_per_market_investor
 
     return ('agents', updated_agents)
 

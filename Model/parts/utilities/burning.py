@@ -12,10 +12,11 @@ def burning_agent_allocation(params, substep, state_history, prev_state, **kwarg
     # policy logic
     agent_utility_sum = 0
     agents_burning_allocations = {}
-    for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens']
-        agents_burning_allocations[agent] = utility_tokens * burning_share
-        agent_utility_sum += agents_burning_allocations[agent]
+    if burning_share > 0:
+        for agent in agents:
+            utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens']
+            agents_burning_allocations[agent] = utility_tokens * burning_share
+            agent_utility_sum += agents_burning_allocations[agent]
     
     return {'u_burning_allocation': agent_utility_sum, 'agents_burning_allocations': agents_burning_allocations}
 
@@ -34,9 +35,10 @@ def update_burning_agent_allocation(params, substep, state_history, prev_state, 
     agents_burning_allocations = policy_input['agents_burning_allocations']
 
     # update logic
-    for agent in updated_agents:
-        updated_agents[agent]['a_tokens_burned'] = agents_burning_allocations[agent]
-        updated_agents[agent]['a_tokens_burned_cum'] += agents_burning_allocations[agent]
+    if agents_burning_allocations != {}:
+        for agent in updated_agents:
+            updated_agents[agent]['a_tokens_burned'] = agents_burning_allocations[agent]
+            updated_agents[agent]['a_tokens_burned_cum'] += agents_burning_allocations[agent]
 
     return ('agents', updated_agents)
 

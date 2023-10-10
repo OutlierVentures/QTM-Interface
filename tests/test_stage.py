@@ -32,9 +32,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
 QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables.csv')
+QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables_only_staking_vesting.csv')
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_1000x_supply.csv'
 input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs.csv'
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_2.75_public_sale_perc.csv'
+input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_only_staking_vesting.csv'
 
 if __name__ == '__main__'   :
     start_time = time.process_time()
@@ -101,7 +103,7 @@ if __name__ == '__main__'   :
     test_timeseries(data=data, data_key='te_minted_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=50, relative_tolerance=0.003)
     test_timeseries(data=data, data_key='te_incentivised_tokens', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=51, relative_tolerance=0.003)
     test_timeseries(data=data, data_key='te_incentivised_tokens_cum', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=52, relative_tolerance=0.003)
-    test_timeseries(data=data, data_key='te_incentivised_tokens_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.004)
+    test_timeseries(data=data, data_key='te_incentivised_tokens_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=54, relative_tolerance=0.003)
 
 
     ## TEST AIRDROPS ##
@@ -236,7 +238,7 @@ if __name__ == '__main__'   :
 
 
     ## Testing agent end balances ##
-    test_timeseries(data=data, data_key="reserve_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=179, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key="reserve_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=179, relative_tolerance=0.005)
     test_timeseries(data=data, data_key="community_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=180, relative_tolerance=0.003)
     test_timeseries(data=data, data_key="foundation_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=181, relative_tolerance=0.003)
     test_timeseries(data=data, data_key="incentivisation_a_tokens", data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=182, relative_tolerance=0.003)

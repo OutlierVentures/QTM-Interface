@@ -47,9 +47,10 @@ def update_agent_vested_tokens(params, substep, state_history, prev_state, polic
     updated_agents = prev_state['agents']
     agent_token_vesting_dict = policy_input['agent_token_vesting_dict']
 
-    for key, value in agent_token_vesting_dict.items():
-        updated_agents[key]['a_tokens'] += value
-        updated_agents[key]['a_tokens_vested'] = value
-        updated_agents[key]['a_tokens_vested_cum'] += value
+    if not all(value == 0 for value in agent_token_vesting_dict.values()):
+        for key, value in agent_token_vesting_dict.items():
+            updated_agents[key]['a_tokens'] += value
+            updated_agents[key]['a_tokens_vested'] = value
+            updated_agents[key]['a_tokens_vested_cum'] += value
 
     return ('agents', updated_agents)

@@ -24,19 +24,20 @@ def holding_agent_allocation(params, substep, state_history, prev_state, **kwarg
     agents_holding_rewards = {}
 
     # calculate the staking apr token allocations and removals for each agent
-    for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and previous timestep holdings
+    if token_payout_apr > 0 and holding_share > 0:
+        for agent in agents:
+            utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and previous timestep holdings
 
-        agents_holding_allocations[agent] = utility_tokens * holding_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
+            agents_holding_allocations[agent] = utility_tokens * holding_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
 
-        agent_utility_sum += agents_holding_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
+            agent_utility_sum += agents_holding_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
 
-        #rewards
-        agents_holding_rewards[agent] = [(agents[agent]['a_tokens'] - agents[agent]['a_tokens_apr_locked_rewards'] - agents[agent]['a_tokens_apr_locked_remove']
-                                          - agents[agent]['a_tokens_staking_vesting_locked_rewards'] - agents[agent]['a_tokens_staking_vesting_locked_remove']
-                                          + agents_holding_allocations[agent]) * token_payout_apr/12 if agents[agent]['a_type'] != 'protocol_bucket' else 0][0] # calculate the amount of tokens that shall be rewarded to the agent for staking for this timestep
-        
-        agent_utility_rewards_sum += agents_holding_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
+            #rewards
+            agents_holding_rewards[agent] = [(agents[agent]['a_tokens'] - agents[agent]['a_tokens_apr_locked_rewards'] - agents[agent]['a_tokens_apr_locked_remove']
+                                            - agents[agent]['a_tokens_staking_vesting_locked_rewards'] - agents[agent]['a_tokens_staking_vesting_locked_remove']
+                                            + agents_holding_allocations[agent]) * token_payout_apr/12 if agents[agent]['a_type'] != 'protocol_bucket' else 0][0] # calculate the amount of tokens that shall be rewarded to the agent for staking for this timestep
+            
+            agent_utility_rewards_sum += agents_holding_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
 
     return {'agents_holding_allocations': agents_holding_allocations, 'agents_holding_rewards': agents_holding_rewards,
             'agent_utility_sum': agent_utility_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum}
@@ -60,12 +61,13 @@ def update_agents_after_holding(params, substep, state_history, prev_state, poli
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
-    for agent in updated_agents:
-        updated_agents[agent]['a_tokens'] += (agents_holding_allocations[agent] + agents_holding_rewards[agent])
+    if agents_holding_rewards != {}:
+        for agent in updated_agents:
+            updated_agents[agent]['a_tokens'] += (agents_holding_allocations[agent] + agents_holding_rewards[agent])
 
-        # subtract tokens from payout source agent
-        if updated_agents[agent]['a_name'].lower() in holding_payout_source.lower():
-            updated_agents[agent]['a_tokens'] -= agent_utility_rewards_sum
+            # subtract tokens from payout source agent
+            if updated_agents[agent]['a_name'].lower() in holding_payout_source.lower():
+                updated_agents[agent]['a_tokens'] -= agent_utility_rewards_sum
 
 
     return ('agents', updated_agents)

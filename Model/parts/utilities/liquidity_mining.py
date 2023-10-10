@@ -28,18 +28,19 @@ def staking_liquidity_mining_agent_allocation(params, substep, state_history, pr
     agents_liquidity_mining_rewards = {}
 
     # calculate the staking apr token allocations and removals for each agent
-    for agent in agents:
-        utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
-        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
-        tokens_apr_locked_cum = agents[agent]['a_tokens_liquidity_mining_cum'] # get amount of liq. mining allocated tokens from last timestep
-        
-        agents_liquidity_mining_allocations[agent] = utility_tokens * liquidity_mining_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
-        agents_liquidity_mining_removal[agent] = tokens_apr_locked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking apr utility for this timestep based on the tokens allocated in the previous timestep
-        agents_liquidity_mining_rewards[agent] = (tokens_apr_locked_cum * (1+(IL_adjustment_factor - 1)) + agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent]) * liquidity_mining_apr/12 # calculate the amount of tokens that shall be rewarded to the agent for staking
-        
-        agent_utility_sum += agents_liquidity_mining_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
-        agent_utility_removal_sum += agents_liquidity_mining_removal[agent] # sum up the total amount of tokens removed from the staking apr utility for this timestep
-        agent_utility_rewards_sum += agents_liquidity_mining_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
+    if liquidity_mining_share > 0:
+        for agent in agents:
+            utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
+            utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
+            tokens_apr_locked_cum = agents[agent]['a_tokens_liquidity_mining_cum'] # get amount of liq. mining allocated tokens from last timestep
+            
+            agents_liquidity_mining_allocations[agent] = utility_tokens * liquidity_mining_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
+            agents_liquidity_mining_removal[agent] = tokens_apr_locked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking apr utility for this timestep based on the tokens allocated in the previous timestep
+            agents_liquidity_mining_rewards[agent] = (tokens_apr_locked_cum * (1+(IL_adjustment_factor - 1)) + agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent]) * liquidity_mining_apr/12 # calculate the amount of tokens that shall be rewarded to the agent for staking
+            
+            agent_utility_sum += agents_liquidity_mining_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
+            agent_utility_removal_sum += agents_liquidity_mining_removal[agent] # sum up the total amount of tokens removed from the staking apr utility for this timestep
+            agent_utility_rewards_sum += agents_liquidity_mining_rewards[agent] # sum up the total amount of tokens rewarded to the agent for staking for this timestep
 
     return {'agents_liquidity_mining_allocations': agents_liquidity_mining_allocations,'agents_liquidity_mining_removal':agents_liquidity_mining_removal,
             'agents_liquidity_mining_rewards': agents_liquidity_mining_rewards, 'agent_utility_sum': agent_utility_sum,
@@ -66,16 +67,17 @@ def update_agents_after_liquidity_mining(params, substep, state_history, prev_st
     IL_adjustment_factor = policy_input['IL_adjustment_factor']
 
     # update logic
-    for agent in updated_agents:
-        updated_agents[agent]['a_tokens_liquidity_mining'] = agents_liquidity_mining_allocations[agent]
-        updated_agents[agent]['a_tokens_liquidity_mining_cum'] = updated_agents[agent]['a_tokens_liquidity_mining_cum'] * (1 + (IL_adjustment_factor - 1)) + agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent]
-        updated_agents[agent]['a_tokens_liquidity_mining_remove'] = agents_liquidity_mining_removal[agent]
-        updated_agents[agent]['a_tokens_liquidity_mining_rewards'] = agents_liquidity_mining_rewards[agent]
-        updated_agents[agent]['a_tokens'] += (agents_liquidity_mining_rewards[agent] + agents_liquidity_mining_removal[agent])
+    if agents_liquidity_mining_allocations != {}:
+        for agent in updated_agents:
+            updated_agents[agent]['a_tokens_liquidity_mining'] = agents_liquidity_mining_allocations[agent]
+            updated_agents[agent]['a_tokens_liquidity_mining_cum'] = updated_agents[agent]['a_tokens_liquidity_mining_cum'] * (1 + (IL_adjustment_factor - 1)) + agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent]
+            updated_agents[agent]['a_tokens_liquidity_mining_remove'] = agents_liquidity_mining_removal[agent]
+            updated_agents[agent]['a_tokens_liquidity_mining_rewards'] = agents_liquidity_mining_rewards[agent]
+            updated_agents[agent]['a_tokens'] += (agents_liquidity_mining_rewards[agent] + agents_liquidity_mining_removal[agent])
 
-        # subtract tokens from payout source agent
-        if updated_agents[agent]['a_name'].lower() in liquidity_mining_payout_source.lower():
-            updated_agents[agent]['a_tokens'] -= agent_utility_rewards_sum
+            # subtract tokens from payout source agent
+            if updated_agents[agent]['a_name'].lower() in liquidity_mining_payout_source.lower():
+                updated_agents[agent]['a_tokens'] -= agent_utility_rewards_sum
 
     return ('agents', updated_agents)
 

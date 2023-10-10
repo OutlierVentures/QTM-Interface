@@ -16,12 +16,13 @@ def transfer_agent_allocation(params, substep, state_history, prev_state, **kwar
     agents_transfer_allocations = {}
     agents_transfer_rewards = {}
 
-    # calculate the staking apr token allocations and removals for each agent
-    for agent in agents:
-        utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
-        agents_transfer_allocations[agent] = utility_tokens * transfer_share # calculate the amount of tokens that shall be allocated to the transfer utility from this timestep
-           
-        agent_utility_sum += agents_transfer_allocations[agent] # sum up the total amount of tokens allocated to the transfer for this timestep
+    if transfer_share > 0:
+        # calculate the staking apr token allocations and removals for each agent
+        for agent in agents:
+            utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
+            agents_transfer_allocations[agent] = utility_tokens * transfer_share # calculate the amount of tokens that shall be allocated to the transfer utility from this timestep
+            
+            agent_utility_sum += agents_transfer_allocations[agent] # sum up the total amount of tokens allocated to the transfer for this timestep
 
     return {'agents_transfer_allocations': agents_transfer_allocations, 'agents_transfer_rewards': agents_transfer_rewards,
             'agent_utility_sum': agent_utility_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum}
@@ -46,14 +47,15 @@ def update_agents_after_transfer(params, substep, state_history, prev_state, pol
 
 
     # update logic
-    for agent in updated_agents:
-        updated_agents[agent]['a_tokens_transferred'] = (agents_transfer_allocations[agent])
-        updated_agents[agent]['a_tokens_transferred_cum'] += (agents_transfer_allocations[agent])
-        a_transfer_allocation += updated_agents[agent]['a_tokens_transferred']
+    if agents_transfer_allocations != {}:
+        for agent in updated_agents:
+            updated_agents[agent]['a_tokens_transferred'] = (agents_transfer_allocations[agent])
+            updated_agents[agent]['a_tokens_transferred_cum'] += (agents_transfer_allocations[agent])
+            a_transfer_allocation += updated_agents[agent]['a_tokens_transferred']
 
-    for agent in updated_agents:
-       if updated_agents[agent]['a_name'].lower() in transfer_destination.lower():
-          updated_agents[agent]['a_tokens'] += a_transfer_allocation
+        for agent in updated_agents:
+            if updated_agents[agent]['a_name'].lower() in transfer_destination.lower():
+                updated_agents[agent]['a_tokens'] += a_transfer_allocation
 
     return ('agents', updated_agents)
 
