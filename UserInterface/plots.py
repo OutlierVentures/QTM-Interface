@@ -7,10 +7,8 @@ import sqlite3
 import plotly.figure_factory as ff
 import plotly.express as px
 
-# TODO Write comments for functions
 
 
-#df = pd.read_csv("data/all_headers_and_friendly_names.csv")
 
 
 
@@ -277,3 +275,24 @@ def plot_token_economy(param_id):
     plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1, param_id)
     plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1, param_id)
     plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1, param_id)
+
+
+
+def format_column_name(column_name):
+    """
+    This function takes a column name as input, replaces underscores with spaces,
+    and capitalizes the first letter of each word.
+
+    Parameters:
+    - column_name (str): The input string that needs to be formatted.
+
+    Returns:
+    str: The formatted string with spaces instead of underscores and capitalized words.
+    """
+    # Replacing underscores with spaces
+    name_with_spaces = column_name.replace('_', ' ')
+    
+    # Capitalizing the first letter of each word
+    user_friendly_name = name_with_spaces.title()
+    
+    return user_friendly_name
