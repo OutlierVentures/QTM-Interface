@@ -46,26 +46,35 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         if fundraising_style != 'Custom':
             target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, max_value=500.0, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target.")
             left_over_raise = target_raise - equity_investments
+    with col23:
+        seed_valuation = st.number_input('Seed Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['seed_valuation'][0]/1e6)][0]), help="The valuation of the seed round.")
+        presale_1_valuation = st.number_input('Presale 1 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_1_valuation'][0]/1e6)][0]), help="The valuation of the first presale.")
+        presale_2_valuation = st.number_input('Presale 2 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_2_valuation'][0]/1e6)][0]), help="The valuation of the second presale.")
     with col22:
         if fundraising_style != 'Custom':
             if parameter_id_choice != "":
                 st.markdown(f"Parameter ID {parameter_id_choice} was given.")
                 st.markdown(f"Hence no changes to the fundraising style are possible.")
                 st.markdown(f"Please choose 'Custom' to adjust the fundraising style manually.")
-            seed_raised = float(left_over_raise/4)
-            presale_1_raised = float(left_over_raise/4)
-            presale_2_raised = float(left_over_raise/4)
-            public_sale_raised = float(left_over_raise/4)
+            
+            valuation_weights = {
+                "seed" : seed_valuation / launch_valuation,
+                "presale_1" : presale_1_valuation / launch_valuation,
+                "presale_2" : presale_2_valuation / launch_valuation,
+                "public_sale" : 1.0
+            }
+            valuation_weights_sum = sum(valuation_weights.values())
+
+            seed_raised = float(valuation_weights["seed"]/valuation_weights_sum * left_over_raise)
+            presale_1_raised = float(valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise)
+            presale_2_raised = float(valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise)
+            public_sale_raised = float(valuation_weights["public_sale"]/valuation_weights_sum * left_over_raise)
         else:
             seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float([left_over_raise/4 if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['seed_raised'][0]/1e6)][0]), help="The amount of money raised in the seed round.")
             presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float([left_over_raise/4 if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_1_raised'][0]/1e6)][0]), help="The amount of money raised in the first presale.")
             presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float([left_over_raise/4 if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_2_raised'][0]/1e6)][0]), help="The amount of money raised in the second presale.")
             public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([left_over_raise/4 if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['public_sale_raised'][0]/1e6)][0]), help="The amount of money raised in the public sale.")
-    with col23:
-        seed_valuation = st.number_input('Seed Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['seed_valuation'][0]/1e6)][0]), help="The valuation of the seed round.")
-        presale_1_valuation = st.number_input('Presale 1 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_1_valuation'][0]/1e6)][0]), help="The valuation of the first presale.")
-        presale_2_valuation = st.number_input('Presale 2 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_2_valuation'][0]/1e6)][0]), help="The valuation of the second presale.")
-    
+
 
     # Map new parameters to model input parameters
     new_params = {

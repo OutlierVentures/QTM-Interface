@@ -207,6 +207,10 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     
     lp_token_allocation = [(1 - x) * y for x in allocation_sum for y in sys_param['initial_total_supply']]
 
+    # check if all lp_token_allocations are > 0
+    if any([x < 0 for x in lp_token_allocation]):
+        raise ValueError("Error: LP token allocation is negative. Please check the initial token allocations of the agents.")
+
     return lp_token_allocation
 
 
