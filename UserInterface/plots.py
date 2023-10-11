@@ -204,13 +204,14 @@ def pie_plot_plotly(values_list, param_id):
 def plot_all_plotly(param_id):    
     ##FUNDRAISING TAB
     plot_results_plotly('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum',
-            'team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1)
+            'team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1, param_id)
         ##NEED EFFECTIVE TOKEN PRICE
     bar_plot_plotly([
-        'angle_token_allocation',
-        'seed_token_allocation',
-        'presale_1_token_allocation',
-        'presale_2_token_allocation'
+        'angle_token_effective',
+        'seed_token_effective',
+        'presale_1_token_effective',
+        'presale_2_token_effective',
+        'public_token_effective'
     ], param_id)
         ##NEED PIE CHART OF INITIAL ALLOCATION
     pie_plot_plotly([
@@ -257,10 +258,11 @@ def plot_fundraising(param_id):
                                      'reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1, param_id)
         ##NEED EFFECTIVE TOKEN PRICE
     bar_plot_plotly([
-        'angle_token_allocation',
-        'seed_token_allocation',
-        'presale_1_token_allocation',
-        'presale_2_token_allocation'
+        'angle_token_effective',
+        'seed_token_effective',
+        'presale_1_token_effective',
+        'presale_2_token_effective',
+        'public_token_effective'
     ], param_id)
         ##NEED PIE CHART OF INITIAL ALLOCATION
     pie_plot_plotly([

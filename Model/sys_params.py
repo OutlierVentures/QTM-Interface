@@ -176,11 +176,18 @@ def get_sys_param(input_file, adjusted_params):
     sys_param.update(utility_initial_values)
 
     agent_effective_price = {
-        'angle_token_allocation': [x/100 for x in sys_param['equity_external_shareholders_perc']],
-        'seed_token_allocation' : calculate_investor_effective_token_price(sys_param, "seed"),
-        'presale_1_token_allocation' : calculate_investor_effective_token_price(sys_param, "presale_1"),
-        'presale_2_token_allocation' : calculate_investor_effective_token_price(sys_param, "presale_2"),
+        'angle_token_effective': [x/100 for x in sys_param['equity_external_shareholders_perc']],
+        'seed_token_effective' : calculate_investor_effective_token_price(sys_param, "seed"),
+        'presale_1_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_1"),
+        'presale_2_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_2"),
+        'public_token_effective' : sys_param['public_sale_token_allocation']* sys_param['initial_token_price']
     }
+
+    print("----------------------------BLAAAAAHHHHHHHH------------")
+    print(agent_effective_price)
+
+    sys_param.update(agent_effective_price)
+
 
     # save parameter to sqlite db
     conn = sqlite3.connect('simulationData.db')
