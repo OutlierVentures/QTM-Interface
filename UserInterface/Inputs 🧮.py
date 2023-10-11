@@ -81,7 +81,12 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     # Run the simulation.py script
     st.session_state['param_id'] = simulation(input_file_path, adjusted_params=adjusted_params)
     st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
-    st.dataframe(get_simulation_data('simulationData.db', 'sys_param'))
+    df = get_simulation_data('simulationData.db', 'sys_param')
+    #col = df.pop("id")
+    #st.write(col)
+    #st.write(col.name)
+    #df = df.insert(0, col.name, col)
+    st.dataframe(df)
     st.success('Done!')
 
 

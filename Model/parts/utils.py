@@ -201,7 +201,7 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     # get max length of possible raised_capital parameters
     max_length = max([len(agent_token_allocations[key]) for key in agent_token_allocations])
     
-    # calculate the raised capital for all possible parameter list combinations in sys_param where "_raised" is in the key
+    # calculate the liquidity pool token allocation by summing up the token allocations of all agents and subtracting it from 1 (100%)
     for i in range(max_length):
         allocation_sum.append(sum([agent_token_allocations[key][i] if (i < len(agent_token_allocations[key])) else agent_token_allocations[key][-1] for key in agent_token_allocations]))
     

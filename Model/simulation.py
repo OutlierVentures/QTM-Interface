@@ -45,12 +45,9 @@ def simulation(input_file, adjusted_params):
 
         result = simulation.run()
         df = pd.DataFrame(result)
-        simulation_end_time = time.process_time()
 
         # post processing
-        postprocessing_one_start_time = time.process_time()
         data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
-        postprocessing_all_end_time = time.process_time()
 
         # Apply the conversion function to each column in the DataFrame
         for col in data.columns:
