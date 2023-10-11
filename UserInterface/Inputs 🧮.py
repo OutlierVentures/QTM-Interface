@@ -24,11 +24,28 @@ if 'param_id' in st.session_state:
     param_id_init = st.session_state['param_id']
 else:
     param_id_init = ""
-parameter_id_choice = st.sidebar.text_input('Parameter ID',param_id_init)
-st.session_state['param_id'] = parameter_id_choice
+# get all existing project names
 try:
-    if parameter_id_choice not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
-        st.sidebar.markdown(f"Parameter ID: {parameter_id_choice} does not exist. Please enter a valid parameter ID or run the simulation with your parameter set to get a parameter ID.")
+    db_sorted = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
+    project_names = db_sorted['project_name']
+    project_names = project_names.to_list()
+    project_names.append('')
+except:
+    db_sorted = pd.DataFrame()
+    project_names = ['']
+if 'project_name' not in st.session_state:
+    st.session_state['project_name'] = ''
+
+if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
+    st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=[db_sorted['id'].to_list().index(st.session_state['param_id']) if st.session_state['param_id'] in db_sorted['id'].to_list() else len(project_names)-1][0])
+    st.session_state['param_id'] = st.sidebar.text_input('Parameter ID',[db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0] if st.session_state['project_name'] in db_sorted['project_name'].to_list() else ""][0])
+else:
+    st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1)
+    st.session_state['param_id'] = st.sidebar.text_input('Parameter ID', "")
+
+try:
+    if st.session_state['param_id'] not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
+        st.sidebar.markdown(f"Parameter ID: {st.session_state['param_id']} does not exist. Please enter a valid parameter ID or run the simulation with your parameter set to get a parameter ID.")
     else:
         st.sidebar.markdown(f"This is a valid parameter ID ✅")
 except:
@@ -38,6 +55,11 @@ st.sidebar.markdown("Parameter input section for the Quantitative Token Model. U
 
 # main page
 st.markdown("## Inputs 🧮")
+if 'project_name' in st.session_state:
+    project_name = st.text_input('Project Name', st.session_state['project_name'])
+else:
+    project_name = st.text_input('Project Name', "")
+st.session_state['project_name'] = project_name
 
 # Upload Input File
 with st.expander("Upload Own Input File"):
@@ -61,7 +83,7 @@ if uploaded_file is not None:
     new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
 
 else:
-    input_file_name = 'Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs.csv'
+    input_file_name = 'Quantitative_Token_Model_V1.89_radCad_integration - radCAD_inputs DEFAULT.csv'
     input_file_path = input_file_base_path + input_file_name
     
     # get new parameters from UI
@@ -78,18 +100,18 @@ if st.button('Run Simulation'):
     st.session_state['button_clicked'] = True
 if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     # compose adjusted parameters
+    new_params.update({'project_name':project_name})
     adjusted_params = new_params
 
     # Run the simulation.py script
-    st.session_state['param_id'] = simulation(input_file_path, adjusted_params=adjusted_params)
-    st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
-    df = get_simulation_data('simulationData.db', 'sys_param')
-    #col = df.pop("id")
-    #st.write(col)
-    #st.write(col.name)
-    #df = df.insert(0, col.name, col)
-    st.dataframe(df)
-    st.success('Done!')
+    st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
+    if execute_sim:
+        st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
+        df = get_simulation_data('simulationData.db', 'sys_param')
+        df.insert(0, "id", df.pop("id"))
+        df.insert(0, "project_name", df.pop("project_name"))
+        st.dataframe(df)
+        st.success('Done!')
 
 
     # Reset the session state variable after running the simulation

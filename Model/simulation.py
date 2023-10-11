@@ -32,11 +32,10 @@ from Model.post_processing import *
 @st.cache_data
 def simulation(input_file, adjusted_params):
     # get simulation parameters
-    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id = get_initial_state(input_file, adjusted_params)
-
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim = get_initial_state(input_file, adjusted_params)
     start_time = time.process_time()
     listOfSimulationDataTables = cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='simulation_data_{param_id}' '''.format(length='multi-line', param_id=param_id))
-    if listOfSimulationDataTables.fetchall()[0][0] == 0:
+    if listOfSimulationDataTables.fetchall()[0][0] == 0 and execute_sim:
         MONTE_CARLO_RUNS = 1
         TIMESTEPS = 12*10
 
@@ -59,7 +58,7 @@ def simulation(input_file, adjusted_params):
         # Close the connection
         conn.close()
 
-    # display necessery time
-    print("Simulation time: ", time.process_time() - start_time, " s")
+        # display necessery time
+        print("Simulation time: ", time.process_time() - start_time, " s")
 
-    return param_id
+    return param_id, execute_sim

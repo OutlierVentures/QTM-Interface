@@ -28,16 +28,22 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
         else:
             sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
-
+        
     with col11:
         supply_type = st.radio('Supply Type',('Fixed', 'Inflationary'), index=['Fixed', 'Inflationary'].index(sys_param['supply_type'][0]), key='supply_type_radio', help="Determines if a minting functionallity is allowed.")
+        equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angle investors")
         initial_supply = st.number_input('Initial Total Token Supply', min_value=100, max_value=1000000000000, value=int(sys_param['initial_total_supply'][0]), help="The initial total token supply.")
     with col12:
+        launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=5, max_value=500, value=int(sys_param['public_sale_valuation'][0]/1e6), help="This is the valuation at which the public sale tokens are sold. It is equivalent to the token launch valuation.")
         public_sale_supply = st.number_input('Public Sale Supply / %', min_value=0.0, max_value=95.0, value=float(str(sys_param['public_sale_supply_perc'][0]).split("%")[0]), help="The percentage of tokens sold in the public sale.")
-        equity_investments = st.number_input('Angle & Equity Raises / $m', min_value=0.01, value=float(sys_param['angle_raised'][0]/1e6), help="The amount of money raised from equity investors.")
+        st.write("Launch Price: "+ str(launch_valuation*1e6/initial_supply)+" $/token")
     with col13:
-        launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=5, max_value=500, value=int(sys_param['public_sale_valuation'][0]/1e6), help="The valuation of the public sale.")
-        equity_perc = st.number_input('Equity sold / %', min_value=0.0, max_value=90.0, value=float(str(sys_param['equity_external_shareholders_perc'][0]).split("%")[0]), help="The percentage of equity sold to external shareholders.")
+        if equity_investors:
+            equity_investments = st.number_input('Angle & Equity Raises / $m', min_value=0.0, value=float(sys_param['angle_raised'][0]/1e6), help="The amount of money raised from equity investors.")
+            equity_perc = st.number_input('Equity sold / %', min_value=0.0, max_value=90.0, value=float(str(sys_param['equity_external_shareholders_perc'][0]).split("%")[0]), help="The percentage of equity sold to external shareholders.")
+        else:
+            equity_investments = 0.0
+            equity_perc = 0.0        
     
     st.markdown("### Fundraising")
     col21, col22, col23 = st.columns(3)
@@ -47,15 +53,21 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, max_value=500.0, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target.")
             left_over_raise = target_raise - equity_investments
     with col23:
-        seed_valuation = st.number_input('Seed Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['seed_valuation'][0]/1e6)][0]), help="The valuation of the seed round.")
-        presale_1_valuation = st.number_input('Presale 1 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_1_valuation'][0]/1e6)][0]), help="The valuation of the first presale.")
-        presale_2_valuation = st.number_input('Presale 2 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_2_valuation'][0]/1e6)][0]), help="The valuation of the second presale.")
+        if fundraising_style != 'Custom':
+            seed_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0]
+            presale_1_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1]
+            presale_2_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2]
+        else:
+            seed_valuation = st.number_input('Seed Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['seed_valuation'][0]/1e6)][0]), help="The valuation of the seed round.")
+            presale_1_valuation = st.number_input('Presale 1 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_1_valuation'][0]/1e6)][0]), help="The valuation of the first presale.")
+            presale_2_valuation = st.number_input('Presale 2 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2] if uploaded_file is None and fundraising_style != 'Custom' and parameter_id_choice == "" else float(sys_param['presale_2_valuation'][0]/1e6)][0]), help="The valuation of the second presale.")
+
     with col22:
         if fundraising_style != 'Custom':
             if parameter_id_choice != "":
                 st.markdown(f"Parameter ID {parameter_id_choice} was given.")
-                st.markdown(f"Hence no changes to the fundraising style are possible.")
-                st.markdown(f"Please choose 'Custom' to adjust the fundraising style manually.")
+                st.markdown(f"Hence no changes to the abstracted fundraising style are possible.")
+                st.markdown(f"Please choose 'Custom' to adjust the fundraising style manually now.")
             
             valuation_weights = {
                 "seed" : seed_valuation / launch_valuation,

@@ -138,7 +138,7 @@ def create_parameter_list(parameter_name, not_iterable_parameters, init_value, m
     """
 
     if parameter_name in not_iterable_parameters:
-        return [init_value.replace(",","").replace("%","")]
+        return [str(init_value).replace(",","").replace("%","")]
     else:
         try:
             if type(init_value) == str:

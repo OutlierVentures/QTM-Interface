@@ -40,7 +40,7 @@ input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration
 
 if __name__ == '__main__'   :
     start_time = time.process_time()
-    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id = get_initial_state(input_file, {})
+    initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim = get_initial_state(input_file, {})
 
     MONTE_CARLO_RUNS = 1
     TIMESTEPS = 12*10

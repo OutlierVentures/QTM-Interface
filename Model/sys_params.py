@@ -1,7 +1,7 @@
 from Model.parts.utils import *
 import pandas as pd
 import sqlite3
-
+import streamlit as st
 from collections import Counter
 import sys
 import os
@@ -180,12 +180,12 @@ def get_sys_param(input_file, adjusted_params):
         'seed_token_effective' : calculate_investor_effective_token_price(sys_param, "seed"),
         'presale_1_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_1"),
         'presale_2_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_2"),
-        'public_token_effective' : [x * y for x in sys_param['public_sale_token_allocation'] for y in sys_param['initial_token_price']]
+        'public_token_effective' : [x / y for x in sys_param["public_sale_valuation"] for y in sys_param["initial_total_supply"]]
     }
 
     sys_param.update(agent_effective_price)
 
-
+    execute_sim = True
     # save parameter to sqlite db
     conn = sqlite3.connect('simulationData.db')
     # Save the sys_param DataFrame to a new SQLite table if these parameter combination does not exist yet
@@ -196,12 +196,15 @@ def get_sys_param(input_file, adjusted_params):
         # create unique identifier for this parameter set
         param_id = str(uuid.uuid4()).replace("-", "")
         sys_param['id'] = [param_id]
-        sys_param_df = pd.DataFrame(sys_param)
-        sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
-        print(sys_param_df.head(10))
-        print("Create new table!")
+        if 'project_name' in sys_param.keys():
+            if sys_param['project_name'][0] in ["", " ", "  ", "   ", "    ", "     "]:
+                st.warning(f"Please provide a project name before running the simulation!", icon="⚠️")
+                execute_sim = False
+        if execute_sim:
+            sys_param_df = pd.DataFrame(sys_param)
+            sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
+            print("Create new table!")
     else:
-        print("Table already exists!")
         print("Get parameter data from table..")
         df = pd.read_sql(f'SELECT * FROM sys_param', conn)
         df_old = df.loc[:, df.columns != 'id']
@@ -212,8 +215,16 @@ def get_sys_param(input_file, adjusted_params):
             print("New parameter set detected!")
             param_id = str(uuid.uuid4()).replace("-", "")
             sys_param['id'] = [param_id]
-            sys_param_df = pd.concat([df, pd.DataFrame(sys_param)])
-            sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
+            if 'project_name' in sys_param.keys() and 'project_name' in df.columns:
+                if sys_param['project_name'][0] in df['project_name'].to_list():
+                    st.warning(f"Project name {sys_param['project_name'][0]} already exists in database. Please choose a different project name and run the simulation again.", icon="⚠️")
+                    execute_sim = False
+                if sys_param['project_name'][0] in ["", " ", "  ", "   ", "    ", "     "]:
+                    st.warning(f"Please provide a project name before running the simulation!", icon="⚠️")
+                    execute_sim = False
+            if execute_sim:
+                sys_param_df = pd.concat([df, pd.DataFrame(sys_param)])
+                sys_param_df.to_sql('sys_param', conn, if_exists='replace', index=False)
         else:
             print("Already existing parameter set detected! Getting its id..")
             # get id of already existing parameter set that equals to the current one
@@ -222,6 +233,6 @@ def get_sys_param(input_file, adjusted_params):
 
     print("Parameter ID of current simulation: ", param_id)
 
-    return sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id
+    return sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim
 
     
