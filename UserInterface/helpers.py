@@ -42,7 +42,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     st.markdown("### Fundraising")
     col21, col22, col23 = st.columns(3)
     with col21:
-        fundraising_style = st.radio('Fundraising Style',('Moderate', 'Medium', 'Aggressive','Custom'), index=3, help=param_help['fundraising_style'])
+        fundraising_style = st.radio('Fundraising Style',('Moderate', 'Medium', 'Aggressive','Custom'), index=0, help=param_help['fundraising_style'])
         if fundraising_style != 'Custom':
             target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, max_value=500.0, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target.")
             left_over_raise = target_raise - equity_investments

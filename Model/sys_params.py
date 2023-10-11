@@ -180,11 +180,8 @@ def get_sys_param(input_file, adjusted_params):
         'seed_token_effective' : calculate_investor_effective_token_price(sys_param, "seed"),
         'presale_1_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_1"),
         'presale_2_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_2"),
-        'public_token_effective' : sys_param['public_sale_token_allocation']* sys_param['initial_token_price']
+        'public_token_effective' : [x * y for x in sys_param['public_sale_token_allocation'] for y in sys_param['initial_token_price']]
     }
-
-    print("----------------------------BLAAAAAHHHHHHHH------------")
-    print(agent_effective_price)
 
     sys_param.update(agent_effective_price)
 

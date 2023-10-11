@@ -26,11 +26,13 @@ else:
     param_id_init = ""
 parameter_id_choice = st.sidebar.text_input('Parameter ID',param_id_init)
 st.session_state['param_id'] = parameter_id_choice
-if parameter_id_choice not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
-    st.sidebar.markdown(f"Parameter ID: {parameter_id_choice} does not exist. Please enter a valid parameter ID or run the simulation with your parameter set to get a parameter ID.")
-else:
-    st.sidebar.markdown(f"This is a valid parameter ID ✅")
-
+try:
+    if parameter_id_choice not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
+        st.sidebar.markdown(f"Parameter ID: {parameter_id_choice} does not exist. Please enter a valid parameter ID or run the simulation with your parameter set to get a parameter ID.")
+    else:
+        st.sidebar.markdown(f"This is a valid parameter ID ✅")
+except:
+    pass
 st.sidebar.markdown("## Inputs 🧮")
 st.sidebar.markdown("Parameter input section for the Quantitative Token Model. Use the default parameters, customize them in the user interface, or upload your own input file based on the radCAD_inputs tab in the [spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing).")
 
