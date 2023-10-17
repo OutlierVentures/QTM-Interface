@@ -1,6 +1,16 @@
 import streamlit as st
 from plots import *
+from PIL import Image
 
+# Get the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Go up one folder
+parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
+
+image = Image.open(parent_dir+'/images/ov_logo.jpg')
+st.image(image, width=125)
 st.title('Quantitative Token Model')
 
 # side bar

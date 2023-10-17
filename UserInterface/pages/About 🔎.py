@@ -9,6 +9,8 @@ parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_d
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
+image = Image.open(parent_dir+'/images/ov_logo.jpg')
+st.image(image, width=125)
 st.title('Quantitative Token Model')
 st.markdown("## About 🔎")
 st.sidebar.markdown("## About 🔎")
