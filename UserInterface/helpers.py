@@ -53,7 +53,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     col21, col22, col23 = st.columns(3)
     with col21:
         fundraising_style = st.radio('Fundraising Style',('Moderate', 'Medium', 'Aggressive','Custom'), index=0, help=param_help['fundraising_style'])
-        show_full_fund_table = st.toggle('Show Full Table', value=False, help="Show the full token fundraising table.")
+        if fundraising_style != 'Custom':
+            show_full_fund_table = st.toggle('Show Full Table', value=False, help="Show the full token fundraising table.")
+        else:
+            show_full_fund_table = False
         if fundraising_style != 'Custom':
             target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, max_value=500.0, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target.")
             left_over_raise = target_raise - equity_investments
@@ -95,7 +98,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     col31, col32 = st.columns(2)
     with col31:
         vesting_style = st.radio('Vesting Style',('Slow', 'Medium', 'Fast','Custom'), index=0, help=param_help['vesting_style'])
-        show_full_alloc_table = st.toggle('Show Full Table', value=False, help="Show the full token allocation and vesting table.")
+        if vesting_style != 'Custom':
+            show_full_alloc_table = st.toggle('Show Full Table', value=False, help="Show the full token allocation and vesting table.")
+        else:
+            show_full_alloc_table = False
     with col32:
         incentivisation_toggle = st.toggle('Incentivisation Vesting', value=sys_param['incentivisation_allocation'][0] > 0.0, help=param_help['incentivisation'])
         staking_vesting_toggle = st.toggle('Staking Vesting', value=sys_param['staking_vesting_allocation'][0] > 0.0, help=param_help['staking_vesting'])
@@ -103,75 +109,71 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
     col41, col42, col43, col44, col45 = st.columns(5)
     with col41:
-        st.write("Name")
         if vesting_style == 'Custom' or show_full_alloc_table:
+            st.write("Name")
             if equity_perc > 0:
-                st.text_input("","Angle",disabled=True, key="angle_name")
+                st.text_input("Angle","Angle", label_visibility="collapsed", disabled=True, key="angle_name")
             if seed_raised > 0:
-                st.text_input("","Seed",disabled=True, key="seed_name")
+                st.text_input("Seed","Seed", label_visibility="collapsed", disabled=True, key="seed_name")
             if presale_1_raised > 0:
-                st.text_input("","Presale 1",disabled=True, key="presale_1_name")
+                st.text_input("Presale 1","Presale 1", label_visibility="collapsed", disabled=True, key="presale_1_name")
             if presale_2_raised > 0:    
-                st.text_input("","Presale 2",disabled=True, key="presale_2_name")
+                st.text_input("Presale 2","Presale 2", label_visibility="collapsed", disabled=True, key="presale_2_name")
             if public_sale_raised > 0:    
-                st.text_input("","Public Sale",disabled=True, key="public_sale_name")
-            st.text_input("","Team",disabled=True, key="team_name")
-            st.text_input("","Advisors",disabled=True, key="advisors_name")
-            st.text_input("","Strat. Partners",disabled=True, key="partners_name")
-            st.text_input("","Reserve",disabled=True, key="reserve_name")
-            st.text_input("","Community",disabled=True, key="community_name")
-            st.text_input("","Foundation",disabled=True, key="foundation_name")
+                st.text_input("Public Sale","Public Sale", label_visibility="collapsed", disabled=True, key="public_sale_name")
+            st.text_input("Team","Team", label_visibility="collapsed", disabled=True, key="team_name")
+            st.text_input("Advisors","Advisors", label_visibility="collapsed", disabled=True, key="advisors_name")
+            st.text_input("Strategic Partners","Strat. Partners", label_visibility="collapsed", disabled=True, key="partners_name")
+            st.text_input("Reserve","Reserve", label_visibility="collapsed", disabled=True, key="reserve_name")
+            st.text_input("Community","Community", label_visibility="collapsed", disabled=True, key="community_name")
+            st.text_input("Foundation","Foundation", label_visibility="collapsed", disabled=True, key="foundation_name")
             if incentivisation_toggle:
-                st.text_input("","Incentivisation",disabled=True, key="incentivisation_name")
+                st.text_input("Incentivisation","Incentivisation", label_visibility="collapsed", disabled=True, key="incentivisation_name")
             if staking_vesting_toggle:
-                st.text_input("","Staking Vesting",disabled=True, key="staking_vesting_name")
+                st.text_input("Staking Vesting","Staking Vesting", label_visibility="collapsed", disabled=True, key="staking_vesting_name")
             if airdrop_toggle:
-                st.markdown("""---""")
-                st.text_input("","Airdrops",disabled=True, key="airdrops_name")
+                st.text_input("Airdrops","Airdrops", label_visibility="hidden", disabled=True, key="airdrops_name")
                 st.write('')
-            st.markdown("""---""")
-            st.text_input("","DEX LP",disabled=True, key="lp_name")
     with col42:
-        st.write("Allocation / %")
         if vesting_style == 'Custom' or show_full_alloc_table:
+            st.write("Allocation / %")
             equity_allocation = (equity_perc/100) * (sys_param['team_allocation'][0]/(1-equity_perc/100))
             if equity_perc > 0:
-                equity_allocation_new = st.number_input('', min_value=0.0, value=equity_allocation, disabled=True, key="angle_allocation")
+                equity_allocation_new = st.number_input('equity_allocation_new', label_visibility="collapsed", min_value=0.0, value=equity_allocation, disabled=True, key="angle_allocation")
             else:
                 equity_allocation_new = 0.0
             if seed_raised > 0:
-                seed_allocation = st.number_input('', min_value=0.0, value=((seed_raised*1e6) / ((seed_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="seed_allocation")
+                seed_allocation = st.number_input('seed_allocation', label_visibility="collapsed", min_value=0.0, value=((seed_raised*1e6) / ((seed_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="seed_allocation")
             else:
                 seed_allocation = 0.0
             if presale_1_raised > 0:
-                presale_1_allocation = st.number_input('', min_value=0.0, value=((presale_1_raised*1e6) / ((presale_1_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_1_allocation")
+                presale_1_allocation = st.number_input('presale_1_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_1_raised*1e6) / ((presale_1_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_1_allocation")
             else:
                 presale_1_allocation = 0.0
             if presale_2_raised > 0:
-                presale_2_allocation = st.number_input('', min_value=0.0, value=((presale_2_raised*1e6) / ((presale_2_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_2_allocation")   
+                presale_2_allocation = st.number_input('presale_2_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_2_raised*1e6) / ((presale_2_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_2_allocation")   
             else:
                 presale_2_allocation = 0.0
             if public_sale_raised > 0:
-                public_sale_allocation = st.number_input('', min_value=0.0, value=((public_sale_raised*1e6) / ((launch_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="public_sale_allocation")
+                public_sale_allocation = st.number_input('public_sale_allocation', label_visibility="collapsed", min_value=0.0, value=((public_sale_raised*1e6) / ((launch_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="public_sale_allocation")
             else:
                 public_sale_allocation = 0.0
-            team_allocation = st.number_input('', min_value=0.0, value=sys_param['team_allocation'][0], disabled=False, key="team_allocation")
-            ov_advisor_allocation = st.number_input('', min_value=0.0, value=sys_param['ov_allocation'][0]+sys_param['advisor_allocation'][0], disabled=False, key="ov_advisor_allocation")
-            strategic_partners_allocation = st.number_input('', min_value=0.0, value=sys_param['strategic_partners_allocation'][0], disabled=False, key="partner_allocation")
-            reserve_allocation = st.number_input('', min_value=0.0, value=sys_param['reserve_allocation'][0], disabled=False, key="reserve_allocation")
-            community_allocation = st.number_input('', min_value=0.0, value=sys_param['community_allocation'][0], disabled=False, key="community_allocation")
-            foundation_allocation = st.number_input('', min_value=0.0, value=sys_param['foundation_allocation'][0], disabled=False, key="foundation_allocation")
+            team_allocation = st.number_input('team_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['team_allocation'][0], disabled=False, key="team_allocation")
+            ov_advisor_allocation = st.number_input('ov_advisor_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['ov_allocation'][0]+sys_param['advisor_allocation'][0], disabled=False, key="ov_advisor_allocation")
+            strategic_partners_allocation = st.number_input('strategic_partners_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['strategic_partners_allocation'][0], disabled=False, key="partner_allocation")
+            reserve_allocation = st.number_input('reserve_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['reserve_allocation'][0], disabled=False, key="reserve_allocation")
+            community_allocation = st.number_input('community_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['community_allocation'][0], disabled=False, key="community_allocation")
+            foundation_allocation = st.number_input('foundation_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['foundation_allocation'][0], disabled=False, key="foundation_allocation")
             if incentivisation_toggle:
-                incentivisation_allocation = st.number_input('', min_value=0.0, value=sys_param['incentivisation_allocation'][0], disabled=False, key="incentivisation_allocation")
+                incentivisation_allocation = st.number_input('incentivisation_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['incentivisation_allocation'][0], disabled=False, key="incentivisation_allocation")
             else:
                 incentivisation_allocation = 0.0
             if staking_vesting_toggle:
-                staking_vesting_allocation = st.number_input('', min_value=0.0, value=sys_param['staking_vesting_allocation'][0], disabled=False, key="staking_vesting_allocation")
+                staking_vesting_allocation = st.number_input('staking_vesting_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['staking_vesting_allocation'][0], disabled=False, key="staking_vesting_allocation")
             else:
                 staking_vesting_allocation = 0.0
             if airdrop_toggle:
-                st.markdown("""---""")
-                airdrop_allocation = st.number_input('', min_value=0.0, value=sys_param['airdrop_allocation'][0], disabled=False, key="airdrop_allocation")
+                airdrop_allocation = st.number_input('airdrop_allocation', label_visibility="hidden", min_value=0.0, value=sys_param['airdrop_allocation'][0], disabled=False, key="airdrop_allocation")
             else:
                 airdrop_allocation = 0.0
             lp_allocation = (100 - equity_allocation_new - seed_allocation - presale_1_allocation
@@ -179,9 +181,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                              - strategic_partners_allocation - reserve_allocation - community_allocation
                              - foundation_allocation - incentivisation_allocation - staking_vesting_allocation
                              - airdrop_allocation)
-            st.write('')
-            st.markdown("""---""")
-            st.number_input('', value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
+
         else:
             equity_allocation_new = (equity_perc/100) * (sys_param['team_allocation'][0]/(1-equity_perc/100))
             seed_allocation = ((seed_raised*1e6) / ((seed_valuation*1e6)/initial_supply) / initial_supply) * 1e2
@@ -211,7 +211,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
             
     with col43:
-        st.write("Init. Vesting / %")
         if vesting_style == 'Slow':
             init_vesting_dict = {
                 "angle" : 0.0,
@@ -261,49 +260,46 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 "staking_vesting" : 5.0
             }
         if vesting_style == 'Custom' or show_full_alloc_table:
+            st.write("Init. Vesting / %")
             if equity_perc > 0:
-                angle_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['angle_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['angle']][0], key="angle_initial_vesting")
+                angle_initial_vesting = st.number_input("angle_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['angle_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['angle']][0], key="angle_initial_vesting")
             else:
                 angle_initial_vesting = 0.0
             if seed_raised > 0:
-                seed_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['seed_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['seed']][0], key="seed_initial_vesting")
+                seed_initial_vesting = st.number_input("seed_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['seed_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['seed']][0], key="seed_initial_vesting")
             else:
                 seed_initial_vesting = 0.0
             if presale_1_raised > 0:
-                presale_1_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['presale_1_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['presale_1']][0], key="presale_1_initial_vesting")
+                presale_1_initial_vesting = st.number_input("presale_1_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['presale_1_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['presale_1']][0], key="presale_1_initial_vesting")
             else:
                 presale_1_initial_vesting = 0.0
             if presale_2_raised > 0:
-                presale_2_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['presale_2_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['presale_2']][0], key="presale_2_initial_vesting")
+                presale_2_initial_vesting = st.number_input("presale_2_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['presale_2_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['presale_2']][0], key="presale_2_initial_vesting")
             else:
                 presale_2_initial_vesting = 0.0
             if public_sale_raised > 0:
-                public_sale_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['public_sale_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['public_sale']][0], key="public_sale_initial_vesting")
+                public_sale_initial_vesting = st.number_input("public_sale_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['public_sale_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['public_sale']][0], key="public_sale_initial_vesting")
             else:
                 public_sale_initial_vesting = 0.0
-            team_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['team_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['team']][0], key="team_initial_vesting")
-            advisor_initial_vesting = st.number_input("", min_value=0.0, value=[(sys_param['ov_initial_vesting'][0]+sys_param['advisor_initial_vesting'][0])/2 if vesting_style == 'Custom' else init_vesting_dict['advisors']][0], key="advisor_initial_vesting")
-            strategic_partners_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['strategic_partners_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['strategic_partners']][0], key="strategic_partners_initial_vesting")
-            reserve_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['reserve_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['reserve']][0], key="reserve_initial_vesting")
-            community_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['community_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['community']][0], key="community_initial_vesting")
-            foundation_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['foundation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['foundation']][0], key="foundation_initial_vesting")
+            team_initial_vesting = st.number_input("team_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['team_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['team']][0], key="team_initial_vesting")
+            advisor_initial_vesting = st.number_input("advisor_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[(sys_param['ov_initial_vesting'][0]+sys_param['advisor_initial_vesting'][0])/2 if vesting_style == 'Custom' else init_vesting_dict['advisors']][0], key="advisor_initial_vesting")
+            strategic_partners_initial_vesting = st.number_input("strategic_partners_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['strategic_partners_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['strategic_partners']][0], key="strategic_partners_initial_vesting")
+            reserve_initial_vesting = st.number_input("reserve_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['reserve_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['reserve']][0], key="reserve_initial_vesting")
+            community_initial_vesting = st.number_input("community_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['community_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['community']][0], key="community_initial_vesting")
+            foundation_initial_vesting = st.number_input("foundation_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['foundation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['foundation']][0], key="foundation_initial_vesting")
             if incentivisation_toggle:
-                incentivisation_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['incentivisation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['incentivisation']][0], key="incentivisation_initial_vesting")
+                incentivisation_initial_vesting = st.number_input("incentivisation_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['incentivisation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['incentivisation']][0], key="incentivisation_initial_vesting")
             else:
                 incentivisation_initial_vesting = 0.0
             if staking_vesting_toggle:
-                staking_vesting_initial_vesting = st.number_input("", min_value=0.0, value=[sys_param['staking_vesting_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['staking_vesting']][0], key="staking_vesting_initial_vesting")
+                staking_vesting_initial_vesting = st.number_input("staking_vesting_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['staking_vesting_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['staking_vesting']][0], key="staking_vesting_initial_vesting")
             else:
                 staking_vesting_initial_vesting = 0.0
             if airdrop_toggle:
-                st.markdown("""---""")
                 airdrop_date1 = st.date_input("Airdrop Date 1", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%y"), help="The date of the first airdrop.")
                 airdrop_amount1 = st.number_input("Amount 1 / %", min_value=0.0, value=sys_param['airdrop_amount1'][0], help="The share of tokens distributed from the airdrop allocation in the first airdrop.")
-                st.number_input('DEX Capital / $m', max_value=raised_funds,value=float((lp_allocation/100 )* initial_supply * launch_valuation*1e6 / initial_supply/1e6), disabled=True, key="liquidity_capital_requirements")
-
 
     with col44:
-        st.write("Cliff / Mon.")
         if vesting_style == 'Slow':
             cliff_dict = {
                 "angle" : 24,
@@ -353,48 +349,46 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 "staking_vesting" : 0
             }
         if vesting_style == 'Custom' or show_full_alloc_table:
+            st.write("Cliff / Mon.")
             if equity_perc > 0:
-                angle_cliff = st.number_input("", min_value=0, value=int([sys_param['angle_cliff'][0] if vesting_style == 'Custom' else cliff_dict['angle']][0]), key="angle_cliff")
+                angle_cliff = st.number_input("angle_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['angle_cliff'][0] if vesting_style == 'Custom' else cliff_dict['angle']][0]), key="angle_cliff")
             else:
                 angle_cliff = 0.0
             if seed_raised > 0:
-                seed_cliff = st.number_input("", min_value=0, value=int([sys_param['seed_cliff'][0] if vesting_style == 'Custom' else cliff_dict['seed']][0]), key="seed_cliff")
+                seed_cliff = st.number_input("seed_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['seed_cliff'][0] if vesting_style == 'Custom' else cliff_dict['seed']][0]), key="seed_cliff")
             else:
                 seed_cliff = 0.0
             if presale_1_raised:
-                presale_1_cliff = st.number_input("", min_value=0, value=int([sys_param['presale_1_cliff'][0] if vesting_style == 'Custom' else cliff_dict['presale_1']][0]), key="presale_1_cliff")
+                presale_1_cliff = st.number_input("presale_1_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['presale_1_cliff'][0] if vesting_style == 'Custom' else cliff_dict['presale_1']][0]), key="presale_1_cliff")
             else:
                 presale_1_cliff = 0.0
             if presale_2_raised > 0:
-                presale_2_cliff = st.number_input("", min_value=0, value=int([sys_param['presale_2_cliff'][0] if vesting_style == 'Custom' else cliff_dict['presale_2']][0]), key="presale_2_cliff")
+                presale_2_cliff = st.number_input("presale_2_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['presale_2_cliff'][0] if vesting_style == 'Custom' else cliff_dict['presale_2']][0]), key="presale_2_cliff")
             else:
                 presale_2_cliff = 0.0
             if public_sale_raised > 0:
-                public_sale_cliff = st.number_input("", min_value=0, value=int([sys_param['public_sale_cliff'][0] if vesting_style == 'Custom' else cliff_dict['public_sale']][0]), key="public_sale_cliff")
+                public_sale_cliff = st.number_input("public_sale_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['public_sale_cliff'][0] if vesting_style == 'Custom' else cliff_dict['public_sale']][0]), key="public_sale_cliff")
             else:
                 public_sale_cliff = 0.0
-            team_cliff = st.number_input("", min_value=0, value=int([sys_param['team_cliff'][0] if vesting_style == 'Custom' else cliff_dict['team']][0]), key="team_cliff")
-            advisor_cliff = st.number_input("", min_value=0, value=int([sys_param['advisor_cliff'][0] if vesting_style == 'Custom' else cliff_dict['advisors']][0]), key="advisor_cliff")
-            strategic_partners_cliff = st.number_input("", min_value=0, value=int([sys_param['strategic_partners_cliff'][0] if vesting_style == 'Custom' else cliff_dict['strategic_partners']][0]), key="strategic_partners_cliff")
-            reserve_cliff = st.number_input("", min_value=0, value=int([sys_param['reserve_cliff'][0] if vesting_style == 'Custom' else cliff_dict['reserve']][0]), key="reserve_cliff")
-            community_cliff = st.number_input("", min_value=0, value=int([sys_param['community_cliff'][0] if vesting_style == 'Custom' else cliff_dict['community']][0]), key="community_cliff")
-            foundation_cliff = st.number_input("", min_value=0, value=int([sys_param['foundation_cliff'][0] if vesting_style == 'Custom' else cliff_dict['foundation']][0]), key="foundation_cliff")
+            team_cliff = st.number_input("team_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['team_cliff'][0] if vesting_style == 'Custom' else cliff_dict['team']][0]), key="team_cliff")
+            advisor_cliff = st.number_input("advisor_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['advisor_cliff'][0] if vesting_style == 'Custom' else cliff_dict['advisors']][0]), key="advisor_cliff")
+            strategic_partners_cliff = st.number_input("strategic_partners_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['strategic_partners_cliff'][0] if vesting_style == 'Custom' else cliff_dict['strategic_partners']][0]), key="strategic_partners_cliff")
+            reserve_cliff = st.number_input("reserve_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['reserve_cliff'][0] if vesting_style == 'Custom' else cliff_dict['reserve']][0]), key="reserve_cliff")
+            community_cliff = st.number_input("community_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['community_cliff'][0] if vesting_style == 'Custom' else cliff_dict['community']][0]), key="community_cliff")
+            foundation_cliff = st.number_input("foundation_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['foundation_cliff'][0] if vesting_style == 'Custom' else cliff_dict['foundation']][0]), key="foundation_cliff")
             if incentivisation_toggle:
-                incentivisation_cliff = st.number_input("", min_value=0, value=int([sys_param['incentivisation_cliff'][0] if vesting_style == 'Custom' else cliff_dict['incentivisation']][0]), key="incentivisation_cliff")
+                incentivisation_cliff = st.number_input("incentivisation_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['incentivisation_cliff'][0] if vesting_style == 'Custom' else cliff_dict['incentivisation']][0]), key="incentivisation_cliff")
             else:
                 incentivisation_cliff = 0.0
             if staking_vesting_toggle:
-                staking_vesting_cliff = st.number_input("", min_value=0, value=int([sys_param['staking_vesting_cliff'][0] if vesting_style == 'Custom' else cliff_dict['staking_vesting']][0]), key="staking_vesting_cliff")
+                staking_vesting_cliff = st.number_input("staking_vesting_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['staking_vesting_cliff'][0] if vesting_style == 'Custom' else cliff_dict['staking_vesting']][0]), key="staking_vesting_cliff")
             else:
                 staking_vesting_cliff = 0.0
             if airdrop_toggle:
-                st.markdown("""---""")                
                 airdrop_date2 = st.date_input("Airdrop Date 2", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%y"), help="The date of the second airdrop.")
                 airdrop_amount2 = st.number_input("Amount 2 / %", min_value=0.0, value=sys_param['airdrop_amount2'][0], help="The share of tokens distributed from the airdrop allocation in the second airdrop.")
-                st.markdown("""---""")
   
     with col45:
-        st.write("Duration / Mon.")
         if vesting_style == 'Slow':
             duration_dict = {
                 "angle" : 72,
@@ -444,45 +438,53 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 "staking_vesting" : 24
             }
         if vesting_style == 'Custom' or show_full_alloc_table:
+            st.write("Duration / Mon.")
             if equity_perc > 0:
-                angle_duration = st.number_input("", min_value=0, value=int([sys_param['angle_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['angle']][0]), key="angle_vesting_duration")
+                angle_duration = st.number_input("angle_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['angle_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['angle']][0]), key="angle_vesting_duration")
             else:
                 angle_duration = 0.0
             if seed_raised > 0:
-                seed_duration = st.number_input("", min_value=0, value=int([sys_param['seed_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['seed']][0]), key="seed_vesting_duration")
+                seed_duration = st.number_input("seed_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['seed_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['seed']][0]), key="seed_vesting_duration")
             else:
                 seed_duration = 0.0
             if presale_1_raised > 0:
-                presale_1_duration = st.number_input("", min_value=0, value=int([sys_param['presale_1_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['presale_1']][0]), key="presale_1_vesting_duration")
+                presale_1_duration = st.number_input("presale_1_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['presale_1_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['presale_1']][0]), key="presale_1_vesting_duration")
             else:
                 presale_1_duration = 0.0
             if presale_2_raised > 0:
-                presale_2_duration = st.number_input("", min_value=0, value=int([sys_param['presale_2_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['presale_2']][0]), key="presale_2_vesting_duration")
+                presale_2_duration = st.number_input("presale_2_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['presale_2_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['presale_2']][0]), key="presale_2_vesting_duration")
             else:
                 presale_2_duration = 0.0
             if public_sale_raised > 0:
-                public_sale_duration = st.number_input("", min_value=0, value=int([sys_param['public_sale_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['public_sale']][0]), key="public_sale_vesting_duration")
+                public_sale_duration = st.number_input("public_sale_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['public_sale_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['public_sale']][0]), key="public_sale_vesting_duration")
             else:
                 public_sale_duration = 0.0
-            team_duration = st.number_input("", min_value=0, value=int([sys_param['team_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['team']][0]), key="team_vesting_duration")
-            advisor_duration = st.number_input("", min_value=0, value=int([(sys_param['advisor_vesting_duration'][0] + sys_param['ov_vesting_duration'][0])/2 if vesting_style == 'Custom' else duration_dict['advisors']][0]), key="advisor_vesting_duration")
-            strategic_partners_duration = st.number_input("", min_value=0, value=int([sys_param['strategic_partner_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['strategic_partners']][0]), key="strategic_partners_vesting_duration")
-            reserve_duration = st.number_input("", min_value=0, value=int([sys_param['reserve_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['reserve']][0]), key="reserve_vesting_duration")
-            community_duration = st.number_input("", min_value=0, value=int([sys_param['community_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['community']][0]), key="community_vesting_duration")
-            foundation_duration = st.number_input("", min_value=0, value=int([sys_param['foundation_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['foundation']][0]), key="foundation_vesting_duration")
+            team_duration = st.number_input("team_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['team_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['team']][0]), key="team_vesting_duration")
+            advisor_duration = st.number_input("advisor_duration", label_visibility="collapsed", min_value=0, value=int([(sys_param['advisor_vesting_duration'][0] + sys_param['ov_vesting_duration'][0])/2 if vesting_style == 'Custom' else duration_dict['advisors']][0]), key="advisor_vesting_duration")
+            strategic_partners_duration = st.number_input("strategic_partners_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['strategic_partner_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['strategic_partners']][0]), key="strategic_partners_vesting_duration")
+            reserve_duration = st.number_input("reserve_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['reserve_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['reserve']][0]), key="reserve_vesting_duration")
+            community_duration = st.number_input("community_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['community_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['community']][0]), key="community_vesting_duration")
+            foundation_duration = st.number_input("foundation_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['foundation_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['foundation']][0]), key="foundation_vesting_duration")
             if incentivisation_toggle:
-                incentivisation_duration = st.number_input("", min_value=0, value=int([sys_param['incentivisation_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['incentivisation']][0]), key="incentivisation_vesting_duration")
+                incentivisation_duration = st.number_input("incentivisation_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['incentivisation_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['incentivisation']][0]), key="incentivisation_vesting_duration")
             else:
                 incentivisation_duration = 0.0
             if staking_vesting_toggle:
-                staking_vesting_duration = st.number_input("", min_value=0, value=int([sys_param['staking_vesting_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['staking_vesting']][0]), key="staking_vesting_vesting_duration")
+                staking_vesting_duration = st.number_input("staking_vesting_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['staking_vesting_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['staking_vesting']][0]), key="staking_vesting_vesting_duration")
             else:
                 staking_vesting_duration = 0.0
             if airdrop_toggle:
-                st.markdown("""---""")
                 airdrop_date3 = st.date_input("Airdrop Date 3", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%y"), help="The date of the third airdrop.")
                 airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
-                st.markdown("""---""")
+
+    if show_full_alloc_table:
+        col51, col52, col53 = st.columns(3)
+        with col51:
+            st.text_input("DEX LP","DEX Liquidity Pool", label_visibility="hidden", disabled=True, key="lp_name")
+        with col52:
+            st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
+        with col53:
+            st.number_input('DEX Capital / $m', max_value=raised_funds,value=float((lp_allocation/100 )* initial_supply * launch_valuation*1e6 / initial_supply/1e6), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
 
     # Map new parameters to model input parameters
     new_params = {

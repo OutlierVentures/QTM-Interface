@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os, sys
+from PIL import Image
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -17,6 +18,8 @@ from UserInterface.helpers import fundraising_style_map, param_help, model_ui_in
 
 input_file_base_path = parent_dir+'/data/'
 
+image = Image.open(parent_dir+'/images/ov_logo.jpg')
+st.image(image, width=125)
 st.title('Quantitative Token Model')
 
 # side bar
