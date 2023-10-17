@@ -104,7 +104,14 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     adjusted_params = new_params
 
     # Run the simulation.py script
-    st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
+    if 'execute_inputs' in st.session_state:
+        if st.session_state['execute_inputs']:
+            st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
+        else:
+            execute_sim = False
+            st.warning(f"Simulation can't be started due to invalid inputs!", icon="⚠️")
+    else:
+        st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
     if execute_sim:
         st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
         df = get_simulation_data('simulationData.db', 'sys_param')
