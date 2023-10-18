@@ -6,9 +6,44 @@ import sys, os
 import sqlite3
 import plotly.figure_factory as ff
 import plotly.express as px
+import plotly.graph_objects as go
 
 
 
+
+
+def customize_plotly_figure(fig, x_title=None, y_title=None, info_box=None, plot_title=None):
+    # Set the axes titles
+    if x_title:
+        fig.update_xaxes(title_text=x_title)
+    if y_title:
+        fig.update_yaxes(title_text=y_title)
+
+
+    # Add a plot title
+    if plot_title:
+        fig.update_layout(title_text=plot_title, title_x=0.5)  # Adjust title_x as needed
+
+     # Add an info box with a white background and black text at the bottom right
+    if info_box:
+        # Calculate the safe position for the info box
+        box_width = len(info_box) * 8  # Adjust the width as needed
+        x_coord = 0.98 - box_width / 1200  # Adjust the divisor as needed
+        y_coord = 0.02  # Adjust the y-coordinate to place it at the bottom
+        
+        fig.add_annotation(
+            text=info_box,
+            align='left',
+            showarrow=False,
+            xref='paper',
+            yref='paper',
+            x=x_coord,
+            y=y_coord,
+            bordercolor='black',
+            bgcolor='white',
+            borderwidth=1,
+            font=dict(color='black')
+        )
 
 
 
@@ -46,7 +81,7 @@ def get_simulation_data(db, dataset_name):
     conn.close()
     return df
 
-def plot_results_plotly(x, y_columns, run, param_id):
+def plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
 
@@ -54,7 +89,7 @@ def plot_results_plotly(x, y_columns, run, param_id):
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    line_plot_plotly(df,x, y_columns, run)
+    line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
 
 
 
@@ -139,15 +174,13 @@ def monte_carlo_plot_st(df,aggregate_dimension,x,y,runs):
     st.pyplot(fig)
 
 
-def line_plot_plotly(df,x,y_series,run):
+def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None):
     '''
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
     
     chart_data = pd.DataFrame(np.asarray(df[df['run'].astype(int)==run][[x]+y_series], float), columns=[x]+y_series)
 
-
-    #fig = px.line(chart_data, x=x, y=y_series)
 
 
     # Format the column names
@@ -156,10 +189,11 @@ def line_plot_plotly(df,x,y_series,run):
     
     fig = px.line(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
 
+    customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
     st.plotly_chart(fig, use_container_width=True)
 
-def bar_plot_plotly(values_list, param_id):
+def bar_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
     # Check if the values in values_list exist in the DataFrame
     
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
@@ -172,13 +206,15 @@ def bar_plot_plotly(values_list, param_id):
 
     fig = px.bar(df, x='Parameter', y='Value')
 
+    customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
+
     st.plotly_chart(fig, use_container_width=True)
 
 
 
 
 
-def pie_plot_plotly(values_list, param_id):
+def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
     # Check if the values in values_list exist in the DataFrame
     
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
@@ -192,6 +228,8 @@ def pie_plot_plotly(values_list, param_id):
     # drop zero parameters
     df = df[df['Value'] != 0]
     fig = px.pie(df, values='Value', names='Parameter')
+
+    customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -233,7 +271,7 @@ def plot_all_plotly(param_id):
         'market_token_allocation',
         'airdrop_receivers_token_allocation',
         'incentivisation_receivers_token_allocation'
-    ], param_id)
+    ], param_id, plot_title="Token Allocation Plot")
 
     ##INPUTS TAB
     plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id)
@@ -255,7 +293,8 @@ def plot_all_plotly(param_id):
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
     plot_results_plotly('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum','team_a_tokens_vested_cum',
-                                     'reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1, param_id)
+            'reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1, param_id
+            , plot_title="Cumulative Token Vesting Over Time", x_title="Months", y_title="Tokens")
         ##NEED EFFECTIVE TOKEN PRICE
     bar_plot_plotly([
         'angle_token_effective',
@@ -263,7 +302,7 @@ def plot_fundraising(param_id):
         'presale_1_token_effective',
         'presale_2_token_effective',
         'public_token_effective'
-    ], param_id)
+    ], param_id, plot_title="Effective Token Price of Investors", x_title="Investors", y_title="Dollars ($)")
         ##NEED PIE CHART OF INITIAL ALLOCATION
     pie_plot_plotly([
         'angle_token_allocation',
@@ -284,26 +323,43 @@ def plot_fundraising(param_id):
         'market_token_allocation',
         'airdrop_receivers_token_allocation',
         'incentivisation_receivers_token_allocation'
-    ], param_id)
+    ], param_id, plot_title="Token Allocation Plot")
 
 def plot_business(param_id):    
     ##INPUTS TAB
-    plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id)
-    plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id)
-    plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id)
-    plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id)
+    plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, plot_title="User Adoption Over Time", x_title="Months", y_title="Users and Token Holders")
+    plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, plot_title="Product Revenue Over Time", x_title="Months", y_title="Revenue ($)")
+    plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, plot_title="Token Purchases Over Time", x_title="Months", y_title="Tokens Purchased")
+    plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, plot_title="Cash Balance Over Time", x_title="Months", y_title="Dollars ($)")
 
 def plot_token_economy(param_id):
     ##UTILITIES TAB
     pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
-                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id)
+                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id, plot_title="Each Token's Utility Share")
 
     ##ANALYSIS TAB
-    plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1, param_id)
-    plot_results_plotly('timestep', ['lp_token_price','lp_volatility'], 1, param_id)
-    plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1, param_id)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1, param_id)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1, param_id)
+    plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
+                        'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
+                        'te_unvested_supply','te_circulating_supply'], 1, param_id
+                        , plot_title="Token Supply Buckets Over Time", x_title="Months", y_title="Tokens")
+    
+    plot_results_plotly('timestep', ['lp_token_price','lp_volatility'], 1, param_id
+                        , plot_title="Token Price and LP Volitility Over Time", x_title="Months", y_title="Dollars ($)")
+    
+    plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1, param_id
+                        , plot_title="Token Price, Market Price, and Fully Diluted Valuation Over Time", x_title="Months", y_title="Dollars (M)")
+    
+    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
+                                     'u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum',
+                                     'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
+                                     'te_holding_allocation_cum'], 1, param_id
+                                     , plot_title="Cumulative Token Allocations By Utilities Over Time", x_title="Months", y_title="Tokens")
+    
+    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
+                                     'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
+                                     'te_airdrop_tokens','te_holding_allocation'], 1, param_id
+                                     , plot_title="Token Allocations By Utilities Over Time", x_title="Months", y_title="Tokens")
+
 
 
 
