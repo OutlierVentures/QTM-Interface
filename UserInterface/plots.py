@@ -91,6 +91,16 @@ def plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None,
     # example for line plots of different outputs in one figure
     line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
 
+def area_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
+
+    df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+
+    # example for Monte Carlo plots
+    #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
+
+    # example for line plots of different outputs in one figure
+    area_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+
 
 
 def aggregate_runs(df,aggregate_dimension,x,y):
@@ -191,6 +201,23 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
 
     st.plotly_chart(fig, use_container_width=True)
 
+def area_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None):
+    '''
+    A function that generates a area plot from a series of data series in a frame in streamlit
+    '''
+    
+    chart_data = pd.DataFrame(np.asarray(df[df['run'].astype(int)==run][[x]+y_series], float), columns=[x]+y_series)
+
+    # Format the column names
+    formatted_columns = [format_column_name(col) for col in [x] + y_series]
+    chart_data.columns = formatted_columns
+
+    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
+
+    customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
+
+    st.plotly_chart(fig, use_container_width=True)
+
 
 def bar_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
     # Check if the values in values_list exist in the DataFrame
@@ -234,64 +261,9 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 
 
-
-
-
-
-def plot_all_plotly(param_id):    
-    ##FUNDRAISING TAB
-    plot_results_plotly('timestep', ['seed_a_tokens_vested_cum','angle_a_tokens_vested_cum',
-            'team_a_tokens_vested_cum','reserve_a_tokens_vested_cum','presale_1_a_tokens_vested_cum'], 1, param_id)
-        ##NEED EFFECTIVE TOKEN PRICE
-    bar_plot_plotly([
-        'angle_token_effective',
-        'seed_token_effective',
-        'presale_1_token_effective',
-        'presale_2_token_effective',
-        'public_token_effective'
-    ], param_id)
-        ##NEED PIE CHART OF INITIAL ALLOCATION
-    pie_plot_plotly([
-        'angle_token_allocation',
-        'seed_token_allocation',
-        'presale_1_token_allocation',
-        'presale_2_token_allocation',
-        'public_sale_token_allocation',
-        'team_token_allocation',
-        'ov_token_allocation',
-        'advisor_token_allocation',
-        'strategic_partners_token_allocation',
-        'reserve_token_allocation',
-        'community_token_allocation',
-        'foundation_token_allocation',
-        'incentivisation_token_allocation',
-        'staking_vesting_token_allocation',
-        'airdrop_token_allocation',
-        'market_token_allocation',
-        'airdrop_receivers_token_allocation',
-        'incentivisation_receivers_token_allocation'
-    ], param_id, plot_title="Token Allocation Plot")
-
-    ##INPUTS TAB
-    plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id)
-    plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id)
-    plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id)
-    plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id)
-
-    ##UTILITIES TAB
-    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
-                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id)
-
-    ##ANALYSIS TAB
-    plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1, param_id)
-    plot_results_plotly('timestep', ['lp_token_price','lp_volatility'], 1, param_id)
-    plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1, param_id)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1, param_id)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1, param_id)
-
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
-    plot_results_plotly('timestep', ['angle_a_tokens_vested_cum', 'seed_a_tokens_vested_cum','presale_1_a_tokens_vested_cum','presale_2_a_tokens_vested_cum','public_sale_a_tokens_vested_cum'
+    area_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum', 'seed_a_tokens_vested_cum','presale_1_a_tokens_vested_cum','presale_2_a_tokens_vested_cum','public_sale_a_tokens_vested_cum'
                                      ,'team_a_tokens_vested_cum', 'advisor_a_tokens_vested_cum', 'strategic_partners_a_tokens_vested_cum'
                                      ,'reserve_a_tokens_vested_cum', 'community_a_tokens_vested_cum', 'foundation_a_tokens_vested_cum', 'incentivisation_a_tokens_vested_cum'
                                      ,'staking_vesting_a_tokens_vested_cum'], 1, param_id
