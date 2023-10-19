@@ -49,6 +49,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             equity_investments = 0.0
             equity_perc = 0.0        
     
+
+
     st.markdown("### Fundraising")
     col21, col22, col23 = st.columns(3)
     with col21:
@@ -93,6 +95,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
             if fundraising_style == 'Custom' or show_full_fund_table:
                 st.write("Total Raised: "+str(raised_funds)+" $m")
+
+
 
     st.markdown("### Token Allocations & Vesting")
     col31, col32 = st.columns(2)
@@ -477,7 +481,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 airdrop_date3 = st.date_input("Airdrop Date 3", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%y"), help="The date of the third airdrop.")
                 airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
 
-    if show_full_alloc_table:
+    if show_full_alloc_table or vesting_style == 'Custom':
         col51, col52, col53 = st.columns(3)
         with col51:
             st.text_input("DEX LP","DEX Liquidity Pool", label_visibility="hidden", disabled=True, key="lp_name")
@@ -485,6 +489,21 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
         with col53:
             st.number_input('DEX Capital / $m', max_value=raised_funds,value=float((lp_allocation/100 )* initial_supply * launch_valuation*1e6 / initial_supply/1e6), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
+
+
+    st.markdown("### User Adoption")
+    adoption_style = st.radio('Adoption Style',('Slow', 'Medium', 'Fast','Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
+    if adoption_style != 'Custom':
+        show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption tables")
+    else:
+        show_full_adoption_table = False
+    col61, col62, col63 = st.columns(3)
+    with col61:
+        pass
+    with col62:
+        pass
+    with col63:
+        pass
 
     # Map new parameters to model input parameters
     new_params = {

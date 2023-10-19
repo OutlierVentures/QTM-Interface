@@ -91,7 +91,7 @@ def plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None,
     # example for line plots of different outputs in one figure
     line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
 
-def area_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
+def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
 
@@ -99,7 +99,7 @@ def area_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    area_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+    vesting_cum_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
 
 
 
@@ -201,9 +201,9 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
 
     st.plotly_chart(fig, use_container_width=True)
 
-def area_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None):
+def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
     '''
-    A function that generates a area plot from a series of data series in a frame in streamlit
+    A function that generates a area plot from vesting series of data series in a frame in streamlit
     '''
     
     chart_data = pd.DataFrame(np.asarray(df[df['run'].astype(int)==run][[x]+y_series], float), columns=[x]+y_series)
@@ -212,7 +212,13 @@ def area_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
     formatted_columns = [format_column_name(col) for col in [x] + y_series]
     chart_data.columns = formatted_columns
 
-    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    init_lp_token_alloc = sys_param_df[sys_param_df['id'] == param_id]['initial_lp_token_allocation']
+    
+    chart_data['Liquidity Pool'] = init_lp_token_alloc.to_list()*len(chart_data)
+    chart_data['Liquidity Pool'] = chart_data['Liquidity Pool'].astype(float)
+
+    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:]+['Liquidity Pool'])
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
@@ -263,10 +269,10 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
-    area_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum', 'seed_a_tokens_vested_cum','presale_1_a_tokens_vested_cum','presale_2_a_tokens_vested_cum','public_sale_a_tokens_vested_cum'
+    vesting_cum_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum', 'seed_a_tokens_vested_cum','presale_1_a_tokens_vested_cum','presale_2_a_tokens_vested_cum','public_sale_a_tokens_vested_cum'
                                      ,'team_a_tokens_vested_cum', 'advisor_a_tokens_vested_cum', 'strategic_partners_a_tokens_vested_cum'
                                      ,'reserve_a_tokens_vested_cum', 'community_a_tokens_vested_cum', 'foundation_a_tokens_vested_cum', 'incentivisation_a_tokens_vested_cum'
-                                     ,'staking_vesting_a_tokens_vested_cum'], 1, param_id
+                                     ,'staking_vesting_a_tokens_vested_cum', 'te_airdrop_tokens_cum'], 1, param_id
                                      , plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
         ##EFFECTIVE TOKEN PRICE
     bar_plot_plotly([

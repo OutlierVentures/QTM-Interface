@@ -70,10 +70,18 @@ with st.expander("Upload Own Input File"):
     st.markdown("Use the default input file or upload your own based on the")
     st.markdown("[Spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing) ➡️ navigate to radCAD_inputs tab ➡️ save it as .csv and then upload it here ⬇️")
     uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        st.success('File uploaded successfully ✅')
+        if 'param_id' in st.session_state:
+            if st.session_state['param_id'] != "":
+                st.warning(f"Delete the Parameter ID to apply the new input file parameters.", icon="⚠️")
 
 st.markdown("### Basic Token Information")
 
 if uploaded_file is not None:
+    # reset the parameter id
+    st.session_state['param_id'] = ""
+
     # Get the file name and construct the full path
     input_file_name = uploaded_file.name
     input_file_path = os.path.join(input_file_base_path, input_file_name)
