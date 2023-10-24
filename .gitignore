@@ -3,6 +3,7 @@ __pycache__
 ./data/__pycache__
 ./Model/__pycache__
 ./Model/parts/__pycache__
+qtmvenv
 .ipynb_checkpoints
 ./Model/simulationData.db
 simulationData.db

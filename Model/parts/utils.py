@@ -1,3 +1,40 @@
+"""Initialisation, testing, and minor helper functions.
+
+Functions:
+    convert_date:
+
+    calculate_raised_capital:
+
+    new_agent:
+
+    generate_agents:
+
+    create_parameter_list:
+
+    compose_initial_parameters:
+
+    calculate_investor_allocation:
+
+    calc_initial_lp_tokens:
+
+    initialize_dex_liquidity:
+
+    generate_initial_token_economy_metrics:
+
+    initialize_user_adoption:
+
+    initialize_business_assumptions:
+
+    initialize_utilities:
+
+    test_timeseries:
+
+    import_dummy_data:
+
+    convert_to_json:
+
+"""
+
 import numpy as np
 import math
 import uuid

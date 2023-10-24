@@ -1,7 +1,21 @@
+"""Calculation and processing of holding token allocations.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    holding_agent_allocation (PF): Policy function to calculate the agent holding.
+
+    update_agents_after_holding (SUF): Function to update agent holding allocations
+
+    update_utilties_after_holding (SUF): Function to update holding token allocations.
+
+"""
+
 # POLICY FUNCTIONS
 def holding_agent_allocation(params, substep, state_history, prev_state, **kwargs):
     """
-    Policy function to calculate the agent holding
+    Policy function to calculate the agent holding.
 
     """
     # get parameters
@@ -76,7 +90,7 @@ def update_agents_after_holding(params, substep, state_history, prev_state, poli
 
 def update_utilties_after_holding(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update meta burning allocations
+    Function to update holding token allocations.
     """
     # get parameters
 

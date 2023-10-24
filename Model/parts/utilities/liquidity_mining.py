@@ -1,3 +1,18 @@
+"""Calculation and processing of liquidity mining at agent level.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    staking_liquidity_mining_agent_allocation (PF): Policy function to calculate the agent liquidity mining
+
+    update_agents_after_liquidity_mining (SUF): Function to update agent liquidity mining allocations
+
+    update_utilties_after_liquidity_mining (SUF): Function to update meta liquidity mining allocations.
+
+"""
+
+
 # POLICY FUNCTIONS
 def staking_liquidity_mining_agent_allocation(params, substep, state_history, prev_state, **kwargs):
     """

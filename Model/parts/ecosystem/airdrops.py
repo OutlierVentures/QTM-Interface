@@ -1,9 +1,34 @@
+"""Calculate and process airdrops.
+
+Contains policy functions (PF) and state update functions (SUF) 
+relevant for behaviour of each type of agent and for meta bucket allocations.
+
+
+Functions:
+    airdrops (PF): Policy function to calculate airdrop amount for current period.
+
+    update_agents_after_airdrops (SUF): Function to update information on airdrop 
+        receiving agent after airdrops distribution.
+
+    update_token_economy_after_airdrops (SUF): Function to update the token economy 
+        after airdrops distribution.
+
+"""
+
 import pandas as pd
 
 # POLICY FUNCTIONS
 def airdrops(params, substep, state_history, prev_state, **kwargs):
     """
-    Policy function to incentivise the ecosystem
+    Policy function to calculate airdrop amount for current period.
+
+    Airdrop amounts are provided as percentages of the airdrop allocation for
+    the predefined airdrop dates. The amounts of airdropped tokens for each 
+    date are calculated based on the total token supply, airdrop allocation 
+    percentage and the airdrop amount. 
+
+    Returns: 
+        A dict where key 'te_airdrop_tokens' gets assigned a nonnegative value. 
     """
     # get parameters
     total_token_supply = params['initial_total_supply']
@@ -35,7 +60,17 @@ def airdrops(params, substep, state_history, prev_state, **kwargs):
 # STATE UPDATE FUNCTIONS
 def update_agents_after_airdrops(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the vested tokens for each investor based on some criteria
+    Function to update information on airdrop receiving agent after airdrops distribution. 
+    
+    State update function.
+
+    Returns:
+        Tuple ('agents', updated_agents), where updated_agents holds information on the agents
+        who are labeled as airdrop receivers.
+
+    Raises:
+        ValueError: No airdrop receivers found; Request to add at least one.
+
     """
     # get parameters
 
@@ -66,7 +101,15 @@ def update_agents_after_airdrops(params, substep, state_history, prev_state, pol
 
 def update_token_economy_after_airdrops(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the token economy after incentivisation
+    Function to update the token economy after airdrops distribution.
+    
+    State update function.
+
+    Returns:
+        Tuple ('token_economy', updated_token_economy), where updated_token_economy 
+        is a dict which holds information on the tokens distributed as airdrops
+        in the current period (token amount, cumulative amount, USD value).
+
     """
     # get parameters
 

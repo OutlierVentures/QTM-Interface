@@ -1,3 +1,17 @@
+"""Calculation and processing of APR and APR allocation.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    staking_apr_allocation (PF): Policy function to for the staking apr calculation
+
+    update_utilties_after_apr (SUF): Function to update the utilities after apr
+
+    update_agents_after_apr (SUF): Function to update the utilities after apr.
+
+"""
+
 # POLICIY FUNCTIONS
 def staking_apr_allocation(params, substep, state_history, prev_state, **kwargs):
     """

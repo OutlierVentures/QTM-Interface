@@ -1,3 +1,17 @@
+"""Calculate and update user adoption metrics.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    calculate_user_adoption: Take in user adoption data and calculate the amount of adoption.
+
+    user_adoption_metrics (PF): Calculate the metrics relevant for monitoring user adoption.
+
+    update_user_adoption (SUF): Function to update the user adoption metrics.
+
+"""
+
 import math
 from Model.parts.utils import *
 
@@ -5,16 +19,20 @@ from Model.parts.utils import *
 
 def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_days):
     """
-    Definition:
-        Function to take in user adoption data and calculate the amount of adoption, can be used for token adoption and product users
-    
-    Parameters:
+    Take in user adoption data and calculate the amount of adoption.
+
+    Can be used for token adoption and product users.
+  
+    Args:
         initial_users: starting amount of users
         final_users: ending amount of users
         velocity: speed of adoption on those users
         timstep: current timestep in days
-        total_days: length of full simulation
+        total_days: length of full simulation.
     
+    Returns:
+        Number representing the user adoption.    
+
     """
 
     term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825) / velocity))) * final_users + initial_users
@@ -29,7 +47,17 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
 # POLICY FUNCTIONS
 def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     """
-    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
+    Calculate the metrics relevant for monitoring user adoption.
+
+    Policy function.
+
+    Token adoption and product users are calculated according to the logic provided in the
+    calculate_user_adoption function.
+
+    Returns:
+        A dict which provides information on product users, token holders, product
+        revenue and token buys.
+    
     """
 
     current_month = prev_state['timestep']
@@ -84,7 +112,15 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 # STATE UPDATE FUNCTIONS
 def update_user_adoption(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the user adoption metrics
+    Function to update the user adoption metrics.
+
+    State update function.
+
+    Returns:
+        A tuple ('user_adoption', updated_user_adoption), where updated_user_adoption
+        provides updated information on product users, token holders, product revenue
+        and token buys.
+    
     """
 
     product_users = policy_input['ua_product_users']

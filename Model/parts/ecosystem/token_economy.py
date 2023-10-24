@@ -1,9 +1,32 @@
+"""Provide date and token economy metrics.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    generate_date (PF): Generate the current date from timestep.
+
+    token_economy_metrics (PF): Calculate the initial token economy metrics, 
+        such as MC, FDV MC, circ. supply, and tokens locked.
+
+    update_date (SUF):Function to update the current date of the timestep.
+
+    update_token_economy (SUF): Function to update token economy attributes 
+        and metrics.
+
+"""
+
 import pandas as pd
 
 # POLICY FUNCTIONS
 def generate_date(params, substep, state_history, prev_state, **kwargs):
     """
-    Generate the current date from timestep
+    Generate the current date from timestep.
+
+    Policy function.
+
+    Returns: 
+        A dict which points to the current date.
     """
     # parameters
     initial_date = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
@@ -18,7 +41,20 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
 
 def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
-    Calculate the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
+    Calculate the initial token economy metrics, such as MC, FDV MC, circ. 
+    supply, and tokens locked.
+
+    Policy function.
+
+    Calculations take place as the last substep, to reflect changes that
+    happened to the token economy in the current timestep. Information 
+    provided for: total supply, selling/utility/holding percentages, 
+    circulating supply, unvested tokens, holding supply, and the metrics:
+    MC and FDV NC.
+
+    Returns: 
+        A dict which provides information about the updated token economy
+        attributes and metrics.
     """
     # parameters
     total_token_supply = params['initial_total_supply']
@@ -75,7 +111,12 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
 # STATE UPDATE FUNCTIONS
 def update_date(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the current date of the timestep
+    Function to update the current date of the timestep.
+
+    State update function.
+
+    Returns:
+        Tuple ('date', updated_date).
     """
     # policy input / update logic
     updated_date = policy_input['new_date']
@@ -84,7 +125,16 @@ def update_date(params, substep, state_history, prev_state, policy_input, **kwar
 
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the agents based on the changes in business funds to seed the liquidity pool.
+    Function to update token economy attributes and metrics.
+
+    State update function.
+
+    Updates nformation for: total supply, selling/utility/holding percentages, 
+    circulating supply, unvested tokens, holding supply, USD values of 
+    incentivised tokens and airdrops and the metrics: MC and FDV NC.
+
+    Returns:
+        Tuple ('token_economy', updated_token_economy).
     """
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
