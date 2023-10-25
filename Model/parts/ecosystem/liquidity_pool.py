@@ -1,3 +1,39 @@
+"""Liquidity pool initialisation and updating after transactions.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    initialize_liquidity_pool (PF): Function to initialize the liquidity pool in 
+        the first timestep.
+
+    liquidity_pool_tx1_after_adoption (PF): Function to calculate the liquidity pool 
+        after the adoption buys. 
+
+    liquidity_pool_tx2_after_vesting_sell (PF): Function to calculate the liquidity 
+        pool after the vesting sell.
+
+    liquidity_pool_tx3_after_liquidity_addition (PF): Function to calculate the 
+        liquidity pool after liquidity addition.
+
+    liquidity_pool_tx4_after_buyback (PF): Function to calculate the liquidity pool
+        after buyback.
+
+    update_lp_after_lp_seeding (SUF): Function to update the agents based on the 
+        changes in business funds to seed the liquidity pool.
+
+    update_agents_tx1_after_adoption (SUF): Function to update the agents after the
+        adoption buys.
+
+    update_agents_tx2_after_vesting_sell (SUF): Function to update the agents after
+        the vesting sell.
+    
+    update_liquidity_pool_after_transaction (SUF): Update the liquidity pool after
+        adoption buys, vesting sell, liquidity addition or buyback.
+
+"""
+
+
 import numpy as np
 
 from Model.parts.utils import *
@@ -5,7 +41,20 @@ from Model.parts.utils import *
 # POLICY FUNCTIONS
 def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwargs):
     """
-    Function to initialize the liquidity pool in the first timestep
+    Function to initialize the liquidity pool in the first timestep. 
+
+    Policy function.
+
+    Checks the current month. If it equals zero, the liquidity pool is initialised
+    from the system parameters, otherwise the function returns the previous state of
+    the liquidity pool.
+
+    Returns: 
+        A dict of the form {'liquidity_pool': liquidity_pool}.
+
+    Raises:
+        ValueError: Insufficient capital raised or too high requirement for seeding
+            of DEX liquidity.
     """
     # parameters
     required_usdc = params['initial_required_usdc']
@@ -39,7 +88,22 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
 
 def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state, **kwargs):
     """
-    Function to calculate the liquidity pool after the adoption buys
+    Function to calculate the liquidity pool after the adoption buys. 
+
+    Policy function.
+    
+    Returns:
+        A dict which provides amount of native protocol tokens in LP, 
+        amount of USDC in LP, value of the constant product invariant,
+        token price, and transaction flag.
+
+    Attributes:
+        token_lp_weight (float): Weight of the token in the liquidity pool.
+        usdc_lp_weight (float): Weight of USDC in the liquidity pool. 
+
+    Raises:
+        AssertionError: Constant product has changed after the adoption buys.
+    
     """
 
     # parameters
@@ -74,7 +138,22 @@ def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state
 
 def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_state, **kwargs):
     """
-    Function to calculate the liquidity pool after the vesting sell
+    Function to calculate the liquidity pool after the vesting sell.
+
+    Policy function.
+
+    Includes selling from airdrops and incentivisation allocations.
+    
+    Returns:
+        A dict which provides amount of native protocol tokens in LP, 
+        amount of USDC in LP, value of the constant product invariant,
+        token price, mapping for agents selling from holding and 
+        transaction flag.
+
+    Attributes:
+        token_lp_weight (float): Weight of the token in the liquidity pool.
+        usdc_lp_weight (float): Weight of USDC in the liquidity pool. 
+
     """
 
     # parameters
@@ -130,7 +209,14 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
 
 def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, prev_state, **kwargs):
     """
-    Function to calculate the liquidity pool after liquidity addition
+    Function to calculate the liquidity pool after liquidity addition.
+
+    Policy function.
+    
+    Returns:
+        A dict which provides amount of native protocol tokens in LP, 
+        amount of USDC in LP, value of the constant product invariant,
+        token price, and transaction flag.
     """
 
     # parameters
@@ -163,7 +249,22 @@ def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, 
 
 def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state, **kwargs):
     """
-    Function to calculate the liquidity pool after buyback
+    Function to calculate the liquidity pool after buyback.
+
+    Policy function.
+    
+    Returns:
+        A dict which provides amount of native protocol tokens in LP, 
+        amount of USDC in LP, value of the constant product invariant,
+        token price, and transaction flag.
+
+    Attributes:
+        token_lp_weight (float): Weight of the token in the liquidity pool.
+        usdc_lp_weight (float): Weight of USDC in the liquidity pool. 
+
+    Raises:
+        AssertionError: Constant product has changed after the adoption buys.
+
     """
 
     # parameters
@@ -201,6 +302,16 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
 def update_lp_after_lp_seeding(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the agents based on the changes in business funds to seed the liquidity pool.
+
+    State update function.
+
+    Note: Important in the first time step when liquidity pool is initialised. For other
+    steps, the liquidity pool is not changed.
+
+    Returns: 
+        Tuple ('liquidity_pool', updated_liquidity_pool), where updated_liquidity_pool is
+        a dict storing elevant information about the liquidity pool.
+
     """
     # get policy inputs
     updated_liquidity_pool = policy_input['liquidity_pool']
@@ -209,7 +320,19 @@ def update_lp_after_lp_seeding(params, substep, state_history, prev_state, polic
 
 def update_agents_tx1_after_adoption(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the agents after the adoption buys
+    Function to update the agents after the adoption buys. 
+
+    State update function.
+
+    Tokens bought are distributed to the agents of 'market_investors' type.
+
+    Returns:
+        Tuple ('agents', updated_agents), where updated_agents provide the information
+        on how the token amount changed for the agents of the 'market_investors' type.
+
+    Raises:
+        ValueError: No market investors found; Request to add at least one.
+
     """
     # state variables
     liquidity_pool = prev_state['liquidity_pool'].copy()
@@ -242,7 +365,16 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
 
 def update_agents_tx2_after_vesting_sell(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the agents after the adoption buys
+    Function to update the agents after the after the vesting sell.
+
+    State update function.
+
+    Applies to the agents of the 'protocol_bucket' type.
+
+    Returns:
+        Tuple ('agents', updated_agents), where updated_agents provide the information
+        on how the sell change token amount of the agents of the 'protocol_bucket' type.
+
     """
     # state variables
     updated_agents = prev_state['agents'].copy()
@@ -260,7 +392,20 @@ def update_agents_tx2_after_vesting_sell(params, substep, state_history, prev_st
 
 def update_liquidity_pool_after_transaction(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the liquidity pool after the adoption buys
+    Update the liquidity pool after adoption buys, vesting sell, liquidity addition
+    or buyback.
+
+    State update function.
+
+    Note: The type of transaction that brings the need for an update to the 
+    liquidity pool is determined by the transaction flag 'tx'.
+
+    Returns:
+        Tuple ('liquidity_pool', updated_liquidity_pool) with updated_liquidity_pool
+            being a dict that provides information on changed attributes of the
+            liquidity pool.
+
+
     """
     # parameters
     initial_token_price = params['initial_token_price']

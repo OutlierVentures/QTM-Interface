@@ -1,7 +1,24 @@
+"""Vesting tokens and updating the amount of vested tokens held.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    vest_tokens (PF): Policy function to vest tokens for each stakeholder.
+
+    update_agent_vested_tokens (SUF): Function to update the vested tokens 
+        for each investor based on some criteria.
+"""
+
 # POLICIY FUNCTIONS
 def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to vest tokens for each stakeholder.
+
+    Policy function.
+
+    Returns: 
+        A dict which mapping agents to their vested token amounts.
     """
     agents = prev_state['agents'].copy()
     total_token_supply = params['initial_total_supply']
@@ -42,7 +59,14 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
 # STATE UPDATE FUNCTIONS
 def update_agent_vested_tokens(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the vested tokens for each investor based on some criteria
+    Function to update the vested tokens for each investor based on some criteria.
+
+    State update function.
+
+    Returns:
+        Tuple ('agents', updated_agents), where updated_agents provide information
+        for all agents on updated token holding, amount of vested tokens in current 
+        period and cumulatively.
     """
     updated_agents = prev_state['agents']
     agent_token_vesting_dict = policy_input['agent_token_vesting_dict']

@@ -1,9 +1,30 @@
+"""Calculation and processing of token burning at ecosystem level.
+
+Contains policy functions (PF) and state update functions (SUF) 
+relevant for behaviour of each type of agent and for meta bucket allocations.
+
+
+Functions:
+    burn_from_protocol_bucket (PF): Policy function to calculate current 
+        burn token amount.
+
+    update_protocol_bucket_agent_after_burn  (SUF): Function to update 
+        the protocol buckets after tokens burned.
+
+    update_token_economy_after_protocol_bucket_burn (SUF): Function to update 
+        the token economy after tokens burned.
+
+"""
+
 import pandas as pd
 
 # POLICY FUNCTIONS
 def burn_from_protocol_bucket(params, substep, state_history, prev_state, **kwargs):
     """
-    Policy function to incentivise the ecosystem
+    Policy function to calculate current burn token amount.
+
+    Returns: 
+        A dict where key 'burn_token_amount' gets assigned a nonnegative value. 
     """
     # get parameters
     total_token_supply = params['initial_total_supply']
@@ -27,7 +48,14 @@ def burn_from_protocol_bucket(params, substep, state_history, prev_state, **kwar
 # STATE UPDATE FUNCTIONS
 def update_protocol_bucket_agent_after_burn(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the vested tokens for each investor based on some criteria
+    Function to update the protocol buckets after tokens burned.
+
+    State update function.
+
+    Returns: 
+        Tuple ('agents', updated_agents), where updated_agents is a dict that maps
+        the protocol buckets into their respective updatek amounts of tokens, tokens
+        burned in the current period, and cumulatively.
     """
     # get parameters
     burn_project_bucket = params['burn_project_bucket']
@@ -51,7 +79,15 @@ def update_protocol_bucket_agent_after_burn(params, substep, state_history, prev
 
 def update_token_economy_after_protocol_bucket_burn(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the token economy after incentivisation
+    Function to update the token economy after tokens burned.
+
+    State update function.
+
+    Returns: 
+        A tuple ('token_economy', updated_token_economy), where updated_token_economy 
+        is a dict that reports respective updatek amounts of tokens, tokens
+        burned in the current period, and cumulatively at the token economy level.
+
     """
     # get parameters
 

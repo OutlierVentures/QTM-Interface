@@ -1,9 +1,38 @@
+"""Set business assumption metrics or update business assumptions.
+
+Contains policy functions (PF) and state update functions (SUF) 
+relevant for behaviour of each type of agent and for meta bucket allocations.
+
+
+Functions:
+    business_assumption_metrics: (PF): Set up the business assumption metrics.
+
+    update_business_assumptions: (SUF): Update the business assumptions.
+
+"""
+
+
 from ..utils import *
 
 
 
 # POLICY FUNCTIONS
 def business_assumption_metrics(params, substep, state_history, prev_state, **kwargs):
+    """
+    Set up the business assumption metrics.
+
+    Policy function.
+
+    Reads a range of parameters (originally from QTM input tab 'cadCAD_inputs'), and
+    the state of: cash balance, revenue streams. 
+    Then calculates: expenditures, buyback, liquidity requirements, sum of raised capital,
+    and cash flow.
+
+    Returns:
+        Returns dict that maps 'cash_flow' to 'buybacks' to their respective values for
+        the current time step.
+
+    """
 
     # parameters
     product_income_per_month = params['product_income_per_month']
@@ -78,7 +107,16 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 # STATE UPDATE FUNCTIONS
 def update_business_assumptions(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the business assumptions
+    Function to update the business assumptions.
+
+    State update function.
+
+    Uses cash flow and buyback variables to update business assumptions.
+
+    Returns:
+        Returns a tuple ('business_assumptions', updated_business_assumptions),
+        where updated_business_assumptions gives latest buybacks and updated cash flow.
+
     """
     # parameters
 

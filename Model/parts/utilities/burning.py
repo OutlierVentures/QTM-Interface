@@ -1,3 +1,17 @@
+"""Calculation and processing of token burning at agect level.
+
+Contains policy functions (PF) and state update functions (SUF).
+
+
+Functions:
+    burning_agent_allocation (PF): Policy function to calculate the agent burning.
+
+    update_burning_agent_allocation (SUF): Function to update agent burning allocations.
+
+    update_burning_meta_allocation (SUF): Function to update meta burning allocations.
+
+"""
+
 # POLICY FUNCTIONS
 def burning_agent_allocation(params, substep, state_history, prev_state, **kwargs):
     """

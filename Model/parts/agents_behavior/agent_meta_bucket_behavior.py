@@ -1,7 +1,45 @@
+"""Agent and meta bucket related state update and policy functions.
+
+Contains policy functions (PF) and state update functions (SUF) 
+relevant for behaviour of each type of agent and for meta bucket allocations.
+
+
+Functions:
+    generate_agent_meta_bucket_behavior: (PF) Define the agent behavior.
+    
+    agent_meta_bucket_allocations: (PF) Define the meta bucket token allocations 
+        of all agents.
+
+    update_agent_meta_bucket_behavior: (SUF) Function to update the agent behaviors.
+
+    update_agent_meta_bucket_allocations: (SUF) Function to update the agent meta 
+        bucket token allocations.
+
+    update_token_economy_meta_bucket_allocations: (SUF) Update the meta bucket 
+            allocations for the token economy.
+
+"""
+
 # POLICY FUNCTIONS
 def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_state, **kwargs):
     """
-    Define the agent behavior for each agent type
+    Define the agent behavior for each agent type.
+
+    Policy function.
+
+    First, checks if the agent behaviour is set up to be stochastic. 
+    If stochastic, agent actions are based on a weighted random choices.
+    If static, define the agent behavior for each agent type based on previous state.
+    If neither, raise an error.
+
+    Returns: 
+        A dict with key 'agent_behavior_dict' and value being a dict, mapping agent
+        types to agent behaviour. 
+
+    Raises:    
+        ValueError: params['agent_behavior'] must be either 'stochastic' or 'static'.
+        KeyError: Missing required parameter.
+
     """
 
     try:
@@ -133,7 +171,21 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
 
 def agent_meta_bucket_allocations(params, substep, state_history, prev_state, **kwargs):
     """
-    Define the meta bucket token allocations of all agents with respect to 'sell' 'hold' and 'utility'
+    Define the meta bucket token allocations of all agents with respect to 'sell',
+    'hold' and 'utility'.    
+
+    Policy function.
+
+    Updates agent token allocations and updates the meta bucket allocations w.r.t. each agents contribution.
+    Note that protocol buckets are not used for meta bucket allocations
+
+    Returns: 
+        A dict which allows to group the agents according to the following keys: 
+        'meta_bucket_allocations','agent_allocations', 'agent_from_holding_allocations'. 
+        Each agent from any of these groups reports the allocations for 'sell',
+        'hold' and 'utility'.    
+
+
     """
 
     # get state variables
@@ -204,7 +256,15 @@ def agent_meta_bucket_allocations(params, substep, state_history, prev_state, **
 # STATE UPDATE FUNCTIONS
 def update_agent_meta_bucket_behavior(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the agent behaviors
+    Function to update the agent behaviors. 
+    
+    State update function.
+
+    Returns:
+        A tuple ('agents', updated_agents), where updated_agents is a dict mapping
+        each agent to their updated behaviour.
+    
+
     """
     updated_agents = prev_state['agents']
     agent_behavior_dict = policy_input['agent_behavior_dict']
@@ -216,7 +276,13 @@ def update_agent_meta_bucket_behavior(params, substep, state_history, prev_state
 
 def update_agent_meta_bucket_allocations(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the agent meta bucket token allocations
+    Function to update the agent meta bucket token allocations.
+
+    State update function.
+
+    Returns: 
+        A tuple ('agents', updated_agents), where updated_agents is a dict mapping
+        each agent to their updated meta bucket token allocation.
     """
     
     # get state variables
@@ -242,7 +308,14 @@ def update_agent_meta_bucket_allocations(params, substep, state_history, prev_st
 
 def update_token_economy_meta_bucket_allocations(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
-    Function to update the meta bucket allocations for the token economy
+    Function to update the meta bucket allocations for the token economy.
+
+    State update function.
+
+    Returns: 
+        A tuple ('token_economy', updated_token_economy), where updated_token_economy is
+        a dict providing values of updated meta bucket allocations for, respectively,
+        token economy selling/utility/holding allocations and their cumulative values.
     """
 
     # get state variables
