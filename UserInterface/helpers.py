@@ -36,11 +36,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     with col11:
         supply_type = st.radio('Supply Type',('Fixed', 'Inflationary'), index=['Fixed', 'Inflationary'].index(sys_param['supply_type'][0]), key='supply_type_radio', help="Determines if a minting functionallity is allowed.")
         equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angle investors")
-        initial_supply = st.number_input('Initial Total Token Supply', min_value=100, max_value=1000000000000, value=int(sys_param['initial_total_supply'][0]), help="The initial total token supply.")
+        initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=100, max_value=1000000, value=int(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
     with col12:
-        launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=5, max_value=500, value=int(sys_param['public_sale_valuation'][0]/1e6), help="This is the valuation at which the public sale tokens are sold. It is equivalent to the token launch valuation.")
+        launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=0.1, max_value=500.0, value=float(sys_param['public_sale_valuation'][0]/1e6), help="This is the valuation at which the public sale tokens are sold. It is equivalent to the token launch valuation.")
         public_sale_supply = st.number_input('Public Sale Supply / %', min_value=0.0, max_value=95.0, value=float(str(sys_param['public_sale_supply_perc'][0]).split("%")[0]), help="The percentage of tokens sold in the public sale.")
-        st.write("Launch Price: "+ str(launch_valuation*1e6/initial_supply)+" $/token")
+        st.write("Launch Price: "+ str(launch_valuation/initial_supply)+" $/token")
     with col13:
         if equity_investors:
             equity_investments = st.number_input('Angle & Equity Raises / $m', min_value=0.0, value=float(sys_param['angle_raised'][0]/1e6), help="The amount of money raised from equity investors.")
@@ -147,19 +147,19 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             else:
                 equity_allocation_new = 0.0
             if seed_raised > 0:
-                seed_allocation = st.number_input('seed_allocation', label_visibility="collapsed", min_value=0.0, value=((seed_raised*1e6) / ((seed_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="seed_allocation")
+                seed_allocation = st.number_input('seed_allocation', label_visibility="collapsed", min_value=0.0, value=((seed_raised) / ((seed_valuation)/initial_supply) / initial_supply) * 1e2, disabled=True, key="seed_allocation")
             else:
                 seed_allocation = 0.0
             if presale_1_raised > 0:
-                presale_1_allocation = st.number_input('presale_1_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_1_raised*1e6) / ((presale_1_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_1_allocation")
+                presale_1_allocation = st.number_input('presale_1_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_1_raised) / ((presale_1_valuation)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_1_allocation")
             else:
                 presale_1_allocation = 0.0
             if presale_2_raised > 0:
-                presale_2_allocation = st.number_input('presale_2_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_2_raised*1e6) / ((presale_2_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_2_allocation")   
+                presale_2_allocation = st.number_input('presale_2_allocation', label_visibility="collapsed", min_value=0.0, value=((presale_2_raised) / ((presale_2_valuation)/initial_supply) / initial_supply) * 1e2, disabled=True, key="presale_2_allocation")   
             else:
                 presale_2_allocation = 0.0
             if public_sale_raised > 0:
-                public_sale_allocation = st.number_input('public_sale_allocation', label_visibility="collapsed", min_value=0.0, value=((public_sale_raised*1e6) / ((launch_valuation*1e6)/initial_supply) / initial_supply) * 1e2, disabled=True, key="public_sale_allocation")
+                public_sale_allocation = st.number_input('public_sale_allocation', label_visibility="collapsed", min_value=0.0, value=((public_sale_raised) / ((launch_valuation)/initial_supply) / initial_supply) * 1e2, disabled=True, key="public_sale_allocation")
             else:
                 public_sale_allocation = 0.0
             team_allocation = st.number_input('team_allocation', label_visibility="collapsed", min_value=0.0, value=sys_param['team_allocation'][0], disabled=False, key="team_allocation")
@@ -188,10 +188,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
         else:
             equity_allocation_new = (equity_perc/100) * (sys_param['team_allocation'][0]/(1-equity_perc/100))
-            seed_allocation = ((seed_raised*1e6) / ((seed_valuation*1e6)/initial_supply) / initial_supply) * 1e2
-            presale_1_allocation = ((presale_1_raised*1e6) / ((presale_1_valuation*1e6)/initial_supply) / initial_supply) * 1e2
-            presale_2_allocation = ((presale_2_raised*1e6) / ((presale_2_valuation*1e6)/initial_supply) / initial_supply) * 1e2
-            public_sale_allocation = ((public_sale_raised*1e6) / ((launch_valuation*1e6)/initial_supply) / initial_supply) * 1e2
+            seed_allocation = ((seed_raised) / ((seed_valuation)/initial_supply) / initial_supply) * 1e2
+            presale_1_allocation = ((presale_1_raised) / ((presale_1_valuation)/initial_supply) / initial_supply) * 1e2
+            presale_2_allocation = ((presale_2_raised) / ((presale_2_valuation)/initial_supply) / initial_supply) * 1e2
+            public_sale_allocation = ((public_sale_raised) / ((launch_valuation)/initial_supply) / initial_supply) * 1e2
             team_allocation = sys_param['team_allocation'][0]
             ov_advisor_allocation = sys_param['ov_allocation'][0]+sys_param['advisor_allocation'][0]
             strategic_partners_allocation = sys_param['strategic_partners_allocation'][0]
@@ -488,45 +488,101 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         with col52:
             st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
         with col53:
-            st.number_input('DEX Capital / $m', max_value=raised_funds,value=float((lp_allocation/100 )* initial_supply * launch_valuation*1e6 / initial_supply/1e6), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
+            st.number_input('DEX Capital / $m', max_value=raised_funds,value=float((lp_allocation/100 )* initial_supply * launch_valuation / initial_supply), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
 
 
     st.markdown("### User Adoption")
     # adoption style choice | user numbers | revenues
     col61, col62, col63 = st.columns(3)
     with col61:
-        adoption_style = st.radio('Adoption Style',('Weak', 'Medium', 'Strong', 'Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
+        adoption_style = st.radio('Adoption Assumption',('Weak', 'Medium', 'Strong', 'Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
         show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
     with col62:
-        product_token_ratio = st.slider('Product / Token Ratio', min_value=0.0, max_value=1.0, step=0.1, value=float(sys_param['initial_product_users'][0])/float(sys_param['initial_token_holders'][0]), format="%.2f", help="The ratio of product users to token holders. 0 means there are no product users, but only token holders. 1 means the opposite.")
-        initial_users = st.number_input('Initial Users', label_visibility="visible", value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Ratio.")
-        initial_product_users = initial_users * product_token_ratio
-        initial_token_holders = initial_users * (1-product_token_ratio)
-        adoption_dict = {
-            "Weak" : {
-                "avg_product_user_growth_rate" : 1.0
-            },
-            "Medium" : {
-                "avg_product_user_growth_rate" : 3.5
-            },
-            "Strong" : {
-                "avg_product_user_growth_rate" : 8.0
-            }
-        }
-        if adoption_style == 'Custom' or show_full_adoption_table:
-            avg_product_user_growth_rate = st.number_input('Avg. Product Users Growth Rate / %', label_visibility="visible", value=[((float(sys_param['product_users_after_10y'][0]) / float(sys_param['initial_product_users'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_product_user_growth_rate']][0], disabled=False, key="product_users_growth_rate", help="The average monthly growth rate of users.")
-            product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
-            st.write(f"Projected Product Users (10y): {int(np.ceil(product_users_after_10y))}")
+        product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no product users, but only token holders. 1 means the opposite and 0 means that there are as many product users as token holders.")
+        initial_users = st.number_input('Initial Users', label_visibility="visible", value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Weight.")
+        initial_product_users = initial_users * (1 - (product_token_ratio)) / 2
+        initial_token_holders = initial_users - initial_product_users
 
     with col63:
-        st.write(f"Initial Token Holders: {int(np.ceil(initial_token_holders))}")
-        st.write(f"Initial Product Users: {int(np.ceil(initial_product_users))}")
+        st.write(f"Initial Token Holders: {int(np.ceil(initial_token_holders)):+,}")
+        st.write(f"Initial Product Users: {int(np.ceil(initial_product_users)):+,}")
 
-    col71, col72 = st.columns(2)
-    with col71:
-        pass
-    with col72:
-        pass
+    adoption_dict = {
+        "Weak" : {
+            "avg_product_user_growth_rate" : 1.0,
+            "avg_token_holder_growth_rate" : 1.0,
+            "product_adoption_velocity" : 0.5,
+            "token_adoption_velocity" : 0.5,
+            "one_time_product_revenue_per_user" : 0.0,
+            "regular_product_revenue_per_user" : 5.0,
+            "one_time_token_buy_per_user" : 0.0,
+            "regular_token_buy_per_user" : 5.0,
+            "avg_token_utility_allocation" : 20.0,
+            "avg_token_selling_allocation" : 70.0,
+            "avg_token_holding_allocation" : 10.0,
+            "avg_token_utility_removal" : 10.0,
+
+        },
+        "Medium" : {
+            "avg_product_user_growth_rate" : 3.5,
+            "avg_token_holder_growth_rate" : 3.5,
+            "product_adoption_velocity" : 1.5,
+            "token_adoption_velocity" : 1.5,
+            "one_time_product_revenue_per_user" : 0.0,
+            "regular_product_revenue_per_user" : 15.0,
+            "one_time_token_buy_per_user" : 0.0,
+            "regular_token_buy_per_user" : 15.0,
+            "avg_token_utility_allocation" : 50.0,
+            "avg_token_selling_allocation" : 40.0,
+            "avg_token_holding_allocation" : 10.0,
+            "avg_token_utility_removal" : 6.0,
+
+        },
+        "Strong" : {
+            "avg_product_user_growth_rate" : 8.0,
+            "avg_token_holder_growth_rate" : 8.0,
+            "product_adoption_velocity" : 3.5,
+            "token_adoption_velocity" : 3.5,
+            "one_time_product_revenue_per_user" : 0.0,
+            "regular_product_revenue_per_user" : 25.0,
+            "one_time_token_buy_per_user" : 0.0,
+            "regular_token_buy_per_user" : 25.0,
+            "avg_token_utility_allocation" : 75.0,
+            "avg_token_selling_allocation" : 20.0,
+            "avg_token_holding_allocation" : 5.0,
+            "avg_token_utility_removal" : 3.0,
+        }
+    }
+
+    if adoption_style == 'Custom' or show_full_adoption_table:
+        col71, col72 = st.columns(2)
+        with col71:
+            avg_product_user_growth_rate = st.number_input('Avg. Product Users Growth Rate / %', label_visibility="visible", value=[((float(sys_param['product_users_after_10y'][0]) / float(sys_param['initial_product_users'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_product_user_growth_rate']][0], disabled=False, key="product_users_growth_rate", help="The average monthly growth rate of product users.")
+            product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
+            st.write(f"Projected Product Users (10y): {int(np.ceil(product_users_after_10y)):+,}")
+            product_adoption_velocity = st.number_input('Product Adoption Velocity', label_visibility="visible", value=[float(sys_param['product_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0], disabled=False, key="product_adoption_velocity", help="The velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.")
+            regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue directly to the business funds.")
+        with col72:
+            avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
+            token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
+            st.write(f"Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}")
+            token_adoption_velocity = st.number_input('Token Adoption Velocity', label_visibility="visible", value=[float(sys_param['token_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0], disabled=False, key="token_adoption_velocity", help="The velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.")
+            regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
+        st.write("**Meta Bucket Allocations**")
+        col73, col74, col75, col76 = st.columns(4)
+        with col73:
+            avg_token_selling_allocation = st.number_input('Avg. Token Selling Allocation / %', label_visibility="visible", value=[float(sys_param['avg_token_selling_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
+        with col74:
+            avg_token_holding_allocation = st.number_input('Avg. Token Holding Allocation / %', label_visibility="visible", value=[float(sys_param['avg_token_holding_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
+        with col75:
+            avg_token_utility_allocation = st.number_input('Avg. Token Utility Allocation / %', label_visibility="visible", value=[float(sys_param['avg_token_utility_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
+        with col76:
+            avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", value=[float(sys_param['avg_token_utility_removal'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
+    else:
+        avg_product_user_growth_rate = adoption_dict[adoption_style]['avg_product_user_growth_rate']
+        product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
+        avg_token_holder_growth_rate = adoption_dict[adoption_style]['avg_token_holder_growth_rate']
+        token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
 
     # Map new parameters to model input parameters
     new_params = {
@@ -600,7 +656,19 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'airdrop_date2': [airdrop_date2.strftime('%d.%m.%y') if airdrop_toggle else sys_param['airdrop_date2'][0]][0],
         'airdrop_amount2': [airdrop_amount2 if airdrop_toggle else sys_param['airdrop_amount2'][0]][0],
         'airdrop_date3': [airdrop_date3.strftime('%d.%m.%y') if airdrop_toggle else sys_param['airdrop_date3'][0]][0],
-        'airdrop_amount3': [airdrop_amount3 if airdrop_toggle else sys_param['airdrop_amount3'][0]][0]
+        'airdrop_amount3': [airdrop_amount3 if airdrop_toggle else sys_param['airdrop_amount3'][0]][0],
+        'initial_product_users': initial_product_users,
+        'initial_token_holders': initial_token_holders,
+        'product_users_after_10y': product_users_after_10y,
+        'token_holders_after_10y': token_holders_after_10y,
+        'product_adoption_velocity': [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0],
+        'token_adoption_velocity': [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0],
+        'regular_product_revenue_per_user': [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0],
+        'regular_token_buy_per_user': [regular_token_buy_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_token_buy_per_user']][0],
+        'avg_token_utility_allocation': [avg_token_utility_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_utility_allocation']][0],
+        'avg_token_selling_allocation': [avg_token_selling_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_selling_allocation']][0],
+        'avg_token_holding_allocation': [avg_token_holding_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_holding_allocation']][0],
+        'avg_token_utility_removal': [avg_token_utility_removal if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_utility_removal']][0],
     }
 
     if lp_allocation < 0:
