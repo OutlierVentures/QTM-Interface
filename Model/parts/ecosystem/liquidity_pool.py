@@ -175,7 +175,6 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     # policy logic
     # get amount of tokens to be sold by agents from vesting + airdrops + incentivisation
     tokens_to_sell = 0
-    agent_sell_from_holding_dict = {}
     a_selling_tokens_sum = 0
     a_selling_from_holding_tokens_sum = 0
     for agent in agents:
@@ -204,8 +203,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     
     np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
         
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price,
-            'agent_sell_from_holding_dict': agent_sell_from_holding_dict, 'tx': 2}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 2}
 
 def liquidity_pool_tx3_after_liquidity_addition(params, substep, state_history, prev_state, **kwargs):
     """
@@ -360,33 +358,6 @@ def update_agents_tx1_after_adoption(params, substep, state_history, prev_state,
                 bought_tokens_per_market_investor = bought_tokens / market_investors
 
                 updated_agents[agent]['a_tokens'] += bought_tokens_per_market_investor
-
-    return ('agents', updated_agents)
-
-def update_agents_tx2_after_vesting_sell(params, substep, state_history, prev_state, policy_input, **kwargs):
-    """
-    Function to update the agents after the after the vesting sell.
-
-    State update function.
-
-    Applies to the agents of the 'protocol_bucket' type.
-
-    Returns:
-        Tuple ('agents', updated_agents), where updated_agents provide the information
-        on how the sell change token amount of the agents of the 'protocol_bucket' type.
-
-    """
-    # state variables
-    updated_agents = prev_state['agents'].copy()
-
-    # get policy inputs
-    agent_sell_from_holding_dict = policy_input['agent_sell_from_holding_dict']
-
-    # update agents token balances as they sell from their holdings of the last timestep
-    for agent in updated_agents:
-        if updated_agents[agent]['a_type'] != 'protocol_bucket':
-
-            updated_agents[agent]['a_tokens'] -= agent_sell_from_holding_dict[agent]
 
     return ('agents', updated_agents)
 

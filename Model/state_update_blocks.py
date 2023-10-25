@@ -197,8 +197,7 @@ state_update_blocks = [
             'liquidity_pool_tx2_after_vesting_sell': liquidity_pool_tx2_after_vesting_sell,
         },
         'variables': {
-            'liquidity_pool': update_liquidity_pool_after_transaction,
-            #'agents': update_agents_tx2_after_vesting_sell
+            'liquidity_pool': update_liquidity_pool_after_transaction
         },
     },
     {

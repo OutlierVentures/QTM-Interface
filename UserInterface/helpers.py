@@ -492,17 +492,40 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
 
     st.markdown("### User Adoption")
-    adoption_style = st.radio('Adoption Style',('Slow', 'Medium', 'Fast','Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
-    if adoption_style != 'Custom':
-        show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption tables")
-    else:
-        show_full_adoption_table = False
+    # adoption style choice | user numbers | revenues
     col61, col62, col63 = st.columns(3)
     with col61:
-        pass
+        adoption_style = st.radio('Adoption Style',('Weak', 'Medium', 'Strong', 'Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
+        show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
     with col62:
-        pass
+        product_token_ratio = st.slider('Product / Token Ratio', min_value=0.0, max_value=1.0, step=0.1, value=float(sys_param['initial_product_users'][0])/float(sys_param['initial_token_holders'][0]), format="%.2f", help="The ratio of product users to token holders. 0 means there are no product users, but only token holders. 1 means the opposite.")
+        initial_users = st.number_input('Initial Users', label_visibility="visible", value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Ratio.")
+        initial_product_users = initial_users * product_token_ratio
+        initial_token_holders = initial_users * (1-product_token_ratio)
+        adoption_dict = {
+            "Weak" : {
+                "avg_product_user_growth_rate" : 1.0
+            },
+            "Medium" : {
+                "avg_product_user_growth_rate" : 3.5
+            },
+            "Strong" : {
+                "avg_product_user_growth_rate" : 8.0
+            }
+        }
+        if adoption_style == 'Custom' or show_full_adoption_table:
+            avg_product_user_growth_rate = st.number_input('Avg. Product Users Growth Rate / %', label_visibility="visible", value=[((float(sys_param['product_users_after_10y'][0]) / float(sys_param['initial_product_users'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_product_user_growth_rate']][0], disabled=False, key="product_users_growth_rate", help="The average monthly growth rate of users.")
+            product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
+            st.write(f"Projected Product Users (10y): {int(np.ceil(product_users_after_10y))}")
+
     with col63:
+        st.write(f"Initial Token Holders: {int(np.ceil(initial_token_holders))}")
+        st.write(f"Initial Product Users: {int(np.ceil(initial_product_users))}")
+
+    col71, col72 = st.columns(2)
+    with col71:
+        pass
+    with col72:
         pass
 
     # Map new parameters to model input parameters
