@@ -274,70 +274,79 @@ def plot_fundraising(param_id):
                                      ,'reserve_a_tokens_vested_cum', 'community_a_tokens_vested_cum', 'foundation_a_tokens_vested_cum', 'incentivisation_a_tokens_vested_cum'
                                      ,'staking_vesting_a_tokens_vested_cum', 'te_airdrop_tokens_cum'], 1, param_id
                                      , plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
+    pcol11, pcol12 = st.columns(2)
+    with pcol11:
         ##EFFECTIVE TOKEN PRICE
-    bar_plot_plotly([
-        'angle_token_effective',
-        'seed_token_effective',
-        'presale_1_token_effective',
-        'presale_2_token_effective',
-        'public_token_effective'
-    ], param_id, plot_title="Effective Token Price for Investors", x_title="Investors", y_title="USD")
+        bar_plot_plotly([
+            'angle_token_effective',
+            'seed_token_effective',
+            'presale_1_token_effective',
+            'presale_2_token_effective',
+            'public_token_effective'
+        ], param_id, plot_title="Effective Token Price for Investors", x_title="Investors", y_title="USD")
+    with pcol12:
         ##rrPIE CHART OF INITIAL ALLOCATION
-    pie_plot_plotly([
-        'angle_token_allocation',
-        'seed_token_allocation',
-        'presale_1_token_allocation',
-        'presale_2_token_allocation',
-        'public_sale_token_allocation',
-        'team_token_allocation',
-        'ov_token_allocation',
-        'advisor_token_allocation',
-        'strategic_partners_token_allocation',
-        'reserve_token_allocation',
-        'community_token_allocation',
-        'foundation_token_allocation',
-        'incentivisation_token_allocation',
-        'staking_vesting_token_allocation',
-        'airdrop_token_allocation',
-        'market_token_allocation',
-        'airdrop_receivers_token_allocation',
-        'incentivisation_receivers_token_allocation'
-    ], param_id, plot_title="Token Allocations")
+        pie_plot_plotly([
+            'angle_token_allocation',
+            'seed_token_allocation',
+            'presale_1_token_allocation',
+            'presale_2_token_allocation',
+            'public_sale_token_allocation',
+            'team_token_allocation',
+            'ov_token_allocation',
+            'advisor_token_allocation',
+            'strategic_partners_token_allocation',
+            'reserve_token_allocation',
+            'community_token_allocation',
+            'foundation_token_allocation',
+            'incentivisation_token_allocation',
+            'staking_vesting_token_allocation',
+            'airdrop_token_allocation',
+            'market_token_allocation',
+            'airdrop_receivers_token_allocation',
+            'incentivisation_receivers_token_allocation'
+        ], param_id, plot_title="Token Allocations")
 
 def plot_business(param_id):    
     ##INPUTS TAB
     plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, plot_title="User Adoption", x_title="Months", y_title="Count")
-    plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
-    plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
     plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    pcol21, pcol22 = st.columns(2)
+    with pcol21:
+        plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
+    with pcol22:
+        plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
 
 def plot_token_economy(param_id):
-    ##UTILITIES TAB
-    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
-                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id, plot_title="Token Utility Share")
-
     ##ANALYSIS TAB
     plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
                         'te_unvested_supply','te_circulating_supply'], 1, param_id
                         , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens")
     
-    plot_results_plotly('timestep', ['lp_token_price'], 1, param_id
-                        , plot_title="Token Price", x_title="Months", y_title="USD")
+    pcol31, pcol32 = st.columns(2)
+    with pcol31:
+        plot_results_plotly('timestep', ['lp_token_price'], 1, param_id
+                            , plot_title="Token Price", x_title="Months", y_title="USD")
+    with pcol32:
+        plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id
+                            , plot_title="Valuations", x_title="Months", y_title="USD (Millions)")
     
-    plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id
-                        , plot_title="Valuations", x_title="Months", y_title="USD (Millions)")
+    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
+                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id, plot_title="Token Utility Share")
     
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
-                                     'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
-                                     'te_airdrop_tokens','te_holding_allocation'], 1, param_id
-                                     , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens")
-
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
-                                     'u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum',
-                                     'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
-                                     'te_holding_allocation_cum'], 1, param_id
-                                     , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
+    pcol41, pcol42 = st.columns(2)
+    with pcol41:
+        plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
+                                        'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
+                                        'te_airdrop_tokens','te_holding_allocation'], 1, param_id
+                                        , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens")
+    with pcol42:
+        plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
+                                        'u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum',
+                                        'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
+                                        'te_holding_allocation_cum'], 1, param_id
+                                        , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
     
 
 

@@ -36,7 +36,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     with col11:
         supply_type = st.radio('Supply Type',('Fixed', 'Inflationary'), index=['Fixed', 'Inflationary'].index(sys_param['supply_type'][0]), key='supply_type_radio', help="Determines if a minting functionallity is allowed.")
         equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angle investors")
-        initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=100, max_value=1000000, value=int(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
+        initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=0.001, max_value=1000000.0, value=float(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
     with col12:
         launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=0.1, max_value=500.0, value=float(sys_param['public_sale_valuation'][0]/1e6), help="This is the valuation at which the public sale tokens are sold. It is equivalent to the token launch valuation.")
         public_sale_supply = st.number_input('Public Sale Supply / %', min_value=0.0, max_value=95.0, value=float(str(sys_param['public_sale_supply_perc'][0]).split("%")[0]), help="The percentage of tokens sold in the public sale.")
@@ -588,7 +588,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     new_params = {
         'equity_external_shareholders_perc': equity_perc,
         'supply_type': supply_type,
-        'initial_total_supply': initial_supply,
+        'initial_total_supply': initial_supply*1e6,
         'public_sale_supply_perc': public_sale_supply,
         'public_sale_valuation': launch_valuation * 1e6,
         'angle_raised': equity_investments * 1e6,

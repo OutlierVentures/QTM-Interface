@@ -15,6 +15,7 @@ from Model.simulation import simulation
 from Model.parts.utils import *
 from data.not_iterable_variables import parameter_list
 from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs
+st.set_page_config(layout="wide")
 
 input_file_base_path = parent_dir+'/data/'
 
