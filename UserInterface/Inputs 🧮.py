@@ -58,26 +58,42 @@ st.sidebar.markdown("## Inputs 🧮")
 st.sidebar.markdown("Parameter input section for the Quantitative Token Model. Use the default parameters, customize them in the user interface, or upload your own input file based on the radCAD_inputs tab in the [spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing).")
 
 # main page
+st.markdown(
+    '''
+    <style>
+    .streamlit-expanderHeader {
+        background-color: #F5EFF5;
+        color: #4E32BF; # Adjust this for expander header color
+    }
+    .streamlit-expanderContent {
+        background-color: #F5EFF5;
+        color: #4E32BF; # Expander content color
+    }
+    </style>
+    ''',
+    unsafe_allow_html=True
+)
 st.markdown("## Inputs 🧮")
-if 'project_name' in st.session_state:
-    project_name = st.text_input('Project Name', st.session_state['project_name'])
-else:
-    project_name = st.text_input('Project Name', "")
-st.session_state['project_name'] = project_name
+col01, col02 = st.columns(2)
+with col01:
+    if 'project_name' in st.session_state:
+        project_name = st.text_input('Project Name', st.session_state['project_name'])
+    else:
+        project_name = st.text_input('Project Name', "")
+    st.session_state['project_name'] = project_name
 
-# Upload Input File
-with st.expander("Upload Own Input File"):
-    st.markdown("### Load Input File 📂")
-    st.markdown("Use the default input file or upload your own based on the")
-    st.markdown("[Spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing) ➡️ navigate to radCAD_inputs tab ➡️ save it as .csv and then upload it here ⬇️")
-    uploaded_file = st.file_uploader("Choose a file")
-    if uploaded_file is not None:
-        st.success('File uploaded successfully ✅')
-        if 'param_id' in st.session_state:
-            if st.session_state['param_id'] != "":
-                st.warning(f"Delete the Parameter ID to apply the new input file parameters.", icon="⚠️")
-
-st.markdown("### Basic Token Information")
+with col02:
+    # Upload Input File
+    with st.expander("Upload Own Input File"):
+        st.markdown("### Load Input File 📂")
+        st.markdown("Use the default input file or upload your own based on the")
+        st.markdown("[Spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing) ➡️ navigate to radCAD_inputs tab ➡️ save it as .csv and then upload it here ⬇️")
+        uploaded_file = st.file_uploader("Choose a file")
+        if uploaded_file is not None:
+            st.success('File uploaded successfully ✅')
+            if 'param_id' in st.session_state:
+                if st.session_state['param_id'] != "":
+                    st.error(f"Delete the Parameter ID to apply the new input file parameters.", icon="⚠️")
 
 if uploaded_file is not None:
     # reset the parameter id
@@ -121,7 +137,7 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
             st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
         else:
             execute_sim = False
-            st.warning(f"Simulation can't be started due to invalid inputs!", icon="⚠️")
+            st.error(f"Simulation can't be started due to invalid inputs!", icon="⚠️")
     else:
         st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
     if execute_sim:

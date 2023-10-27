@@ -198,7 +198,7 @@ def get_sys_param(input_file, adjusted_params):
         sys_param['id'] = [param_id]
         if 'project_name' in sys_param.keys():
             if sys_param['project_name'][0] in ["", " ", "  ", "   ", "    ", "     "]:
-                st.warning(f"Please provide a project name before running the simulation!", icon="⚠️")
+                st.error(f"Please provide a project name before running the simulation!", icon="⚠️")
                 execute_sim = False
         if execute_sim:
             sys_param_df = pd.DataFrame(sys_param)
@@ -220,7 +220,7 @@ def get_sys_param(input_file, adjusted_params):
                     st.warning(f"Project name {sys_param['project_name'][0]} already exists in database. Please choose a different project name and run the simulation again.", icon="⚠️")
                     execute_sim = False
                 if sys_param['project_name'][0] in ["", " ", "  ", "   ", "    ", "     "]:
-                    st.warning(f"Please provide a project name before running the simulation!", icon="⚠️")
+                    st.error(f"Please provide a project name before running the simulation!", icon="⚠️")
                     execute_sim = False
             if execute_sim:
                 sys_param_df = pd.concat([df, pd.DataFrame(sys_param)])
