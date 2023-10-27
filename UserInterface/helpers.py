@@ -54,7 +54,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
     with st.expander("**Fundraising**"):
         st.markdown("### Fundraising")
-        col21, col22, col23 = st.columns(3)
+        col21, col22, col23, col24 = st.columns(4)
         with col21:
             fundraising_style = st.radio('Fundraising Style',('Moderate', 'Medium', 'Aggressive','Custom'), index=0, help=param_help['fundraising_style'])
             if fundraising_style != 'Custom':
@@ -62,7 +62,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             else:
                 show_full_fund_table = False
             if fundraising_style != 'Custom':
-                target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target.")
+                target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target. This is the amount of money raised that will partially be used to seed the DEX liquidity and as a buffer for the financial runway.")
                 left_over_raise = target_raise - equity_investments
         with col23:
             if fundraising_style != 'Custom' and not show_full_fund_table:
@@ -73,6 +73,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 seed_valuation = st.number_input('Seed Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0] if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['seed_valuation'][0]/1e6)][0]), help="The valuation of the seed round.")
                 presale_1_valuation = st.number_input('Presale 1 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[1] if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_1_valuation'][0]/1e6)][0]), help="The valuation of the first presale.")
                 presale_2_valuation = st.number_input('Presale 2 Valuation / $m', min_value=0.01, value=float([np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[2] if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_2_valuation'][0]/1e6)][0]), help="The valuation of the second presale.")
+                st.number_input("Public Sale Valuation / $m", disabled=True, value=launch_valuation, help="The valuation of the public sale defined in the Basic Token Information section.")
 
         with col22:
             valuation_weights = {
@@ -97,6 +98,18 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
                     st.write("Total Raised: "+str(raised_funds)+" $m")
+        
+        with col24:
+            if fundraising_style == 'Custom' or show_full_fund_table:
+                seed_allocation = ((seed_raised) / ((seed_valuation)/initial_supply) / initial_supply) * 1e2
+                presale_1_allocation = ((presale_1_raised) / ((presale_1_valuation)/initial_supply) / initial_supply) * 1e2
+                presale_2_allocation = ((presale_2_raised) / ((presale_2_valuation)/initial_supply) / initial_supply) * 1e2
+                public_sale_allocation = ((public_sale_raised) / ((launch_valuation)/initial_supply) / initial_supply) * 1e2
+                st.number_input('Seed Alloc / %', disabled=True, value=seed_allocation, help="The seed round token allocation as percentage of the initial total supply.")
+                st.number_input('Presale 1 Alloc / %', disabled=True, value=presale_1_allocation, help="The first presale token allocation as percentage of the initial total supply.")
+                st.number_input('Presale 2 Alloc / %', disabled=True, value=presale_2_allocation, help="The second presale token allocation as percentage of the initial total supply.")
+                st.number_input('Public Sale Alloc / %', disabled=True, value=public_sale_allocation, help="The public sale token allocation as percentage of the initial total supply.")
+            
 
 
     with st.expander("**Token Allocations & Vesting**"):
@@ -491,10 +504,12 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
             with col53:
                 dex_capital = st.number_input('DEX Capital / $m', value=float((lp_allocation/100 )* initial_supply * launch_valuation / initial_supply), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
-            if dex_capital > raised_funds:
-                st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
-            if lp_allocation < 0:
-                st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+        else:
+            dex_capital = (lp_allocation/100 )* initial_supply * launch_valuation / initial_supply
+        if dex_capital > raised_funds:
+            st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
+        if lp_allocation < 0:
+            st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
 
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
@@ -577,13 +592,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.write("**Meta Bucket Allocations**")
             col73, col74, col75, col76 = st.columns(4)
             with col73:
-                avg_token_selling_allocation = st.number_input('Avg. Token Selling Allocation / %', label_visibility="visible", min_value=0.0, max_value=100, value=[float(sys_param['avg_token_selling_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
+                avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
             with col74:
-                avg_token_holding_allocation = st.number_input('Avg. Token Holding Allocation / %', label_visibility="visible", min_value=0.0, max_value=100, value=[float(sys_param['avg_token_holding_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
+                avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
             with col75:
-                avg_token_utility_allocation = st.number_input('Avg. Token Utility Allocation / %', label_visibility="visible", min_value=0.0, max_value=100, value=[float(sys_param['avg_token_utility_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
+                avg_token_utility_allocation = st.number_input('Avg. Token Utility Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
             with col76:
-                avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100, value=[float(sys_param['avg_token_utility_removal'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
+                avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_removal'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
         else:
             avg_product_user_growth_rate = adoption_dict[adoption_style]['avg_product_user_growth_rate']
             product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
@@ -773,10 +788,15 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     else:
         st.session_state['execute_inputs'] = True
     
-    with st.expander("**Consistency Checks**"+ ["✅" if st.session_state['execute_inputs'] else "❌"][0]):
+    if 'execute_inputs' in st.session_state:
+        status_msg = ["✅" if st.session_state['execute_inputs'] else "❌"][0]
+    else:
+        status_msg = ""
+    with st.expander("**Consistency Checks**"+ status_msg):
         st.markdown("### Consistency Checks ")
-        if st.session_state['execute_inputs']:
-            st.success("All inputs are valid.", icon="✅")
+        if 'execute_inputs' in st.session_state:
+            if st.session_state['execute_inputs']:
+                st.success("All inputs are valid.", icon="✅")
 
         if dex_capital > raised_funds:
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")

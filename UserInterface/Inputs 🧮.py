@@ -124,8 +124,19 @@ if 'param_id' not in st.session_state:
     st.session_state['param_id'] = ""
 if 'button_clicked' not in st.session_state:
     st.session_state['button_clicked'] = False
-if st.button('Run Simulation'):
-    st.session_state['button_clicked'] = True
+if 'parameter_button_clicked' not in st.session_state:
+    st.session_state['parameter_button_clicked'] = False
+if 'execute_inputs' in st.session_state:
+    status_msg = ["" if st.session_state['execute_inputs'] else "❌"][0]
+else:
+    status_msg = ""
+bcol1, bcol2 = st.columns(2)
+with bcol1:
+    if st.button('Run Simulation'+ status_msg):
+        st.session_state['button_clicked'] = True
+with bcol2:
+    if st.button('Show Parameter Sets'):
+        st.session_state['parameter_button_clicked'] = True
 if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     # compose adjusted parameters
     new_params.update({'project_name':project_name})
@@ -151,3 +162,14 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
 
     # Reset the session state variable after running the simulation
     st.session_state['button_clicked'] = False
+
+if 'parameter_button_clicked' in st.session_state and st.session_state['parameter_button_clicked']:
+    if len(db_sorted) > 0:
+        st.write(f"Parameter sets:")
+        df = get_simulation_data('simulationData.db', 'sys_param')
+        df.insert(0, "id", df.pop("id"))
+        df.insert(0, "project_name", df.pop("project_name"))
+        st.dataframe(df)
+    else:
+        st.error(f"No parameter sets available!", icon="⚠️")
+    st.session_state['parameter_button_clicked'] = False
