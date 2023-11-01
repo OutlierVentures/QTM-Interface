@@ -605,6 +605,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             avg_token_holder_growth_rate = adoption_dict[adoption_style]['avg_token_holder_growth_rate']
             token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
 
+        avg_token_utility_allocation = [avg_token_utility_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_utility_allocation']][0]
+        avg_token_selling_allocation = [avg_token_selling_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_selling_allocation']][0]
+        avg_token_holding_allocation = [avg_token_holding_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_holding_allocation']][0]
+        meta_bucket_alloc_sum = avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation
+        if meta_bucket_alloc_sum != 100:
+            st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+
     with st.expander("**Business Assumptions**"):
         st.markdown("### Business Assumptions")
         # income | expenditures | buybacks | burns
@@ -679,6 +686,87 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 burn_start = [datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
                 burn_end = [datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
     
+    """
+
+    with st.expander("**Utilities**"):
+        st.markdown("### Utilities")
+        # Sample nested dictionary for utility values
+        utility_values = {
+            'lock': {
+                'share': 0,
+                'apr': 0,
+                'payout_source': 0,
+            },
+            'lock_buyback': {
+                'distribute_share': 0,
+                'from_revenue_share': 0
+            },
+            # ... other sections of the dictionary ...
+        }
+
+        st.title("Utility Values Input")
+
+        # Let user add a utility from the dropdown
+        utility_to_add = st.selectbox("Add a utility:", [""] + list(utility_values.keys()))
+
+        if utility_to_add:
+            if utility_to_add not in st.session_state['added_utilities']:
+                st.session_state['added_utilities'].append(utility_to_add)
+            else:
+                st.warning(f"{utility_to_add} has already been added.")
+
+        # Display the input fields for the added utilities
+        for utility in st.session_state['added_utilities']:
+            with st.expander(f"Input values for {utility}"):
+                col1, col2 = st.columns([4, 1])
+                for key, val in utility_values[utility].items():
+                    with col1:
+                        new_val = st.number_input(f"{key.capitalize()}", value=val)
+                        utility_values[utility][key] = new_val
+                with col2:
+                    remove_button = st.button(f"Remove {utility}")
+                    if remove_button:
+                        st.session_state['added_utilities'].remove(utility)
+                        st.success(f"{utility} removed successfully!")
+
+        # Optional: show the current state of utility_values
+        st.write(utility_values)
+
+        utility_initial_values = {
+            'lock': {
+                'share': lock_share,
+                'apr': lock_apr,
+                'payout_source': lock_payout_source,
+            },
+            'lock_buyback': {
+                'distribute_share': lock_buyback_distribute_share,
+                'from_revenue_share': lock_buyback_from_revenue_share
+            },
+            'liquidity_mining': {
+                'share': liquidity_mining_share,
+                'apr': liquidity_mining_apr,
+                'payout_source': liquidity_mining_payout_source
+            },
+            'burning': {
+                'share': burning_share
+            },
+            'holding': {
+                'share': holding_share,
+                'apr': holding_apr,
+                'payout_source': holding_payout_source
+            },
+            'transfer': {
+                'share': transfer_share,
+                'destination': transfer_destination
+            },
+            'incentivisation': {
+                'mint': mint_incentivisation,
+                'payout_source': incentivisation_payout_source
+            }
+        }
+
+        """
+
     # Map new parameters to model input parameters
     new_params = {
         'equity_external_shareholders_perc': equity_perc,
@@ -760,9 +848,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'token_adoption_velocity': [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0],
         'regular_product_revenue_per_user': [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0],
         'regular_token_buy_per_user': [regular_token_buy_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_token_buy_per_user']][0],
-        'avg_token_utility_allocation': [avg_token_utility_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_utility_allocation']][0],
-        'avg_token_selling_allocation': [avg_token_selling_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_selling_allocation']][0],
-        'avg_token_holding_allocation': [avg_token_holding_allocation if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_holding_allocation']][0],
+        'avg_token_utility_allocation': avg_token_utility_allocation,
+        'avg_token_selling_allocation': avg_token_selling_allocation,
+        'avg_token_holding_allocation': avg_token_holding_allocation,
         'avg_token_utility_removal': [avg_token_utility_removal if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['avg_token_utility_removal']][0],
         'royalty_income_per_month': royalty_income_per_month*1e3,
         'treasury_income_per_month': treasury_income_per_month*1e3,
@@ -782,8 +870,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'burn_end': burn_end.strftime('%d.%m.%y'),
     }
 
-    if lp_allocation < 0:
-        st.warning(f"The DEX liquidity pool token allocation must be > 0!", icon="⚠️")
+    # Consistency Checks
+    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds:
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -792,101 +880,20 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         status_msg = ["✅" if st.session_state['execute_inputs'] else "❌"][0]
     else:
         status_msg = ""
+    
     with st.expander("**Consistency Checks**"+ status_msg):
         st.markdown("### Consistency Checks ")
         if 'execute_inputs' in st.session_state:
             if st.session_state['execute_inputs']:
                 st.success("All inputs are valid.", icon="✅")
-
+        
         if dex_capital > raised_funds:
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
+        
         if lp_allocation < 0:
             st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+
+        if meta_bucket_alloc_sum != 100:
+            st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+
     return new_params
-
-
-def utilities_ui_input(input_file_path, uploaded_file, parameter_list):
-
-    # Sample nested dictionary for utility values
-    utility_values = {
-        'lock': {
-            'share': 0,
-            'apr': 0,
-            'payout_source': 0,
-        },
-        'lock_buyback': {
-            'distribute_share': 0,
-            'from_revenue_share': 0
-        },
-        # ... other sections of the dictionary ...
-    }
-
-    # Track added utilities
-    if 'added_utilities' not in st.session_state:
-        st.session_state['added_utilities'] = []
-
-    st.title("Utility Values Input")
-
-    # Let user add a utility from the dropdown
-    utility_to_add = st.selectbox("Add a utility:", [""] + list(utility_values.keys()))
-
-    if utility_to_add:
-        if utility_to_add not in st.session_state['added_utilities']:
-            st.session_state['added_utilities'].append(utility_to_add)
-        else:
-            st.warning(f"{utility_to_add} has already been added.")
-
-    # Display the input fields for the added utilities
-    for utility in st.session_state['added_utilities']:
-        with st.expander(f"Input values for {utility}"):
-            col1, col2 = st.columns([4, 1])
-            for key, val in utility_values[utility].items():
-                with col1:
-                    new_val = st.number_input(f"{key.capitalize()}", value=val)
-                    utility_values[utility][key] = new_val
-            with col2:
-                remove_button = st.button(f"Remove {utility}")
-                if remove_button:
-                    st.session_state['added_utilities'].remove(utility)
-                    st.success(f"{utility} removed successfully!")
-
-    # Optional: show the current state of utility_values
-    st.write(utility_values)
-
-
-"""
-
-utility_initial_values = {
-    'lock': {
-        'share': lock_share,
-        'apr': lock_apr,
-        'payout_source': lock_payout_source,
-    },
-    'lock_buyback': {
-        'distribute_share': lock_buyback_distribute_share,
-        'from_revenue_share': lock_buyback_from_revenue_share
-    },
-    'liquidity_mining': {
-        'share': liquidity_mining_share,
-        'apr': liquidity_mining_apr,
-        'payout_source': liquidity_mining_payout_source
-    },
-    'burning': {
-        'share': burning_share
-    },
-    'holding': {
-        'share': holding_share,
-        'apr': holding_apr,
-        'payout_source': holding_payout_source
-    },
-    'transfer': {
-        'share': transfer_share,
-        'destination': transfer_destination
-    },
-    'incentivisation': {
-        'mint': mint_incentivisation,
-        'payout_source': incentivisation_payout_source
-    }
-}
-
-"""

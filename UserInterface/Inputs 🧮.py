@@ -16,7 +16,7 @@ from Model.parts.utils import *
 from data.not_iterable_variables import parameter_list
 from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs
 st.set_page_config(layout="wide")
-from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs,utilities_ui_input
+from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs
 
 input_file_base_path = parent_dir+'/data/'
 
@@ -110,7 +110,6 @@ if uploaded_file is not None:
 
     # get new parameters from UI
     new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
-    params = utilities_ui_input(input_file_path, uploaded_file, parameter_list)
 else:
     input_file_name = 'Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs DEFAULT.csv'
     input_file_path = input_file_base_path + input_file_name
