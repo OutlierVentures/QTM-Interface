@@ -348,7 +348,26 @@ def plot_token_economy(param_id):
                                         'te_holding_allocation_cum'], 1, param_id
                                         , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
     
+def utility_pie_plot(utility_shares, utility_values):
 
+    df = pd.DataFrame.from_dict(utility_shares, orient='index', columns=['Share / %']).reset_index().rename(columns={'index':'Utility'})
+
+    plotly_colors = px.colors.qualitative.Plotly
+    color_map = {
+        'Stake for Revenue Share Rewards': plotly_colors[0],
+        'Stake for Vesting Rewards': plotly_colors[8],
+        'Stake for fixed APR': plotly_colors[2],
+        'Liquidity Mining': plotly_colors[3],
+        'Burning': plotly_colors[4],
+        'Transfer': plotly_colors[5],
+        'Holding': plotly_colors[6],
+        'Incentivisation': plotly_colors[7],
+        'Undefined': 'red'
+    }
+
+    fig = px.pie(df, values='Share / %', names='Utility', color='Utility', color_discrete_map=color_map)
+
+    st.plotly_chart(fig, use_container_width=True)
 
 
 

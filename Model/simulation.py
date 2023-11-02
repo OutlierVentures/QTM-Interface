@@ -35,7 +35,13 @@ def simulation(input_file, adjusted_params):
     initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim = get_initial_state(input_file, adjusted_params)
     start_time = time.process_time()
     listOfSimulationDataTables = cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='simulation_data_{param_id}' '''.format(length='multi-line', param_id=param_id))
-    if listOfSimulationDataTables.fetchall()[0][0] == 0 and execute_sim:
+    try:
+        length = listOfSimulationDataTables.fetchall()[0][0]
+    except:
+        length = 0
+    
+    if length == 0 and execute_sim:
+        print("New simulation started...")
         MONTE_CARLO_RUNS = 1
         TIMESTEPS = 12*10
 

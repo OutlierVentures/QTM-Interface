@@ -14,9 +14,8 @@ from plots import *
 from Model.simulation import simulation
 from Model.parts.utils import *
 from data.not_iterable_variables import parameter_list
-from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs
+from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs, delete_parameter_and_simulation_data
 st.set_page_config(layout="wide")
-from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs
 
 input_file_base_path = parent_dir+'/data/'
 
@@ -55,6 +54,28 @@ try:
         st.sidebar.markdown(f"This is a valid parameter ID ✅")
 except:
     pass
+
+try:
+    # delete current selected parameter set and simulation data from database
+    if 'delete_parameters_clicked' not in st.session_state:
+        st.session_state['delete_parameters_clicked'] = False
+    if st.sidebar.button('Delete Parameter Set'):
+        st.session_state['delete_parameters_clicked'] = True
+    if 'delete_parameters_clicked' in st.session_state:
+        if st.session_state['delete_parameters_clicked']:
+            if st.session_state['param_id'] != "":
+                delete_parameter_and_simulation_data(st.session_state['param_id'])
+                st.session_state['param_id'] = ""
+                st.session_state['project_name'] = ""
+                st.session_state['delete_parameters_clicked'] = False
+                st.cache_data.clear()
+                st.sidebar.success('Parameter set and simulation data deleted successfully ✅')
+            else:
+                st.sidebar.error(f"Please enter a valid parameter ID to delete the parameter set.", icon="⚠️")
+        else:
+            st.session_state['delete_parameters_clicked'] = False
+except Exception as e: print(e)
+
 st.sidebar.markdown("## Inputs 🧮")
 st.sidebar.markdown("Parameter input section for the Quantitative Token Model. Use the default parameters, customize them in the user interface, or upload your own input file based on the radCAD_inputs tab in the [spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing).")
 
@@ -118,7 +139,6 @@ else:
     new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
 
 
-
 # Run Simulation
 if 'param_id' not in st.session_state:
     st.session_state['param_id'] = ""
@@ -137,6 +157,7 @@ with bcol1:
 with bcol2:
     if st.button('Show Parameter Sets'):
         st.session_state['parameter_button_clicked'] = True
+    
 if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
     # compose adjusted parameters
     new_params.update({'project_name':project_name})
@@ -151,6 +172,7 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
             st.error(f"Simulation can't be started due to invalid inputs!", icon="⚠️")
     else:
         st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params=adjusted_params)
+    
     if execute_sim:
         st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
         df = get_simulation_data('simulationData.db', 'sys_param')

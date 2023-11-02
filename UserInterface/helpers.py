@@ -618,7 +618,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         st.write("**Financial Streams**")
         col81, col82, col83 = st.columns(3)
         with col81:
-            show_full_business_table = st.toggle('Use Full Custom Table', value=False, help="Show the full business assumption parameter set.")
+            show_full_business_table = st.toggle('Use Full Custom Table', value=False, help="Show the full financial stream parameter set. Note that all income streams from the table will be added on top of the adoption product revenue.")
             if not show_full_business_table:
                 income = st.number_input('Additional income per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['royalty_income_per_month'][0] + sys_param['other_income_per_month'][0] + sys_param['treasury_income_per_month'][0])/1e3, disabled=False, key="income", help="The monthly income for the business on top of the product revenue, defined in the user adoption section.")
                 expenditures = st.number_input('Expenditures per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['salaries_per_month'][0] + sys_param['license_costs_per_month'][0] + sys_param['other_monthly_costs'][0] + (sys_param['one_time_payments_1'][0]+ sys_param['one_time_payments_2'][0])/120)/1e3, disabled=False, key="expenditures", help="The monthly expenditures for the business.")
@@ -646,7 +646,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         st.write("**Buybacks and Burns**")
         col91, col92, col93 = st.columns(3)
         with col91:
-            enable_protocol_buybacks = st.toggle('Enable Protocol Token Buybacks', value=float(sys_param['buyback_perc_per_month'][0]) > 0 or float(sys_param['buyback_fixed_per_month'][0]) > 0, help=" Enable the buyback of tokens from a protocol bucket.")
+            enable_protocol_buybacks = st.toggle('Enable Protocol Token Buybacks', value=float(sys_param['buyback_perc_per_month'][0]) > 0 or float(sys_param['buyback_fixed_per_month'][0]) > 0, help=" Enable the buyback of tokens to refill a protocol bucket.")
             enable_protocol_burning = st.toggle('Enable Protocol Token Burning', value=float(sys_param['burn_per_month'][0]) > 0, help=" Enable the burning of tokens from a protocol bucket.")
         with col92:
             if enable_protocol_buybacks:
@@ -685,87 +685,200 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 burn_bucket = [sys_param['burn_bucket'][0] if enable_protocol_burning else 'Reserve'][0]
                 burn_start = [datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
                 burn_end = [datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
-    
-    """
 
     with st.expander("**Utilities**"):
         st.markdown("### Utilities")
         # Sample nested dictionary for utility values
         utility_values = {
-            'lock': {
-                'share': 0,
-                'apr': 0,
-                'payout_source': 0,
+            'Stake for Revenue Share Rewards': {
+                'description': 'Stake tokens to receive bought back tokens from revenue share.',
+                'lock_buyback_distribute_share': {
+                    'value': sys_param['lock_buyback_distribute_share'][0],
+                    'display_name': 'Staking for Revenue Share Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for revenue share rewards.'
+                    },
+                'lock_buyback_from_revenue_share': {
+                    'value': sys_param['lock_buyback_from_revenue_share'][0],
+                    'display_name': 'Revenue Share Buyback / %',
+                    'description': 'The percentage of the revenue that is used for buying back and distribute tokens to stakers.'
+                    },
             },
-            'lock_buyback': {
-                'distribute_share': 0,
-                'from_revenue_share': 0
+            'Stake for Vesting Rewards': {
+                'description': 'Stake tokens to receive tokens from a prescribed fixed initial allocation and vesting schedule.',
+                'lock_vesting_share': {
+                    'value': sys_param['lock_vesting_share'][0],
+                    'display_name': 'Staking for Vesting Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for vesting rewards.'
+                    }
             },
-            # ... other sections of the dictionary ...
-        }
-
-        st.title("Utility Values Input")
-
-        # Let user add a utility from the dropdown
-        utility_to_add = st.selectbox("Add a utility:", [""] + list(utility_values.keys()))
-
-        if utility_to_add:
-            if utility_to_add not in st.session_state['added_utilities']:
-                st.session_state['added_utilities'].append(utility_to_add)
-            else:
-                st.warning(f"{utility_to_add} has already been added.")
-
-        # Display the input fields for the added utilities
-        for utility in st.session_state['added_utilities']:
-            with st.expander(f"Input values for {utility}"):
-                col1, col2 = st.columns([4, 1])
-                for key, val in utility_values[utility].items():
-                    with col1:
-                        new_val = st.number_input(f"{key.capitalize()}", value=val)
-                        utility_values[utility][key] = new_val
-                with col2:
-                    remove_button = st.button(f"Remove {utility}")
-                    if remove_button:
-                        st.session_state['added_utilities'].remove(utility)
-                        st.success(f"{utility} removed successfully!")
-
-        # Optional: show the current state of utility_values
-        st.write(utility_values)
-
-        utility_initial_values = {
-            'lock': {
-                'share': lock_share,
-                'apr': lock_apr,
-                'payout_source': lock_payout_source,
+            'Stake for fixed APR': {
+                'description': "Stake tokens for fixed APR token rewards.",
+                'lock_share': {
+                    'value': sys_param['lock_share'][0],
+                    'display_name': 'Staking for APR Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for APR rewards.'
+                    },
+                'lock_apr': {
+                    'value': sys_param['lock_apr'][0],
+                    'display_name': 'APR / %',
+                    'description': 'The APR for the staking for fixed APR staking rewards.'
+                    },
+                'lock_payout_source': {
+                    'value': sys_param['lock_payout_source'][0],
+                    'display_name': 'Payout Source',
+                    'description': 'The payout source protocol bucket for the staking for fixed APR staking rewards.',
+                    'options': ['Reserve', 'Community', 'Foundation']
+                    }
             },
-            'lock_buyback': {
-                'distribute_share': lock_buyback_distribute_share,
-                'from_revenue_share': lock_buyback_from_revenue_share
+            'Liquidity Mining': {
+                'description': 'Provide liquidity to the DEX liquidity pool to receive tokens as incentives at a fixed APR.',
+                'liquidity_mining_share': {
+                    'value': sys_param['liquidity_mining_share'][0],
+                    'display_name': 'Liquidity Mining Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is used for liquidity mining.'
+                    },
+                'liquidity_mining_apr': {
+                    'value': sys_param['liquidity_mining_apr'][0],
+                    'display_name': 'APR / %',
+                    'description': 'The liquidity mining incentive fixed APR.'
+                    },
+                'liquidity_mining_payout_source': {
+                    'value': sys_param['liquidity_mining_payout_source'][0],
+                    'display_name': 'Payout Source',
+                    'description': 'The payout source protocol bucket for the liquidity mining incentives.',
+                    'options': ['Reserve', 'Community', 'Foundation']
+                    },
             },
-            'liquidity_mining': {
-                'share': liquidity_mining_share,
-                'apr': liquidity_mining_apr,
-                'payout_source': liquidity_mining_payout_source
+            'Burning': {
+                'description': 'Burn tokens from the meta utility bucket allocations per timestep.',
+                'burning_share': {
+                    'value': sys_param['burning_share'][0],
+                    'display_name': 'Burning Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is burned.'
+                    },
             },
-            'burning': {
-                'share': burning_share
+            'Holding': {
+                'description': 'Hold tokens and receive passive token rewards.',
+                'holding_share': {
+                    'value': sys_param['holding_share'][0],
+                    'display_name': 'Holding Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is added to the overall unallocated (holding) supply.'
+                    },
+                'holding_apr': {
+                    'value': sys_param['holding_apr'][0],
+                    'display_name': 'APR / %',
+                    'description': 'The token rewards APR for holding the token.'
+                    },
+                'holding_payout_source': {
+                    'value': sys_param['holding_payout_source'][0],
+                    'display_name': 'Payout Source',
+                    'description': 'The payout source protocol bucket for the holding incentives.',
+                    'options': ['Reserve', 'Community', 'Foundation']
+                    },
+                },
+            'Transfer': {
+                'description': 'Transfer tokens from the meta utility bucket allocations to a protocol bucket. This can be used to simulate any form of purchases in the ecosystem using the token.',
+                'transfer_share': {
+                    'value': sys_param['transfer_share'][0],
+                    'display_name': 'Transfer Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is transferred to a protocol bucket.'
+                    },
+                'transfer_destination': {
+                    'value': sys_param['transfer_destination'][0],
+                    'display_name': 'Transfer Destination',
+                    'description': 'The protocol bucket destination of the transfer.',
+                    'options': ['Reserve', 'Community', 'Foundation']
+                    },
             },
-            'holding': {
-                'share': holding_share,
-                'apr': holding_apr,
-                'payout_source': holding_payout_source
-            },
-            'transfer': {
-                'share': transfer_share,
-                'destination': transfer_destination
-            },
-            'incentivisation': {
-                'mint': mint_incentivisation,
-                'payout_source': incentivisation_payout_source
+            'Incentivisation': {
+                'description': 'Incentivise users to use the product, provide liquidity, or other behaviors by rewarding with tokens from the incentivisation vesting bucket or via minting of new tokens.',
+                'mint_incentivisation': {
+                    'value': sys_param['mint_incentivisation'][0],
+                    'display_name': 'Minted incentives / %',
+                    'description': 'Newly minted tokens for ecosystem incentivisation as percentage of initial total supply. Will only be used if minting is used as payout source in the following section.'
+                    },
+                'incentivisation_payout_source': {
+                    'value': sys_param['incentivisation_payout_source'][0],
+                    'display_name': 'Payout Source',
+                    'description': 'The payout source protocol bucket for the incentivisation incentives.',
+                    'options': ['Minting', 'Incentivisation']
+                    },
             }
         }
+        
+        # remove utilities when not activated in the token allocation section
+        if not incentivisation_toggle:
+            utility_values.pop('Incentivisation')
+        if not staking_vesting_toggle:
+            utility_values.pop('Stake for Vesting Rewards')
 
-        """
+        # get initial and default values
+        default_utilities = []
+        for utility in utility_values:
+            for key, val in utility_values[utility].items():
+                if '_share' in key and key != 'lock_buyback_from_revenue_share':
+                    if val['value'] > 0:
+                        default_utilities.append(utility)
+
+        # Let user add a utility from the dropdown
+        utility_to_add = st.multiselect("Add a utility:", list(utility_values.keys()), default=default_utilities)
+        
+        # Display the input fields for the added utilities
+        utility_sum = 0
+        utility_shares = {}
+        for utility in utility_to_add:
+            st.markdown("---")
+            st.markdown("***" + utility + "***")
+            for key, val in utility_values[utility].items():
+                if key == 'description':
+                    st.write(val)
+                else:
+                    init_value = val['value']
+                    display_name = val['display_name']
+                    description = val['description']
+                    if 'options' in val:
+                        options = val['options']
+                        new_val = st.selectbox(display_name, options=options, index=options.index(init_value), help=description)
+                    else:
+                        new_val = st.number_input(display_name, value=init_value, help=description)
+                    
+                    utility_values[utility][key]['value'] = new_val
+
+        # check utility sums
+        count_staking_utilities = 0
+        for utility in utility_to_add:
+            for key, val in utility_values[utility].items():    
+                if '_share' in key and key != 'lock_buyback_from_revenue_share':
+                    utility_sum += val['value']
+                    utility_shares[utility] = [val['value']]
+            if 'Stake' in utility:
+                count_staking_utilities += 1
+        
+        if utility_sum != 100:
+            if utility_sum < 100:
+                utility_shares['Undefined'] = [100 - utility_sum]
+            st.error(f"The sum of the utility allocations ({round(utility_sum,2)}%) is not equal to 100%. Please adjust the utility shares!", icon="⚠️")
+        if count_staking_utilities > 1:
+            st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
+        
+        # Display the utility pie chart
+        st.markdown("---")
+        st.write(f'**Utility shares: {round(utility_sum,2)}%**')
+        st.markdown("---")
+        utility_pie_plot(utility_shares, utility_values)
+
+        # compose new dictionary with parameter values for utilities
+        utility_parameter_choice = {}
+        for utility in utility_values:
+            for key, val in utility_values[utility].items():
+                if key == 'description':
+                    pass
+                else:
+                    if utility not in utility_to_add and key != 'lock_buyback_from_revenue_share' and '_share' in key:
+                        utility_parameter_choice[key] = 0
+                    else:
+                        utility_parameter_choice[key] = val['value']
+
 
     # Map new parameters to model input parameters
     new_params = {
@@ -870,8 +983,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'burn_end': burn_end.strftime('%d.%m.%y'),
     }
 
+    # add utility parameters to new_params
+    new_params.update(utility_parameter_choice)
+
     # Consistency Checks
-    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds:
+    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100:
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -895,5 +1011,21 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
         if meta_bucket_alloc_sum != 100:
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+        
+        if utility_sum != 100:
+            st.error(f"The sum of the utility allocations ({utility_sum}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+        
+        if count_staking_utilities > 1:
+            st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
+
 
     return new_params
+
+def delete_parameter_and_simulation_data(param_id):
+    # delete current selected parameter set and simulation data from database
+    conn = sqlite3.connect('simulationData.db')
+    cur = conn.cursor()
+    cur.execute(''' DELETE FROM sys_param WHERE id = ? ''', (param_id,))
+    cur.execute(''' DELETE FROM simulation_data_{param_id} '''.format(param_id=param_id))
+    conn.commit()
+    conn.close()
