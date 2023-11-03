@@ -665,7 +665,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                     buyback_buckets.pop(buyback_buckets.index('Staking Vesting'))
                 buyback_bucket = st.radio('Buyback Bucket',tuple(buyback_buckets), index=0, help='The buyback bucket determines the destination of the bought back tokens.')
                 buyback_start = st.date_input("Buybacks Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%y"), help="The date when monthly buybacks should start.")
-                buyback_end = st.date_input("Buybacks End", min_value=buyback_start, value=datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y"), help="The date when monthly buybacks should end.")
+                buyback_end = st.date_input("Buybacks End", min_value=buyback_start, value=datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") if datetime(buyback_start.year, buyback_start.month, buyback_start.day) <= datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") else datetime(buyback_start.year, buyback_start.month, buyback_start.day), help="The date when monthly buybacks should end.")
 
             else:
                 buyback_perc_per_month = [float(sys_param['buyback_perc_per_month'][0]) if enable_protocol_buybacks else 0.0][0]
@@ -677,7 +677,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             if enable_protocol_burning:
                 burn_per_month = st.number_input('Burn per month / %', label_visibility="visible", min_value=0.0, value=[float(sys_param['burn_per_month'][0]) if enable_protocol_burning else 0.0][0], disabled=False, key="burn_per_month", help="The total supply percentage of tokens being burned from the determined protocol bucket per month.")
                 burn_start = st.date_input("Burning Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y"), help="The date when monthly burning should start.")
-                burn_end = st.date_input("Burning End", min_value=burn_start, value=datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y"), help="The date when monthly burning should end.")
+                burn_end = st.date_input("Burning End", min_value=burn_start, value=datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if datetime(burn_start.year, burn_start.month, burn_start.day) <= datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") else datetime(burn_start.year, burn_start.month, burn_start.day), help="The date when monthly burning should end.")
                 burn_buckets = ['Reserve', 'Community', 'Foundation']
                 burn_bucket = st.radio('Burn Bucket',tuple(burn_buckets), index=0, help='The burn bucket determines the protocol bucket origin of the burned tokens.')
             else:
