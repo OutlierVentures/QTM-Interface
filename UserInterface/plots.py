@@ -67,7 +67,20 @@ def format_column_name(column_name):
     
     return user_friendly_name
 
+def drop_zero_columns(df):
+    """
+    This function drops all columns that only contain zeros.
 
+    Parameters:
+    - df (DataFrame): The input DataFrame.
+
+    Returns:
+    DataFrame: The DataFrame with all zero columns removed.
+    """
+    # Drop all columns that only contain zeros
+    df = df.loc[:, (df != 0).any(axis=0)]
+    
+    return df
 
 
 
@@ -188,11 +201,13 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
     '''
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
+    chart_data = pd.DataFrame(np.asarray(df[[x]+y_series], float), columns=[x]+y_series)
+    y_series_updated = [col for col in y_series if chart_data[col].sum() != 0]
+    chart_data = drop_zero_columns(chart_data)
+    # drop zero columns from y_series
     
-    chart_data = pd.DataFrame(np.asarray(df[df['run'].astype(int)==run][[x]+y_series], float), columns=[x]+y_series)
-
     # Format the column names
-    formatted_columns = [format_column_name(col) for col in [x] + y_series]
+    formatted_columns = [format_column_name(col) for col in [x] + y_series_updated]
     chart_data.columns = formatted_columns
 
     fig = px.line(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
@@ -205,11 +220,13 @@ def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=N
     '''
     A function that generates a area plot from vesting series of data series in a frame in streamlit
     '''
-    
-    chart_data = pd.DataFrame(np.asarray(df[df['run'].astype(int)==run][[x]+y_series], float), columns=[x]+y_series)
+
+    chart_data = pd.DataFrame(np.asarray(df[[x]+y_series], float), columns=[x]+y_series)
+    y_series_updated = [col for col in y_series if chart_data[col].sum() != 0]
+    chart_data = drop_zero_columns(chart_data)
 
     # Format the column names
-    formatted_columns = [format_column_name(col) for col in [x] + y_series]
+    formatted_columns = [format_column_name(col) for col in [x] + y_series_updated]
     chart_data.columns = formatted_columns
 
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
@@ -233,6 +250,8 @@ def bar_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
     df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
     
+    df = drop_zero_columns(df)
+
     # Format the 'Parameter' column
     df['Parameter'] = df['Parameter'].apply(format_column_name)
 
@@ -253,6 +272,8 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
 
     df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
+
+    df = drop_zero_columns(df)
 
     # Format the 'Parameter' column
     df['Parameter'] = df['Parameter'].apply(format_column_name)
