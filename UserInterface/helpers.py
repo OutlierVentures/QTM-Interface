@@ -1025,7 +1025,13 @@ def delete_parameter_and_simulation_data(param_id):
     # delete current selected parameter set and simulation data from database
     conn = sqlite3.connect('simulationData.db')
     cur = conn.cursor()
-    cur.execute(''' DELETE FROM sys_param WHERE id = ? ''', (param_id,))
-    cur.execute(''' DELETE FROM simulation_data_{param_id} '''.format(param_id=param_id))
+    try:
+        cur.execute(''' DELETE FROM simulation_data_{param_id} '''.format(param_id=param_id))
+    except:
+        pass
+    try:
+        cur.execute(''' DELETE FROM sys_param WHERE id = ? ''', (param_id,))
+    except:
+        pass
     conn.commit()
     conn.close()
