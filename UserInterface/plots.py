@@ -94,15 +94,19 @@ def get_simulation_data(db, dataset_name):
     conn.close()
     return df
 
-def plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
+def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y_title=None, info_box=None, plot_title=None):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+
+    # reduce df to max_months
+    df = df[df['timestep'].astype(float) <= max_months]
 
     # example for Monte Carlo plots
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+    new_max_months = line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+    return new_max_months
 
 def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
 
@@ -204,17 +208,50 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
     chart_data = pd.DataFrame(np.asarray(df[[x]+y_series], float), columns=[x]+y_series)
     y_series_updated = [col for col in y_series if chart_data[col].sum() != 0]
     chart_data = drop_zero_columns(chart_data)
-    # drop zero columns from y_series
+
+    # cut plot data until the point where ba_cash_balance runs below zero
+    if 'ba_cash_balance' in y_series_updated:
+        chart_data = chart_data[chart_data['ba_cash_balance'] > 0]
+        if len(chart_data) < 120:
+            st.error(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
+    
+    if 'reserve_a_tokens' in y_series_updated:
+        if len(chart_data[chart_data['reserve_a_tokens'] > 0]) < len(chart_data):
+            st.error(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[chart_data['reserve_a_tokens'] > 0]
+    
+    if 'community_a_tokens' in y_series_updated:
+        if len(chart_data[chart_data['community_a_tokens'] > 0]) < len(chart_data):
+            st.error(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])} months, because the token economy community tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[chart_data['community_a_tokens'] > 0]
+    
+    if 'foundation_a_tokens' in y_series_updated:
+        if len(chart_data[chart_data['foundation_a_tokens'] > 0]) < len(chart_data):
+            st.error(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[chart_data['foundation_a_tokens'] > 0]
+    
+    if 'lp_tokens' in y_series_updated:
+        if len(chart_data[chart_data['lp_tokens'] > 0]) < len(chart_data):
+            st.error(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[chart_data['lp_tokens'] > 0]
+    
+    if 'te_holding_supply' in y_series_updated:
+        if len(chart_data[chart_data['te_holding_supply'] > 0]) < len(chart_data):
+            st.error(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[chart_data['te_holding_supply'] > 0]
+        
     
     # Format the column names
     formatted_columns = [format_column_name(col) for col in [x] + y_series_updated]
     chart_data.columns = formatted_columns
-
+    
     fig = px.line(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
     st.plotly_chart(fig, use_container_width=True)
+
+    return len(chart_data)
 
 def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
     '''
@@ -330,27 +367,30 @@ def plot_fundraising(param_id):
 
 def plot_business(param_id):    
     ##INPUTS TAB
-    plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, plot_title="User Adoption", x_title="Months", y_title="Count")
-    plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    max_months = 120   
+    max_months = plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    max_months = plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
     pcol21, pcol22 = st.columns(2)
     with pcol21:
-        plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
+        max_months = plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, max_months, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
     with pcol22:
-        plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
+        max_months = plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, max_months, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
+    
+    return max_months
 
-def plot_token_economy(param_id):
+def plot_token_economy(param_id, max_months):
     ##ANALYSIS TAB
-    plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
+    max_months = plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
-                        'te_unvested_supply','te_circulating_supply'], 1, param_id
+                        'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
                         , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens")
     
     pcol31, pcol32 = st.columns(2)
     with pcol31:
-        plot_results_plotly('timestep', ['lp_token_price'], 1, param_id
+        max_months = plot_results_plotly('timestep', ['lp_token_price'], 1, param_id, max_months
                             , plot_title="Token Price", x_title="Months", y_title="USD")
     with pcol32:
-        plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id
+        max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
                             , plot_title="Valuations", x_title="Months", y_title="USD (Millions)")
     
     pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
@@ -358,15 +398,15 @@ def plot_token_economy(param_id):
     
     pcol41, pcol42 = st.columns(2)
     with pcol41:
-        plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
+        max_months = plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
                                         'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
-                                        'te_airdrop_tokens','te_holding_allocation'], 1, param_id
+                                        'te_airdrop_tokens','te_holding_allocation'], 1, param_id, max_months
                                         , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens")
     with pcol42:
-        plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
+        max_months = plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
                                         'u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum',
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
-                                        'te_holding_allocation_cum'], 1, param_id
+                                        'te_holding_allocation_cum'], 1, param_id, max_months
                                         , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
     
 def utility_pie_plot(utility_shares, utility_values):
