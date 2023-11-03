@@ -250,7 +250,7 @@ def bar_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
     df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
     
-    df = drop_zero_columns(df)
+    df = df[df['Value'] != 0]
 
     # Format the 'Parameter' column
     df['Parameter'] = df['Parameter'].apply(format_column_name)
