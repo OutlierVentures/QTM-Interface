@@ -35,8 +35,8 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
 
     """
 
-    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825) / velocity))) * final_users + initial_users
-    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825) / velocity))) * final_users
+    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
+    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
     term3 = initial_users * (timestamp / total_days)
     term4 = final_users - (term1 - term2 - term3)
     result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
