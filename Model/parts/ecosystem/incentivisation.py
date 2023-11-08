@@ -31,7 +31,6 @@ def incentivisation(params, substep, state_history, prev_state, **kwargs):
     # get parameters
     total_token_supply = params['initial_total_supply']
     incentivisation_payout_source = params['incentivisation_payout_source']
-    mint_incentivisation = params['mint_incentivisation']
 
     # get state variables
     agents = prev_state['agents']
@@ -42,13 +41,7 @@ def incentivisation(params, substep, state_history, prev_state, **kwargs):
         if agents[agent]['a_type'] == 'protocol_bucket' and incentivisation_payout_source.lower() in agents[agent]['a_name'].lower():
             vested_incentivisation_tokens = agents[agent]['a_tokens']
 
-    # Incentivisation through minting
-    if incentivisation_payout_source == 'Minting':
-        minted_incentivisation_tokens = total_token_supply * mint_incentivisation/100
-    else:
-        minted_incentivisation_tokens = 0
-
-    return {'vested_incentivisation_tokens': vested_incentivisation_tokens, 'minted_incentivisation_tokens': minted_incentivisation_tokens}
+    return {'vested_incentivisation_tokens': vested_incentivisation_tokens}
 
 # STATE UPDATE FUNCTIONS
 def update_agents_after_incentivisation(params, substep, state_history, prev_state, policy_input, **kwargs):
@@ -114,13 +107,9 @@ def update_token_economy_after_incentivisation(params, substep, state_history, p
 
     # get policy input
     vested_incentivisation_tokens = policy_input['vested_incentivisation_tokens']
-    minted_incentivisation_tokens = policy_input['minted_incentivisation_tokens']
 
     # update logic
-    incentivisation_tokens = vested_incentivisation_tokens + minted_incentivisation_tokens
-    updated_token_economy['te_minted_tokens'] = minted_incentivisation_tokens
-    updated_token_economy['te_minted_tokens_cum'] += minted_incentivisation_tokens
-    updated_token_economy['te_minted_tokens_cum'] = minted_incentivisation_tokens  * liquidity_pool['lp_token_price']
+    incentivisation_tokens = vested_incentivisation_tokens
     updated_token_economy['te_incentivised_tokens'] = incentivisation_tokens
     updated_token_economy['te_incentivised_tokens_cum'] += incentivisation_tokens
 

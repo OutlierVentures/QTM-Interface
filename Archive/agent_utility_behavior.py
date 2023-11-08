@@ -106,8 +106,7 @@ def generate_agent_behavior(params, substep, state_history, prev_state, **kwargs
                 'hold': params['avg_token_holding_allocation'],
                 'utility': params['avg_token_utility_allocation'],
                 'remove_locked_tokens': params['avg_token_utility_removal'],
-                'locking_apr': params['lock_share'],
-                'locking_buyback': params['lock_buyback_distribute_share'],
+                'staking_share': params['staking_share'],
                 'liquidity': params['liquidity_mining_share'],
                 'transfer': params['transfer_share'],
                 'burning': params['burning_share']
@@ -132,11 +131,10 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
     }
 
     utility_bucket_allocations = {
-        'locking_apr': 0,
-        'locking_buyback': 0,
+        'staking': 0,
         'liquidity': 0,
-        'transfer': 0,
-        'burn': 0
+        'burn': 0,
+        'transfer': 0
     }
 
     # update agent token allocations and update the meta bucket allocations w.r.t. each agents contribution
@@ -149,8 +147,7 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             utility_perc = agents[agent]['a_actions']['utility']
             hold_perc = agents[agent]['a_actions']['hold']
             remove_perc = agents[agent]['a_actions']['remove_locked_tokens']
-            locking_apr_perc = agents[agent]['a_actions']['locking_apr']
-            locking_buyback_share_perc = agents[agent]['a_actions']['locking_buyback']
+            staking_share_perc = agents[agent]['a_actions']['staking_share']
             liquidity_perc = agents[agent]['a_actions']['liquidity']
             transfer_perc = agents[agent]['a_actions']['transfer']
             burn_perc = agents[agent]['a_actions']['burning']
@@ -160,12 +157,10 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             sell_tokens = agents[agent]['a_tokens_vested'] * selling_perc/100
             utility_tokens = agents[agent]['a_tokens_vested'] * utility_perc/100
             holding_tokens = agents[agent]['a_tokens_vested'] * hold_perc/100
-            removed_locked_apr_tokens = agents[agent]['a_tokens_apr_locked'] * remove_perc/100
-            removed_locked_buyback_tokens = agents[agent]['a_tokens_buyback_locked'] * remove_perc/100
+            removed_staked_tokens = agents[agent]['a_tokens_staked'] * remove_perc/100
             removed_liquidity_tokens = agents[agent]['a_tokens_liquidity_mining'] * remove_perc/100
-            removed_tokens = removed_locked_apr_tokens + removed_locked_buyback_tokens + removed_liquidity_tokens 
-            locked_apr_tokens = utility_tokens * locking_apr_perc/100
-            locked_buyback_tokens = utility_tokens * locking_buyback_share_perc/100
+            removed_tokens = removed_staked_tokens + removed_liquidity_tokens 
+            staked_tokens = utility_tokens * staking_share_perc/100
             liquidity_tokens = utility_tokens * liquidity_perc/100
             transfer_tokens = utility_tokens * transfer_perc/100
             burn_tokens = utility_tokens * burn_perc/100
@@ -177,8 +172,7 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             meta_bucket_allocations['removed'] += removed_tokens
 
             # populate utility bucket allocations
-            utility_bucket_allocations['locking_apr'] += locked_apr_tokens
-            utility_bucket_allocations['locking_buyback'] += locked_buyback_tokens
+            utility_bucket_allocations['staking'] += staked_tokens
             utility_bucket_allocations['liquidity'] += liquidity_tokens
             utility_bucket_allocations['transfer'] += transfer_tokens
             utility_bucket_allocations['burn'] += burn_tokens
@@ -188,8 +182,7 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             sell_tokens = 0
             utility_tokens = 0
             removed_tokens = 0
-            locked_apr_tokens = 0
-            locked_buyback_tokens = 0
+            staked_tokens = 0
             liquidity_tokens = 0
             transfer_tokens = 0
             burn_tokens = 0
@@ -200,8 +193,7 @@ def agent_token_allocations(params, substep, state_history, prev_state, **kwargs
             'holding': holding_tokens,
             'utility': utility_tokens,
             'removed': removed_tokens,
-            'locking_apr': locked_apr_tokens,
-            'locking_buyback': locked_buyback_tokens,
+            'staking': staked_tokens,
             'liquidity': liquidity_tokens,
             'transfer': transfer_tokens,
             'burn': burn_tokens
@@ -242,12 +234,11 @@ def update_agent_token_allocations(params, substep, state_history, prev_state, p
         updated_agents[key]['a_utility_tokens'] = agent_allocations[key]['utility']
         updated_agents[key]['a_holding_tokens'] = agent_allocations[key]['holding']
         updated_agents[key]['a_tokens'] = updated_agents[key]['a_tokens'] - agent_allocations[key]['selling'] - agent_allocations[key]['utility'] + agent_allocations[key]['removed']
-        updated_agents[key]['a_tokens_apr_locked'] = updated_agents[key]['a_tokens_apr_locked'] + agent_allocations[key]['locking_apr']
+        updated_agents[key]['a_tokens_staked'] = updated_agents[key]['a_tokens_ '] + agent_allocations[key]['locking_apr']
         updated_agents[key]['a_tokens_buyback_locked'] = updated_agents[key]['a_tokens_buyback_locked'] + agent_allocations[key]['locking_buyback']
         updated_agents[key]['a_tokens_liquidity_mining'] = updated_agents[key]['a_tokens_liquidity_mining'] + agent_allocations[key]['liquidity']
         updated_agents[key]['a_tokens_transferred'] = updated_agents[key]['a_tokens_transferred'] + agent_allocations[key]['transfer']
         updated_agents[key]['a_tokens_burned'] = updated_agents[key]['a_tokens_burned'] + agent_allocations[key]['burn']
-
 
     return ('agents', updated_agents)
 

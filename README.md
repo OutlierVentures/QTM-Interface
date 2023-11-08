@@ -8,7 +8,7 @@ The [Quantitative Token Model (QTM)](https://outlierventures.io/quantitative-tok
 
 ## QTM Structure
 
-![Quantitative Token Model](https://github.com/BlockBoy32/QTM-Interface/blob/main/images/Quantitative_Token_Model_Abstraction.jpeg?raw=true)
+![Quantitative Token Model](https://github.com/OutlierVentures/QTM-Interface/blob/main/images/Quantitative_Token_Model_Abstraction.jpeg?raw=true)
 
 ## Motivation for the radCAD Extension
 
@@ -57,7 +57,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 Python 3.9 is recommended!
 
-- Clone this repository to your local machine by `git clone https://github.com/BlockBoy32/QTM-Interface.git`
+- Clone this repository to your local machine by `git clone https://github.com/OutlierVentures/QTM-Interface.git`
 - Create a new Python environment in the projects directory by `python -m venv venv`
 - Activate the new environment by `venv/bin/activate`
 - Install all required packages by `pip install -r requirements.txt`

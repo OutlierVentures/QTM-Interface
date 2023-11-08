@@ -7,7 +7,7 @@ Functions:
     generate_date (PF): Generate the current date from timestep.
 
     token_economy_metrics (PF): Calculate the initial token economy metrics, 
-        such as MC, FDV MC, circ. supply, and tokens locked.
+        such as MC, FDV MC, and circ. supply.
 
     update_date (SUF):Function to update the current date of the timestep.
 
@@ -41,8 +41,8 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
 
 def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
-    Calculate the initial token economy metrics, such as MC, FDV MC, circ. 
-    supply, and tokens locked.
+    Calculate the initial token economy metrics, such as MC, FDV MC, and circ. 
+    supply.
 
     Policy function.
 
@@ -58,10 +58,10 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     # parameters
     total_token_supply = params['initial_total_supply']
-    selling_perc = params['avg_token_selling_allocation']
-    utility_perc = params['avg_token_utility_allocation']
-    holding_perc = params['avg_token_holding_allocation']
-    remove_perc = params['avg_token_utility_removal']
+    selling_perc = params['avg_token_selling_allocation'] / 100
+    utility_perc = params['avg_token_utility_allocation'] / 100
+    holding_perc = params['avg_token_holding_allocation'] / 100
+    remove_perc = params['avg_token_utility_removal'] / 100
     initial_lp_tokens = params['initial_lp_token_allocation']
 
     # state variables
@@ -73,9 +73,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     # circulating supply variable
     circulating_tokens = 0
     lp_tokens = liquidity_pool['lp_tokens']
-    u_staking_base_apr_allocation_cum = utilities['u_staking_base_apr_allocation_cum']
-    u_staking_revenue_share_allocation_cum = utilities['u_staking_revenue_share_allocation_cum']
-    u_staking_vesting_allocation_cum = utilities['u_staking_vesting_allocation_cum']
+    u_staking_allocation_cum = utilities['u_staking_allocation_cum']
 
     # unvested supply variable
     te_airdrop_tokens_cum = token_economy['te_airdrop_tokens_cum']
@@ -91,7 +89,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
             held_tokens += agents[stakeholder]['a_tokens']
 
     circulating_tokens += protocol_bucket_tokens + held_tokens + lp_tokens
-    circulating_tokens += u_staking_base_apr_allocation_cum + u_staking_revenue_share_allocation_cum + u_staking_vesting_allocation_cum
+    circulating_tokens += u_staking_allocation_cum
     
 
     vested_cum = 0 
@@ -168,7 +166,6 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_holding_supply'] = held_supply
     updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
     updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
-
 
     return ('token_economy', updated_token_economy)
 

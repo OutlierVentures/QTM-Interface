@@ -85,7 +85,7 @@ def update_token_economy_after_protocol_bucket_burn(params, substep, state_histo
 
     Returns: 
         A tuple ('token_economy', updated_token_economy), where updated_token_economy 
-        is a dict that reports respective updatek amounts of tokens, tokens
+        is a dict that reports respective updated amounts of tokens, tokens
         burned in the current period, and cumulatively at the token economy level.
 
     """

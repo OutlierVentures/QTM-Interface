@@ -85,7 +85,7 @@ The Inputs section comprises the following blocks:
 
 The Utility Modules section is focused on activation or deactivation of certain token utilities. It describes the
 weight of token utility utilization with respect to the assumed user behavior. The model allows Holding, Burning,
-Locking, Transferring and Liquidity Mining.
+Staking, Transferring and Liquidity Mining.
 
 - Staking - mechanism of locking the project tokens to receive rewards in the same token. Note that the QTM entails
   3 different staking reward mechanisms: (1) Fixed staking APR rewards, based on a prescribed reward APR of tokens for

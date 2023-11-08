@@ -132,7 +132,7 @@ if uploaded_file is not None:
     # get new parameters from UI
     new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
 else:
-    input_file_name = 'Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs DEFAULT.csv'
+    input_file_name = 'Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs DEFAULT.csv'
     input_file_path = input_file_base_path + input_file_name
     
     # get new parameters from UI

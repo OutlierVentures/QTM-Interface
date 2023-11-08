@@ -393,18 +393,17 @@ def plot_token_economy(param_id, max_months):
         max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
                             , plot_title="Valuations", x_title="Months", y_title="USD (Millions)")
     
-    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share',
-                     'holding_share','transfer_share','lock_buyback_distribute_share'], param_id, plot_title="Token Utility Share")
+    pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
+                     'holding_share','transfer_share'], param_id, plot_title="Token Utility Share")
     
     pcol41, pcol42 = st.columns(2)
     with pcol41:
-        max_months = plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation',
+        max_months = plot_results_plotly('timestep', ['u_staking_allocation',
                                         'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
                                         'te_airdrop_tokens','te_holding_allocation'], 1, param_id, max_months
                                         , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens")
     with pcol42:
-        max_months = plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum',
-                                        'u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum',
+        max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
                                         'te_holding_allocation_cum'], 1, param_id, max_months
                                         , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")

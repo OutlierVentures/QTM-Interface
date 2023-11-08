@@ -36,7 +36,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
             
         with col11:
-            supply_type = st.radio('Supply Type',('Fixed', 'Inflationary'), index=['Fixed', 'Inflationary'].index(sys_param['supply_type'][0]), key='supply_type_radio', help="Determines if a minting functionallity is allowed. Note that burning tokens is allowed in both cases.")
             equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angle investors")
             initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=0.001, max_value=1000000.0, value=float(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
         with col12:
@@ -530,14 +529,14 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
         adoption_dict = {
             "Weak" : {
-                "avg_product_user_growth_rate" : 1.0,
-                "avg_token_holder_growth_rate" : 1.0,
+                "avg_product_user_growth_rate" : 2.0,
+                "avg_token_holder_growth_rate" : 2.0,
                 "product_adoption_velocity" : 0.5,
                 "token_adoption_velocity" : 0.5,
                 "one_time_product_revenue_per_user" : 0.0,
-                "regular_product_revenue_per_user" : 5.0,
+                "regular_product_revenue_per_user" : 8.0,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 5.0,
+                "regular_token_buy_per_user" : 8.0,
                 "avg_token_utility_allocation" : 20.0,
                 "avg_token_selling_allocation" : 70.0,
                 "avg_token_holding_allocation" : 10.0,
@@ -552,7 +551,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 "one_time_product_revenue_per_user" : 0.0,
                 "regular_product_revenue_per_user" : 10.0,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 25.0,
+                "regular_token_buy_per_user" : 15.0,
                 "avg_token_utility_allocation" : 60.0,
                 "avg_token_selling_allocation" : 30.0,
                 "avg_token_holding_allocation" : 10.0,
@@ -565,9 +564,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 "product_adoption_velocity" : 3.5,
                 "token_adoption_velocity" : 3.5,
                 "one_time_product_revenue_per_user" : 0.0,
-                "regular_product_revenue_per_user" : 15.0,
+                "regular_product_revenue_per_user" : 12.5,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 30.0,
+                "regular_token_buy_per_user" : 25.0,
                 "avg_token_utility_allocation" : 75.0,
                 "avg_token_selling_allocation" : 20.0,
                 "avg_token_holding_allocation" : 5.0,
@@ -592,13 +591,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.write("**Meta Bucket Allocations**")
             col73, col74, col75, col76 = st.columns(4)
             with col73:
-                avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0]*100) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
+                avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
             with col74:
-                avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0]*100) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
+                avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
             with col75:
-                avg_token_utility_allocation = st.number_input('Avg. Token Utility Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_allocation'][0]*100) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
+                avg_token_utility_allocation = st.number_input('Avg. Token Utility Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_allocation'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
             with col76:
-                avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_removal'][0]*100) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
+                avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_removal'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
         else:
             avg_product_user_growth_rate = adoption_dict[adoption_style]['avg_product_user_growth_rate']
             product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
@@ -690,45 +689,23 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         st.markdown("### Utilities")
         # Sample nested dictionary for utility values
         utility_values = {
-            'Stake for Revenue Share Rewards': {
-                'description': 'Stake tokens to receive bought back tokens from revenue share.',
-                'lock_buyback_distribute_share': {
-                    'value': sys_param['lock_buyback_distribute_share'][0],
-                    'display_name': 'Staking for Revenue Share Alloc. / %',
-                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for revenue share rewards.'
-                    },
-                'lock_buyback_from_revenue_share': {
-                    'value': sys_param['lock_buyback_from_revenue_share'][0],
-                    'display_name': 'Revenue Share Buyback / %',
-                    'description': 'The percentage of the revenue that is used for buying back and distribute tokens to stakers.'
-                    },
-            },
-            'Stake for Vesting Rewards': {
-                'description': 'Stake tokens to receive tokens from a prescribed fixed initial allocation and vesting schedule.',
-                'lock_vesting_share': {
-                    'value': sys_param['lock_vesting_share'][0],
-                    'display_name': 'Staking for Vesting Alloc. / %',
-                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for vesting rewards.'
-                    }
-            },
-            'Stake for fixed APR': {
+            'Stake': {
                 'description': "Stake tokens for fixed APR token rewards.",
-                'lock_share': {
-                    'value': sys_param['lock_share'][0],
-                    'display_name': 'Staking for APR Alloc. / %',
-                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked for APR rewards.'
+                'staking_share': {
+                    'value': sys_param['staking_share'][0],
+                    'display_name': 'Staking Alloc. / %',
+                    'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked.'
                     },
-                'lock_apr': {
-                    'value': sys_param['lock_apr'][0],
-                    'display_name': 'APR / %',
-                    'description': 'The APR for the staking for fixed APR staking rewards.'
+                'staking_buyback_from_revenue_share': {
+                    'value': sys_param['staking_buyback_from_revenue_share'][0],
+                    'display_name': 'Revenue Share Buyback / %',
+                    'description': 'The percentage of the revenue that is used for buying back and distribute tokens to stakers once the staking vesting bucket runs out of tokens.'
                     },
-                'lock_payout_source': {
-                    'value': sys_param['lock_payout_source'][0],
-                    'display_name': 'Payout Source',
-                    'description': 'The payout source protocol bucket for the staking for fixed APR staking rewards.',
-                    'options': ['Reserve', 'Community', 'Foundation']
-                    }
+                'mint_burn_ratio': {
+                    'value': sys_param['mint_burn_ratio'][0],
+                    'display_name': 'Mint / Burn Ratio',
+                    'description': 'The ratio of minted tokens to burned tokens for staking rewards. The remaining tokens are distributed from the staking vesting bucket if an allocation exists.'
+                    },
             },
             'Liquidity Mining': {
                 'description': 'Provide liquidity to the DEX liquidity pool to receive tokens as incentives at a fixed APR.',
@@ -789,20 +766,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                     'description': 'The protocol bucket destination of the transfer.',
                     'options': ['Reserve', 'Community', 'Foundation']
                     },
-            },
-            'Incentivisation': {
-                'description': 'Incentivise users to use the product, provide liquidity, or other behaviors by rewarding with tokens from the incentivisation vesting bucket or via minting of new tokens.',
-                'mint_incentivisation': {
-                    'value': sys_param['mint_incentivisation'][0],
-                    'display_name': 'Minted incentives / %',
-                    'description': 'Newly minted tokens for ecosystem incentivisation as percentage of initial total supply. Will only be used if minting is used as payout source in the following section.'
-                    },
-                'incentivisation_payout_source': {
-                    'value': sys_param['incentivisation_payout_source'][0],
-                    'display_name': 'Payout Source',
-                    'description': 'The payout source protocol bucket for the incentivisation incentives.',
-                    'options': ['Minting', 'Incentivisation']
-                    },
             }
         }
         
@@ -816,7 +779,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         default_utilities = []
         for utility in utility_values:
             for key, val in utility_values[utility].items():
-                if '_share' in key and key != 'lock_buyback_from_revenue_share':
+                if '_share' in key and key != 'staking_buyback_from_revenue_share':
                     if val['value'] > 0:
                         default_utilities.append(utility)
 
@@ -848,7 +811,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         count_staking_utilities = 0
         for utility in utility_to_add:
             for key, val in utility_values[utility].items():    
-                if '_share' in key and key != 'lock_buyback_from_revenue_share':
+                if '_share' in key and key != 'staking_buyback_from_revenue_share':
                     utility_sum += val['value']
                     utility_shares[utility] = [val['value']]
             if 'Stake' in utility:
@@ -874,7 +837,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 if key == 'description':
                     pass
                 else:
-                    if utility not in utility_to_add and key != 'lock_buyback_from_revenue_share' and '_share' in key:
+                    if utility not in utility_to_add and key != 'staking_buyback_from_revenue_share' and '_share' in key:
                         utility_parameter_choice[key] = 0
                     else:
                         utility_parameter_choice[key] = val['value']
@@ -883,7 +846,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     # Map new parameters to model input parameters
     new_params = {
         'equity_external_shareholders_perc': equity_perc,
-        'supply_type': supply_type,
         'initial_total_supply': initial_supply*1e6,
         'public_sale_supply_perc': public_sale_supply,
         'public_sale_valuation': launch_valuation * 1e6,

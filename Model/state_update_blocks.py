@@ -7,7 +7,7 @@ from Model.parts.ecosystem.token_economy import *
 from Model.parts.business.user_adoption import *
 from Model.parts.business.business_assumptions import *
 from Model.parts.agents_behavior.agent_meta_bucket_behavior import *
-from Model.parts.utilities.staking_base_apr import *
+from Model.parts.utilities.staking_mint_burn import *
 from Model.parts.utilities.staking_revenue_share import *
 from Model.parts.utilities.staking_vesting import *
 from Model.parts.utilities.liquidity_mining import *
@@ -104,17 +104,7 @@ state_update_blocks = [
         },
     },
     {
-        # substep 10: utilities/staking_base_apr.py
-        'policies': {
-            'staking_apr_allocation': staking_apr_allocation,
-        },
-        'variables': {
-            'utilities': update_utilties_after_apr,
-            'agents': update_agents_after_apr,
-        },
-    },
-    {
-        # substep 11: utilities/staking_revenue_share.py
+        # substep 10: utilities/staking_revenue_share.py
         'policies': {
             'staking_revenue_share_buyback_amount': staking_revenue_share_buyback_amount,
         },
@@ -123,7 +113,7 @@ state_update_blocks = [
         },
     },
     {
-        # substep 12: utilities/staking_vesting.py
+        # substep 11: utilities/staking_vesting.py
         'policies': {
             'staking_vesting_allocation': staking_vesting_allocation,
         },
@@ -133,13 +123,25 @@ state_update_blocks = [
         },
     },
     {
-        # substep 13: utilities/burning.py
+        # substep 12: utilities/burning.py
         'policies': {
             'burning_agent_allocation': burning_agent_allocation,
         },
         'variables': {
             'agents': update_burning_agent_allocation,
             'utilities': update_burning_meta_allocation,
+            'token_economy': update_token_economy_after_utility_burn
+        },
+    },
+    {
+        # substep 13: utilities/staking_mint_burn.py
+        'policies': {
+            'staking_mint_burn': staking_mint_burn,
+        },
+        'variables': {
+            'utilities': update_utilties_after_staking_mint_burn,
+            'agents': update_agents_after_staking_mint_burn,
+            'token_economy': update_token_economy_after_staking_mint_burn,
         },
     },
     {
@@ -184,7 +186,7 @@ state_update_blocks = [
     {
         # substep 18: utilities/liquidity_mining.py
         'policies': {
-            'staking_liquidity_mining_agent_allocation': staking_liquidity_mining_agent_allocation,
+            'liquidity_mining_agent_allocation': liquidity_mining_agent_allocation,
         },
         'variables': {
             'agents': update_agents_after_liquidity_mining,
@@ -221,7 +223,7 @@ state_update_blocks = [
     {
         # substep 22: utilities/staking_revenue_share.py
         'policies': {
-            'staking_revenue_share_buyback_allocation': staking_revenue_share_buyback_allocation,
+            'staking_revenue_share_buyback': staking_revenue_share_buyback,
         },
         'variables': {
             'agents': update_agents_after_staking_revenue_share_buyback,

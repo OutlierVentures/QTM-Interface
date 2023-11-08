@@ -254,14 +254,14 @@ def plot_all():
     plot_results('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    pie_plot(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot(['staking_share','liquidity_mining_share','burning_share','holding_share','transfer_share'])
 
     ##ANALYSIS TAB
     plot_results('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
     plot_results('timestep', ['lp_token_price','lp_volatility'], 1)
     plot_results('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
-    plot_results('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
-    plot_results('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
+    plot_results('timestep', ['u_staking_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
+    plot_results('timestep', ['u_staking_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
 
 
 def line_plot_st(df,x,y_series,run):
@@ -323,14 +323,14 @@ def plot_all_st():
     plot_results_st('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share','holding_share','transfer_share'])
 
     ##ANALYSIS TAB
     plot_results_st('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
     plot_results_st('timestep', ['lp_token_price','lp_volatility'], 1)
     plot_results_st('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
-    plot_results_st('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
-    plot_results_st('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
+    plot_results_st('timestep', ['u_staking_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
+    plot_results_st('timestep', ['u_staking_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
 
 
 def line_plot_plotly(df,x,y_series,run):
@@ -409,11 +409,11 @@ def plot_all_plotly():
     plot_results_plotly('timestep', ['ba_cash_balance'], 1)
 
     ##UTILITIES TAB
-    pie_plot_plotly(['lock_share','lock_vesting_share','liquidity_mining_share','burning_share','holding_share','transfer_share','lock_buyback_distribute_share'])
+    pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share','holding_share','transfer_share'])
 
     ##ANALYSIS TAB
     plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens','incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply','te_unvested_supply','te_circulating_supply'], 1)
     plot_results_plotly('timestep', ['lp_token_price','lp_volatility'], 1)
     plot_results_plotly('timestep', ['lp_token_price','te_MC','te_FDV_MC'], 1)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation_cum','u_staking_revenue_share_allocation_cum','u_staking_vesting_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
-    plot_results_plotly('timestep', ['u_staking_base_apr_allocation','u_staking_revenue_share_allocation','u_staking_vesting_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)
+    plot_results_plotly('timestep', ['u_staking_allocation_cum','u_liquidity_mining_allocation_cum','u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum','te_holding_allocation_cum'], 1)
+    plot_results_plotly('timestep', ['u_staking_allocation','u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens','te_airdrop_tokens','te_holding_allocation'], 1)

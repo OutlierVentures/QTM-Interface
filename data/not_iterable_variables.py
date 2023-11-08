@@ -15,7 +15,6 @@ parameter_list = [
     "regular_expenditures_per_month",
     "cash_reserves_after_launch",
     "cashflow_balance",
-    "lock_payout_source",
     "liquidity_mining_payout_source",
     "holding_payout_source",
     "transfer_destination",

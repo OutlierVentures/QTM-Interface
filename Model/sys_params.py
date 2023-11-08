@@ -154,21 +154,18 @@ def get_sys_param(input_file, adjusted_params):
 
     # setting initial values for utility parameters
     utility_initial_values = {
-        'lock_share': [x for x in sys_param['lock_share']],
-        'lock_buyback_distribute_share': [x for x in sys_param['lock_buyback_distribute_share']],
+        'staking_share': [x for x in sys_param['staking_share']],
         'liquidity_mining_share': [x for x in sys_param['liquidity_mining_share']],
         'burning_share': [x for x in sys_param['burning_share']],
         'holding_share': [x for x in sys_param['holding_share']],
         'transfer_share': [x for x in sys_param['transfer_share']],
-        'lock_apr': [x for x in sys_param['lock_apr']],
-        'lock_payout_source': [x for x in sys_param['lock_payout_source']],
-        'lock_buyback_from_revenue_share': [x for x in sys_param['lock_buyback_from_revenue_share']],
+        'staking_buyback_from_revenue_share': [x for x in sys_param['staking_buyback_from_revenue_share']],
+        'mint_burn_ratio' : [x for x in sys_param['mint_burn_ratio']],
         'liquidity_mining_apr': [x for x in sys_param['liquidity_mining_apr']],
         'liquidity_mining_payout_source': [x for x in sys_param['liquidity_mining_payout_source']],
         'holding_apr': [x for x in sys_param['holding_apr']],
         'holding_payout_source': [x for x in sys_param['holding_payout_source']],
         'transfer_destination': [x for x in sys_param['transfer_destination']],
-        'mint_incentivisation': [x for x in sys_param['mint_incentivisation']],
         'incentivisation_payout_source': [x for x in sys_param['incentivisation_payout_source']]
     }
 

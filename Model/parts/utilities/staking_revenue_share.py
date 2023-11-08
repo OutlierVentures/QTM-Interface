@@ -1,11 +1,8 @@
 # POLICY FUNCTIONS
-def staking_revenue_share_buyback_allocation(params, substep, state_history, prev_state, **kwargs):
+def staking_revenue_share_buyback(params, substep, state_history, prev_state, **kwargs):
     """
-    Policy function to calculate the agent staking allocation for token buybacks from the revenue share
+    Policy function to calculate the agent staking rewards for token buybacks from the revenue share
     """
-    # get parameters
-    lock_buyback_distribute_share = params['lock_buyback_distribute_share']/100
-
     # get state variables
     agents = prev_state['agents'].copy()
     utilities = prev_state['utilities'].copy()
@@ -18,11 +15,7 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
 
     # policy logic
     # initialize policy logic variables
-    agent_utility_sum = 0
-    agent_utility_removal_sum = 0
     agent_utility_rewards_sum = 0
-    agents_staking_buyback_allocations = {}
-    agents_staking_buyback_removal = {}
     agents_staking_buyback_rewards = {}
 
     # calculate macro rewards from staking revenue share
@@ -36,47 +29,35 @@ def staking_revenue_share_buyback_allocation(params, substep, state_history, pre
     else:
         raise ValueError("Business buybacks in USD terms (ba_buybacks_usd) must not be negative!")
 
-    # calculate the staking apr token allocations and removals for each agent
-    if lock_buyback_distribute_share > 0:
-        for agent in agents:
-            utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
-            utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
-            tokens_buyback_locked_cum = agents[agent]['a_tokens_buyback_locked_cum'] # get amount of staked tokens for revenue share last timestep
-
-            agents_staking_buyback_allocations[agent] = utility_tokens * lock_buyback_distribute_share # calculate the amount of tokens that shall be allocated to the staking apr utility from this timestep
-            agents_staking_buyback_removal[agent] = tokens_buyback_locked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking apr utility for this timestep based on the tokens allocated in the previous timestep
-            
-            agent_utility_sum += agents_staking_buyback_allocations[agent] # sum up the total amount of tokens allocated to the staking apr utility for this timestep
-            agent_utility_removal_sum += agents_staking_buyback_removal[agent] # sum up the total amount of tokens removed from the staking apr utility for this timestep
-
     # allocate staking rewards for agents
     if agent_utility_rewards_sum > 0:
         for agent in agents:
-            if (utilities['u_staking_revenue_share_allocation_cum'] + agent_utility_sum - agent_utility_removal_sum) > 0:
+            if (utilities['u_staking_allocation_cum']) > 0:
                 agents_staking_buyback_rewards[agent] = agent_utility_rewards_sum * (
-                    (agents[agent]['a_tokens_buyback_locked_cum'] + agents_staking_buyback_allocations[agent]-agents_staking_buyback_removal[agent])
-                    / (utilities['u_staking_revenue_share_allocation_cum'] + agent_utility_sum - agent_utility_removal_sum))
+                    (agents[agent]['a_tokens_staked_cum'])
+                    / (utilities['u_staking_allocation_cum']))
             else:
                 agents_staking_buyback_rewards[agent] = 0
 
-    return {'agents_staking_buyback_allocations': agents_staking_buyback_allocations,'agents_staking_buyback_removal':agents_staking_buyback_removal,
-            'agents_staking_buyback_rewards': agents_staking_buyback_rewards, 'agent_utility_sum': agent_utility_sum,
-            'agent_utility_removal_sum': agent_utility_removal_sum, 'agent_utility_rewards_sum': agent_utility_rewards_sum, 'business_buyback': business_buyback}
+    return {'agents_staking_buyback_rewards': agents_staking_buyback_rewards, 'agent_utility_rewards_sum': agent_utility_rewards_sum, 'business_buyback': business_buyback}
 
 def staking_revenue_share_buyback_amount(params, substep, state_history, prev_state, **kwargs):
     """
     Policy function to calculate the amount of usd to be used for token buyback from the revenue share
     """
     # get parameters
-    staking_revenue_utility_share_allocation = params['lock_buyback_distribute_share']
-    revenue_share = params['lock_buyback_from_revenue_share'] # revenue share to be used for buyback
+    revenue_share = params['staking_buyback_from_revenue_share'] # revenue share to be used for buyback
+    staking_share = params['staking_share'] # share of utility tokens used for staking
 
     # get state variables
     user_adoption = prev_state['user_adoption'].copy()
+    agents = prev_state['agents'].copy()
     product_revenue = user_adoption['ua_product_revenue']
 
+    staking_vesting_bucket_tokens = [agents[agent]['a_tokens'] for agent in agents if agents[agent]['a_name'] == 'staking_vesting'][0] # get the amount of tokens in the staking vesting bucket
+
     # policy logic
-    if float(staking_revenue_utility_share_allocation) > 0:
+    if float(revenue_share) > 0 and staking_vesting_bucket_tokens <= 0 and staking_share > 0:
         buyback_amount = product_revenue * float(revenue_share) / 100
     else:
         buyback_amount = 0
@@ -98,20 +79,15 @@ def update_agents_after_staking_revenue_share_buyback(params, substep, state_his
     updated_agents = prev_state['agents'].copy()
 
     # get policy input
-    agents_staking_buyback_allocations = policy_input['agents_staking_buyback_allocations']
-    agents_staking_buyback_removal = policy_input['agents_staking_buyback_removal']
     agent_rewards = policy_input['agents_staking_buyback_rewards']
     business_buyback = policy_input['business_buyback']
 
     # update logic
-    if agents_staking_buyback_allocations != {} or agent_rewards != {} or business_buyback != 0:
+    if agent_rewards != {} or business_buyback != 0:
         for agent in updated_agents:
-            if agents_staking_buyback_allocations != {} or agent_rewards != {}:
-                updated_agents[agent]['a_tokens_buyback_locked'] = (agents_staking_buyback_allocations[agent])
-                updated_agents[agent]['a_tokens_buyback_locked_cum'] += (agents_staking_buyback_allocations[agent] - agents_staking_buyback_removal[agent])
-                updated_agents[agent]['a_tokens_buyback_locked_remove'] = (agents_staking_buyback_removal[agent])
-                updated_agents[agent]['a_tokens_buyback_locked_rewards'] = agent_rewards[agent]
-                updated_agents[agent]['a_tokens'] += (agent_rewards[agent] + agents_staking_buyback_removal[agent])
+            if agent_rewards != {}:
+                updated_agents[agent]['a_tokens_staking_buyback_rewards'] = agent_rewards[agent]
+                updated_agents[agent]['a_tokens'] += (agent_rewards[agent])
 
             # transfer business bought back tokens to destination
             if updated_agents[agent]['a_name'].lower() in buyback_bucket.lower():
@@ -128,15 +104,10 @@ def update_utilities_after_staking_revenue_share_buyback(params, substep, state_
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    agent_utility_sum = policy_input['agent_utility_sum']
-    agent_utility_removal_sum = policy_input['agent_utility_removal_sum']
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
     updated_utilities['u_staking_revenue_share_rewards'] = agent_utility_rewards_sum
-    updated_utilities['u_staking_revenue_share_allocation'] = (agent_utility_sum)
-    updated_utilities['u_staking_revenue_share_allocation_cum'] += (agent_utility_sum - agent_utility_removal_sum)
-    updated_utilities['u_staking_revenue_share_remove'] = agent_utility_removal_sum
 
     return ('utilities', updated_utilities)
 

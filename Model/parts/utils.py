@@ -69,9 +69,8 @@ def calculate_raised_capital(param):
 def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, 
               tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float, tokens_incentivised_cum: float,
-              tokens_apr_locked: float, tokens_apr_locked_cum: float, tokens_apr_locked_remove: float, tokens_apr_locked_rewards: float,
-              tokens_buyback_locked: float, tokens_buyback_locked_cum: float, tokens_buyback_locked_remove: float, tokens_buyback_locked_rewards: float,
-              tokens_staking_vesting_locked: float, tokens_staking_vesting_locked_cum: float, tokens_staking_vesting_locked_remove: float, tokens_staking_vesting_locked_rewards: float,
+              tokens_staked: float, tokens_staked_cum: float, tokens_staked_remove: float,
+              tokens_staking_buyback_rewards: float, tokens_staking_vesting_rewards: float, tokens_staking_minting_rewards: float,
               tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float, tokens_liquidity_mining_remove: float, tokens_liquidity_mining_rewards: float,
               tokens_transferred: float, tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
               selling_tokens: float, utility_tokens: float, selling_from_holding_tokens: float, utility_from_holding_tokens: float,
@@ -90,20 +89,14 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_airdropped_cum': tokens_airdropped_cum, # amount of airdropped tokens cumulatively
              'a_tokens_incentivised': tokens_incentivised, # amount of incentivised tokens per timestep
              'a_tokens_incentivised_cum': tokens_incentivised_cum, # amount of incentivised tokens cumulatively
-             'a_tokens_apr_locked': tokens_apr_locked, # amount of tokens locked for APR per timestep
-             'a_tokens_apr_locked_cum': tokens_apr_locked_cum, # amount of tokens locked for APR cumulatively
-             'a_tokens_apr_locked_remove': tokens_apr_locked_remove, # amount of tokens removed from staking for base apr
-             'a_tokens_apr_locked_rewards': tokens_apr_locked_rewards, # amount of token rewards for staking for base apr
-             'a_tokens_buyback_locked': tokens_buyback_locked, # amount of tokens locked for buyback per timestep
-             'a_tokens_buyback_locked_cum': tokens_buyback_locked_cum, # amount of tokens locked for buyback cumulatively
-             'a_tokens_buyback_locked_remove': tokens_buyback_locked_remove, # amount of tokens removed from staking for buyback share
-             'a_tokens_buyback_locked_rewards': tokens_buyback_locked_rewards, # amount of token rewards for staking for buyback share
-             'a_tokens_staking_vesting_locked': tokens_staking_vesting_locked, # amount of tokens locked for staking vesting per timestep
-             'a_tokens_staking_vesting_locked_cum': tokens_staking_vesting_locked_cum, # amount of tokens locked for staking vesting cumulatively
-             'a_tokens_staking_vesting_locked_remove': tokens_staking_vesting_locked_remove, # amount of tokens removed from staking for staking vesting
-             'a_tokens_staking_vesting_locked_rewards': tokens_staking_vesting_locked_rewards, # amount of token rewards for staking for staking vesting
-             'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens locked for liquidity mining per timestep
-             'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens locked for liquidity mining cumulatively
+             'a_tokens_staked': tokens_staked, # amount of tokens staked per timestep
+             'a_tokens_staked_cum': tokens_staked_cum, # amount of tokens staked cumulatively
+             'a_tokens_staked_remove': tokens_staked_remove, # amount of tokens removed from staking
+             'a_tokens_staking_buyback_rewards': tokens_staking_buyback_rewards, # amount of token rewards for staking for buyback share
+             'a_tokens_staking_vesting_rewards': tokens_staking_vesting_rewards, # amount of token rewards for staking for staking vesting
+             'a_tokens_staking_minting_rewards': tokens_staking_minting_rewards, # amount of token rewards for staking for minting from mint & burn mechanism
+             'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens used for liquidity mining per timestep
+             'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens used for liquidity mining cumulatively
              'a_tokens_liquidity_mining_remove': tokens_liquidity_mining_remove, # amount of tokens removed from liquidity mining
              'a_tokens_liquidity_mining_rewards': tokens_liquidity_mining_rewards, # amount of token rewards for liquidity mining
              'a_tokens_transferred': tokens_transferred, # amount of tokens transferred per timestep
@@ -139,18 +132,12 @@ def generate_agents(stakeholder_name_mapping: dict) -> dict:
                                     tokens_airdropped_cum = 0,
                                     tokens_incentivised = 0,
                                     tokens_incentivised_cum = 0,
-                                    tokens_apr_locked = 0,
-                                    tokens_apr_locked_cum = 0,
-                                    tokens_apr_locked_remove = 0,
-                                    tokens_apr_locked_rewards = 0,
-                                    tokens_buyback_locked = 0,
-                                    tokens_buyback_locked_cum = 0,
-                                    tokens_buyback_locked_remove = 0,
-                                    tokens_buyback_locked_rewards = 0,
-                                    tokens_staking_vesting_locked = 0,
-                                    tokens_staking_vesting_locked_cum = 0,
-                                    tokens_staking_vesting_locked_remove = 0,
-                                    tokens_staking_vesting_locked_rewards = 0,
+                                    tokens_staked = 0,
+                                    tokens_staked_cum = 0,
+                                    tokens_staked_remove = 0,
+                                    tokens_staking_buyback_rewards = 0,
+                                    tokens_staking_vesting_rewards = 0,
+                                    tokens_staking_minting_rewards = 0,
                                     tokens_liquidity_mining = 0,
                                     tokens_liquidity_mining_cum = 0,
                                     tokens_liquidity_mining_remove = 0,
@@ -273,7 +260,7 @@ def initialize_dex_liquidity():
 
 def generate_initial_token_economy_metrics():
     """
-    Set the initial token economy metrics, such as MC, FDV MC, circ. supply, and tokens locked.
+    Set the initial token economy metrics, such as MC, FDV MC, and circ. supply.
     """
     token_economy = {
         'te_total_supply' : 0, # total token supply in existence
@@ -339,19 +326,13 @@ def initialize_utilities():
     Initialize the utility meta bucket metrics.
     """
     utilities = {
-    'u_staking_base_apr_allocation':0, # staking base apr allocation per timestep
-    'u_staking_base_apr_allocation_cum':0, # staking base apr allocation cumulatively
-    'u_staking_base_apr_remove':0, # staking base apr token removal
-    'u_staking_base_apr_rewards': 0, # staking token rewards
+    'u_staking_allocation':0, # staking allocation per timestep
+    'u_staking_allocation_cum':0, # staking allocation cumulatively
+    'u_staking_remove':0, # staking token removal
     'u_buyback_from_revenue_share_usd': 0, # buyback from revenue share in USD
-    'u_staking_revenue_share_allocation': 0, # staking revenue share token allocation per timestep
-    'u_staking_revenue_share_allocation_cum': 0, # staking revenue share token allocation cumulatively
-    'u_staking_revenue_share_remove': 0, # staking revenue share token removal
     'u_staking_revenue_share_rewards':0, # revenue sharing rewards
-    'u_staking_vesting_allocation': 0, # staking vesting token allocation per timestep
-    'u_staking_vesting_allocation_cum': 0, # staking vesting token allocation cumulatively
-    'u_staking_vesting_remove': 0, # staking vesting token removal
     'u_staking_vesting_rewards':0, # staking vesting rewards
+    'u_staking_minting_rewards':0, # staking minting rewards
     'u_liquidity_mining_rewards': 0, # liquidity mining rewards
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
     'u_liquidity_mining_allocation_cum': 0, # liquidity mining token allocation cumulatively

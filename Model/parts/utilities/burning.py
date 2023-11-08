@@ -73,3 +73,31 @@ def update_burning_meta_allocation(params, substep, state_history, prev_state, p
     updated_utilities['u_burning_allocation_cum'] += burning_allocation
 
     return ('utilities', updated_utilities)
+
+def update_token_economy_after_utility_burn(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the token economy after tokens burned by means of the burning utility.
+
+    State update function.
+
+    Returns: 
+        A tuple ('token_economy', updated_token_economy), where updated_token_economy 
+        is a dict that reports respective updated amounts of tokens, tokens
+        burned in the current period, and cumulatively at the token economy level.
+
+    """
+    # get parameters
+
+    # get state variables
+    updated_token_economy = prev_state['token_economy'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
+
+    # get policy input
+    burn_token_amount = policy_input['u_burning_allocation']
+
+    # update logic
+    updated_token_economy['te_tokens_burned'] += burn_token_amount
+    updated_token_economy['te_tokens_burned_cum'] += burn_token_amount
+    updated_token_economy['te_tokens_burned_usd'] += burn_token_amount * liquidity_pool['lp_token_price']
+
+    return ('token_economy', updated_token_economy)
