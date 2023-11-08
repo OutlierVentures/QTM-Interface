@@ -84,11 +84,9 @@ st.markdown(
     '''
     <style>
     .streamlit-expanderHeader {
-        background-color: #F5EFF5;
         color: #4E32BF; # Adjust this for expander header color
     }
     .streamlit-expanderContent {
-        background-color: #F5EFF5;
         color: #4E32BF; # Expander content color
     }
     </style>
