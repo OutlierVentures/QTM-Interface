@@ -291,7 +291,8 @@ def generate_initial_token_economy_metrics():
         'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
         'te_airdrop_tokens' : 0, # tokens airdropped
         'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
-        'te_airdrop_tokens_cum' : 0 # tokens airdropped cumulatively
+        'te_airdrop_tokens_cum' : 0, # tokens airdropped cumulatively
+        'te_staking_apr': 0, # staking APR
     }
 
     return token_economy

@@ -887,7 +887,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'strategic_partners_allocation': strategic_partners_allocation,
         'strategic_partners_initial_vesting': [strategic_partners_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['strategic_partners']][0],
         'strategic_partners_cliff': [strategic_partners_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['strategic_partners']][0],
-        'strategic_partner_vesting_duration': [strategic_partners_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['strategic_partners']][0],
+        'strategic_partners_vesting_duration': [strategic_partners_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['strategic_partners']][0],
         'reserve_allocation': reserve_allocation,
         'reserve_initial_vesting': [reserve_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['reserve']][0],
         'reserve_cliff': [reserve_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['reserve']][0],

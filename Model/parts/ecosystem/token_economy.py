@@ -166,6 +166,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_holding_supply'] = held_supply
     updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
     updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_staking_apr'] = (utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100
 
     return ('token_economy', updated_token_economy)
 

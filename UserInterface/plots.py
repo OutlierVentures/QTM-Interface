@@ -259,6 +259,7 @@ def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=N
     '''
 
     chart_data = pd.DataFrame(np.asarray(df[[x]+y_series], float), columns=[x]+y_series)
+    
     y_series_updated = [col for col in y_series if chart_data[col].sum() != 0]
     chart_data = drop_zero_columns(chart_data)
 
@@ -272,7 +273,22 @@ def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=N
     chart_data['Liquidity Pool'] = init_lp_token_alloc.to_list()*len(chart_data)
     chart_data['Liquidity Pool'] = chart_data['Liquidity Pool'].astype(float)
 
-    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:]+['Liquidity Pool'])
+    
+    plotly_colors = px.colors.qualitative.Plotly
+    color_map = {
+        y_series[0]: plotly_colors[0],
+        y_series[1]: plotly_colors[1],
+        y_series[2]: plotly_colors[2],
+        y_series[3]: plotly_colors[3],
+        y_series[4]: plotly_colors[4],
+        y_series[5]: plotly_colors[5],
+        y_series[6]: plotly_colors[6],
+        y_series[7]: plotly_colors[7],
+        y_series[8]: plotly_colors[8],
+        y_series[9]: plotly_colors[9]
+    }
+
+    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:]+['Liquidity Pool'], color_discrete_map=color_map)
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
@@ -308,7 +324,11 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
 
-    df = sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
+    new_sys_param = sys_param[values_list].copy()
+    if 'initial_lp_token_allocation' in values_list:
+        new_sys_param['initial_lp_token_allocation'] = float(sys_param['initial_lp_token_allocation']) / float(sys_param['initial_total_supply'])
+
+    df = new_sys_param[values_list].sum().to_frame(name='Value').reset_index().rename(columns={'index':'Parameter'})
 
     df = drop_zero_columns(df)
 
@@ -317,7 +337,21 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
     # drop zero parameters
     df = df[df['Value'] != 0]
-    fig = px.pie(df, values='Value', names='Parameter')
+
+    plotly_colors = px.colors.qualitative.Plotly
+    color_map = {
+        values_list[0]: plotly_colors[0],
+        values_list[1]: plotly_colors[1],
+        values_list[2]: plotly_colors[2],
+        values_list[3]: plotly_colors[3],
+        values_list[4]: plotly_colors[4],
+        values_list[5]: plotly_colors[5],
+        values_list[6]: plotly_colors[6],
+        values_list[7]: plotly_colors[7],
+        values_list[8]: plotly_colors[8],
+        values_list[9]: plotly_colors[9]
+    }
+    fig = px.pie(df, values='Value', names='Parameter', color='Parameter', color_discrete_map=color_map)
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
@@ -327,11 +361,22 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
-    vesting_cum_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum', 'seed_a_tokens_vested_cum','presale_1_a_tokens_vested_cum','presale_2_a_tokens_vested_cum','public_sale_a_tokens_vested_cum'
-                                     ,'team_a_tokens_vested_cum', 'advisor_a_tokens_vested_cum', 'strategic_partners_a_tokens_vested_cum'
-                                     ,'reserve_a_tokens_vested_cum', 'community_a_tokens_vested_cum', 'foundation_a_tokens_vested_cum', 'incentivisation_a_tokens_vested_cum'
-                                     ,'staking_vesting_a_tokens_vested_cum', 'te_airdrop_tokens_cum'], 1, param_id
-                                     , plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
+    vesting_cum_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum',
+                                                 'seed_a_tokens_vested_cum',
+                                                 'presale_1_a_tokens_vested_cum',
+                                                 'presale_2_a_tokens_vested_cum',
+                                                 'public_sale_a_tokens_vested_cum',
+                                                 'team_a_tokens_vested_cum',
+                                                 'ov_a_tokens_vested_cum',
+                                                 'advisor_a_tokens_vested_cum',
+                                                 'strategic_partners_a_tokens_vested_cum',
+                                                 'reserve_a_tokens_vested_cum',
+                                                 'community_a_tokens_vested_cum',
+                                                 'foundation_a_tokens_vested_cum',
+                                                 'incentivisation_a_tokens_vested_cum',
+                                                 'staking_vesting_a_tokens_vested_cum',
+                                                 'te_airdrop_tokens_cum'], 1, param_id,
+                                                 plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
     pcol11, pcol12 = st.columns(2)
     with pcol11:
         ##EFFECTIVE TOKEN PRICE
@@ -360,9 +405,7 @@ def plot_fundraising(param_id):
             'incentivisation_token_allocation',
             'staking_vesting_token_allocation',
             'airdrop_token_allocation',
-            'market_token_allocation',
-            'airdrop_receivers_token_allocation',
-            'incentivisation_receivers_token_allocation'
+            'initial_lp_token_allocation'
         ], param_id, plot_title="Token Allocations")
 
 def plot_business(param_id):    
@@ -407,6 +450,10 @@ def plot_token_economy(param_id, max_months):
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
                                         'te_holding_allocation_cum'], 1, param_id, max_months
                                         , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
+    
+    max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
+                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %")
+
     
 def utility_pie_plot(utility_shares, utility_values):
 
