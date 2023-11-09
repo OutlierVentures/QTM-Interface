@@ -275,18 +275,12 @@ def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=N
 
     
     plotly_colors = px.colors.qualitative.Plotly
-    color_map = {
-        y_series[0]: plotly_colors[0],
-        y_series[1]: plotly_colors[1],
-        y_series[2]: plotly_colors[2],
-        y_series[3]: plotly_colors[3],
-        y_series[4]: plotly_colors[4],
-        y_series[5]: plotly_colors[5],
-        y_series[6]: plotly_colors[6],
-        y_series[7]: plotly_colors[7],
-        y_series[8]: plotly_colors[8],
-        y_series[9]: plotly_colors[9]
-    }
+    color_map = {}
+    for i, value in enumerate(chart_data[formatted_columns[1:]+['Liquidity Pool']]):
+        try:
+            color_map[value] = plotly_colors[i]
+        except:
+            color_map[value] = plotly_colors[i-len(plotly_colors)]
 
     fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:]+['Liquidity Pool'], color_discrete_map=color_map)
 
@@ -339,18 +333,13 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
     df = df[df['Value'] != 0]
 
     plotly_colors = px.colors.qualitative.Plotly
-    color_map = {
-        values_list[0]: plotly_colors[0],
-        values_list[1]: plotly_colors[1],
-        values_list[2]: plotly_colors[2],
-        values_list[3]: plotly_colors[3],
-        values_list[4]: plotly_colors[4],
-        values_list[5]: plotly_colors[5],
-        values_list[6]: plotly_colors[6],
-        values_list[7]: plotly_colors[7],
-        values_list[8]: plotly_colors[8],
-        values_list[9]: plotly_colors[9]
-    }
+    color_map = {}
+    for i, value in enumerate(df['Parameter']):
+        try:
+            color_map[value] = plotly_colors[i]
+        except:
+            color_map[value] = plotly_colors[i-len(plotly_colors)]
+
     fig = px.pie(df, values='Value', names='Parameter', color='Parameter', color_discrete_map=color_map)
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
@@ -454,27 +443,19 @@ def plot_token_economy(param_id, max_months):
     max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
                                         , plot_title="Staking APR / %", x_title="Months", y_title="APR / %")
 
-    
 def utility_pie_plot(utility_shares, utility_values):
 
     df = pd.DataFrame.from_dict(utility_shares, orient='index', columns=['Share / %']).reset_index().rename(columns={'index':'Utility'})
 
     plotly_colors = px.colors.qualitative.Plotly
-    color_map = {
-        'Stake for Revenue Share Rewards': plotly_colors[0],
-        'Stake for Vesting Rewards': plotly_colors[8],
-        'Stake for fixed APR': plotly_colors[2],
-        'Liquidity Mining': plotly_colors[3],
-        'Burning': plotly_colors[4],
-        'Transfer': plotly_colors[5],
-        'Holding': plotly_colors[6],
-        'Incentivisation': plotly_colors[7],
-        'Undefined': 'red'
-    }
+    color_map = {}
+    for i, value in enumerate(df['Utility']):
+        try:
+            color_map[value] = plotly_colors[i]
+        except:
+            color_map[value] = plotly_colors[i-len(plotly_colors)]
 
     fig = px.pie(df, values='Share / %', names='Utility', color='Utility', color_discrete_map=color_map)
 
     st.plotly_chart(fig, use_container_width=True)
-
-
 

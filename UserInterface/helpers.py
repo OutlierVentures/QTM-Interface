@@ -842,6 +842,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                     else:
                         utility_parameter_choice[key] = val['value']
 
+    with st.expander("**Advanced Settings**"):
+        st.markdown("### Advanced Settings")
+
 
     # Map new parameters to model input parameters
     new_params = {
