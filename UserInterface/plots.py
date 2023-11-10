@@ -94,7 +94,7 @@ def get_simulation_data(db, dataset_name):
     conn.close()
     return df
 
-def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y_title=None, info_box=None, plot_title=None):
+def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
 
@@ -105,7 +105,7 @@ def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    new_max_months = line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+    new_max_months = line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
     return new_max_months
 
 def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
@@ -201,7 +201,7 @@ def monte_carlo_plot_st(df,aggregate_dimension,x,y,runs):
     st.pyplot(fig)
 
 
-def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None):
+def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
     '''
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
@@ -245,7 +245,7 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
     formatted_columns = [format_column_name(col) for col in [x] + y_series_updated]
     chart_data.columns = formatted_columns
     
-    fig = px.line(chart_data, x=formatted_columns[0], y=formatted_columns[1:])
+    fig = px.line(chart_data, x=formatted_columns[0], y=formatted_columns[1:], log_y=logy)
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
@@ -412,36 +412,42 @@ def plot_business(param_id):
 
 def plot_token_economy(param_id, max_months):
     ##ANALYSIS TAB
+    log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=True)
     max_months = plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
                         'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
-                        , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens")
+                        , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
     
     pcol31, pcol32 = st.columns(2)
     with pcol31:
+        log_scale_toggle_lp_token_price = st.toggle('Log Scale - Token Price', value=True)
         max_months = plot_results_plotly('timestep', ['lp_token_price'], 1, param_id, max_months
-                            , plot_title="Token Price", x_title="Months", y_title="USD")
+                            , plot_title="Token Price", x_title="Months", y_title="USD", logy=log_scale_toggle_lp_token_price)
     with pcol32:
+        log_scale_toggle_valuations = st.toggle('Log Scale - Valuations', value=True)
         max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
-                            , plot_title="Valuations", x_title="Months", y_title="USD (Millions)")
+                            , plot_title="Valuations", x_title="Months", y_title="USD (Millions)", logy=log_scale_toggle_valuations)
     
     pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
                      'holding_share','transfer_share'], param_id, plot_title="Token Utility Share")
     
     pcol41, pcol42 = st.columns(2)
     with pcol41:
+        log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=True)
         max_months = plot_results_plotly('timestep', ['u_staking_allocation',
                                         'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
                                         'te_airdrop_tokens','te_holding_allocation'], 1, param_id, max_months
-                                        , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens")
+                                        , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
     with pcol42:
+        log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=True)
         max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
                                         'te_holding_allocation_cum'], 1, param_id, max_months
-                                        , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens")
+                                        , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
     
+    log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
     max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
-                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %")
+                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr)
 
 def utility_pie_plot(utility_shares, utility_values):
 

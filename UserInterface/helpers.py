@@ -449,7 +449,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                     "seed" : 24,
                     "presale_1" : 12,
                     "presale_2" : 6,
-                    "public_sale" : 0,
+                    "public_sale" : 3,
                     "team" : 36,
                     "advisors" : 24,
                     "strategic_partners" : 24,
