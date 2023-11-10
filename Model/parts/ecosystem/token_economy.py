@@ -58,10 +58,10 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     # parameters
     total_token_supply = params['initial_total_supply']
-    selling_perc = params['avg_token_selling_allocation'] / 100
-    utility_perc = params['avg_token_utility_allocation'] / 100
-    holding_perc = params['avg_token_holding_allocation'] / 100
-    remove_perc = params['avg_token_utility_removal'] / 100
+    selling_perc = params['avg_token_selling_allocation']
+    utility_perc = params['avg_token_utility_allocation']
+    holding_perc = params['avg_token_holding_allocation']
+    remove_perc = params['avg_token_utility_removal']
     initial_lp_tokens = params['initial_lp_token_allocation']
 
     # state variables
