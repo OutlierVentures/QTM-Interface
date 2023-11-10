@@ -28,6 +28,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         # Adjusting Parameters
         if parameter_id_choice == "":
             sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
+            sys_param['avg_token_utility_allocation'] = [sys_param['avg_token_utility_allocation'][0] / 100]
+            sys_param['avg_token_holding_allocation'] = [sys_param['avg_token_holding_allocation'][0] / 100]
+            sys_param['avg_token_selling_allocation'] = [sys_param['avg_token_selling_allocation'][0] / 100]
+            sys_param['avg_token_utility_removal'] = [sys_param['avg_token_utility_removal'][0] / 100]
         else:
             sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
             if len(sys_param_df[sys_param_df['id'] == parameter_id_choice])<1:
@@ -591,6 +595,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.write("**Meta Bucket Allocations**")
             col73, col74, col75, col76 = st.columns(4)
             with col73:
+                print(float(sys_param['avg_token_selling_allocation'][0])*100)
                 avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
             with col74:
                 avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
