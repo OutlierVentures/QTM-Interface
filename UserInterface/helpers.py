@@ -40,7 +40,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
             
         with col11:
-            equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angle investors")
+            equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angel investors")
             initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=0.001, max_value=1000000.0, value=float(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
         with col12:
             launch_valuation = st.number_input('Public Sale Valuation / $m', min_value=0.1, max_value=500.0, value=float(sys_param['public_sale_valuation'][0]/1e6), help="This is the valuation at which the public sale tokens are sold. It is equivalent to the token launch valuation.")
@@ -48,7 +48,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.write("Launch Price: "+ str(launch_valuation/initial_supply)+" $/token")
         with col13:
             if equity_investors:
-                equity_investments = st.number_input('Angle & Equity Raises / $m', min_value=0.0, value=float(sys_param['angle_raised'][0]/1e6), help="The amount of money raised from equity investors.")
+                equity_investments = st.number_input('Angel & Equity Raises / $m', min_value=0.0, value=float(sys_param['angel_raised'][0]/1e6), help="The amount of money raised from equity investors.")
                 equity_perc = st.number_input('Equity sold / %', min_value=0.0, max_value=100.0, value=float(str(sys_param['equity_external_shareholders_perc'][0]).split("%")[0]), help="The percentage of equity sold to external shareholders.")
             else:
                 equity_investments = 0.0
@@ -134,7 +134,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             if vesting_style == 'Custom' or show_full_alloc_table:
                 st.write("Name")
                 if equity_perc > 0:
-                    st.text_input("Angle","Angle", label_visibility="collapsed", disabled=True, key="angle_name")
+                    st.text_input("Angel","Angel", label_visibility="collapsed", disabled=True, key="angel_name")
                 if seed_raised > 0:
                     st.text_input("Seed","Seed", label_visibility="collapsed", disabled=True, key="seed_name")
                 if presale_1_raised > 0:
@@ -161,7 +161,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 st.write("Allocation / %")
                 equity_allocation = (equity_perc/100) * (sys_param['team_allocation'][0]/(1-equity_perc/100))
                 if equity_perc > 0:
-                    equity_allocation_new = st.number_input('equity_allocation_new', label_visibility="collapsed", min_value=0.0, value=equity_allocation, disabled=True, key="angle_allocation")
+                    equity_allocation_new = st.number_input('equity_allocation_new', label_visibility="collapsed", min_value=0.0, value=equity_allocation, disabled=True, key="angel_allocation")
                 else:
                     equity_allocation_new = 0.0
                 if seed_raised > 0:
@@ -235,7 +235,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         with col43:
             if vesting_style == 'Slow':
                 init_vesting_dict = {
-                    "angle" : 0.0,
+                    "angel" : 0.0,
                     "seed" : 0.0,
                     "presale_1" : 0.0,
                     "presale_2" : 0.0,
@@ -251,7 +251,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Medium':
                 init_vesting_dict = {
-                    "angle" : 0.0,
+                    "angel" : 0.0,
                     "seed" : 0.0,
                     "presale_1" : 0.0,
                     "presale_2" : 5.0,
@@ -267,7 +267,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Fast':
                 init_vesting_dict = {
-                    "angle" : 0.0,
+                    "angel" : 0.0,
                     "seed" : 0.0,
                     "presale_1" : 5.0,
                     "presale_2" : 15.0,
@@ -284,9 +284,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             if vesting_style == 'Custom' or show_full_alloc_table:
                 st.write("Init. Vesting / %")
                 if equity_perc > 0:
-                    angle_initial_vesting = st.number_input("angle_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['angle_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['angle']][0], key="angle_initial_vesting")
+                    angel_initial_vesting = st.number_input("angel_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['angel_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['angel']][0], key="angel_initial_vesting")
                 else:
-                    angle_initial_vesting = 0.0
+                    angel_initial_vesting = 0.0
                 if seed_raised > 0:
                     seed_initial_vesting = st.number_input("seed_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['seed_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['seed']][0], key="seed_initial_vesting")
                 else:
@@ -324,7 +324,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         with col44:
             if vesting_style == 'Slow':
                 cliff_dict = {
-                    "angle" : 24,
+                    "angel" : 24,
                     "seed" : 18,
                     "presale_1" : 12,
                     "presale_2" : 9,
@@ -340,7 +340,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Medium':
                 cliff_dict = {
-                    "angle" : 18,
+                    "angel" : 18,
                     "seed" : 12,
                     "presale_1" : 9,
                     "presale_2" : 6,
@@ -356,7 +356,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Fast':
                 cliff_dict = {
-                    "angle" : 12,
+                    "angel" : 12,
                     "seed" : 9,
                     "presale_1" : 6,
                     "presale_2" : 3,
@@ -373,9 +373,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             if vesting_style == 'Custom' or show_full_alloc_table:
                 st.write("Cliff / Mon.")
                 if equity_perc > 0:
-                    angle_cliff = st.number_input("angle_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['angle_cliff'][0] if vesting_style == 'Custom' else cliff_dict['angle']][0]), key="angle_cliff")
+                    angel_cliff = st.number_input("angel_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['angel_cliff'][0] if vesting_style == 'Custom' else cliff_dict['angel']][0]), key="angel_cliff")
                 else:
-                    angle_cliff = 0.0
+                    angel_cliff = 0.0
                 if seed_raised > 0:
                     seed_cliff = st.number_input("seed_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['seed_cliff'][0] if vesting_style == 'Custom' else cliff_dict['seed']][0]), key="seed_cliff")
                 else:
@@ -413,7 +413,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         with col45:
             if vesting_style == 'Slow':
                 duration_dict = {
-                    "angle" : 72,
+                    "angel" : 72,
                     "seed" : 48,
                     "presale_1" : 36,
                     "presale_2" : 24,
@@ -429,7 +429,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Medium':
                 duration_dict = {
-                    "angle" : 48,
+                    "angel" : 48,
                     "seed" : 36,
                     "presale_1" : 24,
                     "presale_2" : 12,
@@ -445,7 +445,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 }
             if vesting_style == 'Fast':
                 duration_dict = {
-                    "angle" : 36,
+                    "angel" : 36,
                     "seed" : 24,
                     "presale_1" : 12,
                     "presale_2" : 6,
@@ -462,9 +462,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             if vesting_style == 'Custom' or show_full_alloc_table:
                 st.write("Duration / Mon.")
                 if equity_perc > 0:
-                    angle_duration = st.number_input("angle_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['angle_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['angle']][0]), key="angle_vesting_duration")
+                    angel_duration = st.number_input("angel_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['angel_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['angel']][0]), key="angel_vesting_duration")
                 else:
-                    angle_duration = 0.0
+                    angel_duration = 0.0
                 if seed_raised > 0:
                     seed_duration = st.number_input("seed_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['seed_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['seed']][0]), key="seed_vesting_duration")
                 else:
@@ -548,14 +548,14 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
 
             },
             "Medium" : {
-                "avg_product_user_growth_rate" : 3.5,
-                "avg_token_holder_growth_rate" : 3.5,
+                "avg_product_user_growth_rate" : 4.0,
+                "avg_token_holder_growth_rate" : 4.0,
                 "product_adoption_velocity" : 1.5,
                 "token_adoption_velocity" : 1.5,
                 "one_time_product_revenue_per_user" : 0.0,
                 "regular_product_revenue_per_user" : 10.0,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 15.0,
+                "regular_token_buy_per_user" : 18.0,
                 "avg_token_utility_allocation" : 60.0,
                 "avg_token_selling_allocation" : 30.0,
                 "avg_token_holding_allocation" : 10.0,
@@ -565,8 +565,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             "Strong" : {
                 "avg_product_user_growth_rate" : 5.0,
                 "avg_token_holder_growth_rate" : 5.0,
-                "product_adoption_velocity" : 3.5,
-                "token_adoption_velocity" : 3.5,
+                "product_adoption_velocity" : 2.5,
+                "token_adoption_velocity" : 2.5,
                 "one_time_product_revenue_per_user" : 0.0,
                 "regular_product_revenue_per_user" : 12.5,
                 "one_time_token_buy_per_user" : 0.0,
@@ -857,7 +857,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'initial_total_supply': initial_supply*1e6,
         'public_sale_supply_perc': public_sale_supply,
         'public_sale_valuation': launch_valuation * 1e6,
-        'angle_raised': equity_investments * 1e6,
+        'angel_raised': equity_investments * 1e6,
         'seed_raised': seed_raised* 1e6,
         'presale_1_raised': presale_1_raised* 1e6,
         'presale_2_raised': presale_2_raised* 1e6,
@@ -865,9 +865,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         'seed_valuation': seed_valuation* 1e6,
         'presale_1_valuation': presale_1_valuation* 1e6,
         'presale_2_valuation': presale_2_valuation* 1e6,
-        'angle_initial_vesting': [angle_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['angle']][0],
-        'angle_cliff': [angle_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['angle']][0],
-        'angle_vesting_duration': [angle_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['angle']][0],
+        'angel_initial_vesting': [angel_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['angel']][0],
+        'angel_cliff': [angel_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['angel']][0],
+        'angel_vesting_duration': [angel_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['angel']][0],
         'seed_initial_vesting': [seed_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['seed']][0],
         'seed_cliff': [seed_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['seed']][0],
         'seed_vesting_duration': [seed_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['seed']][0],

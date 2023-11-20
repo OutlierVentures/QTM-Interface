@@ -350,7 +350,7 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
-    vesting_cum_plot_results_plotly('timestep', ['angle_a_tokens_vested_cum',
+    vesting_cum_plot_results_plotly('timestep', ['angel_a_tokens_vested_cum',
                                                  'seed_a_tokens_vested_cum',
                                                  'presale_1_a_tokens_vested_cum',
                                                  'presale_2_a_tokens_vested_cum',
@@ -370,7 +370,7 @@ def plot_fundraising(param_id):
     with pcol11:
         ##EFFECTIVE TOKEN PRICE
         bar_plot_plotly([
-            'angle_token_effective',
+            'angel_token_effective',
             'seed_token_effective',
             'presale_1_token_effective',
             'presale_2_token_effective',
@@ -379,7 +379,7 @@ def plot_fundraising(param_id):
     with pcol12:
         ##rrPIE CHART OF INITIAL ALLOCATION
         pie_plot_plotly([
-            'angle_token_allocation',
+            'angel_token_allocation',
             'seed_token_allocation',
             'presale_1_token_allocation',
             'presale_2_token_allocation',
@@ -412,7 +412,7 @@ def plot_business(param_id):
 
 def plot_token_economy(param_id, max_months):
     ##ANALYSIS TAB
-    log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=True)
+    log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
     max_months = plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
                         'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
@@ -426,7 +426,7 @@ def plot_token_economy(param_id, max_months):
     with pcol32:
         log_scale_toggle_valuations = st.toggle('Log Scale - Valuations', value=True)
         max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
-                            , plot_title="Valuations", x_title="Months", y_title="USD (Millions)", logy=log_scale_toggle_valuations)
+                            , plot_title="Valuations", x_title="Months", y_title="USD", logy=log_scale_toggle_valuations)
     
     pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
                      'holding_share','transfer_share'], param_id, plot_title="Token Utility Share")

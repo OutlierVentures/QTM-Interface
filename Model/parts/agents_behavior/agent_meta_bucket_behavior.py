@@ -49,7 +49,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             Agent actions are based on a weighted random choices.
             """
             agent_behavior_dict = {
-                'angle': {
+                'angel': {
                     'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
                     'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
                     'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,

@@ -31,7 +31,7 @@ def get_sys_param(input_file, adjusted_params):
 
     # calculating the token allocations for different agents
     agent_token_allocation = {
-        'angle_token_allocation': [x/100 * (y/100 / (1-x/100)) for x in sys_param['equity_external_shareholders_perc'] for y in sys_param['team_allocation']],
+        'angel_token_allocation': [x/100 * (y/100 / (1-x/100)) for x in sys_param['equity_external_shareholders_perc'] for y in sys_param['team_allocation']],
         'seed_token_allocation' : calculate_investor_allocation(sys_param, "seed"),
         'presale_1_token_allocation' : calculate_investor_allocation(sys_param, "presale_1"),
         'presale_2_token_allocation' : calculate_investor_allocation(sys_param, "presale_2"),
@@ -63,7 +63,7 @@ def get_sys_param(input_file, adjusted_params):
 
     # calculating the initial values for the different agents
     stakeholder_names = [
-        'angle',
+        'angel',
         'seed',
         'presale_1',
         'presale_2',
@@ -84,7 +84,7 @@ def get_sys_param(input_file, adjusted_params):
 
     # defining the mapping between the stakeholder names and their type categories
     stakeholder_name_mapping = {
-        'angle': 'early_investor',
+        'angel': 'early_investor',
         'seed': 'early_investor',
         'presale_1': 'early_investor',
         'presale_2': 'early_investor',
@@ -173,7 +173,7 @@ def get_sys_param(input_file, adjusted_params):
     sys_param.update(utility_initial_values)
 
     agent_effective_price = {
-        'angle_token_effective': [x/100 for x in sys_param['equity_external_shareholders_perc']],
+        'angel_token_effective': [x/100 for x in sys_param['equity_external_shareholders_perc']],
         'seed_token_effective' : calculate_investor_effective_token_price(sys_param, "seed"),
         'presale_1_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_1"),
         'presale_2_token_effective' : calculate_investor_effective_token_price(sys_param, "presale_2"),
