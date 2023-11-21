@@ -51,8 +51,10 @@ st.markdown("## Token Economy 🪙")
 if 'param_id' in st.session_state:
     if st.session_state['param_id'] != "":
         if 'max_months' in st.session_state:
-            if st.session_state['max_months']<120:
+            sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+            sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
+            if st.session_state['max_months']<sys_param['simulation_duration'].iloc[0]:
                 st.error(f"The simulation stopped after {st.session_state['max_months']} months, because the business ran out of funds.", icon="⚠️")
             plot_token_economy(st.session_state['param_id'], st.session_state['max_months'])
         else:
-            plot_token_economy(st.session_state['param_id'], 120)
+            plot_token_economy(st.session_state['param_id'], sys_param['simulation_duration'].iloc[0])

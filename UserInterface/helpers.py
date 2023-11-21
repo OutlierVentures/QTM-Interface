@@ -987,7 +987,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     new_params.update(utility_parameter_choice)
 
     # Consistency Checks
-    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or min(airdrop_date1, airdrop_date2, airdrop_date3, buyback_start, burn_start) < token_launch_date:
+    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -1036,7 +1036,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     col101, col102, col103, col104, col105 = st.columns(5)
     with col101:
-        simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 120, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
+        simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 60, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
         new_params.update({'simulation_duration': simulation_duration})
 
     return new_params

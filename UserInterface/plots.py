@@ -105,7 +105,7 @@ def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    new_max_months = line_plot_plotly(df,x, y_columns, run, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
+    new_max_months = line_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
     return new_max_months
 
 def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
@@ -201,7 +201,7 @@ def monte_carlo_plot_st(df,aggregate_dimension,x,y,runs):
     st.pyplot(fig)
 
 
-def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
+def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
     '''
     A function that generates a line plot from a series of data series in a frame in streamlit
     '''
@@ -209,10 +209,13 @@ def line_plot_plotly(df,x,y_series,run, x_title=None, y_title=None, info_box=Non
     y_series_updated = [col for col in y_series if chart_data[col].sum() != 0]
     chart_data = drop_zero_columns(chart_data)
 
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == param_id]
+
     # cut plot data until the point where ba_cash_balance runs below zero
     if 'ba_cash_balance' in y_series_updated:
         chart_data = chart_data[chart_data['ba_cash_balance'] > 0]
-        if len(chart_data) < 120:
+        if len(chart_data) < sys_param['simulation_duration'].iloc[0]:
             st.error(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
     
     if 'reserve_a_tokens' in y_series_updated:
@@ -399,7 +402,9 @@ def plot_fundraising(param_id):
 
 def plot_business(param_id):    
     ##INPUTS TAB
-    max_months = 120   
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == param_id]
+    max_months = sys_param['simulation_duration'].iloc[0]   
     max_months = plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
     max_months = plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
     pcol21, pcol22 = st.columns(2)

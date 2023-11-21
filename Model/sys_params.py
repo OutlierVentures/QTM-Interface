@@ -215,6 +215,7 @@ def get_sys_param(input_file, adjusted_params):
             if 'project_name' in sys_param.keys() and 'project_name' in df.columns:
                 if sys_param['project_name'][0] in df['project_name'].to_list():
                     st.warning(f"Project name {sys_param['project_name'][0]} already exists in database. Please choose a different project name and run the simulation again.", icon="⚠️")
+                    execute_sim = False
                 if sys_param['project_name'][0] in ["", " ", "  ", "   ", "    ", "     "]:
                     st.error(f"Please provide a project name before running the simulation!", icon="⚠️")
                     execute_sim = False
