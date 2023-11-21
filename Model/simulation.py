@@ -43,7 +43,7 @@ def simulation(input_file, adjusted_params):
     if length == 0 and execute_sim:
         print("New simulation started...")
         MONTE_CARLO_RUNS = 1
-        TIMESTEPS = 12*10
+        TIMESTEPS = int(sys_param['simulation_duration'][0])
 
         model = Model(initial_state=initial_state, params=sys_param, state_update_blocks=state_update_blocks)
         simulation = Simulation(model=model, timesteps=TIMESTEPS, runs=MONTE_CARLO_RUNS)

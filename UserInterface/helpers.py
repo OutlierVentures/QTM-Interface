@@ -988,6 +988,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         if count_staking_utilities > 1:
             st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
 
+    col101, col102, col103, col104, col105 = st.columns(5)
+    with col101:
+        simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 120, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
+        new_params.update({'simulation_duration': simulation_duration})
 
     return new_params
 
