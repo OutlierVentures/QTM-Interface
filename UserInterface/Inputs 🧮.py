@@ -104,7 +104,7 @@ with col01:
 
 with col02:
     # Upload Input File
-    with st.expander("Upload Own Input File"):
+    with st.expander("Upload Own Input File (optional)"):
         st.markdown("### Load Input File 📂")
         st.markdown("Use the default input file or upload your own based on the")
         st.markdown("[Spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing) ➡️ navigate to radCAD_inputs tab ➡️ save it as .csv and then upload it here ⬇️")
@@ -128,13 +128,13 @@ if uploaded_file is not None:
         f.write(uploaded_file.getvalue())
 
     # get new parameters from UI
-    new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
+    new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01)
 else:
     input_file_name = 'Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs DEFAULT.csv'
     input_file_path = input_file_base_path + input_file_name
     
     # get new parameters from UI
-    new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list)
+    new_params = model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01)
 
 
 # Run Simulation

@@ -16,29 +16,37 @@ param_help = {
     'vesting_style': f"The vesting style determines how fast the tokens are released. The faster the higher the initial vesting and the lower the cliff and duration months.",
 }
 
-def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
+def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     if 'param_id' in st.session_state:
         parameter_id_choice = st.session_state['param_id']
     else:
         parameter_id_choice = ""
-    
+
+    # Adjusting Parameters
+    if parameter_id_choice == "":
+        sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
+        sys_param['avg_token_utility_allocation'] = [sys_param['avg_token_utility_allocation'][0] / 100]
+        sys_param['avg_token_holding_allocation'] = [sys_param['avg_token_holding_allocation'][0] / 100]
+        sys_param['avg_token_selling_allocation'] = [sys_param['avg_token_selling_allocation'][0] / 100]
+        sys_param['avg_token_utility_removal'] = [sys_param['avg_token_utility_removal'][0] / 100]
+    else:
+        sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+        if len(sys_param_df[sys_param_df['id'] == parameter_id_choice])<1:
+            sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
+        else:
+            sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
+
+    with col01:
+        token_launch_date = st.date_input("Token Launch Date", value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), help="The token launch date is the time when the token becomes liquid to be traded and at which the vesting conditions start to apply. Defining a date before the today's date means that the token has already been launched and therefore requires additional information about the current token distribution and valuations in the parameter definitions below.")
+        token_launch_date = datetime(token_launch_date.year, token_launch_date.month, token_launch_date.day)
+        if token_launch_date > datetime.today():
+            token_launch = True
+        else:
+            token_launch = False
+
     with st.expander("**Basic Token Information**"):
         st.markdown("### Basic Token Information")
-        col11, col12, col13 = st.columns(3)
-        # Adjusting Parameters
-        if parameter_id_choice == "":
-            sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
-            sys_param['avg_token_utility_allocation'] = [sys_param['avg_token_utility_allocation'][0] / 100]
-            sys_param['avg_token_holding_allocation'] = [sys_param['avg_token_holding_allocation'][0] / 100]
-            sys_param['avg_token_selling_allocation'] = [sys_param['avg_token_selling_allocation'][0] / 100]
-            sys_param['avg_token_utility_removal'] = [sys_param['avg_token_utility_removal'][0] / 100]
-        else:
-            sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
-            if len(sys_param_df[sys_param_df['id'] == parameter_id_choice])<1:
-                sys_param = compose_initial_parameters(pd.read_csv(input_file_path), parameter_list)
-            else:
-                sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
-            
+        col11, col12, col13 = st.columns(3)            
         with col11:
             equity_investors = st.toggle('Equity Investors', value=sys_param['equity_external_shareholders_perc'][0] != 0.0, help="Enable early equity angel investors")
             initial_supply = st.number_input('Initial Total Token Supply / mil.', min_value=0.001, max_value=1000000.0, value=float(sys_param['initial_total_supply'][0]/1e6) , help="The initial total token supply.")
@@ -112,8 +120,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 st.number_input('Presale 1 Alloc / %', disabled=True, value=presale_1_allocation, help="The first presale token allocation as percentage of the initial total supply.")
                 st.number_input('Presale 2 Alloc / %', disabled=True, value=presale_2_allocation, help="The second presale token allocation as percentage of the initial total supply.")
                 st.number_input('Public Sale Alloc / %', disabled=True, value=public_sale_allocation, help="The public sale token allocation as percentage of the initial total supply.")
-            
-
 
     with st.expander("**Token Allocations & Vesting**"):
         st.markdown("### Token Allocations & Vesting")
@@ -513,6 +519,18 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
         if lp_allocation < 0:
             st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+        
+        airdrop_date1 = datetime(airdrop_date1.year, airdrop_date1.month, airdrop_date1.day)
+        airdrop_date2 = datetime(airdrop_date2.year, airdrop_date2.month, airdrop_date2.day)
+        airdrop_date3 = datetime(airdrop_date3.year, airdrop_date3.month, airdrop_date3.day)
+
+        if airdrop_toggle:
+            if airdrop_date1 < token_launch_date:
+                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+            if airdrop_date2 < token_launch_date:
+                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+            if airdrop_date3 < token_launch_date:
+                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
 
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
@@ -648,11 +666,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
             other_monthly_costs = [float(sys_param['other_monthly_costs'][0])/1e3 if expenditures == 0.0 else expenditures][0]
         
         st.write("**Buybacks and Burns**")
-        col91, col92, col93 = st.columns(3)
+        col91, col92 = st.columns(2)
         with col91:
             enable_protocol_buybacks = st.toggle('Enable Protocol Token Buybacks', value=float(sys_param['buyback_perc_per_month'][0]) > 0 or float(sys_param['buyback_fixed_per_month'][0]) > 0, help=" Enable the buyback of tokens to refill a protocol bucket.")
-            enable_protocol_burning = st.toggle('Enable Protocol Token Burning', value=float(sys_param['burn_per_month'][0]) > 0, help=" Enable the burning of tokens from a protocol bucket.")
-        with col92:
             if enable_protocol_buybacks:
                 buyback_type = st.radio('Buyback Type',('Fixed', 'Percentage'), index=0, help='The buyback type determines the buyback behavior of the business. A fixed buyback means that the business buys back a fixed USD worth amount of tokens per month. A percentage buyback means that the business buys back a percentage USD worth amount of tokens per month, depending on the business funds.')
                 if buyback_type == 'Fixed':
@@ -677,7 +693,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 buyback_bucket = [sys_param['buyback_bucket'][0] if enable_protocol_buybacks else 'Reserve'][0]
                 buyback_start = [datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
                 buyback_end = [datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
-        with col93:
+        with col92:
+            enable_protocol_burning = st.toggle('Enable Protocol Token Burning', value=float(sys_param['burn_per_month'][0]) > 0, help=" Enable the burning of tokens from a protocol bucket.")
             if enable_protocol_burning:
                 burn_per_month = st.number_input('Burn per month / %', label_visibility="visible", min_value=0.0, value=[float(sys_param['burn_per_month'][0]) if enable_protocol_burning else 0.0][0], disabled=False, key="burn_per_month", help="The total supply percentage of tokens being burned from the determined protocol bucket per month.")
                 burn_start = st.date_input("Burning Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y"), help="The date when monthly burning should start.")
@@ -689,6 +706,19 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
                 burn_bucket = [sys_param['burn_bucket'][0] if enable_protocol_burning else 'Reserve'][0]
                 burn_start = [datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
                 burn_end = [datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
+
+        buyback_start = datetime(buyback_start.year, buyback_start.month, buyback_start.day)
+        buyback_end = datetime(buyback_end.year, buyback_end.month, buyback_end.day)
+        burn_start = datetime(burn_start.year, burn_start.month, burn_start.day)
+        burn_end = datetime(burn_end.year, burn_end.month, burn_end.day)
+
+        if enable_protocol_buybacks:
+            if buyback_start < token_launch_date:
+                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
+        if enable_protocol_burning:
+            if burn_start < token_launch_date:
+                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
+        
 
     with st.expander("**Utilities**"):
         st.markdown("### Utilities")
@@ -957,7 +987,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
     new_params.update(utility_parameter_choice)
 
     # Consistency Checks
-    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100:
+    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or min(airdrop_date1, airdrop_date2, airdrop_date3, buyback_start, burn_start) < token_launch_date:
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -978,6 +1008,22 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list):
         
         if lp_allocation < 0:
             st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+        
+        if airdrop_toggle:
+            if airdrop_date1 < token_launch_date:
+                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+            if airdrop_date2 < token_launch_date:
+                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+            if airdrop_date3 < token_launch_date:
+                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+
+        if enable_protocol_buybacks:
+            if buyback_start < token_launch_date:
+                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
+        if enable_protocol_burning:
+            if burn_start < token_launch_date:
+                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
+
 
         if meta_bucket_alloc_sum != 100:
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
