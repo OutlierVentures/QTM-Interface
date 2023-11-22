@@ -62,7 +62,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 equity_investments = 0.0
                 equity_perc = 0.0        
     
-
     with st.expander("**Fundraising**"):
         st.markdown("### Fundraising")
         col21, col22, col23, col24 = st.columns(4)
@@ -123,6 +122,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     with st.expander("**Token Allocations & Vesting**"):
         st.markdown("### Token Allocations & Vesting")
+        vesting_dict = {} # structure: {name: {'allocation': allocation, 'initial_vesting': initial_vesting, 'cliff': cliff, 'duration': duration}}
         col31, col32 = st.columns(2)
         with col31:
             vesting_style = st.radio('Vesting Style',('Slow', 'Medium', 'Fast','Custom'), index=0, help=param_help['vesting_style'])
@@ -531,6 +531,88 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
             if airdrop_date3 < token_launch_date:
                 st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+        
+        # fill vesting_dict
+        vesting_dict = {
+            "angel" : {
+                "allocation" : equity_allocation_new,
+                "initial_vesting" : [angel_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['angel']][0],
+                "cliff" : [angel_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['angel']][0],
+                "duration" : [angel_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['angel']][0]
+            },
+            "seed" : {
+                "allocation" : seed_allocation,
+                "initial_vesting" : [seed_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['seed']][0],
+                "cliff" : [seed_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['seed']][0],
+                "duration" : [seed_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['seed']][0]
+            },
+            "presale_1" : {
+                "allocation" : presale_1_allocation,
+                "initial_vesting" : [presale_1_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['presale_1']][0],
+                "cliff" : [presale_1_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['presale_1']][0],
+                "duration" : [presale_1_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['presale_1']][0]
+            },
+            "presale_2" : {
+                "allocation" : presale_2_allocation,
+                "initial_vesting" : [presale_2_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['presale_2']][0],
+                "cliff" : [presale_2_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['presale_2']][0],
+                "duration" : [presale_2_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['presale_2']][0]
+            },
+            "public_sale" : {
+                "allocation" : public_sale_allocation,
+                "initial_vesting" : [public_sale_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['public_sale']][0],
+                "cliff" : [public_sale_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['public_sale']][0],
+                "duration" : [public_sale_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['public_sale']][0]
+            },
+            "team" : {
+                "allocation" : team_allocation,
+                "initial_vesting" : [team_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['team']][0],
+                "cliff" : [team_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['team']][0],
+                "duration" : [team_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['team']][0]
+            },
+            "advisors" : {
+                "allocation" : ov_advisor_allocation,
+                "initial_vesting" : [advisor_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['advisors']][0],
+                "cliff" : [advisor_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['advisors']][0],
+                "duration" : [advisor_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['advisors']][0]
+            },
+            "strategic_partners" : {
+                "allocation" : strategic_partners_allocation,
+                "initial_vesting" : [strategic_partners_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['strategic_partners']][0],
+                "cliff" : [strategic_partners_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['strategic_partners']][0],
+                "duration" : [strategic_partners_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['strategic_partners']][0]
+            },
+            "reserve" : {
+                "allocation" : reserve_allocation,
+                "initial_vesting" : [reserve_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['reserve']][0],
+                "cliff" : [reserve_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['reserve']][0],
+                "duration" : [reserve_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['reserve']][0]
+            },
+            "community" : {
+                "allocation" : community_allocation,
+                "initial_vesting" : [community_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['community']][0],
+                "cliff" : [community_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['community']][0],
+                "duration" : [community_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['community']][0]
+            },
+            "foundation" : {
+                "allocation" : foundation_allocation,
+                "initial_vesting" : [foundation_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['foundation']][0],
+                "cliff" : [foundation_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['foundation']][0],
+                "duration" : [foundation_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['foundation']][0]
+            },
+            "incentivisation" : {
+                "allocation" : incentivisation_allocation,
+                "initial_vesting" : [incentivisation_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['incentivisation']][0],
+                "cliff" : [incentivisation_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['incentivisation']][0],
+                "duration" : [incentivisation_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['incentivisation']][0]
+            },
+            "staking_vesting" : {
+                "allocation" : staking_vesting_allocation,
+                "initial_vesting" : [staking_vesting_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['staking_vesting']][0],
+                "cliff" : [staking_vesting_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['staking_vesting']][0],
+                "duration" : [staking_vesting_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['staking_vesting']][0]
+            }            
+        }
 
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
@@ -877,9 +959,41 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     else:
                         utility_parameter_choice[key] = val['value']
 
-    with st.expander("**Advanced Settings**"):
+    """ with st.expander("**Advanced Settings**"):
         st.markdown("### Advanced Settings")
-        st.write("Under development...")
+        st.write("Under development...") """
+    
+    if not token_launch:
+        with st.expander("**Token In-Market Initialization (for already launched tokens)**"):
+            st.markdown("### Token In-Market Initialization")
+            st.markdown("Use the following input parameters to initialize the model for a token that already launched in the market. Note that all the above settings will still be valid and important for the simulation.")
+
+            current_initial_supply = st.number_input('Total Supply / m', label_visibility="visible", min_value=0.0, value=initial_supply, disabled=False, key="initial_supply", help="The total token supply.")
+            if initial_supply < current_initial_supply:
+                st.info(f"The current total supply ({current_initial_supply}m) is higher than the initial total supply ({initial_supply}m). This means that new tokens got **minted** since token launch.", icon="ℹ️")
+            if initial_supply > current_initial_supply:
+                st.info(f"The current total supply ({current_initial_supply}m) is lower than the initial total supply ({initial_supply}m). This means that tokens got **burned** since token launch.", icon="ℹ️")
+            
+            token_fdv = st.number_input('Current Token FDV / $m', label_visibility="visible", min_value=0.0, value=launch_valuation, disabled=False, key="token_fdv", help="The token fully diluted valuation.")
+
+            current_holdings = {}
+            current_staked = {}
+            vested_dict, vested_supply_sum = calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vesting_dict)
+            st.write(f"**Total Vested Tokens: {round(vested_supply_sum,2)}m | {round(vested_supply_sum/initial_supply*100,2)}%**")
+            col101, col102, col103 = st.columns(3)
+            with col101:
+                st.write("**Stakeholder**")
+                for stakeholder in vested_dict:
+                    st.text_input('Stakeholder', value=stakeholder, label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
+                    
+            with col102:
+                st.write("**Token Holdings / m**")
+                for stakeholder in vested_dict:
+                    current_holdings[stakeholder] = st.number_input(f'Token Holdings ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder], disabled=False, key=f"current_holdings_{stakeholder}", help=f"The current holdings of {stakeholder}.")
+            with col103:
+                st.write("**Tokens Staked / m**")
+                for stakeholder in vested_dict:
+                    current_staked[stakeholder] = st.number_input(f'Tokens Staked ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=0.0, disabled=False, key=f"current_staked_{stakeholder}", help=f"The current staked tokens of {stakeholder}.")
 
     # Map new parameters to model input parameters
     new_params = {
@@ -1034,8 +1148,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         if count_staking_utilities > 1:
             st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
 
-    col101, col102, col103, col104, col105 = st.columns(5)
-    with col101:
+    col111, col112, col113, col114, col115 = st.columns(5)
+    with col111:
         simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 60, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
         new_params.update({'simulation_duration': simulation_duration})
 
@@ -1055,3 +1169,29 @@ def delete_parameter_and_simulation_data(param_id):
         pass
     conn.commit()
     conn.close()
+
+def calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vesting_dict):
+    vested_supply_sum = 0
+    vested_dict = {}
+    
+    # use the vesting dictionary to calculate the vested supply for each stakeholder considering the current date, the token_launch_date, the initial vesting, the cliff and the vesting duration
+    passed_months = np.abs(int(months_difference(token_launch_date, datetime.today())))
+    
+    for stakeholder in vesting_dict:
+        if stakeholder in vesting_dict:
+            allocation = vesting_dict[stakeholder]['allocation']
+            initial_vesting = vesting_dict[stakeholder]['initial_vesting']
+            cliff = vesting_dict[stakeholder]['cliff']
+            duration = vesting_dict[stakeholder]['duration']
+            vested_supply = initial_vesting/100 * allocation/100 * initial_supply if passed_months < cliff else initial_vesting/100 * allocation/100 * initial_supply + (passed_months - cliff) / duration * (allocation/100 * (1-initial_vesting/100)) * initial_supply
+            vested_supply_sum += vested_supply
+            vested_dict[stakeholder] = vested_supply
+    
+    return vested_dict, vested_supply_sum
+
+def months_difference(date1, date2):
+    year_diff = date2.year - date1.year
+    month_diff = date2.month - date1.month
+    total_months = year_diff * 12 + month_diff
+    return total_months
+
