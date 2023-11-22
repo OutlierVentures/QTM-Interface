@@ -968,32 +968,53 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             st.markdown("### Token In-Market Initialization")
             st.markdown("Use the following input parameters to initialize the model for a token that already launched in the market. Note that all the above settings will still be valid and important for the simulation.")
 
-            current_initial_supply = st.number_input('Total Supply / m', label_visibility="visible", min_value=0.0, value=initial_supply, disabled=False, key="initial_supply", help="The total token supply.")
-            if initial_supply < current_initial_supply:
-                st.info(f"The current total supply ({current_initial_supply}m) is higher than the initial total supply ({initial_supply}m). This means that new tokens got **minted** since token launch.", icon="ℹ️")
-            if initial_supply > current_initial_supply:
-                st.info(f"The current total supply ({current_initial_supply}m) is lower than the initial total supply ({initial_supply}m). This means that tokens got **burned** since token launch.", icon="ℹ️")
-            
-            token_fdv = st.number_input('Current Token FDV / $m', label_visibility="visible", min_value=0.0, value=launch_valuation, disabled=False, key="token_fdv", help="The token fully diluted valuation.")
-
             current_holdings = {}
             current_staked = {}
             vested_dict, vested_supply_sum = calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vesting_dict)
-            st.write(f"**Total Vested Tokens: {round(vested_supply_sum,2)}m | {round(vested_supply_sum/initial_supply*100,2)}%**")
-            col101, col102, col103 = st.columns(3)
+
+            col101, col102 = st.columns(2)
             with col101:
+                current_initial_supply = st.number_input('Total Supply / m', label_visibility="visible", min_value=0.001, value=initial_supply, disabled=False, key="initial_supply", help="The total token supply.")
+                if initial_supply < current_initial_supply:
+                    st.info(f"The current total supply ({current_initial_supply}m) is higher than the initial total supply ({initial_supply}m). This means that new tokens got **minted** since token launch.", icon="ℹ️")
+                if initial_supply > current_initial_supply:
+                    st.info(f"The current total supply ({current_initial_supply}m) is lower than the initial total supply ({initial_supply}m). This means that tokens got **burned** since token launch.", icon="ℹ️")
+                
+                token_fdv = st.number_input('Current Token FDV / $m', label_visibility="visible", min_value=0.1, value=launch_valuation, disabled=False, key="token_fdv", help="The token fully diluted valuation.")
+
+                liquidity_depth = st.number_input('Current Liquidity Depth / $m', label_visibility="visible", min_value=0.0, value=token_fdv * vested_supply_sum/initial_supply * 0.1, disabled=False, key="liquidity_depth", help="The current liquidity depth of the token on all DEXs.")
+                if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
+                    st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
+
+            with col102:
+                st.text_input('Total Vested Tokens / m', value=f"{round(vested_supply_sum,2)}m", disabled=True, key=f"vested_supply_sum", help="Total amount of vested tokens according to the vesting schedule and token launch date.")
+                st.text_input('Total Vested Tokens / % init. total supply', value=f"{round(vested_supply_sum/initial_supply*100,2)}%", disabled=True, key=f"vested_supply_sum_perc", help="Total amount of vested tokens as percentage share of the total supply according to the vesting schedule and token launch date.")
+
+            col101a, col102a, col103a = st.columns(3)
+            with col101a:
+                col101b, col102b = st.columns(2)
+                with col101b:
+                    st.text_input('Blank', value="", label_visibility="hidden", disabled=True, key=f"blank_1")
+                with col102b:
+                    st.text_input('Blank', value="", label_visibility="hidden", disabled=True, key=f"blank_2")
                 st.write("**Stakeholder**")
                 for stakeholder in vested_dict:
-                    st.text_input('Stakeholder', value=stakeholder, label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
+                    st.text_input('Stakeholder', value=stakeholder.replace("_"," ").title(), label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
                     
-            with col102:
+            with col102a:
+                if 'Stake' not in utility_shares:
+                    token_holding_ratio_share = st.number_input("Token Holding Ratio Share / %", value=100, disabled=True, key="avg_token_holding_allocation", help="The currently held token supply share by the stakeholders")
+                else:
+                    token_holding_ratio_share = st.number_input("Token Holding Ratio Share / %", value=avg_token_holding_allocation, disabled=False, key="avg_token_holding_allocation", help="The currently held token supply share by the stakeholders")
                 st.write("**Token Holdings / m**")
                 for stakeholder in vested_dict:
-                    current_holdings[stakeholder] = st.number_input(f'Token Holdings ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder], disabled=False, key=f"current_holdings_{stakeholder}", help=f"The current holdings of {stakeholder}.")
-            with col103:
-                st.write("**Tokens Staked / m**")
-                for stakeholder in vested_dict:
-                    current_staked[stakeholder] = st.number_input(f'Tokens Staked ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=0.0, disabled=False, key=f"current_staked_{stakeholder}", help=f"The current staked tokens of {stakeholder}.")
+                    current_holdings[stakeholder] = st.number_input(f'Token Holdings ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder]*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_{stakeholder}", help=f"The current holdings of {stakeholder}.")
+            if 'Stake' in utility_shares:
+                with col103a:
+                    st.number_input("Token Staking Ratio Share / %", min_value=0.0, value=100.0-token_holding_ratio_share, disabled=True, key="avg_token_utility_allocation", help="The currently staked token supply share by the stakeholders as ")
+                    st.write("**Tokens Staked / m**")
+                    for stakeholder in vested_dict:
+                        current_staked[stakeholder] = st.number_input(f'Tokens Staked ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder]*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_{stakeholder}", help=f"The current staked tokens of {stakeholder}.")
 
     # Map new parameters to model input parameters
     new_params = {
@@ -1100,8 +1121,21 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # add utility parameters to new_params
     new_params.update(utility_parameter_choice)
 
+    # add in-market initialization parameters to new_params
+    if not token_launch:
+        new_params.update({
+            'current_initial_supply': current_initial_supply*1e6,
+            'token_fdv': token_fdv*1e6,
+            'liquidity_depth': liquidity_depth*1e6,
+            'current_holdings': current_holdings,
+            'current_staked': current_staked,
+        })
+
     # Consistency Checks
-    if lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning):
+    if (lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or
+        (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
+        (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning) or
+        liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -1138,7 +1172,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             if burn_start < token_launch_date:
                 st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
 
-
         if meta_bucket_alloc_sum != 100:
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
         
@@ -1147,6 +1180,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         
         if count_staking_utilities > 1:
             st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
+        
+        if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
+            st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
+
 
     col111, col112, col113, col114, col115 = st.columns(5)
     with col111:
