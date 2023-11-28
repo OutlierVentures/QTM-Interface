@@ -1,3 +1,4 @@
+
 """Provide date and token economy metrics.
 
 Contains policy functions (PF) and state update functions (SUF).
@@ -17,6 +18,7 @@ Functions:
 """
 
 import pandas as pd
+from ..utils import *
 
 # POLICY FUNCTIONS
 def generate_date(params, substep, state_history, prev_state, **kwargs):
@@ -29,7 +31,7 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
         A dict which points to the current date.
     """
     # parameters
-    initial_date = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
+    initial_date = get_initial_date(params)
     
     # state variables
     old_timestep = prev_state['timestep']

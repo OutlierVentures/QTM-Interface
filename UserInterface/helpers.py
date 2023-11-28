@@ -37,7 +37,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
 
     with col01:
-        token_launch_date = st.date_input("Token Launch Date", value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), help="The token launch date is the time when the token becomes liquid to be traded and at which the vesting conditions start to apply. Defining a date before the today's date means that the token has already been launched and therefore requires additional information about the current token distribution and valuations in the parameter definitions below.")
+        token_launch_date = st.date_input("Token Launch Date", value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), help="The token launch date is the time when the token becomes liquid to be traded and at which the vesting conditions start to apply. Defining a date before the today's date means that the token has already been launched and therefore requires additional information about the current token distribution and valuations in the parameter definitions below.")
         token_launch_date = datetime(token_launch_date.year, token_launch_date.month, token_launch_date.day)
         if token_launch_date > datetime.today():
             token_launch = True
@@ -73,7 +73,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 show_full_fund_table = False
             if fundraising_style != 'Custom':
                 target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target. This is the amount of money raised that will partially be used to seed the DEX liquidity and as a buffer for the financial runway.")
-                left_over_raise = target_raise - equity_investments
+                left_over_raise = target_raise - equity_investments - launch_valuation * (public_sale_supply/100)
         with col23:
             if fundraising_style != 'Custom' and not show_full_fund_table:
                 seed_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0]
@@ -89,21 +89,20 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             valuation_weights = {
                 "seed" : seed_valuation / launch_valuation,
                 "presale_1" : presale_1_valuation / launch_valuation,
-                "presale_2" : presale_2_valuation / launch_valuation,
-                "public_sale" : 1.0
+                "presale_2" : presale_2_valuation / launch_valuation
             }
             valuation_weights_sum = sum(valuation_weights.values())
             if fundraising_style != 'Custom' and not show_full_fund_table:
                 seed_raised = float(valuation_weights["seed"]/valuation_weights_sum * left_over_raise)
                 presale_1_raised = float(valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise)
                 presale_2_raised = float(valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise)
-                public_sale_raised = float(valuation_weights["public_sale"]/valuation_weights_sum * left_over_raise)
+                public_sale_raised = launch_valuation * (public_sale_supply/100)
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
             else:
                 seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float([valuation_weights["seed"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['seed_raised'][0]/1e6)][0]), help="The amount of money raised in the seed round.")
                 presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_1_raised'][0]/1e6)][0]), help="The amount of money raised in the first presale.")
                 presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_2_raised'][0]/1e6)][0]), help="The amount of money raised in the second presale.")
-                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([valuation_weights["public_sale"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['public_sale_raised'][0]/1e6)][0]), help="The amount of money raised in the public sale.")
+                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([launch_valuation * (public_sale_supply/100) if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['public_sale_raised'][0]/1e6)][0]), help="The amount of money raised in the public sale.")
 
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
@@ -228,9 +227,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 airdrop_amount1 = sys_param['airdrop_amount1'][0]
                 airdrop_amount2 = sys_param['airdrop_amount2'][0]
                 airdrop_amount3 = sys_param['airdrop_amount3'][0]
-                airdrop_date1 = datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%y")
-                airdrop_date2 = datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%y")
-                airdrop_date3 = datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%y")
+                airdrop_date1 = datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y")
+                airdrop_date2 = datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y")
+                airdrop_date3 = datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y")
                 lp_allocation = (100 - equity_allocation_new - seed_allocation - presale_1_allocation
                                 - presale_2_allocation - public_sale_allocation - team_allocation - ov_advisor_allocation
                                 - strategic_partners_allocation - reserve_allocation - community_allocation
@@ -247,7 +246,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 0.0,
                     "public_sale" : 10.0,
                     "team" : 0.0,
-                    "advisors" : 0.0,
+                    "advisor" : 0.0,
                     "strategic_partners" : 0.0,
                     "reserve" : 10.0,
                     "community" : 10.0,
@@ -263,7 +262,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 5.0,
                     "public_sale" : 15.0,
                     "team" : 0.0,
-                    "advisors" : 0.0,
+                    "advisor" : 0.0,
                     "strategic_partners" : 0.0,
                     "reserve" : 10.0,
                     "community" : 10.0,
@@ -279,7 +278,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 15.0,
                     "public_sale" : 35.0,
                     "team" : 0.0,
-                    "advisors" : 0.0,
+                    "advisor" : 0.0,
                     "strategic_partners" : 0.0,
                     "reserve" : 25.0,
                     "community" : 25.0,
@@ -310,7 +309,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     public_sale_initial_vesting = 0.0
                 team_initial_vesting = st.number_input("team_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['team_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['team']][0], key="team_initial_vesting")
-                advisor_initial_vesting = st.number_input("advisor_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[(sys_param['ov_initial_vesting'][0]+sys_param['advisor_initial_vesting'][0])/2 if vesting_style == 'Custom' else init_vesting_dict['advisors']][0], key="advisor_initial_vesting")
+                advisor_initial_vesting = st.number_input("advisor_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[(sys_param['ov_initial_vesting'][0]+sys_param['advisor_initial_vesting'][0])/2 if vesting_style == 'Custom' else init_vesting_dict['advisor']][0], key="advisor_initial_vesting")
                 strategic_partners_initial_vesting = st.number_input("strategic_partners_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['strategic_partners_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['strategic_partners']][0], key="strategic_partners_initial_vesting")
                 reserve_initial_vesting = st.number_input("reserve_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['reserve_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['reserve']][0], key="reserve_initial_vesting")
                 community_initial_vesting = st.number_input("community_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['community_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['community']][0], key="community_initial_vesting")
@@ -324,7 +323,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_initial_vesting = 0.0
                 if airdrop_toggle:
-                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%y"), help="The date of the first airdrop.")
+                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y"), help="The date of the first airdrop.")
                     airdrop_amount1 = st.number_input("Amount 1 / %", min_value=0.0, value=sys_param['airdrop_amount1'][0], help="The share of tokens distributed from the airdrop allocation in the first airdrop.")
 
         with col44:
@@ -336,7 +335,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 9,
                     "public_sale" : 3,
                     "team" : 24,
-                    "advisors" : 18,
+                    "advisor" : 18,
                     "strategic_partners" : 18,
                     "reserve" : 0,
                     "community" : 0,
@@ -352,7 +351,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 6,
                     "public_sale" : 0,
                     "team" : 18,
-                    "advisors" : 12,
+                    "advisor" : 12,
                     "strategic_partners" : 12,
                     "reserve" : 0,
                     "community" : 0,
@@ -368,7 +367,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 3,
                     "public_sale" : 0,
                     "team" : 12,
-                    "advisors" : 9,
+                    "advisor" : 9,
                     "strategic_partners" : 9,
                     "reserve" : 0,
                     "community" : 0,
@@ -399,7 +398,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     public_sale_cliff = 0.0
                 team_cliff = st.number_input("team_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['team_cliff'][0] if vesting_style == 'Custom' else cliff_dict['team']][0]), key="team_cliff")
-                advisor_cliff = st.number_input("advisor_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['advisor_cliff'][0] if vesting_style == 'Custom' else cliff_dict['advisors']][0]), key="advisor_cliff")
+                advisor_cliff = st.number_input("advisor_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['advisor_cliff'][0] if vesting_style == 'Custom' else cliff_dict['advisor']][0]), key="advisor_cliff")
                 strategic_partners_cliff = st.number_input("strategic_partners_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['strategic_partners_cliff'][0] if vesting_style == 'Custom' else cliff_dict['strategic_partners']][0]), key="strategic_partners_cliff")
                 reserve_cliff = st.number_input("reserve_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['reserve_cliff'][0] if vesting_style == 'Custom' else cliff_dict['reserve']][0]), key="reserve_cliff")
                 community_cliff = st.number_input("community_cliff", label_visibility="collapsed", min_value=0, value=int([sys_param['community_cliff'][0] if vesting_style == 'Custom' else cliff_dict['community']][0]), key="community_cliff")
@@ -413,7 +412,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_cliff = 0.0
                 if airdrop_toggle:
-                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%y"), help="The date of the second airdrop.")
+                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y"), help="The date of the second airdrop.")
                     airdrop_amount2 = st.number_input("Amount 2 / %", min_value=0.0, value=sys_param['airdrop_amount2'][0], help="The share of tokens distributed from the airdrop allocation in the second airdrop.")
     
         with col45:
@@ -425,7 +424,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 24,
                     "public_sale" : 12,
                     "team" : 72,
-                    "advisors" : 48,
+                    "advisor" : 48,
                     "strategic_partners" : 48,
                     "reserve" : 72,
                     "community" : 72,
@@ -441,7 +440,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 12,
                     "public_sale" : 6,
                     "team" : 48,
-                    "advisors" : 36,
+                    "advisor" : 36,
                     "strategic_partners" : 36,
                     "reserve" : 48,
                     "community" : 48,
@@ -457,7 +456,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     "presale_2" : 6,
                     "public_sale" : 3,
                     "team" : 36,
-                    "advisors" : 24,
+                    "advisor" : 24,
                     "strategic_partners" : 24,
                     "reserve" : 24,
                     "community" : 24,
@@ -488,7 +487,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     public_sale_duration = 0.0
                 team_duration = st.number_input("team_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['team_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['team']][0]), key="team_vesting_duration")
-                advisor_duration = st.number_input("advisor_duration", label_visibility="collapsed", min_value=0, value=int([(sys_param['advisor_vesting_duration'][0] + sys_param['ov_vesting_duration'][0])/2 if vesting_style == 'Custom' else duration_dict['advisors']][0]), key="advisor_vesting_duration")
+                advisor_duration = st.number_input("advisor_duration", label_visibility="collapsed", min_value=0, value=int([(sys_param['advisor_vesting_duration'][0] + sys_param['ov_vesting_duration'][0])/2 if vesting_style == 'Custom' else duration_dict['advisor']][0]), key="advisor_vesting_duration")
                 strategic_partners_duration = st.number_input("strategic_partners_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['strategic_partner_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['strategic_partners']][0]), key="strategic_partners_vesting_duration")
                 reserve_duration = st.number_input("reserve_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['reserve_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['reserve']][0]), key="reserve_vesting_duration")
                 community_duration = st.number_input("community_duration", label_visibility="collapsed", min_value=0, value=int([sys_param['community_vesting_duration'][0] if vesting_style == 'Custom' else duration_dict['community']][0]), key="community_vesting_duration")
@@ -502,7 +501,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_duration = 0.0
                 if airdrop_toggle:
-                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%y"), help="The date of the third airdrop.")
+                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y"), help="The date of the third airdrop.")
                     airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
 
         if show_full_alloc_table or vesting_style == 'Custom':
@@ -526,11 +525,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
         if airdrop_toggle:
             if airdrop_date1 < token_launch_date:
-                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
             if airdrop_date2 < token_launch_date:
-                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
             if airdrop_date3 < token_launch_date:
-                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
         
         # fill vesting_dict
         vesting_dict = {
@@ -570,11 +569,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 "cliff" : [team_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['team']][0],
                 "duration" : [team_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['team']][0]
             },
-            "advisors" : {
+            "advisor" : {
                 "allocation" : ov_advisor_allocation,
-                "initial_vesting" : [advisor_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['advisors']][0],
-                "cliff" : [advisor_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['advisors']][0],
-                "duration" : [advisor_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['advisors']][0]
+                "initial_vesting" : [advisor_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['advisor']][0],
+                "cliff" : [advisor_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['advisor']][0],
+                "duration" : [advisor_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['advisor']][0]
             },
             "strategic_partners" : {
                 "allocation" : strategic_partners_allocation,
@@ -766,28 +765,28 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 if not staking_vesting_toggle:
                     buyback_buckets.pop(buyback_buckets.index('Staking Vesting'))
                 buyback_bucket = st.radio('Buyback Bucket',tuple(buyback_buckets), index=0, help='The buyback bucket determines the destination of the bought back tokens.')
-                buyback_start = st.date_input("Buybacks Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%y"), help="The date when monthly buybacks should start.")
-                buyback_end = st.date_input("Buybacks End", min_value=buyback_start, value=datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") if datetime(buyback_start.year, buyback_start.month, buyback_start.day) <= datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") else datetime(buyback_start.year, buyback_start.month, buyback_start.day), help="The date when monthly buybacks should end.")
+                buyback_start = st.date_input("Buybacks Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%Y"), help="The date when monthly buybacks should start.")
+                buyback_end = st.date_input("Buybacks End", min_value=buyback_start, value=datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%Y") if datetime(buyback_start.year, buyback_start.month, buyback_start.day) <= datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%Y") else datetime(buyback_start.year, buyback_start.month, buyback_start.day), help="The date when monthly buybacks should end.")
 
             else:
                 buyback_perc_per_month = [float(sys_param['buyback_perc_per_month'][0]) if enable_protocol_buybacks else 0.0][0]
                 buyback_fixed_per_month = [float(sys_param['buyback_fixed_per_month'][0])/1e3 if enable_protocol_buybacks else 0.0][0]
                 buyback_bucket = [sys_param['buyback_bucket'][0] if enable_protocol_buybacks else 'Reserve'][0]
-                buyback_start = [datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
-                buyback_end = [datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
+                buyback_start = [datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%Y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y")][0]
+                buyback_end = [datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%Y") if enable_protocol_buybacks else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y")][0]
         with col92:
             enable_protocol_burning = st.toggle('Enable Protocol Token Burning', value=float(sys_param['burn_per_month'][0]) > 0, help=" Enable the burning of tokens from a protocol bucket.")
             if enable_protocol_burning:
                 burn_per_month = st.number_input('Burn per month / %', label_visibility="visible", min_value=0.0, value=[float(sys_param['burn_per_month'][0]) if enable_protocol_burning else 0.0][0], disabled=False, key="burn_per_month", help="The total supply percentage of tokens being burned from the determined protocol bucket per month.")
-                burn_start = st.date_input("Burning Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y"), value=datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y"), help="The date when monthly burning should start.")
-                burn_end = st.date_input("Burning End", min_value=burn_start, value=datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if datetime(burn_start.year, burn_start.month, burn_start.day) <= datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") else datetime(burn_start.year, burn_start.month, burn_start.day), help="The date when monthly burning should end.")
+                burn_start = st.date_input("Burning Start", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['burn_start'][0], "%d.%m.%Y"), help="The date when monthly burning should start.")
+                burn_end = st.date_input("Burning End", min_value=burn_start, value=datetime.strptime(sys_param['burn_end'][0], "%d.%m.%Y") if datetime(burn_start.year, burn_start.month, burn_start.day) <= datetime.strptime(sys_param['burn_end'][0], "%d.%m.%Y") else datetime(burn_start.year, burn_start.month, burn_start.day), help="The date when monthly burning should end.")
                 burn_buckets = ['Reserve', 'Community', 'Foundation']
                 burn_bucket = st.radio('Burn Bucket',tuple(burn_buckets), index=0, help='The burn bucket determines the protocol bucket origin of the burned tokens.')
             else:
                 burn_per_month = [float(sys_param['burn_per_month'][0]) if enable_protocol_burning else 0.0][0]
                 burn_bucket = [sys_param['burn_bucket'][0] if enable_protocol_burning else 'Reserve'][0]
-                burn_start = [datetime.strptime(sys_param['burn_start'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
-                burn_end = [datetime.strptime(sys_param['burn_end'][0], "%d.%m.%y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%y")][0]
+                burn_start = [datetime.strptime(sys_param['burn_start'][0], "%d.%m.%Y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y")][0]
+                burn_end = [datetime.strptime(sys_param['burn_end'][0], "%d.%m.%Y") if enable_protocol_burning else datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y")][0]
 
         buyback_start = datetime(buyback_start.year, buyback_start.month, buyback_start.day)
         buyback_end = datetime(buyback_end.year, buyback_end.month, buyback_end.day)
@@ -796,10 +795,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
         if enable_protocol_buybacks:
             if buyback_start < token_launch_date:
-                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
+                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
         if enable_protocol_burning:
             if burn_start < token_launch_date:
-                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
+                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
         
 
     with st.expander("**Utilities**"):
@@ -888,9 +887,15 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         
         # remove utilities when not activated in the token allocation section
         if not incentivisation_toggle:
-            utility_values.pop('Incentivisation')
+            try:
+                utility_values.pop('Incentivisation')
+            except:
+                pass
         if not staking_vesting_toggle:
-            utility_values.pop('Stake for Vesting Rewards')
+            try:
+                utility_values.pop('Stake for Vesting Rewards')
+            except:
+                pass
 
         # get initial and default values
         default_utilities = []
@@ -999,7 +1004,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     st.text_input('Blank', value="", label_visibility="hidden", disabled=True, key=f"blank_2")
                 st.write("**Stakeholder**")
                 for stakeholder in vested_dict:
-                    st.text_input('Stakeholder', value=stakeholder.replace("_"," ").title(), label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
+                    if vesting_dict[stakeholder]['allocation'] > 0:
+                        st.text_input('Stakeholder', value=stakeholder.replace("_"," ").title(), label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
                     
             with col102a:
                 if 'Stake' not in utility_shares:
@@ -1008,16 +1014,20 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     token_holding_ratio_share = st.number_input("Token Holding Ratio Share / %", value=avg_token_holding_allocation, disabled=False, key="avg_token_holding_allocation", help="The currently held token supply share by the stakeholders")
                 st.write("**Token Holdings / m**")
                 for stakeholder in vested_dict:
-                    current_holdings[stakeholder] = st.number_input(f'Token Holdings ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder]*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_{stakeholder}", help=f"The current holdings of {stakeholder}.")
+                    if vesting_dict[stakeholder]['allocation'] > 0:
+                        current_holdings[stakeholder] = st.number_input(f'Token Holdings ({stakeholder}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_{stakeholder}", help=f"The current holdings of {stakeholder}.")
             if 'Stake' in utility_shares:
                 with col103a:
                     st.number_input("Token Staking Ratio Share / %", min_value=0.0, value=100.0-token_holding_ratio_share, disabled=True, key="avg_token_utility_allocation", help="The currently staked token supply share by the stakeholders as ")
                     st.write("**Tokens Staked / m**")
                     for stakeholder in vested_dict:
-                        current_staked[stakeholder] = st.number_input(f'Tokens Staked ({stakeholder}) / m', label_visibility="collapsed", min_value=0.0, value=vested_dict[stakeholder]*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_{stakeholder}", help=f"The current staked tokens of {stakeholder}.")
+                        if vesting_dict[stakeholder]['allocation'] > 0:
+                            current_staked[stakeholder] = st.number_input(f'Tokens Staked ({stakeholder}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_{stakeholder}", help=f"The current staked tokens of {stakeholder}.")
 
     # Map new parameters to model input parameters
     new_params = {
+        'token_launch': token_launch,
+        'launch_date': token_launch_date.strftime("%d.%m.%Y").split(" ")[0],
         'equity_external_shareholders_perc': equity_perc,
         'initial_total_supply': initial_supply*1e6,
         'public_sale_supply_perc': public_sale_supply,
@@ -1054,9 +1064,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'ov_cliff': 0,
         'ov_vesting_duration': 0,
         'advisor_allocation': ov_advisor_allocation,
-        'advisor_initial_vesting': [advisor_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['advisors']][0],
-        'advisor_cliff': [advisor_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['advisors']][0],
-        'advisor_vesting_duration': [advisor_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['advisors']][0],
+        'advisor_initial_vesting': [advisor_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['advisor']][0],
+        'advisor_cliff': [advisor_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['advisor']][0],
+        'advisor_vesting_duration': [advisor_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['advisor']][0],
         'strategic_partners_allocation': strategic_partners_allocation,
         'strategic_partners_initial_vesting': [strategic_partners_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['strategic_partners']][0],
         'strategic_partners_cliff': [strategic_partners_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['strategic_partners']][0],
@@ -1082,11 +1092,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'staking_vesting_cliff': [staking_vesting_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['staking_vesting']][0],
         'staking_vesting_vesting_duration': [staking_vesting_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['staking_vesting']][0],
         'airdrop_allocation': airdrop_allocation,
-        'airdrop_date1': [airdrop_date1.strftime('%d.%m.%y') if airdrop_toggle else sys_param['airdrop_date1'][0]][0],
+        'airdrop_date1': [airdrop_date1.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date1'][0]][0],
         'airdrop_amount1': [airdrop_amount1 if airdrop_toggle else sys_param['airdrop_amount1'][0]][0],
-        'airdrop_date2': [airdrop_date2.strftime('%d.%m.%y') if airdrop_toggle else sys_param['airdrop_date2'][0]][0],
+        'airdrop_date2': [airdrop_date2.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date2'][0]][0],
         'airdrop_amount2': [airdrop_amount2 if airdrop_toggle else sys_param['airdrop_amount2'][0]][0],
-        'airdrop_date3': [airdrop_date3.strftime('%d.%m.%y') if airdrop_toggle else sys_param['airdrop_date3'][0]][0],
+        'airdrop_date3': [airdrop_date3.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date3'][0]][0],
         'airdrop_amount3': [airdrop_amount3 if airdrop_toggle else sys_param['airdrop_amount3'][0]][0],
         'initial_product_users': initial_product_users,
         'initial_token_holders': initial_token_holders,
@@ -1110,12 +1120,12 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'buyback_perc_per_month': buyback_perc_per_month,
         'buyback_fixed_per_month': buyback_fixed_per_month*1e3,
         'buyback_bucket': buyback_bucket,
-        'buyback_start': buyback_start.strftime('%d.%m.%y'),
-        'buyback_end': buyback_end.strftime('%d.%m.%y'),
+        'buyback_start': buyback_start.strftime('%d.%m.%Y'),
+        'buyback_end': buyback_end.strftime('%d.%m.%Y'),
         'burn_per_month': burn_per_month,
         'burn_bucket': burn_bucket,
-        'burn_start': burn_start.strftime('%d.%m.%y'),
-        'burn_end': burn_end.strftime('%d.%m.%y'),
+        'burn_start': burn_start.strftime('%d.%m.%Y'),
+        'burn_end': burn_end.strftime('%d.%m.%Y'),
     }
 
     # add utility parameters to new_params
@@ -1123,22 +1133,32 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     # add in-market initialization parameters to new_params
     if not token_launch:
+        new_params['initial_total_supply'] = current_initial_supply*1e6
         new_params.update({
-            'current_initial_supply': current_initial_supply*1e6,
             'token_fdv': token_fdv*1e6,
             'liquidity_depth': liquidity_depth*1e6,
-            'current_holdings': current_holdings,
-            'current_staked': current_staked,
+            'vested_supply_sum': vested_supply_sum*1e6,
         })
+        # add current_holdings, current_staked, and vested_dict dict entries to new_params
+        for stakeholder in vested_dict:
+            if vesting_dict[stakeholder]['allocation'] > 0:
+                new_params.update({
+                    f'{stakeholder}_current_holdings': current_holdings[stakeholder]*1e6,
+                    f'{stakeholder}_current_staked': current_staked[stakeholder]*1e6,
+                    f'{stakeholder}_vested_init': vested_dict[stakeholder]*1e6,
+                })
 
     # Consistency Checks
     if (lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or
         (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
-        (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning) or
-        liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01):
+        (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning)):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
+    
+    if not token_launch:
+        if (liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01):
+            st.session_state['execute_inputs'] = False
     
     if 'execute_inputs' in st.session_state:
         status_msg = ["✅" if st.session_state['execute_inputs'] else "❌"][0]
@@ -1159,18 +1179,18 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         
         if airdrop_toggle:
             if airdrop_date1 < token_launch_date:
-                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The first airdrop date ({airdrop_date1.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
             if airdrop_date2 < token_launch_date:
-                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The second airdrop date ({airdrop_date2.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
             if airdrop_date3 < token_launch_date:
-                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
+                st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
 
         if enable_protocol_buybacks:
             if buyback_start < token_launch_date:
-                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
+                st.error(f"The buyback starting date ({buyback_start.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the buyback starting date!", icon="⚠️")
         if enable_protocol_burning:
             if burn_start < token_launch_date:
-                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
+                st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
 
         if meta_bucket_alloc_sum != 100:
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
@@ -1181,8 +1201,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         if count_staking_utilities > 1:
             st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
         
-        if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
-            st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
+        if not token_launch:
+            if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
+                st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
 
 
     col111, col112, col113, col114, col115 = st.columns(5)
@@ -1212,23 +1233,21 @@ def calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vestin
     vested_dict = {}
     
     # use the vesting dictionary to calculate the vested supply for each stakeholder considering the current date, the token_launch_date, the initial vesting, the cliff and the vesting duration
-    passed_months = np.abs(int(months_difference(token_launch_date, datetime.today())))
+    passed_months = np.abs(int(months_difference(token_launch_date, datetime.today()))) - 1
     
     for stakeholder in vesting_dict:
-        if stakeholder in vesting_dict:
-            allocation = vesting_dict[stakeholder]['allocation']
-            initial_vesting = vesting_dict[stakeholder]['initial_vesting']
-            cliff = vesting_dict[stakeholder]['cliff']
-            duration = vesting_dict[stakeholder]['duration']
-            vested_supply = initial_vesting/100 * allocation/100 * initial_supply if passed_months < cliff else initial_vesting/100 * allocation/100 * initial_supply + (passed_months - cliff) / duration * (allocation/100 * (1-initial_vesting/100)) * initial_supply
-            vested_supply_sum += vested_supply
-            vested_dict[stakeholder] = vested_supply
+        allocation = vesting_dict[stakeholder]['allocation']
+        initial_vesting = vesting_dict[stakeholder]['initial_vesting']
+        cliff = vesting_dict[stakeholder]['cliff']
+        duration = vesting_dict[stakeholder]['duration']
+        if passed_months <= cliff:
+            vested_supply = initial_vesting/100 * allocation/100 * initial_supply
+        elif passed_months <= duration + cliff:
+            vested_supply = initial_vesting/100 * allocation/100 * initial_supply + ((passed_months - cliff) / duration) * (allocation/100 * (1-initial_vesting/100)) * initial_supply
+        else:
+            vested_supply = allocation/100 * initial_supply
+        vested_supply_sum += vested_supply
+        vested_dict[stakeholder] = vested_supply
     
     return vested_dict, vested_supply_sum
-
-def months_difference(date1, date2):
-    year_diff = date2.year - date1.year
-    month_diff = date2.month - date1.month
-    total_months = year_diff * 12 + month_diff
-    return total_months
 

@@ -33,9 +33,9 @@ def airdrops(params, substep, state_history, prev_state, **kwargs):
     # get parameters
     total_token_supply = params['initial_total_supply']
     airdrop_allocation = params['airdrop_allocation']
-    airdrop_date1 = pd.to_datetime(params['airdrop_date1'], format='%d.%m.%y')
-    airdrop_date2 = pd.to_datetime(params['airdrop_date2'], format='%d.%m.%y')
-    airdrop_date3 = pd.to_datetime(params['airdrop_date3'], format='%d.%m.%y')
+    airdrop_date1 = pd.to_datetime(params['airdrop_date1'], format='%d.%m.%Y')
+    airdrop_date2 = pd.to_datetime(params['airdrop_date2'], format='%d.%m.%Y')
+    airdrop_date3 = pd.to_datetime(params['airdrop_date3'], format='%d.%m.%Y')
     airdrop_amount1 = params['airdrop_amount1']
     airdrop_amount2 = params['airdrop_amount2']
     airdrop_amount3 = params['airdrop_amount3']

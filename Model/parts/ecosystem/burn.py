@@ -28,8 +28,8 @@ def burn_from_protocol_bucket(params, substep, state_history, prev_state, **kwar
     """
     # get parameters
     total_token_supply = params['initial_total_supply']
-    burn_start = pd.to_datetime(params['burn_start'], format='%d.%m.%y')
-    burn_end = pd.to_datetime(params['burn_end'], format='%d.%m.%y')
+    burn_start = pd.to_datetime(params['burn_start'], format='%d.%m.%Y')
+    burn_end = pd.to_datetime(params['burn_end'], format='%d.%m.%Y')
     burn_per_month = params['burn_per_month']
 
     # get state variables

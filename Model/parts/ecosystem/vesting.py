@@ -1,3 +1,8 @@
+import numpy as np
+import pandas as pd
+from datetime import datetime
+from Model.parts.utils import months_difference
+
 """Vesting tokens and updating the amount of vested tokens held.
 
 Contains policy functions (PF) and state update functions (SUF).
@@ -20,10 +25,21 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
     Returns: 
         A dict which mapping agents to their vested token amounts.
     """
+    token_launch_date = pd.to_datetime(params['launch_date'], format='%d.%m.%Y')
+    if 'token_launch' in params:
+        token_launch = params['token_launch']
+    else:
+        token_launch = True
+
     agents = prev_state['agents'].copy()
     total_token_supply = params['initial_total_supply']
     current_month = prev_state['timestep']
-    
+
+    if not token_launch:
+        passed_months = np.abs(int(months_difference(token_launch_date, datetime.today())))
+        current_month = passed_months + current_month
+
+
     agent_token_vesting_dict = {}
     for key, agent in agents.items():
         # Get all invesotor info

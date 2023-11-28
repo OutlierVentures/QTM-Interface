@@ -14,13 +14,13 @@ def get_initial_state(input_file, adjusted_params):
     sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim = get_sys_param(input_file, adjusted_params)
 
     # initialize the initial stakeholders
-    initial_stakeholders = generate_agents(stakeholder_name_mapping)
+    initial_stakeholders = generate_agents(stakeholder_name_mapping, sys_param)
 
     # initialize the initial liquidity pool
     initial_liquidity_pool = initialize_dex_liquidity()
 
     # initialize the initial token economy
-    initial_token_economy = generate_initial_token_economy_metrics()
+    initial_token_economy = generate_initial_token_economy_metrics(initial_stakeholders, sys_param)
 
     # initialize the initial user adoption
     initial_user_adoption = initialize_user_adoption()
@@ -29,11 +29,11 @@ def get_initial_state(input_file, adjusted_params):
     business_assumptions = initialize_business_assumptions()
 
     # initialize the initial standard utilities
-    utilities = initialize_utilities()
+    utilities = initialize_utilities(initial_stakeholders, sys_param)
 
     # compose the initial state
     initial_state = {
-        'date': convert_date(sys_param),
+        'date': get_initial_date(sys_param),
         'agents': initial_stakeholders,
         'liquidity_pool': initial_liquidity_pool,
         'token_economy': initial_token_economy,

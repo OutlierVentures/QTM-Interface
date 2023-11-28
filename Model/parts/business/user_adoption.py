@@ -62,7 +62,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     current_month = prev_state['timestep']
     current_date = prev_state['date']
-    launchDate = pd.to_datetime(params['launch_date'], format='%d.%m.%y')
+    launchDate = pd.to_datetime(params['launch_date'], format='%d.%m.%Y')
 
     current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
 

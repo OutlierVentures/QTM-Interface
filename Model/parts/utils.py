@@ -49,10 +49,26 @@ import sqlite3
 
 # Helper Functions
 def convert_date(sys_param):
-    if "." in sys_param['launch_date'][0]:
-        return datetime.strptime(sys_param['launch_date'][0],'%d.%m.%y')
+    if type(sys_param['launch_date'][0]) == datetime:
+        date_transformed = sys_param['launch_date'][0].strftime("%d.%m.%Y")
+    else:
+        date_transformed = sys_param['launch_date'][0]
+
+    if "." in date_transformed:
+        return datetime.strptime(date_transformed,'%d.%m.%Y')
     elif "/" in sys_param:
-        return datetime.strptime(sys_param['launch_date'][0],'%d/%m/%Y')
+        return datetime.strptime(date_transformed,'%d/%m/%Y')
+    elif "-" in sys_param:
+        return datetime.strptime(date_transformed,'%d-%m-%Y')
+
+def get_initial_date(sys_param):
+    initial_date = pd.to_datetime(sys_param['launch_date'][0] if isinstance(sys_param['launch_date'], list) else sys_param['launch_date'], format='%d.%m.%Y')
+    if 'token_launch' in sys_param:
+        token_launch = sys_param['token_launch']
+        if not token_launch:
+            # set initial date to today's date
+            initial_date = pd.to_datetime('today')
+    return initial_date
 
 def calculate_raised_capital(param):
     """
@@ -78,7 +94,6 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     """
     Function to create a new agent aka stakeholder for the token ecosystem.
     """
-
     agent = {'a_name': stakeholder_name, # seed, advisor, reserve, incentivisation, staking_vesting, market_investors, etc.
              'a_type': stakeholder_type, # early_investor, protocol_bucket, market_investors, airdrop_receiver, incentivisation_receiver
              'a_usd_funds': usd_funds, # amount of USD funds available to this stakeholder (not applicalbe/used in the current version)
@@ -115,25 +130,34 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
     return agent
 
 
-def generate_agents(stakeholder_name_mapping: dict) -> dict:
+def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
     """
     Initialize all token ecosystem agents aka stakeholders.
     """
-
+    
     initial_agents = {}
     for stakeholder_name, stakeholder_type in stakeholder_name_mapping.items():
+        if 'token_launch' in sys_param:
+            token_launch = sys_param['token_launch'][0]
+            current_holdings = sys_param[f'{stakeholder_name}_current_holdings'][0] if not token_launch and f'{stakeholder_name}_current_holdings' in sys_param else 0
+            current_staked = sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
+            vested = sys_param[f'{stakeholder_name}_vested_init'][0] if not token_launch and f'{stakeholder_name}_vested_init' in sys_param else 0
+        else:
+            current_holdings = 0
+            current_staked = 0
+            vested = 0
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
                                     stakeholder_type = stakeholder_type,
                                     usd_funds = 0,
-                                    tokens = 0,
+                                    tokens = current_holdings,
                                     tokens_vested = 0,
-                                    tokens_vested_cum = 0,
+                                    tokens_vested_cum = vested,
                                     tokens_airdropped = 0,
                                     tokens_airdropped_cum = 0,
                                     tokens_incentivised = 0,
                                     tokens_incentivised_cum = 0,
                                     tokens_staked = 0,
-                                    tokens_staked_cum = 0,
+                                    tokens_staked_cum = current_staked,
                                     tokens_staked_remove = 0,
                                     tokens_staking_buyback_rewards = 0,
                                     tokens_staking_vesting_rewards = 0,
@@ -258,7 +282,7 @@ def initialize_dex_liquidity():
 
     return liquidity_pool
 
-def generate_initial_token_economy_metrics():
+def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
     """
     Set the initial token economy metrics, such as MC, FDV MC, and circ. supply.
     """
@@ -322,13 +346,21 @@ def initialize_business_assumptions():
     return business_assumptions
 
 
-def initialize_utilities():
+def initialize_utilities(initial_stakeholders, sys_param):
     """
     Initialize the utility meta bucket metrics.
     """
+    if 'token_launch' in sys_param:
+        token_launch = sys_param['token_launch'][0]
+        staked_tokens = sum([initial_stakeholders[agent]['a_tokens_staked_cum'] for agent in initial_stakeholders]) if not token_launch else 0
+        liquidity_mining_tokens = sum([initial_stakeholders[agent]['a_tokens_liquidity_mining_cum'] for agent in initial_stakeholders]) if not token_launch else 0
+    else:
+        staked_tokens = 0
+        liquidity_mining_tokens = 0
+    
     utilities = {
     'u_staking_allocation':0, # staking allocation per timestep
-    'u_staking_allocation_cum':0, # staking allocation cumulatively
+    'u_staking_allocation_cum':staked_tokens, # staking allocation cumulatively
     'u_staking_remove':0, # staking token removal
     'u_buyback_from_revenue_share_usd': 0, # buyback from revenue share in USD
     'u_staking_revenue_share_rewards':0, # revenue sharing rewards
@@ -336,7 +368,7 @@ def initialize_utilities():
     'u_staking_minting_rewards':0, # staking minting rewards
     'u_liquidity_mining_rewards': 0, # liquidity mining rewards
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
-    'u_liquidity_mining_allocation_cum': 0, # liquidity mining token allocation cumulatively
+    'u_liquidity_mining_allocation_cum': liquidity_mining_tokens, # liquidity mining token allocation cumulatively
     'u_liquidity_mining_allocation_remove': 0, # liquidity mining token removal
     'u_burning_allocation': 0, # burning token allocation per timestep
     'u_burning_allocation_cum': 0, # burning token allocation cumulatively
@@ -401,3 +433,9 @@ def convert_to_json(x):
         return json.dumps(x)
     except:
         return x
+
+def months_difference(date1, date2):
+    year_diff = date2.year - date1.year
+    month_diff = date2.month - date1.month
+    total_months = year_diff * 12 + month_diff
+    return total_months

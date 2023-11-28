@@ -369,6 +369,23 @@ def plot_fundraising(param_id):
                                                  'staking_vesting_a_tokens_vested_cum',
                                                  'te_airdrop_tokens_cum'], 1, param_id,
                                                  plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
+    
+    plot_results_plotly('timestep', ['angel_a_tokens_vested_cum',
+                                                 'seed_a_tokens_vested_cum',
+                                                 'presale_1_a_tokens_vested_cum',
+                                                 'presale_2_a_tokens_vested_cum',
+                                                 'public_sale_a_tokens_vested_cum',
+                                                 'team_a_tokens_vested_cum',
+                                                 'ov_a_tokens_vested_cum',
+                                                 'advisor_a_tokens_vested_cum',
+                                                 'strategic_partners_a_tokens_vested_cum',
+                                                 'reserve_a_tokens_vested_cum',
+                                                 'community_a_tokens_vested_cum',
+                                                 'foundation_a_tokens_vested_cum',
+                                                 'incentivisation_a_tokens_vested_cum',
+                                                 'staking_vesting_a_tokens_vested_cum',
+                                                 'te_airdrop_tokens_cum'], 1, param_id, max_months=120,
+                                                 plot_title="Token Vesting", x_title="Months", y_title="Tokens")
     pcol11, pcol12 = st.columns(2)
     with pcol11:
         ##EFFECTIVE TOKEN PRICE
@@ -422,6 +439,13 @@ def plot_token_economy(param_id, max_months):
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
                         'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
                         , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
+    
+    log_scale_toggle_stakeholder_holdings = st.toggle('Log Scale - Stakeholder Holdings', value=False)
+    max_months = plot_results_plotly('timestep', ['angel_a_tokens','seed_a_tokens','presale_1_a_tokens',
+                        'presale_2_a_tokens','public_sale_a_tokens','team_a_tokens', 'ov_a_tokens',
+                        'advisor_a_tokens', 'strategic_partners_a_tokens', 'market_investors_a_tokens',
+                        'airdrop_receivers_a_tokens', 'incentivisation_receivers_a_tokens'], 1, param_id, max_months
+                        , plot_title="Stakeholder Holdings", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_holdings)
     
     pcol31, pcol32 = st.columns(2)
     with pcol31:

@@ -35,11 +35,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     """
 
     # parameters
-    product_income_per_month = params['product_income_per_month']
     royalty_income_per_month = params['royalty_income_per_month']
     other_income_per_month = params['other_income_per_month']
     treasury_income_per_month = params['treasury_income_per_month']
-    regular_income_sum = params['regular_income_sum']
     one_time_payments_1 = params['one_time_payments_1']
     one_time_payments_2 = params['one_time_payments_2']
     salaries_per_month = params['salaries_per_month']
@@ -48,13 +46,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     buyback_type = params['buyback_type']
     buyback_perc_per_month = params['buyback_perc_per_month']
     buyback_fixed_per_month = params['buyback_fixed_per_month']
-    buyback_bucket = params['buyback_bucket']
-    buyback_start = pd.to_datetime(params['buyback_start'], format='%d.%m.%y')
-    buyback_end = pd.to_datetime(params['buyback_end'], format='%d.%m.%y')
-    burn_per_month = params['burn_per_month']
-    burn_start = params['burn_start']
-    burn_end = params['burn_end']
-    burn_project_bucket = params['burn_project_bucket']
+    buyback_start = pd.to_datetime(params['buyback_start'], format='%d.%m.%Y')
+    buyback_end = pd.to_datetime(params['buyback_end'], format='%d.%m.%Y')
+
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
 
