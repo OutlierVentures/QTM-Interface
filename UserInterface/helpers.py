@@ -1,6 +1,9 @@
 import streamlit as st
 from plots import *
 from Model.parts.utils import *
+import pandas as pd
+from io import BytesIO
+from pyxlsb import open_workbook as open_xlsb
 
 fundraising_style_map = {
     'Moderate': 2,
@@ -1251,3 +1254,14 @@ def calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vestin
     
     return vested_dict, vested_supply_sum
 
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+    format1 = workbook.add_format({'num_format': '0.00'}) 
+    worksheet.set_column('A:A', None, format1)  
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data

@@ -74,7 +74,6 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
         liquidity_pool['lp_usdc'] = required_usdc
         liquidity_pool['lp_constant_product'] = constant_product
         liquidity_pool['lp_token_price'] = token_price
-        print(f"lp_tokens: {liquidity_pool['lp_tokens']}, lp_usdc: {liquidity_pool['lp_usdc']}, lp_constant_product: {liquidity_pool['lp_constant_product']}, lp_token_price: {liquidity_pool['lp_token_price']}")
         
         # check if required funds are available from funds raised
         sum_of_raised_capital = calculate_raised_capital(params)
@@ -416,8 +415,6 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_buyback'] = lp_tokens
-        print(f"\ntimestep: {prev_state['timestep']} lp_tokens: {updated_liquidity_pool['lp_tokens']}, lp_usdc: {updated_liquidity_pool['lp_usdc']}, lp_constant_product: {updated_liquidity_pool['lp_constant_product']}, lp_token_price: {updated_liquidity_pool['lp_token_price']}")
-
-    
+   
 
     return ('liquidity_pool', updated_liquidity_pool)

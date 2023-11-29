@@ -25,3 +25,5 @@ jupyterlab-spellchecker==0.6.0
 streamlit==1.27.2
 altair<5
 plotly==5.17.0
+pyxlsb
+xlsxwriter

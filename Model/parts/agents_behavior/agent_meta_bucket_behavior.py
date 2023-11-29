@@ -146,7 +146,6 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
         elif params['agent_behavior'] == 'static':
             """
             Define the agent behavior for each agent type for the static 1:1 QTM behavior
-            ToDo: Consistency checks of correct meta bucket and utility share amounts, which should be 100% in total for each agent type
             """
             agents = prev_state['agents'].copy()
             
@@ -161,6 +160,11 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                     'utility': params['avg_token_utility_allocation'],
                     'remove_tokens': params['avg_token_utility_removal'],
                 }
+
+                # consistency check for agent metabucket behavior
+                if agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'] != 100:
+                    raise ValueError(f"Agent meta bucket behavior for agent {agent} does not sum up to 100%.")
+                
         else:
             raise ValueError("params['agent_behavior'] must be either 'stochastic' or 'static'.")
     
