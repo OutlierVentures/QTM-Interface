@@ -19,6 +19,8 @@ Functions:
             allocations for the token economy.
 
 """
+import random
+import numpy as np
 
 # POLICY FUNCTIONS
 def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_state, **kwargs):
@@ -43,105 +45,54 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
     """
 
     try:
-        if params['agent_behavior'] == 'stochastic':
+        if params['agent_behavior'] == 'random':
             """
-            Define the agent behavior for each agent type for the stochastic agent behavior
-            Agent actions are based on a weighted random choices.
+            Define the agent behavior for each agent type for the random agent behavior
+            Agent actions are based on pure randomnes.
             """
-            agent_behavior_dict = {
-                'angel': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'seed': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'presale_1': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'presale_2': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'public_sale': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'team': {
-                    'trade': params['avg_token_selling_allocation']-params['avg_token_utility_removal']/3,
-                    'hold': params['avg_token_holding_allocation']-params['avg_token_utility_removal']/3,
-                    'utility': params['avg_token_utility_allocation']-params['avg_token_utility_removal']/3,
-                    'remove_locked_tokens': params['avg_token_utility_removal'],
-                },
-                'reserve': {
-                    'trade': 0,
-                    'hold': 50,
-                    'utility': 0,
-                    'remove_locked_tokens': 0,
-                    'incentivise': 50
-                },
-                'community': {
-                    'trade': 0,
-                    'hold': 100,
-                    'utility': 0,
-                    'remove_locked_tokens': 0,
-                    'incentivise': 0
-                },
-                'foundation': {
-                    'trade': 0,
-                    'hold': 100,
-                    'utility': 0,
-                    'remove_locked_tokens': 0,
-                    'incentivise': 0
-                },
-                'incentivisation': {
-                    'trade': 0,
-                    'hold': 100,
-                    'utility': 0,
-                    'remove_locked_tokens': 0,
-                    'incentivise': 0
-                },
-                'staking_vesting': {
-                    'trade': 0,
-                    'hold': 100,
-                    'utility': 0,
-                    'remove_locked_tokens': 0,
-                    'incentivise': 0
-                },
-                'market_investors': {
-                    'trade': 60,
-                    'hold': 10,
-                    'utility': 25,
-                    'remove_locked_tokens': 5,
-                    'incentivise': 0
-                },
-                'airdrop_receivers': {
-                    'trade': 60,
-                    'hold': 10,
-                    'utility': 25,
-                    'remove_locked_tokens': 5,
-                    'incentivise': 0
-                },
-                'incentivisation_receivers': {
-                    'trade': 60,
-                    'hold': 10,
-                    'utility': 25,
-                    'remove_locked_tokens': 5,
-                    'incentivise': 0
+            # get parameters
+            random_seed = params['random_seed']
+
+            # get state variables
+            agents = prev_state['agents'].copy()
+            token_economy = prev_state['token_economy'].copy()
+            staking_apr = token_economy['te_staking_apr']
+
+            # initialize agent behavior dictionary
+            agent_behavior_dict = {}
+
+            # populate agent behavior dictionary
+            for i, agent in enumerate(agents):
+                
+                # determine utility and selling behavior
+                random.seed(random_seed + prev_state['timestep'] + i)
+                utility = np.min([random.uniform(np.min([staking_apr/25,1]), 1), 1])
+                selling = 1 - utility
+                remove = (1-utility)
+                
+                # include token holdings
+                random.seed(random_seed + prev_state['timestep'] + i + random.uniform(0, 50))
+                holding = random.uniform(0, 1) * 0.05
+                selling = selling - holding/2
+                utility = utility - holding/2
+                
+                if selling < 0:
+                    utility = utility + selling
+                    selling = 0
+                if utility < 0:
+                    selling = selling + utility
+                    utility = 0
+                
+                agent_behavior_dict[agent] = {
+                    'sell': selling,
+                    'hold': holding,
+                    'utility': utility,
+                    'remove_tokens': remove,
                 }
-            }
+
+                # consistency check for agent metabucket behavior
+                error_msg = f"Agent meta bucket behavior for agent {agent} does not sum up to 100% ({(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'])*100.0})."
+                np.testing.assert_allclose(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'], 1.0, rtol=0.0001, err_msg=error_msg)
         
         elif params['agent_behavior'] == 'static':
             """

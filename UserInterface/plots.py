@@ -461,23 +461,56 @@ def plot_token_economy(param_id, max_months):
                             'airdrop_receivers_a_tokens_staked_cum', 'incentivisation_receivers_a_tokens_staked_cum'], 1, param_id, max_months
                             , plot_title="Stakeholder Staked Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_staked)
     
-    # plot meta bucket allocations of all agents
-    pcol31a, pcol32a = st.columns(2)
-    with pcol31a:
-        log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
-        max_months = plot_results_plotly('timestep', ['angel_a_utility_tokens','seed_a_utility_tokens','presale_1_a_utility_tokens',
-                            'presale_2_a_utility_tokens','public_sale_a_utility_tokens','team_a_utility_tokens', 'ov_a_utility_tokens',
-                            'advisor_a_utility_tokens', 'strategic_partners_a_utility_tokens', 'market_investors_a_utility_tokens',
-                            'airdrop_receivers_a_utility_tokens', 'incentivisation_receivers_a_utility_tokens'], 1, param_id, max_months
-                            , plot_title="Meta Utility Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
-    with pcol32a:
-        log_scale_toggle_meta_alloc_selling = st.toggle('Log Scale - Selling Meta Bucket Allocations', value=False)
-        max_months = plot_results_plotly('timestep', ['angel_a_selling_tokens','seed_a_selling_tokens','presale_1_a_selling_tokens',
-                            'presale_2_a_selling_tokens','public_sale_a_selling_tokens','team_a_selling_tokens', 'ov_a_selling_tokens',
-                            'advisor_a_selling_tokens', 'strategic_partners_a_selling_tokens', 'market_investors_a_selling_tokens',
-                            'airdrop_receivers_a_selling_tokens', 'incentivisation_receivers_a_selling_tokens'], 1, param_id, max_months
-                            , plot_title="Meta Selling Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling)
+    with st.expander("**Detailed Agent Behaviors**"):
+        # plot meta bucket allocations of all agents
+        pcol31a, pcol32a = st.columns(2)
+        with pcol31a:
+            log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_utility_tokens','seed_a_utility_tokens','presale_1_a_utility_tokens',
+                                'presale_2_a_utility_tokens','public_sale_a_utility_tokens','team_a_utility_tokens', 'ov_a_utility_tokens',
+                                'advisor_a_utility_tokens', 'strategic_partners_a_utility_tokens', 'market_investors_a_utility_tokens',
+                                'airdrop_receivers_a_utility_tokens', 'incentivisation_receivers_a_utility_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Utility Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
+        with pcol32a:
+            log_scale_toggle_meta_alloc_utility_from_holding = st.toggle('Log Scale - Utility Meta Bucket Allocations From Holding', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_utility_from_holding_tokens','seed_a_utility_from_holding_tokens','presale_1_a_utility_from_holding_tokens',
+                                'presale_2_a_utility_from_holding_tokens','public_sale_a_utility_from_holding_tokens','team_a_utility_from_holding_tokens', 'ov_a_utility_from_holding_tokens',
+                                'advisor_a_utility_from_holding_tokens', 'strategic_partners_a_utility_from_holding_tokens', 'market_investors_a_utility_from_holding_tokens',
+                                'airdrop_receivers_a_utility_from_holding_tokens', 'incentivisation_receivers_a_utility_from_holding_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Utility Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility_from_holding)
 
+        # plot from holding meta bucket allocations of all agents
+        pcol31b, pcol32b = st.columns(2)
+        with pcol31b:
+            log_scale_toggle_meta_alloc_selling = st.toggle('Log Scale - Selling Meta Bucket Allocations', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_selling_tokens','seed_a_selling_tokens','presale_1_a_selling_tokens',
+                                'presale_2_a_selling_tokens','public_sale_a_selling_tokens','team_a_selling_tokens', 'ov_a_selling_tokens',
+                                'advisor_a_selling_tokens', 'strategic_partners_a_selling_tokens', 'market_investors_a_selling_tokens',
+                                'airdrop_receivers_a_selling_tokens', 'incentivisation_receivers_a_selling_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Selling Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling)
+        with pcol32b:
+            log_scale_toggle_meta_alloc_selling_from_holding = st.toggle('Log Scale - Selling Meta Bucket Allocations From Holding', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_selling_from_holding_tokens','seed_a_selling_from_holding_tokens','presale_1_a_selling_from_holding_tokens',
+                                'presale_2_a_selling_from_holding_tokens','public_sale_a_selling_from_holding_tokens','team_a_selling_from_holding_tokens', 'ov_a_selling_from_holding_tokens',
+                                'advisor_a_selling_from_holding_tokens', 'strategic_partners_a_selling_from_holding_tokens', 'market_investors_a_selling_from_holding_tokens',
+                                'airdrop_receivers_a_selling_from_holding_tokens', 'incentivisation_receivers_a_selling_from_holding_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Selling Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling_from_holding)
+
+        pcol31c, pcol32c = st.columns(2)
+        with pcol31c:
+            log_scale_toggle_meta_alloc_holding = st.toggle('Log Scale - Holding Meta Bucket Allocations', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_holding_tokens','seed_a_holding_tokens','presale_1_a_holding_tokens',
+                                'presale_2_a_holding_tokens','public_sale_a_holding_tokens','team_a_holding_tokens', 'ov_a_holding_tokens',
+                                'advisor_a_holding_tokens', 'strategic_partners_a_holding_tokens', 'market_investors_a_holding_tokens',
+                                'airdrop_receivers_a_holding_tokens', 'incentivisation_receivers_a_holding_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Holding Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding)
+        with pcol32c:
+            log_scale_toggle_meta_alloc_holding_from_holding = st.toggle('Log Scale - Holding Meta Bucket Allocations From Holding', value=False)
+            max_months = plot_results_plotly('timestep', ['angel_a_holding_from_holding_tokens','seed_a_holding_from_holding_tokens','presale_1_a_holding_from_holding_tokens',
+                                'presale_2_a_holding_from_holding_tokens','public_sale_a_holding_from_holding_tokens','team_a_holding_from_holding_tokens', 'ov_a_holding_from_holding_tokens',
+                                'advisor_a_holding_from_holding_tokens', 'strategic_partners_a_holding_from_holding_tokens', 'market_investors_a_holding_from_holding_tokens',
+                                'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
+                                , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
 
     pcol41, pcol42 = st.columns(2)
     with pcol41:
