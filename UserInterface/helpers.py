@@ -1236,7 +1236,7 @@ def calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vestin
     vested_dict = {}
     
     # use the vesting dictionary to calculate the vested supply for each stakeholder considering the current date, the token_launch_date, the initial vesting, the cliff and the vesting duration
-    passed_months = np.abs(int(months_difference(token_launch_date, datetime.today()))) - 1
+    passed_months = np.abs(int(months_difference(token_launch_date, datetime.today())))
     
     for stakeholder in vesting_dict:
         allocation = vesting_dict[stakeholder]['allocation']

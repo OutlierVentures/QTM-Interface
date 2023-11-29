@@ -442,28 +442,42 @@ def plot_token_economy(param_id, max_months):
                         'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
                         , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
     
-    # plot stakeholder holdings
-    log_scale_toggle_stakeholder_holdings = st.toggle('Log Scale - Stakeholder Holdings', value=False)
-    max_months = plot_results_plotly('timestep', ['angel_a_tokens','seed_a_tokens','presale_1_a_tokens',
-                        'presale_2_a_tokens','public_sale_a_tokens','team_a_tokens', 'ov_a_tokens',
-                        'advisor_a_tokens', 'strategic_partners_a_tokens', 'market_investors_a_tokens',
-                        'airdrop_receivers_a_tokens', 'incentivisation_receivers_a_tokens'], 1, param_id, max_months
-                        , plot_title="Stakeholder Holdings", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_holdings)
-    
-    # plot stakeholder staked tokens
-    log_scale_toggle_stakeholder_staked = st.toggle('Log Scale - Stakeholder Staked Tokens', value=False)
-    max_months = plot_results_plotly('timestep', ['angel_a_tokens_staked_cum','seed_a_tokens_staked_cum','presale_1_a_tokens_staked_cum',
-                        'presale_2_a_tokens_staked_cum','public_sale_a_tokens_staked_cum','team_a_tokens_staked_cum', 'ov_a_tokens_staked_cum',
-                        'advisor_a_tokens_staked_cum', 'strategic_partners_a_tokens_staked_cum', 'market_investors_a_tokens_staked_cum',
-                        'airdrop_receivers_a_tokens_staked_cum', 'incentivisation_receivers_a_tokens_staked_cum'], 1, param_id, max_months
-                        , plot_title="Stakeholder Staked Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_staked)
-    
     pcol31, pcol32 = st.columns(2)
     with pcol31:
+        # plot stakeholder holdings
+        log_scale_toggle_stakeholder_holdings = st.toggle('Log Scale - Stakeholder Holdings', value=False)
+        max_months = plot_results_plotly('timestep', ['angel_a_tokens','seed_a_tokens','presale_1_a_tokens',
+                            'presale_2_a_tokens','public_sale_a_tokens','team_a_tokens', 'ov_a_tokens',
+                            'advisor_a_tokens', 'strategic_partners_a_tokens', 'market_investors_a_tokens',
+                            'airdrop_receivers_a_tokens', 'incentivisation_receivers_a_tokens'], 1, param_id, max_months
+                            , plot_title="Stakeholder Holdings", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_holdings)
+    
+    with pcol32:
+        # plot stakeholder staked tokens
+        log_scale_toggle_stakeholder_staked = st.toggle('Log Scale - Stakeholder Staked Tokens', value=False)
+        max_months = plot_results_plotly('timestep', ['angel_a_tokens_staked_cum','seed_a_tokens_staked_cum','presale_1_a_tokens_staked_cum',
+                            'presale_2_a_tokens_staked_cum','public_sale_a_tokens_staked_cum','team_a_tokens_staked_cum', 'ov_a_tokens_staked_cum',
+                            'advisor_a_tokens_staked_cum', 'strategic_partners_a_tokens_staked_cum', 'market_investors_a_tokens_staked_cum',
+                            'airdrop_receivers_a_tokens_staked_cum', 'incentivisation_receivers_a_tokens_staked_cum'], 1, param_id, max_months
+                            , plot_title="Stakeholder Staked Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_staked)
+    
+    # plot meta bucket allocations of all agents
+    pcol31a, pcol32a = st.columns(2)
+    with pcol31a:
+        log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
+        max_months = plot_results_plotly('timestep', ['angel_a_utility_tokens','seed_a_utility_tokens','presale_1_a_utility_tokens',
+                            'presale_2_a_utility_tokens','public_sale_a_utility_tokens','team_a_utility_tokens', 'ov_a_utility_tokens',
+                            'advisor_a_utility_tokens', 'strategic_partners_a_utility_tokens', 'market_investors_a_utility_tokens',
+                            'airdrop_receivers_a_utility_tokens', 'incentivisation_receivers_a_utility_tokens'], 1, param_id, max_months
+                            , plot_title="Stakeholder Meta Utility Allocations Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
+
+
+    pcol41, pcol42 = st.columns(2)
+    with pcol41:
         log_scale_toggle_lp_token_price = st.toggle('Log Scale - Token Price', value=True)
         max_months = plot_results_plotly('timestep', ['lp_token_price'], 1, param_id, max_months
                             , plot_title="Token Price", x_title="Months", y_title="USD", logy=log_scale_toggle_lp_token_price)
-    with pcol32:
+    with pcol42:
         log_scale_toggle_valuations = st.toggle('Log Scale - Valuations', value=True)
         max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
                             , plot_title="Valuations", x_title="Months", y_title="USD", logy=log_scale_toggle_valuations)
@@ -471,14 +485,14 @@ def plot_token_economy(param_id, max_months):
     pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
                      'holding_share','transfer_share'], param_id, plot_title="Token Utility Share")
     
-    pcol41, pcol42 = st.columns(2)
-    with pcol41:
+    pcol51, pcol52 = st.columns(2)
+    with pcol51:
         log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=True)
         max_months = plot_results_plotly('timestep', ['u_staking_allocation',
                                         'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
                                         'te_airdrop_tokens','te_holding_allocation'], 1, param_id, max_months
                                         , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
-    with pcol42:
+    with pcol52:
         log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=True)
         max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',

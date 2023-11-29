@@ -162,8 +162,8 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 }
 
                 # consistency check for agent metabucket behavior
-                if agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'] != 100:
-                    raise ValueError(f"Agent meta bucket behavior for agent {agent} does not sum up to 100%.")
+                if agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'] != 1.0:
+                    raise ValueError(f"Agent meta bucket behavior for agent {agent} does not sum up to 100% ({(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'])*100.0}).")
                 
         else:
             raise ValueError("params['agent_behavior'] must be either 'stochastic' or 'static'.")
@@ -307,6 +307,8 @@ def update_agent_meta_bucket_allocations(params, substep, state_history, prev_st
         updated_agents[key]['a_tokens'] -= (agent_allocations[key]['selling'] + agent_allocations[key]['utility']
                                             + [agent_from_holding_allocations[key]['selling'] + agent_from_holding_allocations[key]['utility'] if key in agent_from_holding_allocations else 0][0])
 
+        if prev_state['timestep'] < 5:
+            print(f"Agent {updated_agents[key]['a_name']}: updated_agents[key]['a_selling_tokens']: {updated_agents[key]['a_selling_tokens']}, updated_agents[key]['a_utility_tokens']: {updated_agents[key]['a_utility_tokens']}, updated_agents[key]['a_holding_tokens']: {updated_agents[key]['a_holding_tokens']}, updated_agents[key]['a_selling_from_holding_tokens']: {updated_agents[key]['a_selling_from_holding_tokens']}, updated_agents[key]['a_utility_from_holding_tokens']: {updated_agents[key]['a_utility_from_holding_tokens']}, updated_agents[key]['a_holding_from_holding_tokens']: {updated_agents[key]['a_holding_from_holding_tokens']}, updated_agents[key]['a_tokens']: {updated_agents[key]['a_tokens']}")
     return ('agents', updated_agents)
 
 
