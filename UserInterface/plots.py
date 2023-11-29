@@ -22,7 +22,7 @@ def customize_plotly_figure(fig, x_title=None, y_title=None, info_box=None, plot
 
     # Add a plot title
     if plot_title:
-        fig.update_layout(title_text=plot_title, title_x=0.5)  # Adjust title_x as needed
+        fig.update_layout(title_text=plot_title, title_x=0)  # Adjust title_x as needed
 
      # Add an info box with a white background and black text at the bottom right
     if info_box:
@@ -469,7 +469,14 @@ def plot_token_economy(param_id, max_months):
                             'presale_2_a_utility_tokens','public_sale_a_utility_tokens','team_a_utility_tokens', 'ov_a_utility_tokens',
                             'advisor_a_utility_tokens', 'strategic_partners_a_utility_tokens', 'market_investors_a_utility_tokens',
                             'airdrop_receivers_a_utility_tokens', 'incentivisation_receivers_a_utility_tokens'], 1, param_id, max_months
-                            , plot_title="Stakeholder Meta Utility Allocations Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
+                            , plot_title="Meta Utility Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
+    with pcol32a:
+        log_scale_toggle_meta_alloc_selling = st.toggle('Log Scale - Selling Meta Bucket Allocations', value=False)
+        max_months = plot_results_plotly('timestep', ['angel_a_selling_tokens','seed_a_selling_tokens','presale_1_a_selling_tokens',
+                            'presale_2_a_selling_tokens','public_sale_a_selling_tokens','team_a_selling_tokens', 'ov_a_selling_tokens',
+                            'advisor_a_selling_tokens', 'strategic_partners_a_selling_tokens', 'market_investors_a_selling_tokens',
+                            'airdrop_receivers_a_selling_tokens', 'incentivisation_receivers_a_selling_tokens'], 1, param_id, max_months
+                            , plot_title="Meta Selling Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling)
 
 
     pcol41, pcol42 = st.columns(2)
