@@ -16,6 +16,50 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 from data.not_iterable_variables import parameter_list
 
+def get_stakeholders():
+    # calculating the initial values for the different agents
+    stakeholder_names = [
+        'angel',
+        'seed',
+        'presale_1',
+        'presale_2',
+        'public_sale',
+        'team',
+        'ov',
+        'advisor',
+        'strategic_partners',
+        'reserve',
+        'community',
+        'foundation',
+        'incentivisation',
+        'staking_vesting',
+        'market_investors',
+        'airdrop_receivers',
+        'incentivisation_receivers'
+    ]
+
+    # defining the mapping between the stakeholder names and their type categories
+    stakeholder_name_mapping = {
+        'angel': 'early_investor',
+        'seed': 'early_investor',
+        'presale_1': 'early_investor',
+        'presale_2': 'early_investor',
+        'public_sale': 'early_investor',
+        'team': 'team',
+        'ov': 'early_investor',
+        'advisor': 'early_investor',
+        'strategic_partners': 'early_investor',
+        'reserve': 'protocol_bucket',
+        'community': 'protocol_bucket',
+        'foundation': 'protocol_bucket',
+        'incentivisation': 'protocol_bucket',
+        'staking_vesting': 'protocol_bucket',
+        'market_investors': 'market_investors',
+        'airdrop_receivers': 'airdrop_receivers',
+        'incentivisation_receivers': 'incentivisation_receivers',
+    }
+    return stakeholder_names, stakeholder_name_mapping
+
 def get_sys_param(input_file, adjusted_params):
 
     QTM_inputs = pd.read_csv(input_file)
@@ -61,47 +105,7 @@ def get_sys_param(input_file, adjusted_params):
     }
     sys_param.update(liquidity_pool_initial_values)
 
-    # calculating the initial values for the different agents
-    stakeholder_names = [
-        'angel',
-        'seed',
-        'presale_1',
-        'presale_2',
-        'public_sale',
-        'team',
-        'ov',
-        'advisor',
-        'strategic_partners',
-        'reserve',
-        'community',
-        'foundation',
-        'incentivisation',
-        'staking_vesting',
-        'market_investors',
-        'airdrop_receivers',
-        'incentivisation_receivers'
-    ]
-
-    # defining the mapping between the stakeholder names and their type categories
-    stakeholder_name_mapping = {
-        'angel': 'early_investor',
-        'seed': 'early_investor',
-        'presale_1': 'early_investor',
-        'presale_2': 'early_investor',
-        'public_sale': 'early_investor',
-        'team': 'team',
-        'ov': 'early_investor',
-        'advisor': 'early_investor',
-        'strategic_partners': 'early_investor',
-        'reserve': 'protocol_bucket',
-        'community': 'protocol_bucket',
-        'foundation': 'protocol_bucket',
-        'incentivisation': 'protocol_bucket',
-        'staking_vesting': 'protocol_bucket',
-        'market_investors': 'market_investors',
-        'airdrop_receivers': 'airdrop_receivers',
-        'incentivisation_receivers': 'incentivisation_receivers',
-    }
+    stakeholder_names, stakeholder_name_mapping = get_stakeholders()
 
     # setting initial values for user adoption
     user_adoption_initial_values = {

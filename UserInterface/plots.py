@@ -7,9 +7,7 @@ import sqlite3
 import plotly.figure_factory as ff
 import plotly.express as px
 import plotly.graph_objects as go
-
-
-
+from Model.sys_params import *
 
 
 def customize_plotly_figure(fig, x_title=None, y_title=None, info_box=None, plot_title=None):
@@ -44,9 +42,6 @@ def customize_plotly_figure(fig, x_title=None, y_title=None, info_box=None, plot
             borderwidth=1,
             font=dict(color='black')
         )
-
-
-
 
 def format_column_name(column_name):
     """
@@ -93,6 +88,35 @@ def get_simulation_data(db, dataset_name):
     # Close the connection
     conn.close()
     return df
+
+def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area):
+    df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+    df = df[['timestep', stakeholder1_raw+'_a_utility_tokens', stakeholder1_raw+'_a_selling_tokens', stakeholder1_raw+'_a_holding_tokens'
+             , stakeholder1_raw+'_a_utility_from_holding_tokens', stakeholder1_raw+'_a_selling_from_holding_tokens', stakeholder1_raw+'_a_holding_from_holding_tokens']].copy()
+    df = df[df['timestep'].astype(float) <= max_months]
+
+    # Format the column names
+    formatted_columns = [format_column_name(col) for col in ['timestep', stakeholder1_raw+'_a_utility_tokens', stakeholder1_raw+'_a_selling_tokens', stakeholder1_raw+'_a_holding_tokens',
+                                                             stakeholder1_raw+'_a_utility_from_holding_tokens', stakeholder1_raw+'_a_selling_from_holding_tokens', stakeholder1_raw+'_a_holding_from_holding_tokens']]
+    df.columns = formatted_columns
+
+    plotly_colors = px.colors.qualitative.Plotly
+    color_map = {}
+    for i, value in enumerate(df[formatted_columns[1:]]):
+        try:
+            color_map[value] = plotly_colors[i]
+        except:
+            color_map[value] = plotly_colors[i-len(plotly_colors)]
+
+    if percentage_area:
+        fig = px.area(df, x=formatted_columns[0], y=formatted_columns[1:], color_discrete_map=color_map, groupnorm='fraction')
+        fig.update_layout(yaxis_tickformat='.0%') # Convert the y-axis to percentages
+    else:
+        fig = px.area(df, x=formatted_columns[0], y=formatted_columns[1:], color_discrete_map=color_map)
+
+    customize_plotly_figure(fig, x_title="Months", y_title="Tokens")
+
+    st.plotly_chart(fig, use_container_width=True)
 
 def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
 
@@ -462,7 +486,7 @@ def plot_token_economy(param_id, max_months):
                             , plot_title="Stakeholder Staked Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_staked)
     
     with st.expander("**Detailed Agent Behaviors**"):
-        # plot meta bucket allocations of all agents
+        # plot meta bucket allocations of agents
         pcol31a, pcol32a = st.columns(2)
         with pcol31a:
             log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
@@ -511,6 +535,36 @@ def plot_token_economy(param_id, max_months):
                                 'advisor_a_holding_from_holding_tokens', 'strategic_partners_a_holding_from_holding_tokens', 'market_investors_a_holding_from_holding_tokens',
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
+
+        # plot individual agent meta bucket behavior
+        stakeholder_names, stakeholder_mapping = get_stakeholders()
+        pcol31d, pcol32d = st.columns(2)
+        with pcol31d:
+            st.write('**Select Stakeholder 1**')
+            pcol31d1, pcol31d2 = st.columns(2)
+            with pcol31d1:
+                # pick agent
+                
+                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(col) for col in stakeholder_names], label_visibility='collapsed')
+                stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
+            with pcol31d2:
+                # pick meta bucket
+                percentage_area1 = st.toggle('Percentage Area 1', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+        
+        with pcol32d:
+            st.write('**Select Stakeholder 2**')
+            pcol32d1, pcol32d2 = st.columns(2)
+            with pcol32d1:
+                # pick agent
+                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(col) for col in stakeholder_names], label_visibility='collapsed')
+                stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
+            with pcol32d2:
+                # pick meta bucket
+                percentage_area2 = st.toggle('Percentage Area 2', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
 
     pcol41, pcol42 = st.columns(2)
     with pcol41:

@@ -257,9 +257,7 @@ def update_agent_meta_bucket_allocations(params, substep, state_history, prev_st
         updated_agents[key]['a_holding_from_holding_tokens'] = [agent_from_holding_allocations[key]['holding'] if key in agent_from_holding_allocations else 0][0]
         updated_agents[key]['a_tokens'] -= (agent_allocations[key]['selling'] + agent_allocations[key]['utility']
                                             + [agent_from_holding_allocations[key]['selling'] + agent_from_holding_allocations[key]['utility'] if key in agent_from_holding_allocations else 0][0])
-
-        if prev_state['timestep'] < 5:
-            print(f"Agent {updated_agents[key]['a_name']}: updated_agents[key]['a_selling_tokens']: {updated_agents[key]['a_selling_tokens']}, updated_agents[key]['a_utility_tokens']: {updated_agents[key]['a_utility_tokens']}, updated_agents[key]['a_holding_tokens']: {updated_agents[key]['a_holding_tokens']}, updated_agents[key]['a_selling_from_holding_tokens']: {updated_agents[key]['a_selling_from_holding_tokens']}, updated_agents[key]['a_utility_from_holding_tokens']: {updated_agents[key]['a_utility_from_holding_tokens']}, updated_agents[key]['a_holding_from_holding_tokens']: {updated_agents[key]['a_holding_from_holding_tokens']}, updated_agents[key]['a_tokens']: {updated_agents[key]['a_tokens']}")
+    
     return ('agents', updated_agents)
 
 
