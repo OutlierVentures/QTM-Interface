@@ -70,7 +70,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         st.markdown("### Fundraising")
         col21, col22, col23, col24 = st.columns(4)
         with col21:
-            fundraising_style = st.radio('Fundraising Style',('Moderate', 'Medium', 'Aggressive','Custom'), index=0, help=param_help['fundraising_style'])
+            fundraising_style_choices = ['Moderate', 'Medium', 'Aggressive','Custom']
+            fundraising_style = st.radio('Fundraising Style',tuple(fundraising_style_choices), index=fundraising_style_choices.index(sys_param['fundraising_style'][0]) if 'fundraising_style' in sys_param else 0, help=param_help['fundraising_style'])
             if fundraising_style != 'Custom':
                 show_full_fund_table = st.toggle('Show Full Table', value=False, help="Show the full token fundraising table.")
             else:
@@ -128,7 +129,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         vesting_dict = {} # structure: {name: {'allocation': allocation, 'initial_vesting': initial_vesting, 'cliff': cliff, 'duration': duration}}
         col31, col32 = st.columns(2)
         with col31:
-            vesting_style = st.radio('Vesting Style',('Slow', 'Medium', 'Fast','Custom'), index=0, help=param_help['vesting_style'])
+            vesting_style_choices = ['Slow', 'Medium', 'Fast','Custom']
+            vesting_style = st.radio('Vesting Style',tuple(vesting_style_choices), index=vesting_style_choices.index(sys_param['vesting_style'][0]) if 'vesting_style' in sys_param else 0, help=param_help['vesting_style'])
             if vesting_style != 'Custom':
                 show_full_alloc_table = st.toggle('Show Full Table', value=False, help="Show the full token allocation and vesting table.")
             else:
@@ -622,7 +624,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         # adoption style choice | user numbers | revenues | meta bucket allocations
         col61, col62, col63 = st.columns(3)
         with col61:
-            adoption_style = st.radio('Adoption Assumption',('Weak', 'Medium', 'Strong', 'Custom'), index=0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
+            adoption_style_choices = ['Weak', 'Medium', 'Strong', 'Custom']
+            adoption_style = st.radio('Adoption Assumption',tuple(adoption_style_choices), index=adoption_style_choices.index(sys_param['adoption_style'][0]) if 'adoption_style' in sys_param else 0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
             show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
         with col62:
             product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no product users, but only token holders. 1 means the opposite and 0 means that there are as many product users as token holders.")
@@ -1045,6 +1048,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'public_sale_supply_perc': public_sale_supply,
         'public_sale_valuation': launch_valuation * 1e6,
         'angel_raised': equity_investments * 1e6,
+        'fundraising_style': fundraising_style if not show_full_fund_table else 'Custom',
         'seed_raised': seed_raised* 1e6,
         'presale_1_raised': presale_1_raised* 1e6,
         'presale_2_raised': presale_2_raised* 1e6,
@@ -1052,6 +1056,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'seed_valuation': seed_valuation* 1e6,
         'presale_1_valuation': presale_1_valuation* 1e6,
         'presale_2_valuation': presale_2_valuation* 1e6,
+        'vesting_style': vesting_style if not show_full_alloc_table else 'Custom',
         'angel_initial_vesting': [angel_initial_vesting if vesting_style == 'Custom' or show_full_alloc_table else init_vesting_dict['angel']][0],
         'angel_cliff': [angel_cliff if vesting_style == 'Custom' or show_full_alloc_table else cliff_dict['angel']][0],
         'angel_vesting_duration': [angel_duration if vesting_style == 'Custom' or show_full_alloc_table else duration_dict['angel']][0],
@@ -1110,6 +1115,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'airdrop_amount2': [airdrop_amount2 if airdrop_toggle else sys_param['airdrop_amount2'][0]][0],
         'airdrop_date3': [airdrop_date3.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date3'][0]][0],
         'airdrop_amount3': [airdrop_amount3 if airdrop_toggle else sys_param['airdrop_amount3'][0]][0],
+        'adoption_style': adoption_style if not show_full_adoption_table else 'Custom',
         'initial_product_users': initial_product_users,
         'initial_token_holders': initial_token_holders,
         'product_users_after_10y': product_users_after_10y,
