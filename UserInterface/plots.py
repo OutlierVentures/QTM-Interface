@@ -487,6 +487,36 @@ def plot_token_economy(param_id, max_months):
     
     with st.expander("**Detailed Agent Behaviors**"):
         # plot meta bucket allocations of agents
+        # plot individual agent meta bucket behavior
+        stakeholder_names, stakeholder_mapping = get_stakeholders()
+        pcol31d, pcol32d = st.columns(2)
+        with pcol31d:
+            st.write('**Select Stakeholder 1**')
+            pcol31d1, pcol31d2 = st.columns(2)
+            with pcol31d1:
+                # pick agent
+                
+                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(col) for col in stakeholder_names], index=0, label_visibility='collapsed')
+                stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
+            with pcol31d2:
+                # pick meta bucket
+                percentage_area1 = st.toggle('Percentage Area 1', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+        
+        with pcol32d:
+            st.write('**Select Stakeholder 2**')
+            pcol32d1, pcol32d2 = st.columns(2)
+            with pcol32d1:
+                # pick agent
+                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(col) for col in stakeholder_names], index=1, label_visibility='collapsed')
+                stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
+            with pcol32d2:
+                # pick meta bucket
+                percentage_area2 = st.toggle('Percentage Area 2', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
+        
         pcol31a, pcol32a = st.columns(2)
         with pcol31a:
             log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
@@ -535,36 +565,6 @@ def plot_token_economy(param_id, max_months):
                                 'advisor_a_holding_from_holding_tokens', 'strategic_partners_a_holding_from_holding_tokens', 'market_investors_a_holding_from_holding_tokens',
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
-
-        # plot individual agent meta bucket behavior
-        stakeholder_names, stakeholder_mapping = get_stakeholders()
-        pcol31d, pcol32d = st.columns(2)
-        with pcol31d:
-            st.write('**Select Stakeholder 1**')
-            pcol31d1, pcol31d2 = st.columns(2)
-            with pcol31d1:
-                # pick agent
-                
-                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(col) for col in stakeholder_names], label_visibility='collapsed')
-                stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
-            with pcol31d2:
-                # pick meta bucket
-                percentage_area1 = st.toggle('Percentage Area 1', value=False)
-
-            area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
-        
-        with pcol32d:
-            st.write('**Select Stakeholder 2**')
-            pcol32d1, pcol32d2 = st.columns(2)
-            with pcol32d1:
-                # pick agent
-                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(col) for col in stakeholder_names], label_visibility='collapsed')
-                stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
-            with pcol32d2:
-                # pick meta bucket
-                percentage_area2 = st.toggle('Percentage Area 2', value=False)
-
-            area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
 
     pcol41, pcol42 = st.columns(2)
     with pcol41:

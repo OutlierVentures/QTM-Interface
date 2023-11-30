@@ -105,8 +105,8 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     else:
         token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
 
-    if params['agent_behavior'] == 'random':
-        token_buys = token_buys * random.uniform(0.5,1.5)
+    """ if params['agent_behavior'] == 'random':
+        token_buys = token_buys * random.uniform(0.5,1.5) """
     
     #token2_in_lp = token_buys/ lp2 price
     # This is going to be the same as token buys because we are assuing USD is the pair

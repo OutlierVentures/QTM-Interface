@@ -699,7 +699,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 token_adoption_velocity = st.number_input('Token Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['token_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0], disabled=False, key="token_adoption_velocity", help="The velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.")
                 regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
             
-            agent_behavior = st.radio('Agent Meta Bucket Behavior',('Static', 'Random'), index=0, help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
+            agent_behavior_choices = ['Static', 'Random']
+            agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index('Static') if 'random_seed' not in sys_param else agent_behavior_choices.index('Random'), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
             col73, col74, col75, col76 = st.columns(4)
             if agent_behavior == 'static':
                 st.write("**Meta Bucket Allocations**")
@@ -723,11 +724,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             avg_token_holder_growth_rate = adoption_dict[adoption_style]['avg_token_holder_growth_rate']
             token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
 
-        avg_token_utility_allocation = [avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0]
-        avg_token_selling_allocation = [avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0]
-        avg_token_holding_allocation = [avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0]
+        avg_token_utility_allocation = avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation'] if agent_behavior =='static' else 0.0
+        avg_token_selling_allocation = avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation'] if agent_behavior =='static' else 0.0
+        avg_token_holding_allocation = avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation'] if agent_behavior =='static' else 0.0
         meta_bucket_alloc_sum = avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation
-        if meta_bucket_alloc_sum != 100:
+        if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
 
     with st.expander("**Business Assumptions**"):
@@ -836,7 +837,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     'value': sys_param['mint_burn_ratio'][0],
                     'display_name': 'Mint / Burn Ratio',
                     'description': 'The ratio of minted tokens to burned tokens for staking rewards. The remaining tokens are distributed from the staking vesting bucket if an allocation exists.'
-                    },
+                    }
             },
             'Liquidity Mining': {
                 'description': 'Provide liquidity to the DEX liquidity pool to receive tokens as incentives at a fixed APR.',
@@ -899,6 +900,14 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     },
             }
         }
+        
+        # add staking target to utility values
+        if agent_behavior == 'random':
+            utility_values['Stake'].update({'agent_staking_apr_target':{
+                    'value': sys_param['agent_staking_apr_target'][0] if 'agent_staking_apr_target' in sys_param else 10.0,
+                    'display_name': 'APR Target / %',
+                    'description': 'The agents target APR for staking rewards. Agents with random behavior will prioritize utility allocations over selling on average as long as the staking APR is above the APR target. Only applicable for random agent behavior!'
+                    }})
         
         # remove utilities when not activated in the token allocation section
         if not incentivisation_toggle:
@@ -1128,7 +1137,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'avg_token_utility_allocation': avg_token_utility_allocation,
         'avg_token_selling_allocation': avg_token_selling_allocation,
         'avg_token_holding_allocation': avg_token_holding_allocation,
-        'avg_token_utility_removal': [avg_token_utility_removal if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior == 'static' else adoption_dict[adoption_style]['avg_token_utility_removal']][0],
+        'avg_token_utility_removal': avg_token_utility_removal if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior == 'static' else adoption_dict[adoption_style]['avg_token_utility_removal'] if agent_behavior == 'static' else 0,
         'royalty_income_per_month': royalty_income_per_month*1e3,
         'treasury_income_per_month': treasury_income_per_month*1e3,
         'other_income_per_month': other_income_per_month*1e3,
@@ -1172,7 +1181,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 })
 
     # Consistency Checks
-    if (lp_allocation < 0 or meta_bucket_alloc_sum != 100 or dex_capital > raised_funds or utility_sum != 100 or
+    if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or dex_capital > raised_funds or utility_sum != 100 or
         (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
         (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning)):
         st.session_state['execute_inputs'] = False
@@ -1215,7 +1224,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             if burn_start < token_launch_date:
                 st.error(f"The burn starting date ({burn_start.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the burn starting date!", icon="⚠️")
 
-        if meta_bucket_alloc_sum != 100:
+        if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
         
         if utility_sum != 100:
