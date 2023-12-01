@@ -508,7 +508,7 @@ def plot_token_economy(param_id, max_months):
             with pcol31d1:
                 # pick agent
                 
-                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(col) for col in stakeholder_names], index=0, label_visibility='collapsed')
+                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(name) for name in stakeholder_names if stakeholder_mapping[name.replace(' ', '_').lower()] is not 'protocol_bucket'], index=0, label_visibility='collapsed')
                 stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
             with pcol31d2:
                 # pick meta bucket
@@ -521,7 +521,7 @@ def plot_token_economy(param_id, max_months):
             pcol32d1, pcol32d2 = st.columns(2)
             with pcol32d1:
                 # pick agent
-                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(col) for col in stakeholder_names], index=1, label_visibility='collapsed')
+                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(name) for name in stakeholder_names if stakeholder_mapping[name.replace(' ', '_').lower()] is not 'protocol_bucket'], index=1, label_visibility='collapsed')
                 stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
             with pcol32d2:
                 # pick meta bucket
