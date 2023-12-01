@@ -111,7 +111,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
-                    st.write("Total Raised: "+str(raised_funds)+" $m")
+                    st.write(f"Total Raised: {raised_funds:.3f} $m")
         
         with col24:
             if fundraising_style == 'Custom' or show_full_fund_table:
