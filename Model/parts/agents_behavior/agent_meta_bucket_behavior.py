@@ -65,16 +65,26 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
 
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
+                random.seed(random_seed + prev_state['timestep'] + i)
+
+                # agents previous timestep behavior
+                prev_agent_behavior = agents[agent]['a_actions']
+                if prev_state['timestep'] == 1:
+                    utility_prev = random.uniform(0.5, 1)
+                    hold_prev = random.uniform(0.05, 0.15)
+                else:
+                    utility_prev = float(prev_agent_behavior['utility'])
+                    hold_prev = float(prev_agent_behavior['hold'])
                 
                 # determine utility and selling behavior
-                random.seed(random_seed + prev_state['timestep'] + i)
-                utility = np.min([random.uniform(np.min([staking_apr/agent_staking_apr_target,1]), 1), 1])
+                new_utility = utility_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1])) + (staking_apr - agent_staking_apr_target)/agent_staking_apr_target
+                utility = np.min([np.max([0, new_utility]), 1])
                 selling = 1 - utility
-                remove = (1-utility)
+                remove = (1-utility) * random.uniform(0, 0.1)
                 
                 # include token holdings
                 random.seed(random_seed + prev_state['timestep'] + i + random.uniform(0, 50))
-                holding = random.uniform(0, 1) * 0.05
+                holding = hold_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1]))
                 selling = selling - holding/2
                 utility = utility - holding/2
                 
