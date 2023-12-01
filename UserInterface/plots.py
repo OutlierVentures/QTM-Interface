@@ -377,6 +377,7 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
+    st.markdown('---')
     vesting_cum_plot_results_plotly('timestep', ['angel_a_tokens_vested_cum',
                                                  'seed_a_tokens_vested_cum',
                                                  'presale_1_a_tokens_vested_cum',
@@ -411,6 +412,8 @@ def plot_fundraising(param_id):
                                                  'staking_vesting_a_tokens_vested_cum',
                                                  'te_airdrop_tokens_cum'], 1, param_id, max_months=120,
                                                  plot_title="Token Vesting", x_title="Months", y_title="Tokens") """
+    
+    st.markdown('---')
     pcol11, pcol12 = st.columns(2)
     with pcol11:
         ##EFFECTIVE TOKEN PRICE
@@ -447,25 +450,34 @@ def plot_business(param_id):
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
     max_months = sys_param['simulation_duration'].iloc[0]   
+    st.markdown('---')
     max_months = plot_results_plotly('timestep', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    st.markdown('---')
     max_months = plot_results_plotly('timestep', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
+    st.markdown('---')
     pcol21, pcol22 = st.columns(2)
     with pcol21:
         max_months = plot_results_plotly('timestep', ['ua_product_revenue'], 1, param_id, max_months, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
     with pcol22:
         max_months = plot_results_plotly('timestep', ['ua_token_buys'], 1, param_id, max_months, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
+    st.markdown('---')
+    max_months = plot_results_plotly('timestep', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
     
     return max_months
 
 def plot_token_economy(param_id, max_months):
     ##ANALYSIS TAB
     # plot token protocol and economy supply buckets
+    st.markdown('---')
+    st.markdown('### Token Economy and Protocol Buckets')
     log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
     max_months = plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                         'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
                         'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
                         , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
     
+    st.markdown('---')
+    st.markdown('### Stakeholder Behavior')
     pcol31, pcol32 = st.columns(2)
     with pcol31:
         # plot stakeholder holdings
@@ -565,17 +577,9 @@ def plot_token_economy(param_id, max_months):
                                 'advisor_a_holding_from_holding_tokens', 'strategic_partners_a_holding_from_holding_tokens', 'market_investors_a_holding_from_holding_tokens',
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
-
-    pcol41, pcol42 = st.columns(2)
-    with pcol41:
-        log_scale_toggle_lp_token_price = st.toggle('Log Scale - Token Price', value=True)
-        max_months = plot_results_plotly('timestep', ['lp_token_price'], 1, param_id, max_months
-                            , plot_title="Token Price", x_title="Months", y_title="USD", logy=log_scale_toggle_lp_token_price)
-    with pcol42:
-        log_scale_toggle_valuations = st.toggle('Log Scale - Valuations', value=True)
-        max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
-                            , plot_title="Valuations", x_title="Months", y_title="USD", logy=log_scale_toggle_valuations)
     
+    st.markdown('---')
+    st.markdown('### Utility Allocations')
     pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
                      'holding_share','transfer_share'], param_id, plot_title="Token Utility Share")
     
@@ -592,10 +596,30 @@ def plot_token_economy(param_id, max_months):
                                         'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
                                         'te_holding_allocation_cum'], 1, param_id, max_months
                                         , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
-    
-    log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
-    max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
+
+    st.markdown('---')
+    st.markdown('### Token Rewards')
+    pcol61, pcol62 = st.columns(2)
+    with pcol61:
+        log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
+        max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
                                         , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr)
+    with pcol62:
+        log_scale_toggle_token_rewards = st.toggle('Log Scale - Token Rewards', value=True)
+        max_months = plot_results_plotly('timestep', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards', 'u_staking_minting_rewards', 'u_liquidity_mining_rewards'], 1, param_id, max_months
+                                        , plot_title="Token Rewards", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_rewards)
+
+    st.markdown('---')
+    st.markdown('### Token Valuations')
+    pcol41, pcol42 = st.columns(2)
+    with pcol41:
+        log_scale_toggle_lp_token_price = st.toggle('Log Scale - Token Price', value=True)
+        max_months = plot_results_plotly('timestep', ['lp_token_price'], 1, param_id, max_months
+                            , plot_title="Token Price", x_title="Months", y_title="USD", logy=log_scale_toggle_lp_token_price)
+    with pcol42:
+        log_scale_toggle_valuations = st.toggle('Log Scale - Valuations', value=True)
+        max_months = plot_results_plotly('timestep', ['lp_valuation','te_MC','te_FDV_MC'], 1, param_id, max_months
+                            , plot_title="Valuations", x_title="Months", y_title="USD", logy=log_scale_toggle_valuations)
 
 def utility_pie_plot(utility_shares, utility_values):
 
