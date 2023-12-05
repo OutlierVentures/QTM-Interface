@@ -98,6 +98,10 @@ def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_month
     # Format the column names
     formatted_columns = [format_column_name(col) for col in ['timestep', stakeholder1_raw+'_a_utility_tokens', stakeholder1_raw+'_a_selling_tokens', stakeholder1_raw+'_a_holding_tokens',
                                                              stakeholder1_raw+'_a_utility_from_holding_tokens', stakeholder1_raw+'_a_selling_from_holding_tokens', stakeholder1_raw+'_a_holding_from_holding_tokens']]
+    
+    # Format the column names
+    formatted_columns = [col + ' From Vesting' if ('Timestep' not in col and 'From Holding' not in col) else col for col in formatted_columns ]
+    
     df.columns = formatted_columns
 
     plotly_colors = px.colors.qualitative.Plotly
@@ -535,7 +539,7 @@ def plot_token_economy(param_id, max_months):
                                 'presale_2_a_utility_tokens','public_sale_a_utility_tokens','team_a_utility_tokens', 'ov_a_utility_tokens',
                                 'advisor_a_utility_tokens', 'strategic_partners_a_utility_tokens', 'market_investors_a_utility_tokens',
                                 'airdrop_receivers_a_utility_tokens', 'incentivisation_receivers_a_utility_tokens'], 1, param_id, max_months
-                                , plot_title="Meta Utility Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
+                                , plot_title="Meta Utility Allocations Tokens per Month From Vesting", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_utility)
         with pcol32a:
             log_scale_toggle_meta_alloc_utility_from_holding = st.toggle('Log Scale - Utility Meta Bucket Allocations From Holding', value=False)
             max_months = plot_results_plotly('timestep', ['angel_a_utility_from_holding_tokens','seed_a_utility_from_holding_tokens','presale_1_a_utility_from_holding_tokens',
@@ -552,7 +556,7 @@ def plot_token_economy(param_id, max_months):
                                 'presale_2_a_selling_tokens','public_sale_a_selling_tokens','team_a_selling_tokens', 'ov_a_selling_tokens',
                                 'advisor_a_selling_tokens', 'strategic_partners_a_selling_tokens', 'market_investors_a_selling_tokens',
                                 'airdrop_receivers_a_selling_tokens', 'incentivisation_receivers_a_selling_tokens'], 1, param_id, max_months
-                                , plot_title="Meta Selling Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling)
+                                , plot_title="Meta Selling Allocations Tokens per Month From Vesting", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_selling)
         with pcol32b:
             log_scale_toggle_meta_alloc_selling_from_holding = st.toggle('Log Scale - Selling Meta Bucket Allocations From Holding', value=False)
             max_months = plot_results_plotly('timestep', ['angel_a_selling_from_holding_tokens','seed_a_selling_from_holding_tokens','presale_1_a_selling_from_holding_tokens',
@@ -568,7 +572,7 @@ def plot_token_economy(param_id, max_months):
                                 'presale_2_a_holding_tokens','public_sale_a_holding_tokens','team_a_holding_tokens', 'ov_a_holding_tokens',
                                 'advisor_a_holding_tokens', 'strategic_partners_a_holding_tokens', 'market_investors_a_holding_tokens',
                                 'airdrop_receivers_a_holding_tokens', 'incentivisation_receivers_a_holding_tokens'], 1, param_id, max_months
-                                , plot_title="Meta Holding Allocations Tokens per Month", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding)
+                                , plot_title="Meta Holding Allocations Tokens per Month From Vesting", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding)
         with pcol32c:
             log_scale_toggle_meta_alloc_holding_from_holding = st.toggle('Log Scale - Holding Meta Bucket Allocations From Holding', value=False)
             max_months = plot_results_plotly('timestep', ['angel_a_holding_from_holding_tokens','seed_a_holding_from_holding_tokens','presale_1_a_holding_from_holding_tokens',
