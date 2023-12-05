@@ -35,7 +35,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Web based UI for result output plots
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Improve function & overall code documentation
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Improve the robustness of all functions
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Improve the robustness of all model input parameter
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Improve the robustness of all model input parameter
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Staging tests of the whole model
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Case studies & publishing first results in an article
@@ -45,8 +45,8 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build a web-based UI to create another input option
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add more dynamic agent (behavior) policies
-  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Stochastic agents
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add more dynamic agent (behavior) policies
+  - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Stochastic agents
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents I: Hard coded logics
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents II: LLM driven decision making
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
