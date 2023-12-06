@@ -339,8 +339,24 @@ def bar_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
     st.plotly_chart(fig, use_container_width=True)
 
+def bar_plot_plotly_from_variables(value_dict, x_title, y_title, info_box=None, plot_title=None):
+    # Check if the values in values_list exist in the DataFrame
+    
+    df = pd.DataFrame.from_dict(value_dict)
 
+    plotly_colors = px.colors.qualitative.Plotly
+    color_map = {}
+    for i, value in enumerate(df[x_title]):
+        try:
+            color_map[value] = plotly_colors[i]
+        except:
+            color_map[value] = plotly_colors[i-len(plotly_colors)]
 
+    fig = px.bar(df, x=x_title, y=y_title, color_discrete_map=color_map)
+
+    customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
+
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):

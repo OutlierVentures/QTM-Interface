@@ -107,7 +107,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float([valuation_weights["seed"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['seed_raised'][0]/1e6)][0]), help="The amount of money raised in the seed round.")
                 presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_1_raised'][0]/1e6)][0]), help="The amount of money raised in the first presale.")
                 presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_2_raised'][0]/1e6)][0]), help="The amount of money raised in the second presale.")
-                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([launch_valuation * (public_sale_supply/100) if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['public_sale_raised'][0]/1e6)][0]), help="The amount of money raised in the public sale.")
+                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([launch_valuation * (public_sale_supply/100) if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['public_sale_raised'][0]/1e6)][0]), disabled=True, help="The amount of money raised in the public sale.")
 
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
@@ -123,6 +123,16 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 st.number_input('Presale 1 Alloc / %', disabled=True, value=presale_1_allocation, help="The first presale token allocation as percentage of the initial total supply.")
                 st.number_input('Presale 2 Alloc / %', disabled=True, value=presale_2_allocation, help="The second presale token allocation as percentage of the initial total supply.")
                 st.number_input('Public Sale Alloc / %', disabled=True, value=public_sale_allocation, help="The public sale token allocation as percentage of the initial total supply.")
+        
+        if fundraising_style == 'Custom' or show_full_fund_table:
+            col21a, col22a, col23a = st.columns(3)
+            with col21a:
+                bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Raised / $': [equity_investments, seed_raised, presale_1_raised, presale_2_raised, public_sale_raised]}, 'Round', 'Raised / $', info_box=None, plot_title='Fundraising Round Raised Capital')
+            with col22a:
+                bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Valuation / $m': [equity_investments / (initial_supply * equity_perc/100), seed_valuation, presale_1_valuation, presale_2_valuation, launch_valuation]}, 'Round', 'Valuation / $m', info_box=None, plot_title='Fundraising Round Token Valuations')
+            with col23a:
+                bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Allocation / %': [equity_perc, seed_allocation, presale_1_allocation, presale_2_allocation, public_sale_allocation]}, 'Round', 'Allocation / %', info_box=None, plot_title='Fundraising Round Token Allocations')
+
 
     with st.expander("**Token Allocations & Vesting**"):
         st.markdown("### Token Allocations & Vesting")
@@ -700,7 +710,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
             
             agent_behavior_choices = ['Static', 'Random']
-            agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index('Static') if 'random_seed' not in sys_param else agent_behavior_choices.index('Random'), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
+            agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index(sys_param['agent_behavior'][0].capitalize()), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
             col73, col74, col75, col76 = st.columns(4)
             if agent_behavior == 'static':
                 st.write("**Meta Bucket Allocations**")
