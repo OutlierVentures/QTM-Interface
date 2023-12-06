@@ -86,9 +86,9 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
               tokens: float, tokens_vested: float, tokens_vested_cum: float, 
               tokens_airdropped: float, tokens_airdropped_cum: float, tokens_incentivised: float, tokens_incentivised_cum: float,
               tokens_staked: float, tokens_staked_cum: float, tokens_staked_remove: float,
-              tokens_staking_buyback_rewards: float, tokens_staking_vesting_rewards: float, tokens_staking_minting_rewards: float,
-              tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float, tokens_liquidity_mining_remove: float, tokens_liquidity_mining_rewards: float,
-              tokens_transferred: float, tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
+              tokens_staking_buyback_rewards: float, tokens_staking_buyback_rewards_cum: float, tokens_staking_vesting_rewards: float, tokens_staking_vesting_rewards_cum: float,
+              tokens_staking_minting_rewards: float, tokens_staking_minting_rewards_cum: float, tokens_liquidity_mining: float, tokens_liquidity_mining_cum: float, tokens_liquidity_mining_remove: float,
+              tokens_liquidity_mining_rewards: float, tokens_liquidity_mining_rewards_cum: float, tokens_transferred: float, tokens_transferred_cum: float, tokens_burned: float, tokens_burned_cum: float,
               selling_tokens: float, utility_tokens: float, selling_from_holding_tokens: float, utility_from_holding_tokens: float,
               holding_from_holding_tokens: float, holding_tokens: float, actions: dict, current_action: str) -> dict:
     """
@@ -108,12 +108,16 @@ def new_agent(stakeholder_name: str, stakeholder_type: str, usd_funds: float,
              'a_tokens_staked_cum': tokens_staked_cum, # amount of tokens staked cumulatively
              'a_tokens_staked_remove': tokens_staked_remove, # amount of tokens removed from staking
              'a_tokens_staking_buyback_rewards': tokens_staking_buyback_rewards, # amount of token rewards for staking for buyback share
+             'a_tokens_staking_buyback_rewards_cum': tokens_staking_buyback_rewards_cum, # amount of token rewards for staking for buyback share cumulative
              'a_tokens_staking_vesting_rewards': tokens_staking_vesting_rewards, # amount of token rewards for staking for staking vesting
+             'a_tokens_staking_vesting_rewards_cum': tokens_staking_vesting_rewards_cum, # amount of token rewards for staking for staking vesting cumulative
              'a_tokens_staking_minting_rewards': tokens_staking_minting_rewards, # amount of token rewards for staking for minting from mint & burn mechanism
+             'a_tokens_staking_minting_rewards_cum': tokens_staking_minting_rewards_cum, # amount of token rewards for staking for minting from mint & burn mechanism cumulative
              'a_tokens_liquidity_mining': tokens_liquidity_mining, # amount of tokens used for liquidity mining per timestep
              'a_tokens_liquidity_mining_cum': tokens_liquidity_mining_cum, # amount of tokens used for liquidity mining cumulatively
              'a_tokens_liquidity_mining_remove': tokens_liquidity_mining_remove, # amount of tokens removed from liquidity mining
              'a_tokens_liquidity_mining_rewards': tokens_liquidity_mining_rewards, # amount of token rewards for liquidity mining
+             'a_tokens_liquidity_mining_rewards_cum': tokens_liquidity_mining_rewards_cum, # amount of token rewards for liquidity mining cumulative
              'a_tokens_transferred': tokens_transferred, # amount of tokens transferred per timestep
              'a_tokens_transferred_cum': tokens_transferred_cum, # amount of tokens transferred cumulatively
              'a_tokens_burned': tokens_burned, # amount of tokens burned per timestep
@@ -142,10 +146,12 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
             current_holdings = sys_param[f'{stakeholder_name}_current_holdings'][0] if not token_launch and f'{stakeholder_name}_current_holdings' in sys_param else 0
             current_staked = sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
             vested = sys_param[f'{stakeholder_name}_vested_init'][0] if not token_launch and f'{stakeholder_name}_vested_init' in sys_param else 0
+            tokens_incentivised_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
         else:
             current_holdings = 0
             current_staked = 0
             vested = 0
+            tokens_incentivised_cum = 0
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
                                     stakeholder_type = stakeholder_type,
                                     usd_funds = 0,
@@ -155,17 +161,21 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
                                     tokens_airdropped = 0,
                                     tokens_airdropped_cum = 0,
                                     tokens_incentivised = 0,
-                                    tokens_incentivised_cum = 0,
+                                    tokens_incentivised_cum = tokens_incentivised_cum,
                                     tokens_staked = 0,
                                     tokens_staked_cum = current_staked,
                                     tokens_staked_remove = 0,
                                     tokens_staking_buyback_rewards = 0,
+                                    tokens_staking_buyback_rewards_cum = 0,
                                     tokens_staking_vesting_rewards = 0,
+                                    tokens_staking_vesting_rewards_cum = 0,
                                     tokens_staking_minting_rewards = 0,
+                                    tokens_staking_minting_rewards_cum = 0,
                                     tokens_liquidity_mining = 0,
                                     tokens_liquidity_mining_cum = 0,
                                     tokens_liquidity_mining_remove = 0,
                                     tokens_liquidity_mining_rewards = 0,
+                                    tokens_liquidity_mining_rewards_cum = 0,
                                     tokens_transferred = 0,
                                     tokens_transferred_cum = 0,
                                     tokens_burned = 0,

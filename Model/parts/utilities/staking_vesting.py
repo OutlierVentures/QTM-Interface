@@ -90,6 +90,7 @@ def update_agents_after_staking_vesting(params, substep, state_history, prev_sta
             updated_agents[agent]['a_tokens_staked_cum'] += (agents_staking_allocations[agent] - agents_staking_removal[agent])
             updated_agents[agent]['a_tokens_staked_remove'] = agents_staking_removal[agent]
             updated_agents[agent]['a_tokens_staking_vesting_rewards'] = agents_staking_vesting_rewards[agent]
+            updated_agents[agent]['a_tokens_staking_vesting_rewards_cum'] += agents_staking_vesting_rewards[agent]
             updated_agents[agent]['a_tokens'] += (agents_staking_vesting_rewards[agent] + agents_staking_removal[agent])
 
             # subtract tokens from payout source agent

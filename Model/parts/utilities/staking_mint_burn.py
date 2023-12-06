@@ -61,6 +61,7 @@ def update_agents_after_staking_mint_burn(params, substep, state_history, prev_s
     if agents_staking_minting_rewards != {}:
         for agent in updated_agents:
             updated_agents[agent]['a_tokens_staking_minting_rewards'] = agents_staking_minting_rewards[agent]
+            updated_agents[agent]['a_tokens_staking_minting_rewards_cum'] += agents_staking_minting_rewards[agent]
             updated_agents[agent]['a_tokens'] += (agents_staking_minting_rewards[agent])
 
     return ('agents', updated_agents)

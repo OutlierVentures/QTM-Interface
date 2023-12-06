@@ -88,6 +88,7 @@ def update_agents_after_liquidity_mining(params, substep, state_history, prev_st
             updated_agents[agent]['a_tokens_liquidity_mining_cum'] = updated_agents[agent]['a_tokens_liquidity_mining_cum'] * (1 + (IL_adjustment_factor - 1)) + agents_liquidity_mining_allocations[agent] - agents_liquidity_mining_removal[agent]
             updated_agents[agent]['a_tokens_liquidity_mining_remove'] = agents_liquidity_mining_removal[agent]
             updated_agents[agent]['a_tokens_liquidity_mining_rewards'] = agents_liquidity_mining_rewards[agent]
+            updated_agents[agent]['a_tokens_liquidity_mining_rewards_cum'] += agents_liquidity_mining_rewards[agent]
             updated_agents[agent]['a_tokens'] += (agents_liquidity_mining_rewards[agent] + agents_liquidity_mining_removal[agent])
 
             # subtract tokens from payout source agent

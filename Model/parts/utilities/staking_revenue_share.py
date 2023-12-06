@@ -87,6 +87,7 @@ def update_agents_after_staking_revenue_share_buyback(params, substep, state_his
         for agent in updated_agents:
             if agent_rewards != {}:
                 updated_agents[agent]['a_tokens_staking_buyback_rewards'] = agent_rewards[agent]
+                updated_agents[agent]['a_tokens_staking_buyback_rewards_cum'] += agent_rewards[agent]
                 updated_agents[agent]['a_tokens'] += (agent_rewards[agent])
 
             # transfer business bought back tokens to destination

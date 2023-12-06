@@ -55,7 +55,7 @@ def format_column_name(column_name):
     str: The formatted string with spaces instead of underscores and capitalized words.
     """
     # Replacing underscores with spaces
-    name_with_spaces = column_name.replace('_a_', ' ').replace('tokens_vested_cum', '').replace('_token_effective','').replace('_token_allocation','').replace('ua_','').replace('ba_','').replace('te_','').replace('lp_tokens', 'Liquidity Pool').replace('lp_valuation','Liquidity Pool').replace('_supply','').replace('tokens','').replace('lp_','').replace('u_','').replace('_cum','').replace('allocation','').replace('_', ' ')
+    name_with_spaces = column_name.replace('_a_', ' ').replace('_token_effective','').replace('_token_allocation','').replace('ua_','').replace('ba_','').replace('te_','').replace('lp_tokens', 'Liquidity Pool').replace('lp_valuation','Liquidity Pool').replace('_supply','').replace('tokens','').replace('lp_','').replace('u_','').replace('_cum','').replace('allocation','').replace('_', ' ')
     
     # Capitalizing the first letter of each word
     user_friendly_name = name_with_spaces.title()
@@ -534,6 +534,15 @@ def plot_token_economy(param_id, max_months):
                 percentage_area1 = st.toggle('Percentage Area 1', value=False)
 
             area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_vested_cum', f'{stakeholder1_raw}_a_tokens_airdropped_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_incentivised_cum', f'{stakeholder1_raw}_a_tokens_staking_buyback_rewards_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder1_raw}_a_tokens_staking_minting_rewards_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
+                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+            
+            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_staked_cum', f'{stakeholder1_raw}_a_tokens_liquidity_mining_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_transferred_cum', f'{stakeholder1_raw}_a_tokens_burned_cum'], 1, param_id, max_months
+                                , plot_title="Sent Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
         
         with pcol32d:
             st.write('**Select Stakeholder 2**')
@@ -547,6 +556,15 @@ def plot_token_economy(param_id, max_months):
                 percentage_area2 = st.toggle('Percentage Area 2', value=False)
 
             area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
+            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_vested_cum', f'{stakeholder2_raw}_a_tokens_airdropped_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_incentivised_cum', f'{stakeholder2_raw}_a_tokens_staking_buyback_rewards_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder2_raw}_a_tokens_staking_minting_rewards_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
+                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+            
+            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_staked_cum', f'{stakeholder2_raw}_a_tokens_liquidity_mining_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_transferred_cum', f'{stakeholder2_raw}_a_tokens_burned_cum'], 1, param_id, max_months
+                                , plot_title="Sent Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
         
         pcol31a, pcol32a = st.columns(2)
         with pcol31a:
