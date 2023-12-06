@@ -210,8 +210,6 @@ def agent_meta_bucket_allocations(params, substep, state_history, prev_state, **
             sell_from_holding_sum += agent_from_holding_allocations[agent]['selling']
             utility_from_holding_sum += agent_from_holding_allocations[agent]['utility']
             hold_from_holding_sum += agent_from_holding_allocations[agent]['holding']
-            if agents[agent]['a_name'] == 'incentivisation_receivers':
-                print(f"ts: {prev_state['timestep']}, a_tokens: {agents[agent]['a_tokens']}, a_tokens_vested: {agents[agent]['a_tokens_vested']}, sell: {agent_from_holding_allocations[agent]['selling']}, utility: {agent_from_holding_allocations[agent]['utility']}, hold: {agent_from_holding_allocations[agent]['holding']}")
         
         # populate meta bucket allocations
         meta_bucket_allocations['selling'] += sell_tokens + [agent_from_holding_allocations[agent]['selling'] if agent in agent_from_holding_allocations else 0][0]

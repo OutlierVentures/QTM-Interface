@@ -708,38 +708,38 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 st.write(f"Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}")
                 token_adoption_velocity = st.number_input('Token Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['token_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0], disabled=False, key="token_adoption_velocity", help="The velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.")
                 regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
-            
-            agent_behavior_choices = ['Static', 'Random']
-            agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index(sys_param['agent_behavior'][0].capitalize()), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
-            col73, col74, col75, col76 = st.columns(4)
-            if agent_behavior == 'static':
-                st.write("**Meta Bucket Allocations**")
-                col73, col74, col75, col76 = st.columns(4)
-                with col73:
-                    avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
-                with col74:
-                    avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
-                with col75:
-                    avg_token_utility_allocation = st.number_input('Avg. Token Utility Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
-                with col76:
-                    avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_removal'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
-            elif agent_behavior == 'random':
-                with col73:
-                    random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
-
         else:
-            agent_behavior = 'static'
             avg_product_user_growth_rate = adoption_dict[adoption_style]['avg_product_user_growth_rate']
             product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
             avg_token_holder_growth_rate = adoption_dict[adoption_style]['avg_token_holder_growth_rate']
             token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
 
+    with st.expander("**Agent Behavior**"):
+        st.markdown("### Agent Behavior")
+        agent_behavior_choices = ['Static', 'Random']
+        agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index(sys_param['agent_behavior'][0].capitalize()), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: The agent behavior is completely random for every agent and timestep.").lower()
+        col73, col74, col75 = st.columns(3)
+        if agent_behavior == 'static':
+            st.write("**Meta Bucket Allocations**")
+            col7a, col7b, col7c, col7d = st.columns(4)
+            with col7a:
+                avg_token_selling_allocation = st.number_input('Avg. Token Selling Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_selling_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_selling_allocation']][0], disabled=False, key="avg_token_selling_allocation", help="The average monthly token allocation for selling purposes from all holding supply.")
+            with col7b:
+                avg_token_holding_allocation = st.number_input('Avg. Token Holding Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_holding_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holding_allocation']][0], disabled=False, key="avg_token_holding_allocation", help="The average monthly token allocation for holding purposes from all holding supply.")
+            with col7c:
+                avg_token_utility_allocation = st.number_input('Avg. Token Utility Alloc. / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_allocation'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_allocation']][0], disabled=False, key="avg_token_utility_allocation", help="The average monthly token allocation for utility purposes from all holding supply.")
+            with col7d:
+                avg_token_utility_removal = st.number_input('Avg. Token Utility Removal / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['avg_token_utility_removal'][0])*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_utility_removal']][0], disabled=False, key="avg_token_utility_removal", help="The average monthly token removal from staking and liquidity mining utilities.")
+        elif agent_behavior == 'random':
+            with col73:
+                random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
         avg_token_utility_allocation = avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation'] if agent_behavior =='static' else 0.0
         avg_token_selling_allocation = avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation'] if agent_behavior =='static' else 0.0
         avg_token_holding_allocation = avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation'] if agent_behavior =='static' else 0.0
         meta_bucket_alloc_sum = avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation
         if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+
 
     with st.expander("**Business Assumptions**"):
         st.markdown("### Business Assumptions")
