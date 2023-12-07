@@ -146,7 +146,10 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
             current_holdings = sys_param[f'{stakeholder_name}_current_holdings'][0] if not token_launch and f'{stakeholder_name}_current_holdings' in sys_param else 0
             current_staked = sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
             vested = sys_param[f'{stakeholder_name}_vested_init'][0] if not token_launch and f'{stakeholder_name}_vested_init' in sys_param else 0
-            tokens_incentivised_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
+            tokens_incentivised_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and (f'{stakeholder_name}_current_staked' in sys_param and stakeholder_name == 'incentivisation_receivers') else 0
+            tokens_airdropped_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and (f'{stakeholder_name}_current_staked' in sys_param and stakeholder_name == 'airdrop_receivers') else 0
+            if stakeholder_name == 'airdrop_receivers':
+                print(f"tokens_airdropped_cum: {tokens_airdropped_cum}")
         else:
             current_holdings = 0
             current_staked = 0
@@ -159,7 +162,7 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
                                     tokens_vested = 0,
                                     tokens_vested_cum = vested,
                                     tokens_airdropped = 0,
-                                    tokens_airdropped_cum = 0,
+                                    tokens_airdropped_cum = tokens_airdropped_cum,
                                     tokens_incentivised = 0,
                                     tokens_incentivised_cum = tokens_incentivised_cum,
                                     tokens_staked = 0,

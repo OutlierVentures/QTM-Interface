@@ -339,7 +339,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_initial_vesting = 0.0
                 if airdrop_toggle:
-                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y"), help="The date of the first airdrop.")
+                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y"), help="The date of the first airdrop.")
                     airdrop_amount1 = st.number_input("Amount 1 / %", min_value=0.0, value=sys_param['airdrop_amount1'][0], help="The share of tokens distributed from the airdrop allocation in the first airdrop.")
 
         with col44:
@@ -428,7 +428,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_cliff = 0.0
                 if airdrop_toggle:
-                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y"), help="The date of the second airdrop.")
+                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y"), help="The date of the second airdrop.")
                     airdrop_amount2 = st.number_input("Amount 2 / %", min_value=0.0, value=sys_param['airdrop_amount2'][0], help="The share of tokens distributed from the airdrop allocation in the second airdrop.")
     
         with col45:
@@ -517,7 +517,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     staking_vesting_duration = 0.0
                 if airdrop_toggle:
-                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y"), help="The date of the third airdrop.")
+                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y"), help="The date of the third airdrop.")
                     airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
 
         if show_full_alloc_table or vesting_style == 'Custom':
@@ -1089,9 +1089,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 stakeholder_allocations += vesting_dict[stakeholder]['allocation']
             stakeholder_allocations += airdrop_allocation if airdrop_toggle else 0
             st.write(f"Total stakeholder allocation at initialization: {stakeholder_allocations}m or {stakeholder_allocations/current_initial_supply*100}% of the initial total supply.")
-            
             st.write(f"Total airdropped supply at initialization: {airdropped_supply_sum}m or {airdropped_supply_sum/current_initial_supply*100}% of the initial total supply.")
             st.write(f"Remaining airdrop supply at initialization: {remaining_airdrop_supply}m or {remaining_airdrop_supply/current_initial_supply*100}% of the initial total supply.")
+            st.write(current_holdings)
 
     # Map new parameters to model input parameters
     new_params = {
@@ -1224,6 +1224,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     f'{stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}_current_staked': current_staked[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers']*1e6,
                     f'{stakeholder}_vested_init': vested_dict[stakeholder]*1e6,
                 })
+        # add airdrop receivers to new_params
+        if airdrop_toggle:
+            new_params.update({
+                'airdrop_receivers_current_holdings': current_holdings['airdrop_receivers']*1e6,
+                'airdrop_receivers_current_staked': current_staked['airdrop_receivers']*1e6,
+                'airdrop_receivers_vested_init': 0,
+            })
 
     # Consistency Checks
     if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or dex_capital > raised_funds or utility_sum != 100 or
