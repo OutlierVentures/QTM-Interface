@@ -29,7 +29,6 @@ def incentivisation(params, substep, state_history, prev_state, **kwargs):
 
     """
     # get parameters
-    total_token_supply = params['initial_total_supply']
     incentivisation_payout_source = params['incentivisation_payout_source']
 
     # get state variables
@@ -103,7 +102,6 @@ def update_token_economy_after_incentivisation(params, substep, state_history, p
 
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
-    liquidity_pool = prev_state['liquidity_pool']
 
     # get policy input
     vested_incentivisation_tokens = policy_input['vested_incentivisation_tokens']

@@ -415,24 +415,6 @@ def plot_fundraising(param_id):
                                                  'te_airdrop_tokens_cum'], 1, param_id,
                                                  plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
     
-    """ # plot individual token vesting
-    plot_results_plotly('timestep', ['angel_a_tokens_vested_cum',
-                                                 'seed_a_tokens_vested_cum',
-                                                 'presale_1_a_tokens_vested_cum',
-                                                 'presale_2_a_tokens_vested_cum',
-                                                 'public_sale_a_tokens_vested_cum',
-                                                 'team_a_tokens_vested_cum',
-                                                 'ov_a_tokens_vested_cum',
-                                                 'advisor_a_tokens_vested_cum',
-                                                 'strategic_partners_a_tokens_vested_cum',
-                                                 'reserve_a_tokens_vested_cum',
-                                                 'community_a_tokens_vested_cum',
-                                                 'foundation_a_tokens_vested_cum',
-                                                 'incentivisation_a_tokens_vested_cum',
-                                                 'staking_vesting_a_tokens_vested_cum',
-                                                 'te_airdrop_tokens_cum'], 1, param_id, max_months=120,
-                                                 plot_title="Token Vesting", x_title="Months", y_title="Tokens") """
-    
     st.markdown('---')
     pcol11, pcol12 = st.columns(2)
     with pcol11:
@@ -622,16 +604,15 @@ def plot_token_economy(param_id, max_months):
         
         pcol51, pcol52 = st.columns(2)
         with pcol51:
-            log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=True)
+            log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=False)
             max_months = plot_results_plotly('timestep', ['u_staking_allocation',
                                             'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
-                                            'te_airdrop_tokens','te_holding_allocation'], 1, param_id, max_months
+                                            'te_airdrop_tokens'], 1, param_id, max_months
                                             , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
         with pcol52:
-            log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=True)
+            log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=False)
             max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
-                                            'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum',
-                                            'te_holding_allocation_cum'], 1, param_id, max_months
+                                            'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum'], 1, param_id, max_months
                                             , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
 
     st.markdown('---')

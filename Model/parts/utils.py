@@ -299,6 +299,15 @@ def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
     """
     Set the initial token economy metrics, such as MC, FDV MC, and circ. supply.
     """
+
+    if 'token_launch' in sys_param:
+        token_launch = sys_param['token_launch'][0]
+        tokens_airdropped_cum = sum([initial_stakeholders[agent]['a_tokens_airdropped_cum'] for agent in initial_stakeholders]) if not token_launch else 0
+        tokens_incentivised_cum = sum([initial_stakeholders[agent]['a_tokens_incentivised_cum'] for agent in initial_stakeholders]) if not token_launch else 0
+    else:
+        tokens_airdropped_cum = 0
+        tokens_incentivised_cum = 0
+
     token_economy = {
         'te_total_supply' : 0, # total token supply in existence
         'te_circulating_supply' : 0, # circulating token supply
@@ -325,10 +334,10 @@ def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
         'te_minted_tokens_usd': 0, # tokens minted in USD
         'te_incentivised_tokens' : 0, # tokens incentivised
         'te_incentivised_tokens_usd' : 0, # tokens incentivised in USD
-        'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
+        'te_incentivised_tokens_cum' : tokens_incentivised_cum, # tokens incentivised cumulatively
         'te_airdrop_tokens' : 0, # tokens airdropped
         'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
-        'te_airdrop_tokens_cum' : 0, # tokens airdropped cumulatively
+        'te_airdrop_tokens_cum' : tokens_airdropped_cum, # tokens airdropped cumulatively
         'te_staking_apr': 0, # staking APR
     }
 
