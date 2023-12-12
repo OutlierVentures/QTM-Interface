@@ -1095,6 +1095,16 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             with col103a:
                 dex_capital = st.number_input('DEX Capital / $m', value=lp_allocation * token_fdv / current_initial_supply, disabled=True, key="liquidity_capital_requirements1", help="The required capital to seed the liquidity: left over lp token allocation x total_initial_supply / 100 % * token_launch_price.")
 
+            # calculate the amount of tokens held and staked per stakeholder and check if the sum is greater than their initial allocation
+            for stakeholder in current_holdings:
+                if stakeholder != 'market_investors':
+                    if stakeholder == 'airdrop_receivers':
+                        if current_holdings[stakeholder] + current_staked[stakeholder] > airdropped_supply_sum + remaining_airdrop_supply:
+                            st.warning(f"The current airdrop receiver holdings ({round(current_holdings[stakeholder],2)}m) plus staked supply ({round(current_staked[stakeholder],2)}m) are greater than the overall airdrop allocation ({round(airdrop_allocation,2)}m). Double check if this allocation matches your intention!", icon="⚠️")
+                    else:
+                        if current_holdings[stakeholder] + current_staked[stakeholder] > vesting_dict[stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation']:
+                            st.warning(f"The current holdings ({round(current_holdings[stakeholder],2)}m) plus staked supply ({round(current_staked[stakeholder],2)}m) are greater than the initial allocation ({round(vesting_dict[stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation'],2)}m) for {stakeholder}. Double check if this allocation matches your intention!", icon="⚠️")
+
             if lp_allocation < 0:
                 st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Reduce stakeholder allocations!", icon="⚠️")
             
