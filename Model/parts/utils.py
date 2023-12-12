@@ -155,6 +155,7 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
             current_staked = 0
             vested = 0
             tokens_incentivised_cum = 0
+            tokens_airdropped_cum = 0
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
                                     stakeholder_type = stakeholder_type,
                                     usd_funds = 0,

@@ -520,20 +520,21 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     airdrop_date3 = st.date_input("Airdrop Date 3", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y"), help="The date of the third airdrop.")
                     airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
 
-        if show_full_alloc_table or vesting_style == 'Custom':
-            col51, col52, col53 = st.columns(3)
-            with col51:
-                st.text_input("DEX LP","DEX Liquidity Pool", label_visibility="hidden", disabled=True, key="lp_name")
-            with col52:
-                st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
-            with col53:
-                dex_capital = st.number_input('DEX Capital / $m', value=float((lp_allocation/100 )* initial_supply * launch_valuation / initial_supply), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
-        else:
-            dex_capital = (lp_allocation/100 )* initial_supply * launch_valuation / initial_supply
-        if dex_capital > raised_funds:
-            st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
-        if lp_allocation < 0:
-            st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+        if token_launch:
+            if show_full_alloc_table or vesting_style == 'Custom':
+                col51, col52, col53 = st.columns(3)
+                with col51:
+                    st.text_input("DEX LP","DEX Liquidity Pool", label_visibility="hidden", disabled=True, key="lp_name")
+                with col52:
+                    st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation, disabled=True, key="lp_allocation", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
+                with col53:
+                    dex_capital = st.number_input('DEX Capital / $m', value=float((lp_allocation/100 )* initial_supply * launch_valuation / initial_supply), disabled=True, key="liquidity_capital_requirements", help="The required capital to seed the liquidity: lp_allocation x total_initial_supply / 100 % * token_launch_price.")
+            else:
+                dex_capital = (lp_allocation/100 )* initial_supply * launch_valuation / initial_supply
+            if dex_capital > raised_funds:
+                st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
+            if lp_allocation < 0:
+                st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
         
         airdrop_date1 = datetime(airdrop_date1.year, airdrop_date1.month, airdrop_date1.day)
         airdrop_date2 = datetime(airdrop_date2.year, airdrop_date2.month, airdrop_date2.day)
@@ -1027,7 +1028,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             vested_dict, vested_supply_sum = calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vesting_dict)
             airdropped_supply_sum, remaining_airdrop_supply = calc_airdropped_tokens(token_launch_date, initial_supply, airdrop_allocation, airdrop_dict)
 
-            st.write(f"vested_dict: {sum(vested_dict.values())}, vested_supply_sum: {vested_supply_sum}")
             col101, col102 = st.columns(2)
             with col101:
                 current_initial_supply = st.number_input('Total Supply / m', label_visibility="visible", min_value=0.001, value=initial_supply, disabled=False, key="initial_supply", help="The total token supply. This can be different from the initial total supply if tokens got minted or burned since token launch.")
@@ -1037,10 +1037,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                     st.info(f"The current total supply ({current_initial_supply}m) is lower than the initial total supply ({initial_supply}m). This means that tokens got **burned** since token launch.", icon="ℹ️")
                 
                 token_fdv = st.number_input('Current Token FDV / $m', label_visibility="visible", min_value=0.1, value=launch_valuation, disabled=False, key="token_fdv", help="The token fully diluted valuation.")
-
-                liquidity_depth = st.number_input('Current Liquidity Depth / $m', label_visibility="visible", min_value=0.0, value=token_fdv * vested_supply_sum/initial_supply * 0.1, disabled=False, key="liquidity_depth", help="The current liquidity depth of the token on all DEXs.")
-                if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
-                    st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
 
             with col102:
                 st.text_input('Total Vested Tokens / m', value=f"{round(vested_supply_sum,2)}m", disabled=True, key=f"vested_supply_sum", help="Total amount of vested tokens according to the vesting schedule and token launch date.")
@@ -1059,7 +1055,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                         st.text_input('Stakeholder', value=[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'][0].replace("_"," ").title(), label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
                 if airdrop_toggle:
                     st.text_input('Airdrop Receivers', value='Airdrop Receivers', label_visibility="collapsed", disabled=True, key=f"stakeholder_airdrop_receivers")
-                    
+                st.text_input('Market Investors', value='Market Investers', label_visibility="collapsed", disabled=True, key=f"stakeholder_market_investors")
+                st.text_input('DEX Liquidity Pool', value='DEX Liquidity Pool', label_visibility="hidden", disabled=True, key=f"dex_liquidity_pool_in_market")
+            
             with col102a:
                 if 'Stake' not in utility_shares:
                     token_holding_ratio_share = st.number_input("Token Holding Ratio Share / %", value=100, disabled=True, key="avg_token_holding_allocation1", help="The currently held token supply share by the stakeholders")
@@ -1071,8 +1069,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                         current_holdings[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Token Holdings ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current holdings of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
                 if airdrop_toggle:
                     current_holdings['airdrop_receivers'] = st.number_input(f'Token Holdings (Airdrop Receivers) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(airdropped_supply_sum)*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_airdrop_receivers", help=f"The current holdings of the airdrop receivers.")
-            if 'Stake' in utility_shares:
-                with col103a:
+                current_holdings['market_investors'] = st.number_input(f'Token Holdings (Market Investors) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(sys_param['market_investors_current_holdings'][0]/1e6) if 'market_investors_current_holdings' in sys_param else 0.0, disabled=False, key=f"current_holdings_market_investors", help=f"The current holdings of the market investors.")
+            
+            with col103a:
+                if 'Stake' in utility_shares:
                     st.number_input("Token Staking Ratio Share / %", min_value=0.0, value=100.0-token_holding_ratio_share, disabled=True, key="avg_token_utility_allocation1", help="The currently staked token supply share by the stakeholders as ")
                     st.write("**Tokens Staked / m**")
                     for stakeholder in vested_dict:
@@ -1080,19 +1080,24 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                             current_staked[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Tokens Staked ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current staked tokens of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
                     if airdrop_toggle:
                         current_staked['airdrop_receivers'] = st.number_input(f'Tokens Staked (Airdrop Receivers) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(airdropped_supply_sum)*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_airdrop_receivers", help=f"The current staked tokens of the airdrop receivers.")
+                    current_staked['market_investors'] = st.number_input(f'Tokens Staked (Market Investors) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(sys_param['market_investors_current_staked'][0]/1e6) if 'market_investors_current_staked' in sys_param else 0.0, disabled=False, key=f"current_staked_market_investors", help=f"The current staked tokens of the market investors.")
             
-            st.markdown("---")
-            st.write(f"Total allocated supply at initialization: {sum(current_holdings.values()) + sum(current_staked.values())}m or {(sum(current_holdings.values()) + sum(current_staked.values()))/current_initial_supply*100}% of the initial total supply.")
             # calculate stakeholder allocation amounts
             stakeholder_allocations = 0
             for stakeholder in vesting_dict:
                 stakeholder_allocations += vesting_dict[stakeholder]['allocation']
             stakeholder_allocations += airdrop_allocation if airdrop_toggle else 0
-            st.write(f"Total stakeholder allocation at initialization: {stakeholder_allocations}m or {stakeholder_allocations/current_initial_supply*100}% of the initial total supply.")
-            st.write(f"Total airdropped supply at initialization: {airdropped_supply_sum}m or {airdropped_supply_sum/current_initial_supply*100}% of the initial total supply.")
-            st.write(f"Remaining airdrop supply at initialization: {remaining_airdrop_supply}m or {remaining_airdrop_supply/current_initial_supply*100}% of the initial total supply.")
-            st.write(current_holdings)
+            stakeholder_allocations += current_holdings['market_investors'] + current_staked['market_investors']
+            
+            lp_allocation = (current_initial_supply - stakeholder_allocations)
+            with col102a:
+                st.number_input('LP Token Allocation / %', label_visibility="visible", value=lp_allocation / current_initial_supply * 100, disabled=True, key="lp_allocation1", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
+            with col103a:
+                dex_capital = st.number_input('DEX Capital / $m', value=lp_allocation * token_fdv / current_initial_supply, disabled=True, key="liquidity_capital_requirements1", help="The required capital to seed the liquidity: left over lp token allocation x total_initial_supply / 100 % * token_launch_price.")
 
+            if lp_allocation < 0:
+                st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Reduce stakeholder allocations!", icon="⚠️")
+            
     # Map new parameters to model input parameters
     new_params = {
         'token_launch': token_launch,
@@ -1212,9 +1217,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     if not token_launch:
         new_params['initial_total_supply'] = current_initial_supply*1e6
         new_params.update({
-            'token_fdv': token_fdv*1e6,
-            'liquidity_depth': liquidity_depth*1e6,
-            'vested_supply_sum': vested_supply_sum*1e6,
+            'token_fdv': token_fdv*1e6
         })
         # add current_holdings, current_staked, and vested_dict dict entries to new_params
         for stakeholder in vested_dict:
@@ -1232,6 +1235,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 'airdrop_receivers_vested_init': 0,
             })
 
+        # add market investors to new_params
+        new_params.update({
+            'market_investors_current_holdings': current_holdings['market_investors']*1e6,
+            'market_investors_current_staked': current_staked['market_investors']*1e6,
+            'market_investors_vested_init': 0,
+        })
+
     # Consistency Checks
     if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or dex_capital > raised_funds or utility_sum != 100 or
         (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
@@ -1239,10 +1249,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
-    
-    if not token_launch:
-        if (liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01):
-            st.session_state['execute_inputs'] = False
     
     if 'execute_inputs' in st.session_state:
         status_msg = ["✅" if st.session_state['execute_inputs'] else "❌"][0]
@@ -1259,7 +1265,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
         
         if lp_allocation < 0:
-            st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Please increase the token launch valuation or reduce stakeholder allocations!", icon="⚠️")
+            st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Reduce the stakeholder allocations!", icon="⚠️")
         
         if airdrop_toggle:
             if airdrop_date1 < token_launch_date:
@@ -1284,11 +1290,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         
         if count_staking_utilities > 1:
             st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
-        
-        if not token_launch:
-            if liquidity_depth < token_fdv * vested_supply_sum/initial_supply * 0.01:
-                st.error(f"The set liquidity depth ({liquidity_depth}m) is lower than 1% of the token circulating valuation ({round(token_fdv * vested_supply_sum/initial_supply * 0.01,3)}m). Please increase the liquidity depth!", icon="⚠️")
-
 
     col111, col112, col113, col114, col115 = st.columns(5)
     with col111:
