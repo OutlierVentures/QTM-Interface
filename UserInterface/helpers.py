@@ -1264,7 +1264,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         new_params['initial_cash_balance'] = initial_cash_balance*1e3
 
     # Consistency Checks
-    if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or (dex_capital > raised_funds and not token_launch) or utility_sum != 100 or
+    if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or (dex_capital > raised_funds and token_launch) or utility_sum != 100 or
         (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
         (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning) or
         (initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users *
@@ -1289,7 +1289,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
         
         if not token_launch:
-            if (initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * regular_product_revenue_per_user - salaries_per_month - license_costs_per_month - other_monthly_costs) and not token_launch):
+            if (initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users *
+                                               [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0] -
+                                               salaries_per_month - license_costs_per_month - other_monthly_costs) and not token_launch):
                 st.error(f"The initial cash balance is 0. Please adjust the initial cash balance or the monthly income and cost parameters!", icon="⚠️")
 
 
