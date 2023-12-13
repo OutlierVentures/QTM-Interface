@@ -53,7 +53,6 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             # get parameters
             random_seed = params['random_seed']
             agent_staking_apr_target = params['agent_staking_apr_target']
-            staking_share = params['staking_share'] / 100
 
             # get state variables
             agents = prev_state['agents'].copy()
@@ -84,7 +83,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 remove = (1-utility) * random.uniform(0, 0.1)
                 
                 # include token holdings
-                random.seed(random_seed + prev_state['timestep'] + i + random.uniform(0, 50))
+                random.seed(random_seed + current_month + i + random.uniform(0, 50))
                 holding = hold_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1]))
                 selling = selling - holding/2
                 utility = utility - holding/2

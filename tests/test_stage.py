@@ -31,10 +31,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go two folders up
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.90_radCad_integration - Data Tables.csv')
+QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.90_radCad_integration - Data Tables2.csv')
 #QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables_only_staking_vesting.csv')
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_1000x_supply.csv'
-input_file = parent_dir+'/data/Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs.csv'
+input_file = parent_dir+'/data/Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs2.csv'
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_2.75_public_sale_perc.csv'
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_only_staking_vesting.csv'
 
@@ -196,7 +196,7 @@ if __name__ == '__main__'   :
     ## TEST PROTOCOL BUCKET BURN ##
     print("\n----------------------------------------## TEST PROTOCOL BUCKET BURN ##--------------------------------------")
     print("Testing protocol bucket burn of radCad timeseries simulation against QTM data tables...")
-    test_timeseries(data=data, data_key='te_tokens_burned', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key={'-': ['te_tokens_burned','u_burning_allocation']}, data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=134, relative_tolerance=0.003)
 
 
     ## TEST LIQUIDITY POOL TRANSACTIONS ##

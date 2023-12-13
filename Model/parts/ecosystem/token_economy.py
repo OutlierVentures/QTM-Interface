@@ -59,7 +59,7 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
         attributes and metrics.
     """
     # parameters
-    total_token_supply = params['initial_total_supply']
+    initial_total_supply = params['initial_total_supply']
     selling_perc = params['avg_token_selling_allocation']
     utility_perc = params['avg_token_utility_allocation']
     holding_perc = params['avg_token_holding_allocation']
@@ -98,11 +98,12 @@ def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     for stakeholder in agents:
         vested_cum += agents[stakeholder]['a_tokens_vested_cum']
     
-    unvested_tokens = total_token_supply-vested_cum-te_airdrop_tokens_cum-initial_lp_tokens
+    unvested_tokens = initial_total_supply-vested_cum-te_airdrop_tokens_cum-initial_lp_tokens
+
+    total_token_supply = circulating_tokens + unvested_tokens
 
     MC = liquidity_pool['lp_token_price'] * circulating_tokens
     FDV_MC = liquidity_pool['lp_token_price'] * total_token_supply
-
 
     return {'total_token_supply': total_token_supply, 'te_selling_perc': selling_perc, 'te_utility_perc': utility_perc, 'te_holding_perc': holding_perc,
             'te_remove_perc': remove_perc, 'te_circulating_supply': circulating_tokens,'te_unvested_supply':unvested_tokens, 'te_MC': MC, 'te_FDV_MC': FDV_MC,

@@ -475,7 +475,7 @@ def plot_token_economy(param_id, max_months):
         log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
         max_months = plot_results_plotly('timestep', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
                             'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
-                            'te_unvested_supply','te_circulating_supply'], 1, param_id, max_months
+                            'te_unvested_supply','te_circulating_supply','te_total_supply'], 1, param_id, max_months
                             , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
     
     st.markdown('---')

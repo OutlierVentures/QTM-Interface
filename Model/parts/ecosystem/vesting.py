@@ -36,7 +36,6 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         passed_months = np.abs(int(months_difference(token_launch_date, datetime.today())))
         current_month = passed_months + current_month
 
-
     agent_token_vesting_dict = {}
     for key, agent in agents.items():
         # Get all invesotor info

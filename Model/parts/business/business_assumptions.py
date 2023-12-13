@@ -83,18 +83,11 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
 
     # liquidity capital requirement
-    required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price
-
-    # amount of raised capital
-    if token_launch:
-        initial_capital = calculate_raised_capital(params)
-    else:
-        initial_capital = params['initial_cash_balance']
-        required_liquidity_pool_fund_allocation = 0
+    required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price if token_launch else 0
 
     # calculate the cash flow for the month
     if current_month == 1:
-        cash_flow = (initial_capital - required_liquidity_pool_fund_allocation + Revenue_Streams +
+        cash_flow = (- required_liquidity_pool_fund_allocation + Revenue_Streams +
                       product_revenue - (Expenditures + one_time_payments_1 + one_time_payments_2 + buybacks))
 
     elif current_month > 1:

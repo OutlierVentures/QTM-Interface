@@ -64,7 +64,7 @@ def convert_date(sys_param):
 def get_initial_date(sys_param):
     initial_date = pd.to_datetime(sys_param['launch_date'][0] if isinstance(sys_param['launch_date'], list) else sys_param['launch_date'], format='%d.%m.%Y')
     if 'token_launch' in sys_param:
-        token_launch = sys_param['token_launch']
+        token_launch = sys_param['token_launch'][0] if isinstance(sys_param['token_launch'], list) else sys_param['token_launch']
         if not token_launch:
             # set initial date to today's date
             initial_date = pd.to_datetime('today')
@@ -77,7 +77,7 @@ def calculate_raised_capital(param):
 
     raised_capital = 0
     # calculate the raised capital for all investors in sys_param where "_raised" is in the key
-    raised_capital = sum([param[key] if ("_raised" in key) else 0 for key in param])
+    raised_capital = sum([param[key][0] if ("_raised" in key) and isinstance(param[key], list) else param[key] if ("_raised" in key) else 0 for key in param])
 
     return raised_capital
 
@@ -308,9 +308,11 @@ def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
     else:
         tokens_airdropped_cum = 0
         tokens_incentivised_cum = 0
+    
+    initial_total_supply = sys_param['initial_total_supply'][0]
 
     token_economy = {
-        'te_total_supply' : 0, # total token supply in existence
+        'te_total_supply' : initial_total_supply, # total token supply in existence
         'te_circulating_supply' : 0, # circulating token supply
         'te_unvested_supply': 0, # unvested token tupply
         'te_holding_supply' : 0, # supply of tokens held by agents
@@ -357,12 +359,22 @@ def initialize_user_adoption():
 
     return user_adoption
 
-def initialize_business_assumptions():
+def initialize_business_assumptions(sys_param):
     """
     Initialize the business assumptions metrics.
     """
+    if 'token_launch' in sys_param:
+        token_launch = sys_param['token_launch'][0]
+    else:
+        token_launch = True
+    
+    if token_launch:
+        initial_capital = calculate_raised_capital(sys_param)
+    else:
+        initial_capital = sys_param['initial_cash_balance'][0]
+
     business_assumptions = {
-    'ba_cash_balance': 0, ## cash balance of the company
+    'ba_cash_balance': initial_capital, ## cash balance of the company
     'ba_buybacks_usd': 0 ## buybacks in USD per month
     }
 
@@ -410,18 +422,37 @@ def test_timeseries(data, data_key, data_row_multiplier, QTM_data_tables, QTM_ro
     # get amount of accounted for timesteps
     n_timesteps = len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]) - [len(QTM_data_tables.iloc[QTM_row-2].values[2:-1])-timestep_cut_off if timestep_cut_off > 0 else 0][0] - shift
 
-    print("Testing "+data_key+" of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+") for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps...")
+    if isinstance(data_key, dict):
+        sign = list(data_key.keys())[0]
+        data_key1 = data_key[sign][0]
+        data_key2 = data_key[sign][1]
+
+    key_string = f"{data_key1} {sign} {data_key2}" if isinstance(data_key, dict) else f"{data_key}"
     
+    print(f"Testing {key_string} of radCad timeseries simulation at QTM row "+str(QTM_row)+" ("+QTM_data_tables.iloc[QTM_row-2].values[1]+") for "+str(n_timesteps)+" / "+str(len(QTM_data_tables.iloc[QTM_row-2].values[2:-1]))+" timesteps...")
+
     for i in range(n_timesteps):
         # get testing values
         QTM_data_table_value = float(QTM_data_tables.iloc[QTM_row-2].values[2:-1][i].replace(",",""))
-        radCAD_value = float(data[data_key].values[i+shift]) * data_row_multiplier
+        if isinstance(data_key, dict):
+            radCAD_value1 = float(data[data_key1].values[i+shift]) * data_row_multiplier
+            radCAD_value2 = float(data[data_key2].values[i+shift]) * data_row_multiplier
+            if sign == '-':
+                radCAD_value = radCAD_value1 - radCAD_value2
+            elif sign == '+':
+                radCAD_value = radCAD_value1 + radCAD_value2
+            elif sign == '*':
+                radCAD_value = radCAD_value1 * radCAD_value2
+            elif sign == '/':
+                radCAD_value = radCAD_value1 / radCAD_value2
+        else:
+            radCAD_value = float(data[data_key].values[i+shift]) * data_row_multiplier
 
         # assert the values
-        error_message = ("radCad simulation value "+data_key+" = "+ str(radCAD_value)
-        + " at timestep "+str(i+1)+" is not equal to the QTM data table value "+ str(QTM_data_table_value)+" at row "+str(QTM_row)
-        +" and date "+str(QTM_data_tables.iloc[3].values[2:-1][i])+". The difference is "+str(radCAD_value - QTM_data_table_value)+" or "
-        +str([radCAD_value/QTM_data_table_value * 100 if QTM_data_table_value!= 0 else "NaN"][0])+"%.")
+        error_message = (f"radCad simulation value {key_string} = "+ str(radCAD_value)
+                        + " at timestep "+str(i+1)+" is not equal to the QTM data table value "+ str(QTM_data_table_value)+" at row "+str(QTM_row)
+                        +" and date "+str(QTM_data_tables.iloc[3].values[2:-1][i])+". The difference is "+str(radCAD_value - QTM_data_table_value)+" or "
+                        +str([radCAD_value/QTM_data_table_value * 100 if QTM_data_table_value!= 0 else "NaN"][0])+"%.")
 
         if QTM_data_table_value == 0:
             if np.abs(radCAD_value) < relative_tolerance:
