@@ -26,10 +26,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         A dict which mapping agents to their vested token amounts.
     """
     token_launch_date = pd.to_datetime(params['launch_date'], format='%d.%m.%Y')
-    if 'token_launch' in params:
-        token_launch = params['token_launch']
-    else:
-        token_launch = True
+    token_launch = params['token_launch'] if 'token_launch' in params else True
 
     agents = prev_state['agents'].copy()
     total_token_supply = params['initial_total_supply']

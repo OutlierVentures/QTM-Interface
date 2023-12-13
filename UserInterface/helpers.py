@@ -749,9 +749,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         elif agent_behavior == 'random':
             with col73:
                 random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
-        avg_token_utility_allocation = avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation'] if agent_behavior =='static' else 0.0
-        avg_token_selling_allocation = avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation'] if agent_behavior =='static' else 0.0
-        avg_token_holding_allocation = avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation'] if agent_behavior =='static' else 0.0
+        avg_token_utility_allocation = avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation'] if agent_behavior =='static' else 60.0
+        avg_token_selling_allocation = avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation'] if agent_behavior =='static' else 30.0
+        avg_token_holding_allocation = avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation'] if agent_behavior =='static' else 10.0
         meta_bucket_alloc_sum = avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation
         if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
@@ -788,6 +788,16 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             license_costs_per_month = [float(sys_param['license_costs_per_month'][0])/1e3 if expenditures == 0.0 else 0.0][0]
             other_monthly_costs = [float(sys_param['other_monthly_costs'][0])/1e3 if expenditures == 0.0 else expenditures][0]
         
+        if not token_launch:
+            months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
+            projected_cash_balance = raised_funds*1e3 - one_time_payments_1 + (royalty_income_per_month + treasury_income_per_month + other_income_per_month - salaries_per_month - license_costs_per_month - other_monthly_costs) * months_since_launch
+            initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
+            if initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * regular_product_revenue_per_user - salaries_per_month - license_costs_per_month - other_monthly_costs) < 0:
+                st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
+        else:
+            initial_cash_balance = 0.0
+
+
         st.write("**Buybacks and Burns**")
         col91, col92 = st.columns(2)
         with col91:
@@ -1251,11 +1261,15 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             'market_investors_current_staked': current_staked['market_investors']*1e6,
             'market_investors_vested_init': 0,
         })
+        new_params['initial_cash_balance'] = initial_cash_balance*1e3
 
     # Consistency Checks
-    if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or dex_capital > raised_funds or utility_sum != 100 or
+    if (lp_allocation < 0 or (meta_bucket_alloc_sum != 100 and agent_behavior == 'static') or (dex_capital > raised_funds and not token_launch) or utility_sum != 100 or
         (min(airdrop_date1, airdrop_date2, airdrop_date3) < token_launch_date and airdrop_toggle) or
-        (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning)):
+        (buyback_start < token_launch_date and enable_protocol_buybacks) or (burn_start < token_launch_date and enable_protocol_burning) or
+        (initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users *
+                                        [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0] -
+                                        salaries_per_month - license_costs_per_month - other_monthly_costs) and not token_launch)):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -1271,9 +1285,14 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             if st.session_state['execute_inputs']:
                 st.success("All inputs are valid.", icon="✅")
         
-        if dex_capital > raised_funds:
+        if dex_capital > raised_funds and token_launch:
             st.error(f"The required capital ({round(dex_capital,2)}m) to seed the liquidity is higher than the raised funds (${round(raised_funds,2)}m). Please reduce the LP Token Allocation or the Launch Valuation!", icon="⚠️")
         
+        if not token_launch:
+            if (initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * regular_product_revenue_per_user - salaries_per_month - license_costs_per_month - other_monthly_costs) and not token_launch):
+                st.error(f"The initial cash balance is 0. Please adjust the initial cash balance or the monthly income and cost parameters!", icon="⚠️")
+
+
         if lp_allocation < 0:
             st.error(f"The LP token allocation ({round(lp_allocation,2)}%) is negative. Reduce the stakeholder allocations!", icon="⚠️")
         

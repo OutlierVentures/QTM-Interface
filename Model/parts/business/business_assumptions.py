@@ -48,6 +48,7 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     buyback_fixed_per_month = params['buyback_fixed_per_month']
     buyback_start = pd.to_datetime(params['buyback_start'], format='%d.%m.%Y')
     buyback_end = pd.to_datetime(params['buyback_end'], format='%d.%m.%Y')
+    token_launch = params['token_launch'] if 'token_launch' in params else True
 
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
@@ -85,11 +86,15 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price
 
     # amount of raised capital
-    sum_of_raised_capital = calculate_raised_capital(params)
+    if token_launch:
+        initial_capital = calculate_raised_capital(params)
+    else:
+        initial_capital = params['initial_cash_balance']
+        required_liquidity_pool_fund_allocation = 0
 
     # calculate the cash flow for the month
     if current_month == 1:
-        cash_flow = (sum_of_raised_capital - required_liquidity_pool_fund_allocation + Revenue_Streams +
+        cash_flow = (initial_capital - required_liquidity_pool_fund_allocation + Revenue_Streams +
                       product_revenue - (Expenditures + one_time_payments_1 + one_time_payments_2 + buybacks))
 
     elif current_month > 1:

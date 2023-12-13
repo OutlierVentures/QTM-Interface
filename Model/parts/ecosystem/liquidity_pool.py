@@ -59,6 +59,7 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
     # parameters
     required_usdc = params['initial_required_usdc']
     required_tokens = params['initial_lp_token_allocation']
+    token_launch = params['token_launch'] if 'token_launch' in params else True
 
     # state variables
     current_month = prev_state['timestep']
@@ -75,12 +76,13 @@ def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwar
         liquidity_pool['lp_constant_product'] = constant_product
         liquidity_pool['lp_token_price'] = token_price
         
-        # check if required funds are available from funds raised
-        sum_of_raised_capital = calculate_raised_capital(params)
+        if token_launch:
+            # check if required funds are available from funds raised
+            sum_of_raised_capital = calculate_raised_capital(params)
 
-        if required_usdc > sum_of_raised_capital:
-            raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
-                             f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
+            if required_usdc > sum_of_raised_capital:
+                raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
+                                f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
         
         return {'liquidity_pool': liquidity_pool}
     else:
