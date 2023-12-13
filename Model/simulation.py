@@ -53,8 +53,6 @@ def simulation(input_file, adjusted_params):
 
         # post processing
         data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
-        #data = postprocessing(df, substep=df.substep.min()+1, category="all") # at the end of the timestep = last substep
-
 
         # Apply the conversion function to each column in the DataFrame
         for col in data.columns:

@@ -34,10 +34,10 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
     initial_date = get_initial_date(params)
     
     # state variables
-    old_timestep = prev_state['timestep']
+    current_month = prev_state['timestep']
     
     # policy logic
-    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=old_timestep-1)
+    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=current_month-1)
 
     return {'new_date': new_date}
 
@@ -138,7 +138,6 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     """
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
-    agents = prev_state['agents'].copy()
     utilities = prev_state['utilities'].copy()
     lp = prev_state['liquidity_pool'].copy()
 

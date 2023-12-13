@@ -59,17 +59,18 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             agents = prev_state['agents'].copy()
             token_economy = prev_state['token_economy'].copy()
             staking_apr = token_economy['te_staking_apr']
+            current_month = prev_state['timestep']
 
             # initialize agent behavior dictionary
             agent_behavior_dict = {}
 
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
-                random.seed(random_seed + prev_state['timestep'] + i)
+                random.seed(random_seed + current_month + i)
 
                 # agents previous timestep behavior
                 prev_agent_behavior = agents[agent]['a_actions']
-                if prev_state['timestep'] == 1:
+                if current_month == 1:
                     utility_prev = random.uniform(0.5, 1)
                     hold_prev = random.uniform(0.05, 0.15)
                 else:

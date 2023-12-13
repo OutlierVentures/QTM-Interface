@@ -394,6 +394,7 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
 
     # state variables
     updated_liquidity_pool = prev_state['liquidity_pool']
+    current_month = prev_state['timestep']
 
     # get policy inputs
     lp_tokens = policy_input['lp_tokens']
@@ -407,8 +408,8 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_token_price_max'] = token_price
         updated_liquidity_pool['lp_token_price_min'] = token_price
     elif policy_input['tx'] in [2, 3, 4]:
-        updated_liquidity_pool['lp_token_price_max'] = np.max([updated_liquidity_pool['lp_token_price_max'], token_price, [initial_token_price if prev_state['timestep'] == 1 else 0][0]])
-        updated_liquidity_pool['lp_token_price_min'] = np.min([updated_liquidity_pool['lp_token_price_min'], token_price, [initial_token_price if prev_state['timestep'] == 1 else 1e20][0]])
+        updated_liquidity_pool['lp_token_price_max'] = np.max([updated_liquidity_pool['lp_token_price_max'], token_price, [initial_token_price if current_month == 1 else 0][0]])
+        updated_liquidity_pool['lp_token_price_min'] = np.min([updated_liquidity_pool['lp_token_price_min'], token_price, [initial_token_price if current_month == 1 else 1e20][0]])
 
     # update logic
     updated_liquidity_pool['lp_tokens'] = lp_tokens
