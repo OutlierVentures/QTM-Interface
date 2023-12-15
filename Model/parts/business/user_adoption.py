@@ -16,34 +16,6 @@ import math
 from Model.parts.utils import *
 import random
 
-
-def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_days):
-    """
-    Take in user adoption data and calculate the amount of adoption.
-
-    Can be used for token adoption and product users.
-  
-    Args:
-        initial_users: starting amount of users
-        final_users: ending amount of users
-        velocity: speed of adoption on those users
-        timstep: current timestep in days
-        total_days: length of full simulation.
-    
-    Returns:
-        Number representing the user adoption.    
-
-    """
-
-    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
-    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
-    term3 = initial_users * (timestamp / total_days)
-    term4 = final_users - (term1 - term2 - term3)
-    result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
-    
-    return result
-
-
 # POLICY FUNCTIONS
 def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     """
@@ -104,12 +76,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:
         token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
-
-    """ if params['agent_behavior'] == 'random':
-        token_buys = token_buys * random.uniform(0.5,1.5) """
-    
-    #token2_in_lp = token_buys/ lp2 price
-    # This is going to be the same as token buys because we are assuing USD is the pair
 
     return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
 

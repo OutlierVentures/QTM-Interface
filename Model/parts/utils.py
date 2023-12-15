@@ -281,6 +281,31 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
 
     return lp_token_allocation
 
+def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_days):
+    """
+    Take in user adoption data and calculate the amount of adoption.
+
+    Can be used for token adoption and product users.
+  
+    Args:
+        initial_users: starting amount of users
+        final_users: ending amount of users
+        velocity: speed of adoption on those users
+        timstep: current timestep in days
+        total_days: length of full simulation.
+    
+    Returns:
+        Number representing the user adoption.    
+
+    """
+
+    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
+    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
+    term3 = initial_users * (timestamp / total_days)
+    term4 = final_users - (term1 - term2 - term3)
+    result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
+    
+    return result
 
 def initialize_dex_liquidity(sys_param):
     """
@@ -408,12 +433,44 @@ def initialize_user_adoption(sys_param):
     """
     initial_product_users = sys_param['initial_product_users'][0]
     initial_token_holders = sys_param['initial_token_holders'][0]
+    launchDate = pd.to_datetime(sys_param['launch_date'][0], format='%d.%m.%Y')
+    current_date = get_initial_date(sys_param)
+
+    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
+
+    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
+    total_days = 3653
+
+    ## Product user adoption
+    initial_product_users = sys_param['initial_product_users'][0]
+    product_users_after_10y = sys_param['product_users_after_10y'][0]
+    product_adoption_velocity = sys_param['product_adoption_velocity'][0]
+    one_time_product_revenue_per_user = sys_param['one_time_product_revenue_per_user'][0]
+    regular_product_revenue_per_user = sys_param['regular_product_revenue_per_user'][0]
+
+    # print all calculate_user_adoption inputs
+    product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
     
+    ## Product Revenue    
+    product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
+
+    ## Token holder adoption
+    initial_token_holders = sys_param['initial_token_holders'][0]
+    token_holders_after_10y = sys_param['token_holders_after_10y'][0]
+    token_adoption_velocity = sys_param['token_adoption_velocity'][0]
+    one_time_token_buy_per_user = sys_param['one_time_token_buy_per_user'][0]
+    regular_token_buy_per_user = sys_param['regular_token_buy_per_user'][0]
+
+    token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
+
+    ## Calculating Token Buys
+    token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+
     user_adoption = {
-    'ua_product_users': initial_product_users, # amount of product users
-    'ua_token_holders': initial_token_holders, # amount of token holders
-    'ua_product_revenue':0, # product revenue
-    'ua_token_buys': 0 # amount of effective token buys
+    'ua_product_users': product_users, # amount of product users
+    'ua_token_holders': token_holders, # amount of token holders
+    'ua_product_revenue':product_revenue, # product revenue
+    'ua_token_buys': token_buys # amount of effective token buys
     }
 
     return user_adoption
