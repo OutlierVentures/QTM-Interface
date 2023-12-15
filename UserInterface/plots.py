@@ -242,34 +242,34 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
 
     # cut plot data until the point where ba_cash_balance runs below zero
     if 'ba_cash_balance' in y_series_updated:
-        chart_data = chart_data[chart_data['ba_cash_balance'] > 0]
+        chart_data = chart_data[(chart_data['ba_cash_balance'] > 0) | (chart_data['timestep'] == 0)]
         if len(chart_data) < sys_param['simulation_duration'].iloc[0]:
-            st.error(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
     
     if 'reserve_a_tokens' in y_series_updated:
-        if len(chart_data[chart_data['reserve_a_tokens'] > 0]) < len(chart_data):
-            st.error(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[chart_data['reserve_a_tokens'] > 0]
+        if len(chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep'] == 0)]) < len(chart_data):
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep'] == 0)]
     
     if 'community_a_tokens' in y_series_updated:
-        if len(chart_data[chart_data['community_a_tokens'] > 0]) < len(chart_data):
-            st.error(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])} months, because the token economy community tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[chart_data['community_a_tokens'] > 0]
+        if len(chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep'] == 0)]) < len(chart_data):
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])} months, because the token economy community tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep'] == 0)]
     
     if 'foundation_a_tokens' in y_series_updated:
-        if len(chart_data[chart_data['foundation_a_tokens'] > 0]) < len(chart_data):
-            st.error(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[chart_data['foundation_a_tokens'] > 0]
+        if len(chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep'] == 0)]) < len(chart_data):
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep'] == 0)]
     
     if 'lp_tokens' in y_series_updated:
-        if len(chart_data[chart_data['lp_tokens'] > 0]) < len(chart_data):
-            st.error(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[chart_data['lp_tokens'] > 0]
+        if len(chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep'] == 0)]) < len(chart_data):
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep'] == 0)]
     
     if 'te_holding_supply' in y_series_updated:
-        if len(chart_data[chart_data['te_holding_supply'] > 0]) < len(chart_data):
-            st.error(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[chart_data['te_holding_supply'] > 0]
+        if len(chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep'] == 0)]) < len(chart_data):
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
+        chart_data = chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep'] == 0)]
         
     
     # Format the column names

@@ -647,7 +647,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
-        # adoption style choice | user numbers | revenues | meta bucket allocations
+        # adoption style choice | user numbers | revenues
         col61, col62, col63 = st.columns(3)
         with col61:
             adoption_style_choices = ['Weak', 'Medium', 'Strong', 'Custom']
@@ -749,9 +749,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         elif agent_behavior == 'random':
             with col73:
                 random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
-        avg_token_utility_allocation = avg_token_utility_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_utility_allocation'] if agent_behavior =='static' else 60.0
-        avg_token_selling_allocation = avg_token_selling_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_selling_allocation'] if agent_behavior =='static' else 30.0
-        avg_token_holding_allocation = avg_token_holding_allocation if (adoption_style == 'Custom' or show_full_adoption_table) and agent_behavior =='static' else adoption_dict[adoption_style]['avg_token_holding_allocation'] if agent_behavior =='static' else 10.0
+        avg_token_utility_allocation = avg_token_utility_allocation if agent_behavior =='static' else 60.0
+        avg_token_selling_allocation = avg_token_selling_allocation if agent_behavior =='static' else 30.0
+        avg_token_holding_allocation = avg_token_holding_allocation if agent_behavior =='static' else 10.0
         meta_bucket_alloc_sum = avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation
         if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
