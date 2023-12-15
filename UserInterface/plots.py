@@ -122,9 +122,21 @@ def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_month
 
     st.plotly_chart(fig, use_container_width=True)
 
-def plot_results_plotly(x, y_columns, run, param_id, max_months, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
+def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns=[], x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+
+    # structure calcColumns = {'col': {'sign': sign, 'firstCol': firstCol, 'secondCol': secondCol}}
+    if len(calcColumns) > 0:
+        for key, col in calcColumns.items():
+            if col['sign'] == '+':
+                df[key] = df[col['firstCol']].astype(float) + df[col['secondCol']].astype(float)
+            elif col['sign'] == '-':
+                df[key] = df[col['firstCol']].astype(float) - df[col['secondCol']].astype(float)
+            elif col['sign'] == '*':
+                df[key] = df[col['firstCol']].astype(float) * df[col['secondCol']].astype(float)
+            elif col['sign'] == '/':
+                df[key] = df[col['firstCol']].astype(float) / df[col['secondCol']].astype(float)
 
     # reduce df to max_months
     df = df[df['timestep'].astype(float) <= max_months]
@@ -604,29 +616,73 @@ def plot_token_economy(param_id, max_months):
         
         pcol51, pcol52 = st.columns(2)
         with pcol51:
-            log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=False)
-            max_months = plot_results_plotly('timestep', ['u_staking_allocation',
-                                            'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
-                                            'te_airdrop_tokens'], 1, param_id, max_months
-                                            , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
+            pcol51a, pcol52a = st.columns(2)
+            with pcol51a:
+                log_scale_toggle_utility_alloc = st.toggle('Log Scale - Utility Allocations', value=False)
+            with pcol52a:
+                toggle_usd_utility_alloc = st.toggle('Convert to USD - Utility Allocations', value=False)
+            if toggle_usd_utility_alloc:
+                max_months = plot_results_plotly('timestep', ['u_staking_allocation_usd',
+                                'u_liquidity_mining_allocation_usd','u_burning_allocation_usd','u_transfer_allocation_usd','te_incentivised_tokens_usd',
+                                'te_airdrop_tokens_usd'], 1, param_id, max_months
+                                , calcColumns= {'u_staking_allocation_usd': {'sign': '*', 'firstCol': 'u_staking_allocation', 'secondCol': 'lp_token_price'},
+                                                'u_liquidity_mining_allocation_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_allocation', 'secondCol': 'lp_token_price'},
+                                                'u_burning_allocation_usd': {'sign': '*', 'firstCol': 'u_burning_allocation', 'secondCol': 'lp_token_price'},
+                                                'u_transfer_allocation_usd': {'sign': '*', 'firstCol': 'u_transfer_allocation', 'secondCol': 'lp_token_price'},
+                                                'te_incentivised_tokens_usd': {'sign': '*', 'firstCol': 'te_incentivised_tokens', 'secondCol': 'lp_token_price'},
+                                                'te_airdrop_tokens_usd': {'sign': '*', 'firstCol': 'te_airdrop_tokens', 'secondCol': 'lp_token_price'}}
+                                , plot_title="Token Allocations By Utilities", x_title="Months", y_title="USD", logy=log_scale_toggle_utility_alloc)
+            else:
+                max_months = plot_results_plotly('timestep', ['u_staking_allocation',
+                                                'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
+                                                'te_airdrop_tokens'], 1, param_id, max_months
+                                                , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
         with pcol52:
-            log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=False)
-            max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
-                                            'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum'], 1, param_id, max_months
-                                            , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
+            pcol51b, pcol52b = st.columns(2)
+            with pcol51b:
+                log_scale_toggle_utility_alloc_cum = st.toggle('Log Scale - Utility Allocations Cum.', value=False)
+            with pcol52b:
+                toggle_usd_utility_alloc_cum = st.toggle('Convert to USD - Utility Allocations Cum.', value=False)
+            if toggle_usd_utility_alloc_cum:
+                max_months = plot_results_plotly('timestep', ['u_staking_allocation_usd_cum', 'u_liquidity_mining_allocation_usd_cum',
+                                'u_burning_allocation_usd_cum','u_transfer_allocation_usd_cum','te_incentivised_tokens_usd_cum','te_airdrop_tokens_usd_cum'], 1, param_id, max_months
+                                , calcColumns= {'u_staking_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_staking_allocation_cum', 'secondCol': 'lp_token_price'},
+                                                'u_liquidity_mining_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_liquidity_mining_allocation_cum', 'secondCol': 'lp_token_price'},
+                                                'u_burning_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_burning_allocation_cum', 'secondCol': 'lp_token_price'},
+                                                'u_transfer_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_transfer_allocation_cum', 'secondCol': 'lp_token_price'},
+                                                'te_incentivised_tokens_usd_cum': {'sign': '*', 'firstCol': 'te_incentivised_tokens_cum', 'secondCol': 'lp_token_price'},
+                                                'te_airdrop_tokens_usd_cum': {'sign': '*', 'firstCol': 'te_airdrop_tokens_cum', 'secondCol': 'lp_token_price'}}
+                                , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="USD", logy=log_scale_toggle_utility_alloc_cum)
+            else:
+                max_months = plot_results_plotly('timestep', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
+                                                'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum'], 1, param_id, max_months
+                                                , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
+
 
     st.markdown('---')
-    with st.expander("**Token Rewards**"):
+    with st.expander("**Token Incentives**"):
         pcol61, pcol62 = st.columns(2)
         with pcol61:
+            pcol61a, pcol62a = st.columns(2)
+            with pcol61a:
+                log_scale_toggle_token_incentives = st.toggle('Log Scale - Token Incentives', value=True)
+            with pcol62a:
+                toggle_usd_token_incentives = st.toggle('Convert to USD - Token Incentives', value=False)
+            if toggle_usd_token_incentives:
+                max_months = plot_results_plotly('timestep', ['u_staking_revenue_share_rewards_usd', 'u_staking_vesting_rewards_usd', 'u_staking_minting_rewards_usd', 'u_liquidity_mining_rewards_usd'], 1, param_id, max_months
+                                                , calcColumns={'u_staking_revenue_share_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_revenue_share_rewards', 'secondCol': 'lp_token_price'},
+                                                                'u_staking_vesting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_vesting_rewards', 'secondCol': 'lp_token_price'},
+                                                                'u_staking_minting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_minting_rewards', 'secondCol': 'lp_token_price'},
+                                                                'u_liquidity_mining_rewards_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_rewards', 'secondCol': 'lp_token_price'}}
+                                                , plot_title="USD Token Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_token_incentives)
+            else:
+                max_months = plot_results_plotly('timestep', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards', 'u_staking_minting_rewards', 'u_liquidity_mining_rewards'], 1, param_id, max_months
+                                , plot_title="Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
+        with pcol62:
             log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
             max_months = plot_results_plotly('timestep', ['te_staking_apr'], 1, param_id, max_months
-                                            , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr)
-        with pcol62:
-            log_scale_toggle_token_rewards = st.toggle('Log Scale - Token Rewards', value=True)
-            max_months = plot_results_plotly('timestep', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards', 'u_staking_minting_rewards', 'u_liquidity_mining_rewards'], 1, param_id, max_months
-                                            , plot_title="Token Rewards", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_rewards)
-
+                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr)
+            
     st.markdown('---')
     with st.expander("**Token Valuations**"):
         pcol41, pcol42 = st.columns(2)

@@ -161,8 +161,6 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
             tokens_incentivised_cum = 0
             tokens_airdropped_cum = 0
 
-        print(f"Initializing {stakeholder_name} with {current_holdings} token holdings and {current_staked} tokens staked.")
-
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
                                     stakeholder_type = stakeholder_type,
                                     usd_funds = 0,
