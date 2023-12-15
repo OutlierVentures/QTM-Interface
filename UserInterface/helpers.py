@@ -792,7 +792,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
             projected_cash_balance = raised_funds*1e3 - one_time_payments_1 + (royalty_income_per_month + treasury_income_per_month + other_income_per_month - salaries_per_month - license_costs_per_month - other_monthly_costs) * months_since_launch
             initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
-            if initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * regular_product_revenue_per_user - salaries_per_month - license_costs_per_month - other_monthly_costs) < 0:
+            if initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * (regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']) - salaries_per_month - license_costs_per_month - other_monthly_costs) < 0:
                 st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
         else:
             initial_cash_balance = 0.0
@@ -1129,7 +1129,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 st.write(f"**{stakeholder_allocations + lp_allocation_tokens:,.4f}m**")
                 st.write(f"**{required_circulating_supply:,.4f}m**")
                 
-
             if (stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 > 100.005:
                 st.error(f"Initialized / Required Circulating Supply: {(stakeholder_allocations + lp_allocation_tokens)*1e6:,.0f} / {required_circulating_supply*1e6:,.0f}  |  {(stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100:,.4f}%. Double check if this allocation matches your intention!", icon="⚠️")
             elif (stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 < 99.995:
