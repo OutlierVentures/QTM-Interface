@@ -37,7 +37,7 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
     current_month = prev_state['timestep']
     
     # policy logic
-    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=current_month-1)
+    new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=current_month)
 
     return {'new_date': new_date}
 

@@ -141,21 +141,26 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
     
     initial_agents = {}
     for stakeholder_name, stakeholder_type in stakeholder_name_mapping.items():
+
+        initial_total_supply = sys_param['initial_total_supply'][0]
+        agent_token_allocation = [sys_param[stakeholder_name+"_token_allocation"][0] if stakeholder_name+"_token_allocation" in sys_param else 0][0]
+        agent_initial_vesting_perc = [sys_param[stakeholder_name+"_initial_vesting"][0] if stakeholder_name+"_initial_vesting" in sys_param else 0][0]
+        initial_agent_tokens_vested = (agent_initial_vesting_perc / 100) * (agent_token_allocation * initial_total_supply)
+        
         if 'token_launch' in sys_param:
             token_launch = sys_param['token_launch'][0]
-            current_holdings = sys_param[f'{stakeholder_name}_current_holdings'][0] if not token_launch and f'{stakeholder_name}_current_holdings' in sys_param else 0
-            current_staked = sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0
-            vested = sys_param[f'{stakeholder_name}_vested_init'][0] if not token_launch and f'{stakeholder_name}_vested_init' in sys_param else 0
+            current_staked = sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and f'{stakeholder_name}_current_staked' in sys_param else 0            
+            vested = sys_param[f'{stakeholder_name}_vested_init'][0] if not token_launch and f'{stakeholder_name}_vested_init' in sys_param else initial_agent_tokens_vested
+            current_holdings = sys_param[f'{stakeholder_name}_current_holdings'][0] if not token_launch and f'{stakeholder_name}_current_holdings' in sys_param else vested if stakeholder_name != 'incentivisation' else 0
             tokens_incentivised_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and (f'{stakeholder_name}_current_staked' in sys_param and stakeholder_name == 'incentivisation_receivers') else 0
             tokens_airdropped_cum = sys_param[f'{stakeholder_name}_current_holdings'][0] + sys_param[f'{stakeholder_name}_current_staked'][0] if not token_launch and (f'{stakeholder_name}_current_staked' in sys_param and stakeholder_name == 'airdrop_receivers') else 0
-            if stakeholder_name == 'airdrop_receivers':
-                print(f"tokens_airdropped_cum: {tokens_airdropped_cum}")
-        else:
-            current_holdings = 0
+        else:         
             current_staked = 0
-            vested = 0
+            vested = initial_agent_tokens_vested
+            current_holdings = vested
             tokens_incentivised_cum = 0
             tokens_airdropped_cum = 0
+
         initial_agents[uuid.uuid4()] = new_agent(stakeholder_name = stakeholder_name,
                                     stakeholder_type = stakeholder_type,
                                     usd_funds = 0,
@@ -192,6 +197,7 @@ def generate_agents(stakeholder_name_mapping: dict, sys_param: dict) -> dict:
                                     holding_from_holding_tokens = 0,
                                     actions = {},
                                     current_action = 'hold')
+
     return initial_agents
 
 def create_parameter_list(parameter_name, not_iterable_parameters, init_value, min, max, intervals):
@@ -276,16 +282,62 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
     return lp_token_allocation
 
 
-def initialize_dex_liquidity():
+def initialize_dex_liquidity(sys_param):
     """
     Initialize the DEX liquidity pool.
     """
+    required_usdc = sys_param['initial_required_usdc'][0]
+    required_tokens = sys_param['initial_lp_token_allocation'][0]
+    total_token_supply = sys_param['initial_total_supply'][0]
+    token_launch = sys_param['token_launch'][0] if 'token_launch' in sys_param else True
+    token_fdv = sys_param['token_fdv'][0] if not token_launch else 0
+
+    if 'token_launch' in sys_param:
+            token_launch = sys_param['token_launch'][0]
+            if not token_launch:
+                token_price = token_fdv / total_token_supply
+                lp_tokens = required_tokens
+                lp_usdc = token_price * required_tokens
+                lp_constant_product = lp_tokens * lp_usdc
+
+            else:
+                constant_product = required_usdc * required_tokens
+                token_price = required_usdc / required_tokens
+
+                # initialize the liquidity pool from the system parameters
+                lp_tokens = required_tokens
+                lp_usdc = required_usdc
+                lp_constant_product = constant_product
+            
+                # check if required funds are available from funds raised
+                sum_of_raised_capital = calculate_raised_capital(sys_param)
+
+                if required_usdc > sum_of_raised_capital:
+                    raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
+                                    f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
+    else:
+        constant_product = required_usdc * required_tokens
+        token_price = required_usdc / required_tokens
+
+        # initialize the liquidity pool from the system parameters
+        lp_tokens = required_tokens
+        lp_usdc = required_usdc
+        lp_constant_product = constant_product
+
+        # check if required funds are available from funds raised
+        sum_of_raised_capital = calculate_raised_capital(sys_param)
+
+        if required_usdc > sum_of_raised_capital:
+            raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
+                            f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
+
+
     liquidity_pool = {
-        'lp_tokens' : 0, # amount of native protocol tokens in LP
-        'lp_usdc' : 0, # amount of USDC in LP
-        'lp_constant_product' : 0, # constant product of LP tokens and USDC
-        'lp_token_price' : 0, # price of LP token
-        'lp_valuation': 0, # valuation of LP tokens
+        'lp_tokens' : lp_tokens, # amount of native protocol tokens in LP
+        'lp_usdc' : lp_usdc, # amount of USDC in LP
+        'lp_constant_product' : lp_constant_product, # constant product of LP tokens and USDC
+        'lp_token_price' : token_price, # price of LP token
+        'lp_valuation': lp_usdc * 2, # valuation of LP tokens
         'lp_volatility': 0, # volatility of LP tokens
         'lp_token_price_max': 0, # max price of LP token
         'lp_token_price_min': 0, # min price of LP token
@@ -296,28 +348,32 @@ def initialize_dex_liquidity():
 
     return liquidity_pool
 
-def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
+def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param):
     """
     Set the initial token economy metrics, such as MC, FDV MC, and circ. supply.
     """
 
     if 'token_launch' in sys_param:
         token_launch = sys_param['token_launch'][0]
-        tokens_airdropped_cum = sum([initial_stakeholders[agent]['a_tokens_airdropped_cum'] for agent in initial_stakeholders]) if not token_launch else 0
-        tokens_incentivised_cum = sum([initial_stakeholders[agent]['a_tokens_incentivised_cum'] for agent in initial_stakeholders]) if not token_launch else 0
+        token_fdv = sys_param['token_fdv'][0] if not token_launch else sys_param['public_sale_valuation'][0]
     else:
-        tokens_airdropped_cum = 0
-        tokens_incentivised_cum = 0
+        token_fdv = sys_param['public_sale_valuation'][0]
     
     initial_total_supply = sys_param['initial_total_supply'][0]
+    tokens_holding_cum = sum([initial_stakeholders[agent]['a_tokens'] for agent in initial_stakeholders if initial_stakeholders[agent]['a_type'] != 'protocol_bucket'])
+    tokens_vested_cum = sum([initial_stakeholders[agent]['a_tokens_vested_cum'] for agent in initial_stakeholders])
+    tokens_airdropped_cum = sum([initial_stakeholders[agent]['a_tokens_airdropped_cum'] for agent in initial_stakeholders])
+    tokens_incentivised_cum = sum([initial_stakeholders[agent]['a_tokens_incentivised_cum'] for agent in initial_stakeholders])
+    lp_tokens = initial_liquidity_pool['lp_tokens']
+    
 
     token_economy = {
         'te_total_supply' : initial_total_supply, # total token supply in existence
-        'te_circulating_supply' : 0, # circulating token supply
-        'te_unvested_supply': 0, # unvested token tupply
-        'te_holding_supply' : 0, # supply of tokens held by agents
-        'te_MC' : 0, # market capitalization
-        'te_FDV_MC' : 0, # fully diluted market capitalization
+        'te_circulating_supply' : (tokens_vested_cum + tokens_airdropped_cum + lp_tokens), # circulating token supply
+        'te_unvested_supply': initial_total_supply - (tokens_vested_cum + tokens_airdropped_cum + lp_tokens), # unvested token tupply
+        'te_holding_supply' : tokens_holding_cum, # supply of tokens held by agents
+        'te_MC' : token_fdv * (tokens_vested_cum + tokens_airdropped_cum + lp_tokens) / initial_total_supply, # market capitalization
+        'te_FDV_MC' : token_fdv, # fully diluted market capitalization
         'te_selling_perc': 0, # percentage of tokens sold
         'te_utility_perc': 0, # percentage of tokens used for utility
         'te_holding_perc': 0, # percentage of tokens held
@@ -346,13 +402,16 @@ def generate_initial_token_economy_metrics(initial_stakeholders, sys_param):
 
     return token_economy
 
-def initialize_user_adoption():
+def initialize_user_adoption(sys_param):
     """
     Initialize the user adoption metrics.
     """
+    initial_product_users = sys_param['initial_product_users'][0]
+    initial_token_holders = sys_param['initial_token_holders'][0]
+    
     user_adoption = {
-    'ua_product_users': 0, # amount of product users
-    'ua_token_holders': 0, # amount of token holders
+    'ua_product_users': initial_product_users, # amount of product users
+    'ua_token_holders': initial_token_holders, # amount of token holders
     'ua_product_revenue':0, # product revenue
     'ua_token_buys': 0 # amount of effective token buys
     }
@@ -385,13 +444,9 @@ def initialize_utilities(initial_stakeholders, sys_param):
     """
     Initialize the utility meta bucket metrics.
     """
-    if 'token_launch' in sys_param:
-        token_launch = sys_param['token_launch'][0]
-        staked_tokens = sum([initial_stakeholders[agent]['a_tokens_staked_cum'] for agent in initial_stakeholders]) if not token_launch else 0
-        liquidity_mining_tokens = sum([initial_stakeholders[agent]['a_tokens_liquidity_mining_cum'] for agent in initial_stakeholders]) if not token_launch else 0
-    else:
-        staked_tokens = 0
-        liquidity_mining_tokens = 0
+
+    staked_tokens = sum([initial_stakeholders[agent]['a_tokens_staked_cum'] for agent in initial_stakeholders])
+    liquidity_mining_tokens = sum([initial_stakeholders[agent]['a_tokens_liquidity_mining_cum'] for agent in initial_stakeholders])
     
     utilities = {
     'u_staking_allocation':0, # staking allocation per timestep

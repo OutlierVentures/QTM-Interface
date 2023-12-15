@@ -1037,6 +1037,20 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             current_staked = {}
             vested_dict, vested_supply_sum = calc_vested_tokens_for_stakeholder(token_launch_date, initial_supply, vesting_dict)
             airdropped_supply_sum, remaining_airdrop_supply = calc_airdropped_tokens(token_launch_date, initial_supply, airdrop_allocation, airdrop_dict)
+            
+            staking_vesting_vested = vested_dict['staking_vesting']
+            # distribute staking vesting rewarded tokens according to the staking vesting allocation
+            # calculate all vested tokens for all non-protocol bucket stakeholders
+            stakeholder_names, stakeholder_name_mapping = get_stakeholders()
+            staking_vesting_receiver_vested_tokens = sum([vested_dict[stakeholder] for stakeholder in vested_dict if stakeholder_name_mapping[stakeholder] != 'protocol_bucket'])
+            vested_dict_plus_staking_rewards = {}
+            for stakeholder in vested_dict:
+                if stakeholder_name_mapping[stakeholder] != 'protocol_bucket':
+                    vested_dict_plus_staking_rewards[stakeholder] = vested_dict[stakeholder] + (vested_dict[stakeholder] / staking_vesting_receiver_vested_tokens) * staking_vesting_vested
+                elif stakeholder != 'staking_vesting':
+                    vested_dict_plus_staking_rewards[stakeholder] = vested_dict[stakeholder]
+                else:
+                    vested_dict_plus_staking_rewards[stakeholder] = 0.0
 
             col101, col102 = st.columns(2)
             with col101:
@@ -1060,7 +1074,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 with col102b:
                     st.text_input('Blank', value="", label_visibility="hidden", disabled=True, key=f"blank_2")
                 st.write("**Stakeholder**")
-                for stakeholder in vested_dict:
+                for stakeholder in vested_dict_plus_staking_rewards:
                     if vesting_dict[stakeholder]['allocation'] > 0:
                         st.text_input('Stakeholder', value=[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'][0].replace("_"," ").title(), label_visibility="collapsed", disabled=True, key=f"stakeholder_{stakeholder}")
                 if airdrop_toggle:
@@ -1074,9 +1088,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 else:
                     token_holding_ratio_share = st.number_input("Token Holding Ratio Share / %", value=avg_token_holding_allocation, disabled=False, key="avg_token_holding_allocation2", help="The currently held token supply share by the stakeholders")
                 st.write("**Token Holdings / m**")
-                for stakeholder in vested_dict:
+                for stakeholder in vested_dict_plus_staking_rewards:
                     if vesting_dict[stakeholder]['allocation'] > 0:
-                        current_holdings[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Token Holdings ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current holdings of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
+                        current_holdings[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Token Holdings ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict_plus_staking_rewards[stakeholder]*token_holding_ratio_share/100 if stakeholder != 'staking_vesting' else 0.0, disabled=False if stakeholder != 'staking_vesting' else True, key=f"current_holdings_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current holdings of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
                 if airdrop_toggle:
                     current_holdings['airdrop_receivers'] = st.number_input(f'Token Holdings (Airdrop Receivers) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(airdropped_supply_sum)*token_holding_ratio_share/100, disabled=False, key=f"current_holdings_airdrop_receivers", help=f"The current holdings of the airdrop receivers.")
                 current_holdings['market_investors'] = st.number_input(f'Token Holdings (Market Investors) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(sys_param['market_investors_current_holdings'][0]/1e6) if 'market_investors_current_holdings' in sys_param else 0.0, disabled=False, key=f"current_holdings_market_investors", help=f"The current holdings of the market investors.")
@@ -1085,9 +1099,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
                 if 'Stake' in utility_shares:
                     st.number_input("Token Staking Ratio Share / %", min_value=0.0, value=100.0-token_holding_ratio_share, disabled=True, key="avg_token_utility_allocation1", help="The currently staked token supply share by the stakeholders as ")
                     st.write("**Tokens Staked / m**")
-                    for stakeholder in vested_dict:
+                    for stakeholder in vested_dict_plus_staking_rewards:
                         if vesting_dict[stakeholder]['allocation'] > 0:
-                            current_staked[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Tokens Staked ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict[stakeholder]*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current staked tokens of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
+                            current_staked[stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'] = st.number_input(f'Tokens Staked ({stakeholder if stakeholder is not "incentivisation" else "incentivisation_receivers"}) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=vested_dict_plus_staking_rewards[stakeholder]*(1-token_holding_ratio_share/100) if stakeholder != 'staking_vesting' else 0.0, disabled=False if stakeholder != 'staking_vesting' else True, key=f"current_staked_{stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}", help=f"The current staked tokens of {stakeholder if stakeholder is not 'incentivisation' else 'incentivisation_receivers'}.")
                     if airdrop_toggle:
                         current_staked['airdrop_receivers'] = st.number_input(f'Tokens Staked (Airdrop Receivers) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(airdropped_supply_sum)*(1-token_holding_ratio_share/100), disabled=False, key=f"current_staked_airdrop_receivers", help=f"The current staked tokens of the airdrop receivers.")
                     current_staked['market_investors'] = st.number_input(f'Tokens Staked (Market Investors) / m', label_visibility="collapsed", format="%.4f", min_value=0.0, value=float(sys_param['market_investors_current_staked'][0]/1e6) if 'market_investors_current_staked' in sys_param else 0.0, disabled=False, key=f"current_staked_market_investors", help=f"The current staked tokens of the market investors.")

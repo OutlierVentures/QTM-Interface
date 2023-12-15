@@ -3,7 +3,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-def postprocessing(df, substep, category):
+def postprocessing(df0, includeInitialization, substep, category):
     '''
     Definition:
     Refine and extract metrics from the simulation
@@ -16,7 +16,15 @@ def postprocessing(df, substep, category):
     '''
     print("Postprocessing for substep: ", substep, " and category: ", category, "started..")
     # subset to last substep
-    df = df[df['substep'] == substep]
+    df = df0[df0['substep'] == substep]
+    
+    if includeInitialization:
+        print("Including initialization data..")
+        df2 = df0[(df0['substep'] == int(df0['substep'].min())+1)]
+        df2 = df2[df2['timestep'] == int(df2['timestep'].min())]
+        df2['timestep'][1] = 0
+
+        df = pd.concat([df2, df], ignore_index=True)
 
     # Get the ABM results
     timesteps = df.timestep

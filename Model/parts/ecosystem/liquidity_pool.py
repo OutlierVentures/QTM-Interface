@@ -39,64 +39,6 @@ import numpy as np
 from Model.parts.utils import *
 
 # POLICY FUNCTIONS
-def initialize_liquidity_pool(params, substep, state_history, prev_state, **kwargs):
-    """
-    Function to initialize the liquidity pool in the first timestep. 
-
-    Policy function.
-
-    Checks the current month. If it equals zero, the liquidity pool is initialised
-    from the system parameters, otherwise the function returns the previous state of
-    the liquidity pool.
-
-    Returns: 
-        A dict of the form {'liquidity_pool': liquidity_pool}.
-
-    Raises:
-        ValueError: Insufficient capital raised or too high requirement for seeding
-            of DEX liquidity.
-    """
-    # parameters
-    required_usdc = params['initial_required_usdc']
-    required_tokens = params['initial_lp_token_allocation']
-    total_token_supply = params['initial_total_supply']
-    token_launch = params['token_launch'] if 'token_launch' in params else True
-    token_fdv = params['token_fdv'] if not token_launch else 0
-
-    # state variables
-    current_month = prev_state['timestep']
-    liquidity_pool = prev_state['liquidity_pool']
-
-    if current_month == 0:
-        print('Initializing the liquidity pool...')
-        if token_launch:
-            constant_product = required_usdc * required_tokens
-            token_price = required_usdc / required_tokens
-
-            # initialize the liquidity pool from the system parameters
-            liquidity_pool['lp_tokens'] = required_tokens
-            liquidity_pool['lp_usdc'] = required_usdc
-            liquidity_pool['lp_constant_product'] = constant_product
-            liquidity_pool['lp_token_price'] = token_price
-        
-            # check if required funds are available from funds raised
-            sum_of_raised_capital = calculate_raised_capital(params)
-
-            if required_usdc > sum_of_raised_capital:
-                raise ValueError(f'The required funds to seed the DEX liquidity are {required_usdc}, '
-                                f'which is higher than the sum of raised capital {sum_of_raised_capital}!')
-        
-        else:
-            token_price = token_fdv / total_token_supply
-            liquidity_pool['lp_tokens'] = required_tokens
-            liquidity_pool['lp_usdc'] = token_price * required_tokens
-            liquidity_pool['lp_constant_product'] = liquidity_pool['lp_tokens'] * liquidity_pool['lp_usdc']
-            liquidity_pool['lp_token_price'] = token_price
-        
-        return {'liquidity_pool': liquidity_pool}
-    else:
-        return {'liquidity_pool': prev_state['liquidity_pool']}
-
 def liquidity_pool_tx1_after_adoption(params, substep, state_history, prev_state, **kwargs):
     """
     Function to calculate the liquidity pool after the adoption buys. 
@@ -193,7 +135,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
         tokens_to_sell += agents[agent]['a_selling_tokens'] + agents[agent]['a_selling_from_holding_tokens']
         a_selling_tokens_sum += agents[agent]['a_selling_tokens']
         a_selling_from_holding_tokens_sum += agents[agent]['a_selling_from_holding_tokens']
-    
+
     # consistency check for the amount of tokens to be sold being equivalent to meta bucket selling allocation
     error_message = (
     f'The amount of tokens to be sold {tokens_to_sell} '
@@ -308,25 +250,6 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
 
 
 # STATE UPDATE FUNCTIONS
-def update_lp_after_lp_seeding(params, substep, state_history, prev_state, policy_input, **kwargs):
-    """
-    Function to update the agents based on the changes in business funds to seed the liquidity pool.
-
-    State update function.
-
-    Note: Important in the first time step when liquidity pool is initialised. For other
-    steps, the liquidity pool is not changed.
-
-    Returns: 
-        Tuple ('liquidity_pool', updated_liquidity_pool), where updated_liquidity_pool is
-        a dict storing elevant information about the liquidity pool.
-
-    """
-    # get policy inputs
-    updated_liquidity_pool = policy_input['liquidity_pool']
-
-    return ('liquidity_pool', updated_liquidity_pool)
-
 def update_agents_tx1_after_adoption(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
     Function to update the agents after the adoption buys. 
@@ -427,6 +350,5 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_buyback'] = lp_tokens
-   
 
     return ('liquidity_pool', updated_liquidity_pool)

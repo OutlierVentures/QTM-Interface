@@ -70,7 +70,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
 
     # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
-    total_days = 3653                        
+    total_days = 3653
 
     ## Product user adoption
     initial_product_users = params['initial_product_users']
@@ -81,9 +81,9 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
 
-    ## Product Revenue
-    
+    ## Product Revenue    
     prev_product_users = prev_state['user_adoption']['ua_product_users']
+
     if current_month == 1:
         product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
     else:

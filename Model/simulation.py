@@ -30,7 +30,7 @@ from Model.parts.utils import *
 from Model.post_processing import *
 
 @st.cache_data
-def simulation(input_file, adjusted_params):
+def simulation(input_file, adjusted_params, includeInitialization):
     # get simulation parameters
     initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim = get_initial_state(input_file, adjusted_params)
     start_time = time.process_time()
@@ -52,7 +52,7 @@ def simulation(input_file, adjusted_params):
         df = pd.DataFrame(result)
 
         # post processing
-        data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
+        data = postprocessing(df, includeInitialization, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
 
         # Apply the conversion function to each column in the DataFrame
         for col in data.columns:

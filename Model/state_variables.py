@@ -17,13 +17,13 @@ def get_initial_state(input_file, adjusted_params):
     initial_stakeholders = generate_agents(stakeholder_name_mapping, sys_param)
 
     # initialize the initial liquidity pool
-    initial_liquidity_pool = initialize_dex_liquidity()
+    initial_liquidity_pool = initialize_dex_liquidity(sys_param)
 
     # initialize the initial token economy
-    initial_token_economy = generate_initial_token_economy_metrics(initial_stakeholders, sys_param)
+    initial_token_economy = generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidity_pool, sys_param)
 
     # initialize the initial user adoption
-    initial_user_adoption = initialize_user_adoption()
+    initial_user_adoption = initialize_user_adoption(sys_param)
 
     # initialize the initial business assumptions
     business_assumptions = initialize_business_assumptions(sys_param)

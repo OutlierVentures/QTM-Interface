@@ -31,10 +31,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go two folders up
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.90_radCad_integration - Data Tables2.csv')
+QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.90_radCad_integration - Data Tables.csv')
 #QTM_data_tables = pd.read_csv(parent_dir+'/data/Quantitative_Token_Model_V1.89_radCad_integration - Data Tables_only_staking_vesting.csv')
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_1000x_supply.csv'
-input_file = parent_dir+'/data/Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs2.csv'
+input_file = parent_dir+'/data/Quantitative_Token_Model_V1.90_radCAD_integration - radCAD_inputs.csv'
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_2.75_public_sale_perc.csv'
 #input_file = parent_dir+'/data/Quantitative_Token_Model_V1.89_radCAD_integration - radCAD_inputs_only_staking_vesting.csv'
 
@@ -53,12 +53,12 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, substep=16, category="all") # after adoption buy lp tx
-    data_tx2 = postprocessing(df, substep=19, category="all") # after vesting sell lp tx
-    data_tx3 = postprocessing(df, substep=20, category="all") # after liquidity addition lp tx
-    data_tx4 = postprocessing(df, substep=21, category="all") # after buyback lp tx
+    data_tx1 = postprocessing(df, False, substep=15, category="all") # after adoption buy lp tx
+    data_tx2 = postprocessing(df, False, substep=18, category="all") # after vesting sell lp tx
+    data_tx3 = postprocessing(df, False, substep=19, category="all") # after liquidity addition lp tx
+    data_tx4 = postprocessing(df, False, substep=20, category="all") # after buyback lp tx
     postprocessing_one_start_time = time.process_time()
-    data = postprocessing(df, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
+    data = postprocessing(df, False, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()
 
 
