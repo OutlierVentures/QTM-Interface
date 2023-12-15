@@ -98,10 +98,19 @@ def get_sys_param(input_file, adjusted_params):
     sys_param.update(agent_token_allocation)
 
     # calculating the initial values for the liquidity pool
+    if 'token_launch' in sys_param.keys() and not sys_param['token_launch'][0]:
+        initial_lp_token_allocation = [sys_param['lp_allocation_tokens'][0]]
+        token_fdv = sys_param['token_fdv'][0]
+        initial_total_supply = sys_param['initial_total_supply'][0]
+        initial_required_usdc = [token_fdv / initial_total_supply * initial_lp_token_allocation[0]]
+    else:
+        initial_lp_token_allocation = calc_initial_lp_tokens(agent_token_allocation, sys_param)
+        initial_required_usdc = [x * y for x in initial_lp_token_allocation for y in [x / y for x in sys_param['public_sale_valuation'] for y in sys_param['initial_total_supply']]]
+    
     liquidity_pool_initial_values = {
         'initial_token_price': [x / y for x in sys_param['public_sale_valuation'] for y in sys_param['initial_total_supply']],
-        'initial_lp_token_allocation': calc_initial_lp_tokens(agent_token_allocation, sys_param),
-        'initial_required_usdc': [x * y for x in calc_initial_lp_tokens(agent_token_allocation, sys_param) for y in [x / y for x in sys_param['public_sale_valuation'] for y in sys_param['initial_total_supply']]]
+        'initial_lp_token_allocation': initial_lp_token_allocation,
+        'initial_required_usdc': initial_required_usdc
     }
     sys_param.update(liquidity_pool_initial_values)
 
