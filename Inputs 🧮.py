@@ -10,7 +10,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
-from plots import *
+from UserInterface.plots import *
 from Model.simulation import simulation
 from Model.parts.utils import *
 from data.not_iterable_variables import parameter_list

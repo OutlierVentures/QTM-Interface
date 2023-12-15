@@ -1,11 +1,13 @@
 import streamlit as st
-from plots import *
+from UserInterface.plots import *
 from PIL import Image
+import pandas as pd
+from UserInterface.helpers import to_excel
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go up one folder
-parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
+parent_dir = os.path.abspath(os.path.join(os.path.abspath(current_dir), os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
@@ -44,17 +46,16 @@ try:
         st.sidebar.markdown(f"This is a valid parameter ID ✅")
 except:
     pass
-st.sidebar.markdown("## Token Economy 🪙")
+st.sidebar.markdown("## Data 💾")
 
 # main page
-st.markdown("## Token Economy 🪙")
+st.markdown("## Data 💾")
+st.markdown("### Full Timeseries Data")
 if 'param_id' in st.session_state:
     if st.session_state['param_id'] != "":
-        sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
-        sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
-        if 'max_months' in st.session_state:
-            if st.session_state['max_months']<sys_param['simulation_duration'].iloc[0]:
-                st.error(f"The simulation stopped after {st.session_state['max_months']} months, because the business ran out of funds.", icon="⚠️")
-            plot_token_economy(st.session_state['param_id'], st.session_state['max_months'])
-        else:
-            plot_token_economy(st.session_state['param_id'], sys_param['simulation_duration'].iloc[0])
+        df = get_simulation_data('simulationData.db', 'simulation_data_'+str(st.session_state['param_id']))
+        st.dataframe(df)
+        df_xlsx = to_excel(df)
+        st.download_button(label='📥 Download Data as .xlsx',
+                                data=df_xlsx ,
+                                file_name= f"QTM_Results_{st.session_state['project_name']}.xlsx")

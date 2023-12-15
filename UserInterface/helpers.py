@@ -1,5 +1,5 @@
 import streamlit as st
-from plots import *
+from UserInterface.plots import *
 from Model.parts.utils import *
 import pandas as pd
 from io import BytesIO

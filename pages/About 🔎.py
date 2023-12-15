@@ -5,7 +5,7 @@ import os, sys
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go up one folder
-parent_dir = os.path.abspath(os.path.join(os.path.abspath(os.path.join(current_dir, os.pardir)), os.pardir))
+parent_dir = os.path.abspath(os.path.join(os.path.abspath(current_dir), os.pardir))
 # Append the parent directory to sys.path
 sys.path.append(parent_dir)
 
