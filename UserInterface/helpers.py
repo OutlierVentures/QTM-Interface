@@ -13,7 +13,7 @@ fundraising_style_map = {
 }
 
 param_help = {
-    'fundraising_style': f"Themore aggressive the fundraising style, the more advantageous it is to be an early investor: **Moderate** / **Medium** / **Aggressive** : **{fundraising_style_map['Moderate']}x** / **{fundraising_style_map['Medium']}x** / **{fundraising_style_map['Aggressive']}x** public sale to seed round valuation ratio.",
+    'fundraising_style': f"The more aggressive the fundraising style, the more advantageous it is to be an early investor: **Moderate** / **Medium** / **Aggressive** : **{fundraising_style_map['Moderate']}x** / **{fundraising_style_map['Medium']}x** / **{fundraising_style_map['Aggressive']}x** public sale to seed round valuation ratio.",
     'incentivisation': "Enable token incentives for your ecosystem. These can have several applications, e.g. liquidity incentives or behavior/action incentives. Whenever you want to incentivize something through a fixed vesting rewards approach enable the incentivisation allocation.",
     'staking_vesting': "Enable staking vesting token allocations. These tokens will automatically vest as rewards for stakers. Note that the QTM provides 3 different staking mechanisms: **(1) Staking Vesting (2) Staking fixed APR rewards (3) Staking revenue share buybacks and distribute rewards**. At this input you only switch on/off the staking vesting mechanism (1) as it is relevant for the initial token allocations.",
     'airdrops': "Enable airdrops. Airdrops are a great way to distribute tokens to a large number of people. They can be used to incentivize certain actions or to reward early supporters.",
@@ -41,7 +41,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             sys_param = {k:[v] for k, v in sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index')[list(sys_param_df[sys_param_df['id'] == parameter_id_choice].to_dict('index').keys())[0]].items()}
 
     with col01:
-        token_launch_date = st.date_input("Token Launch Date", value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), help="The token launch date is the time when the token becomes liquid to be traded and at which the vesting conditions start to apply. Defining a date before the today's date means that the token has already been launched and therefore requires additional information about the current token distribution and valuations in the parameter definitions below.")
+        token_launch_date = st.date_input("Token Launch Date", value=datetime.strptime(sys_param['launch_date'][0], "%d.%m.%Y"), help="The token launch date is the time when the token becomes liquid to be traded and at which the vesting conditions start to apply. Defining a date before today's date means that the token has already been launched and therefore requires additional information about the current token distribution and valuations in the parameter definitions below.")
         token_launch_date = datetime(token_launch_date.year, token_launch_date.month, token_launch_date.day)
         if token_launch_date > datetime.today():
             token_launch = True
@@ -654,7 +654,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
             adoption_style = st.radio('Adoption Assumption',tuple(adoption_style_choices), index=adoption_style_choices.index(sys_param['adoption_style'][0]) if 'adoption_style' in sys_param else 0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
             show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
         with col62:
-            product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no product users, but only token holders. 1 means the opposite and 0 means that there are as many product users as token holders.")
+            product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no token holders, but only product users. 1 means the opposite and 0 means that there are as many product users as token holders.")
             initial_users = st.number_input('Initial Users', label_visibility="visible", min_value=0, value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Weight.")
             initial_product_users = initial_users * (1 - (product_token_ratio)) / 2
             initial_token_holders = initial_users - initial_product_users
