@@ -14,8 +14,9 @@ from UserInterface.plots import *
 from Model.simulation import simulation
 from Model.parts.utils import *
 from data.not_iterable_variables import parameter_list
-from UserInterface.helpers import fundraising_style_map, param_help, model_ui_inputs, delete_parameter_and_simulation_data
+from UserInterface.helpers import model_ui_inputs, delete_parameter_and_simulation_data, get_simulation_data
 st.set_page_config(layout="wide")
+
 
 input_file_base_path = parent_dir+'/data/'
 
@@ -178,7 +179,8 @@ if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
         df.insert(0, "project_name", df.pop("project_name"))
         st.dataframe(df)
         st.success('Done!')
-
+        # write hint for user to switch to the next page
+        st.info("Go to the Fundraising 💰, Business 📈, Token Economy 🪙, or Data 💾 page in the navigation bar on the left side to see the respective simulation results!", icon="ℹ️")
 
     # Reset the session state variable after running the simulation
     st.session_state['button_clicked'] = False
