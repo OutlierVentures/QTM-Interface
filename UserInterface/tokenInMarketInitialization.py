@@ -1,5 +1,6 @@
 import streamlit as st
 from . import helpers
+from Model.sys_params import *
 
 def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return_dict, ut_return_dict, ab_return_dict, tav_return_dict, sys_param):
 
@@ -35,7 +36,7 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
                 st.text_input('Total Emitted Tokens / % init. total supply', value=f"{round((vested_supply_sum + airdropped_supply_sum + tav_return_dict['lp_allocation'] / 100 * bti_return_dict['initial_supply'])/bti_return_dict['initial_supply']*100,2)}%", disabled=True, key=f"vested_supply_sum_perc", help="Total amount of vested tokens as percentage share of the total supply according to the vesting schedule and token launch date.")
 
             staking_vesting_vested = vested_dict['staking_vesting']
-            stakeholder_names, stakeholder_name_mapping = helpers.get_stakeholders()
+            stakeholder_names, stakeholder_name_mapping = get_stakeholders()
 
             col101a, col102a, col103a = st.columns(3)
             with col101a:
@@ -85,7 +86,7 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
                 stakeholder_allocations += current_holdings[stakeholder] + current_staked[stakeholder]
             
             with col102a:
-                lp_allocation_tokens = st.number_input('LP Token Allocation / m', label_visibility="visible", value=tav_return_dict['lp_allocation'] / 100 * bti_return_dict['initial_supply'], format="%.4f", disabled=False, key="lp_allocation_tokens", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
+                lp_allocation_tokens = st.number_input('LP Token Allocation / m', label_visibility="visible", value=sys_param['lp_allocation_tokens'][0]/1e6 if 'lp_allocation_tokens' in sys_param else tav_return_dict['lp_allocation'] / 100 * bti_return_dict['initial_supply'], format="%.4f", disabled=False, key="lp_allocation_tokens", help="The percentage of tokens allocated to the liquidity pool. This is the remaining percentage of tokens after all other allocations have been made. It must not be < 0 and determines the required capital to seed the liquidity.")
             with col103a:
                 tav_return_dict["dex_capital"] = st.number_input('DEX Capital / $m', value=lp_allocation_tokens * token_fdv / current_initial_supply, disabled=True, key="liquidity_capital_requirements1", help="The required capital to seed the liquidity: left over lp token allocation x total_initial_supply / 100 % * token_launch_price.")
 
@@ -138,6 +139,7 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
         stakeholder_allocations = 0
         lp_allocation_tokens = tav_return_dict["lp_allocation"] / 100 * bti_return_dict["initial_supply"]
         required_circulating_supply = vested_supply_sum + airdropped_supply_sum + tav_return_dict["lp_allocation"] / 100 * bti_return_dict["initial_supply"]
+        token_holding_ratio_share = 100
     
     timi_return_dict = {
         "current_initial_supply": current_initial_supply,
@@ -151,6 +153,7 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
         "stakeholder_allocations": stakeholder_allocations,
         "lp_allocation_tokens": lp_allocation_tokens,
         "required_circulating_supply": required_circulating_supply,
+        "token_holding_ratio_share": token_holding_ratio_share
     }
 
     return timi_return_dict

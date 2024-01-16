@@ -2,7 +2,12 @@ import streamlit as st
 import numpy as np
 from . import plots as plts
 
-def fundraisingInput(sys_param, param_help, equity_investments, equity_perc, public_sale_supply, launch_valuation, initial_supply, uploaded_file, fundraising_style_map):
+def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_supply, launch_valuation, initial_supply, uploaded_file):
+    fundraising_style_map = {
+        'Moderate': 2,
+        'Medium': 5,
+        'Aggressive': 8
+    }
     with st.expander("**Fundraising**"):
         st.markdown("### Fundraising")
         col21, col22, col23, col24 = st.columns(4)
