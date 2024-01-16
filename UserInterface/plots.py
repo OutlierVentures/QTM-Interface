@@ -498,8 +498,9 @@ def plot_token_economy(param_id, max_months):
             log_scale_toggle_stakeholder_holdings = st.toggle('Log Scale - Stakeholder Holdings', value=False)
             max_months = plot_results_plotly('timestep', ['angel_a_tokens','seed_a_tokens','presale_1_a_tokens',
                                 'presale_2_a_tokens','public_sale_a_tokens','team_a_tokens', 'ov_a_tokens',
-                                'advisor_a_tokens', 'strategic_partners_a_tokens', 'market_investors_a_tokens',
-                                'airdrop_receivers_a_tokens', 'incentivisation_receivers_a_tokens'], 1, param_id, max_months
+                                'advisor_a_tokens', 'strategic_partners_a_tokens', 'reserve_a_tokens', 'community_a_tokens', 
+                                'foundation_a_tokens', 'market_investors_a_tokens', 'airdrop_receivers_a_tokens',
+                                'incentivisation_receivers_a_tokens'], 1, param_id, max_months
                                 , plot_title="Stakeholder Holdings", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_holdings)
         
         with pcol32:
@@ -507,59 +508,13 @@ def plot_token_economy(param_id, max_months):
             log_scale_toggle_stakeholder_staked = st.toggle('Log Scale - Stakeholder Staked Tokens', value=False)
             max_months = plot_results_plotly('timestep', ['angel_a_tokens_staked_cum','seed_a_tokens_staked_cum','presale_1_a_tokens_staked_cum',
                                 'presale_2_a_tokens_staked_cum','public_sale_a_tokens_staked_cum','team_a_tokens_staked_cum', 'ov_a_tokens_staked_cum',
-                                'advisor_a_tokens_staked_cum', 'strategic_partners_a_tokens_staked_cum', 'market_investors_a_tokens_staked_cum',
+                                'advisor_a_tokens_staked_cum', 'strategic_partners_a_tokens_staked_cum', 'reserve_a_tokens_staked_cum',
+                                'community_a_tokens_staked_cum', 'foundation_a_tokens_staked_cum', 'market_investors_a_tokens_staked_cum',
                                 'airdrop_receivers_a_tokens_staked_cum', 'incentivisation_receivers_a_tokens_staked_cum'], 1, param_id, max_months
                                 , plot_title="Stakeholder Staked Tokens", x_title="Months", y_title="Tokens", logy=log_scale_toggle_stakeholder_staked)
 
-        # plot meta bucket allocations of agents
-        # plot individual agent meta bucket behavior
-        stakeholder_names, stakeholder_mapping = get_stakeholders()
-        pcol31d, pcol32d = st.columns(2)
-        with pcol31d:
-            st.write('**Select Stakeholder 1**')
-            pcol31d1, pcol31d2 = st.columns(2)
-            with pcol31d1:
-                # pick agent
-                
-                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(name) for name in stakeholder_names if stakeholder_mapping[name.replace(' ', '_').lower()] is not 'protocol_bucket'], index=0, label_visibility='collapsed')
-                stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
-            with pcol31d2:
-                # pick meta bucket
-                percentage_area1 = st.toggle('Percentage Area 1', value=False)
-
-            area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
-            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_vested_cum', f'{stakeholder1_raw}_a_tokens_airdropped_cum',
-                                                          f'{stakeholder1_raw}_a_tokens_incentivised_cum', f'{stakeholder1_raw}_a_tokens_staking_buyback_rewards_cum',
-                                                          f'{stakeholder1_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder1_raw}_a_tokens_staking_minting_rewards_cum',
-                                                          f'{stakeholder1_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
-                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
-            
-            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_staked_cum', f'{stakeholder1_raw}_a_tokens_liquidity_mining_cum',
-                                                          f'{stakeholder1_raw}_a_tokens_transferred_cum', f'{stakeholder1_raw}_a_tokens_burned_cum'], 1, param_id, max_months
-                                , plot_title="Sent Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
         
-        with pcol32d:
-            st.write('**Select Stakeholder 2**')
-            pcol32d1, pcol32d2 = st.columns(2)
-            with pcol32d1:
-                # pick agent
-                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(name) for name in stakeholder_names if stakeholder_mapping[name.replace(' ', '_').lower()] is not 'protocol_bucket'], index=1, label_visibility='collapsed')
-                stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
-            with pcol32d2:
-                # pick meta bucket
-                percentage_area2 = st.toggle('Percentage Area 2', value=False)
-
-            area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
-            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_vested_cum', f'{stakeholder2_raw}_a_tokens_airdropped_cum',
-                                                          f'{stakeholder2_raw}_a_tokens_incentivised_cum', f'{stakeholder2_raw}_a_tokens_staking_buyback_rewards_cum',
-                                                          f'{stakeholder2_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder2_raw}_a_tokens_staking_minting_rewards_cum',
-                                                          f'{stakeholder2_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
-                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
-            
-            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_staked_cum', f'{stakeholder2_raw}_a_tokens_liquidity_mining_cum',
-                                                          f'{stakeholder2_raw}_a_tokens_transferred_cum', f'{stakeholder2_raw}_a_tokens_burned_cum'], 1, param_id, max_months
-                                , plot_title="Sent Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
-        
+        # plot meta bucket allocations of agents        
         pcol31a, pcol32a = st.columns(2)
         with pcol31a:
             log_scale_toggle_meta_alloc_utility = st.toggle('Log Scale - Utility Meta Bucket Allocations', value=False)
@@ -609,6 +564,54 @@ def plot_token_economy(param_id, max_months):
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
     
+            # plot individual agent meta bucket behavior
+        stakeholder_names, stakeholder_mapping = get_stakeholders()
+        pcol31d, pcol32d = st.columns(2)
+        with pcol31d:
+            st.write('**Select Stakeholder 1**')
+            pcol31d1, pcol31d2 = st.columns(2)
+            with pcol31d1:
+                # pick agent
+                
+                stakeholder1 = st.selectbox('Select Stakeholder 1', [format_column_name(name) for name in stakeholder_names], index=0, label_visibility='collapsed')
+                stakeholder1_raw = stakeholder1.replace(' ', '_').lower()
+            with pcol31d2:
+                # pick meta bucket
+                percentage_area1 = st.toggle('Percentage Area 1', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_vested_cum', f'{stakeholder1_raw}_a_tokens_airdropped_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_incentivised_cum', f'{stakeholder1_raw}_a_tokens_staking_buyback_rewards_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder1_raw}_a_tokens_staking_minting_rewards_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
+                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+            
+            max_months = plot_results_plotly('timestep', [f'{stakeholder1_raw}_a_tokens_staked_cum', f'{stakeholder1_raw}_a_tokens_liquidity_mining_cum',
+                                                          f'{stakeholder1_raw}_a_tokens_transferred_cum', f'{stakeholder1_raw}_a_tokens_burned_cum'], 1, param_id, max_months
+                                , plot_title="Allocated Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+        
+        with pcol32d:
+            st.write('**Select Stakeholder 2**')
+            pcol32d1, pcol32d2 = st.columns(2)
+            with pcol32d1:
+                # pick agent
+                stakeholder2 = st.selectbox('Select Stakeholder 2', [format_column_name(name) for name in stakeholder_names], index=1, label_visibility='collapsed')
+                stakeholder2_raw = stakeholder2.replace(' ', '_').lower()
+            with pcol32d2:
+                # pick meta bucket
+                percentage_area2 = st.toggle('Percentage Area 2', value=False)
+
+            area_plot_stakeholder_meta_allocations(param_id, stakeholder2_raw, max_months, percentage_area2)
+            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_vested_cum', f'{stakeholder2_raw}_a_tokens_airdropped_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_incentivised_cum', f'{stakeholder2_raw}_a_tokens_staking_buyback_rewards_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder2_raw}_a_tokens_staking_minting_rewards_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_liquidity_mining_rewards_cum'], 1, param_id, max_months
+                                , plot_title="Received Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+            
+            max_months = plot_results_plotly('timestep', [f'{stakeholder2_raw}_a_tokens_staked_cum', f'{stakeholder2_raw}_a_tokens_liquidity_mining_cum',
+                                                          f'{stakeholder2_raw}_a_tokens_transferred_cum', f'{stakeholder2_raw}_a_tokens_burned_cum'], 1, param_id, max_months
+                                , plot_title="Allocated Tokens Cum.", x_title="Months", y_title="Tokens", logy=False)
+
     st.markdown('---')
     with st.expander("**Utility Allocations**"):
         pie_plot_plotly(['staking_share','liquidity_mining_share','burning_share',
