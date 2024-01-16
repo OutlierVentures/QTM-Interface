@@ -49,6 +49,7 @@ st.sidebar.markdown("## Fundraising 💰")
 
 # main page
 st.markdown("## Fundraising 💰")
+
 if 'param_id' in st.session_state:
     if st.session_state['param_id'] != "":
         plot_fundraising(st.session_state['param_id'])
