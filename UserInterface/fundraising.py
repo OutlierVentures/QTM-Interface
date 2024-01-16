@@ -8,7 +8,7 @@ def fundraisingInput(sys_param, param_help, equity_investments, equity_perc, pub
         col21, col22, col23, col24 = st.columns(4)
         with col21:
             fundraising_style_choices = ['Moderate', 'Medium', 'Aggressive','Custom']
-            fundraising_style = st.radio('Fundraising Style',tuple(fundraising_style_choices), index=fundraising_style_choices.index(sys_param['fundraising_style'][0]) if 'fundraising_style' in sys_param else 0, help=param_help['fundraising_style'])
+            fundraising_style = st.radio('Fundraising Style',tuple(fundraising_style_choices), index=fundraising_style_choices.index(sys_param['fundraising_style'][0]) if 'fundraising_style' in sys_param else 0, help=f"The more aggressive the fundraising style, the more advantageous it is to be an early investor: **Moderate** / **Medium** / **Aggressive** : **{fundraising_style_map['Moderate']}x** / **{fundraising_style_map['Medium']}x** / **{fundraising_style_map['Aggressive']}x** public sale to seed round valuation ratio.")
             if fundraising_style != 'Custom':
                 show_full_fund_table = st.toggle('Show Full Table', value=False, help="Show the full token fundraising table.")
             else:

@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-def tokenAllocationsAndVestingInput(sys_param, param_help, equity_perc, seed_raised, presale_1_raised, presale_2_raised, public_sale_raised, raised_funds, launch_valuation, seed_valuation, presale_1_valuation, presale_2_valuation, initial_supply, token_launch_date, token_launch):
+def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale_1_raised, presale_2_raised, public_sale_raised, raised_funds, launch_valuation, seed_valuation, presale_1_valuation, presale_2_valuation, initial_supply, token_launch_date, token_launch):
     """
     This function creates the token allocations and vesting section of the UI.
     """
@@ -11,15 +11,15 @@ def tokenAllocationsAndVestingInput(sys_param, param_help, equity_perc, seed_rai
         col31, col32 = st.columns(2)
         with col31:
             vesting_style_choices = ['Slow', 'Medium', 'Fast','Custom']
-            vesting_style = st.radio('Vesting Style',tuple(vesting_style_choices), index=vesting_style_choices.index(sys_param['vesting_style'][0]) if 'vesting_style' in sys_param else 0, help=param_help['vesting_style'])
+            vesting_style = st.radio('Vesting Style',tuple(vesting_style_choices), index=vesting_style_choices.index(sys_param['vesting_style'][0]) if 'vesting_style' in sys_param else 0, help=f"The vesting style determines how fast the tokens are released. The faster the higher the initial vesting and the lower the cliff and duration months.")
             if vesting_style != 'Custom':
                 show_full_alloc_table = st.toggle('Show Full Table', value=False, help="Show the full token allocation and vesting table.")
             else:
                 show_full_alloc_table = False
         with col32:
-            incentivisation_toggle = st.toggle('Incentivisation Vesting', value=sys_param['incentivisation_allocation'][0] > 0.0, help=param_help['incentivisation'])
-            staking_vesting_toggle = st.toggle('Staking Vesting', value=sys_param['staking_vesting_allocation'][0] > 0.0, help=param_help['staking_vesting'])
-            airdrop_toggle = st.toggle('Airdrops', value=sys_param['airdrop_allocation'][0] > 0.0, help=param_help['airdrops'])
+            incentivisation_toggle = st.toggle('Incentivisation Vesting', value=sys_param['incentivisation_allocation'][0] > 0.0, help="Enable token incentives for your ecosystem. These can have several applications, e.g. liquidity incentives or behavior/action incentives. Whenever you want to incentivize something through a fixed vesting rewards approach enable the incentivisation allocation.")
+            staking_vesting_toggle = st.toggle('Staking Vesting', value=sys_param['staking_vesting_allocation'][0] > 0.0, help="Enable staking vesting token allocations. These tokens will automatically vest as rewards for stakers. Note that the QTM provides 3 different staking mechanisms: **(1) Staking Vesting (2) Staking fixed APR rewards (3) Staking revenue share buybacks and distribute rewards**. At this input you only switch on/off the staking vesting mechanism (1) as it is relevant for the initial token allocations.")
+            airdrop_toggle = st.toggle('Airdrops', value=sys_param['airdrop_allocation'][0] > 0.0, help="Enable airdrops. Airdrops are a great way to distribute tokens to a large number of people. They can be used to incentivize certain actions or to reward early supporters.")
 
         col41, col42, col43, col44, col45 = st.columns(5)
         with col41:
