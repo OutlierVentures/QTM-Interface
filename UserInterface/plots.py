@@ -411,7 +411,7 @@ def pie_plot_plotly(values_list, param_id, x_title=None, y_title=None, info_box=
 
 def plot_fundraising(param_id):    
     ##FUNDRAISING TAB
-    st.session_state['date_conversion'] = st.toggle('Dates Time', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
+    st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
 
     st.markdown('---')
     vesting_cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['angel_a_tokens_vested_cum',
@@ -465,7 +465,7 @@ def plot_fundraising(param_id):
 
 def plot_business(param_id):    
     ##INPUTS TAB
-    st.session_state['date_conversion'] = st.toggle('Dates Time', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
+    st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
     max_months = sys_param['simulation_duration'].iloc[0]   
@@ -486,7 +486,7 @@ def plot_business(param_id):
 
 def plot_token_economy(param_id, max_months):
     ##ANALYSIS TAB
-    st.session_state['date_conversion'] = st.toggle('Dates Time', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
+    st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
     # plot token protocol and economy supply buckets
     st.markdown('---')
     with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
