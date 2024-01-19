@@ -68,6 +68,8 @@ Python 3.9 is recommended!
 - Make sure you followed the previous installation section.
 - Navigate with your terminal to the main project directory.
 - Run `streamlit run .\Welcome.py` within the previously installed and activated environment.
+- Expand the Sign-Up expander on the Welcome landing page and create a new user account.
+- Expand and login via the Login expander on the Welcome landing page by using your new account credentials.
 
 ## New Module Implementation Procedure
 Create a function that combines all of these into a single file
