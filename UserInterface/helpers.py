@@ -7,6 +7,8 @@ import sqlite3
 import numpy as np
 import os
 from PIL import Image
+import time
+import yaml
 
 from Model.parts.utils import *
 from UserInterface.plots import *
@@ -74,11 +76,7 @@ def to_excel(df):
     processed_data = output.getvalue()
     return processed_data
 
-def ui_base(parent_dir):
-    image = Image.open(parent_dir+'/images/ov_logo.jpg')
-    st.image(image, width=125)
-    st.title('Quantitative Token Model')
-
+def ui_base(parent_dir, return_db_sorted=False):
     # get all existing project names
     try:
         db_sorted = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
@@ -105,3 +103,30 @@ def ui_base(parent_dir):
             st.sidebar.markdown(f"This is a valid parameter ID ✅")
     except:
         pass
+    
+    if return_db_sorted:
+        return db_sorted
+
+def returnToStart(parent_dir):
+    st.write("You are not logged in. Please log in to access this page.")
+    st.write("You will be redirected to the login page in 3 seconds..")
+    time.sleep(3)
+    st.switch_page(f"{parent_dir}\Welcome.py")
+
+def header(basePath):
+    hcol1, hcol2 = st.columns(2)
+    with hcol1:
+        image = Image.open(f'{basePath}/images/ov_logo.jpg')
+        st.image(image, width=125)
+        st.title('Quantitative Token Model')
+    with hcol2:
+        if st.session_state["authentication_status"]:
+            st.write(f'✅ *{st.session_state["name"]}*')
+            st.session_state["authenticator"].logout('Logout', 'main', key='unique_key')
+
+def safeToYaml(config):
+    # safe to yaml file
+    with open('./config.yaml', 'w') as file:
+        yaml.dump(config, file, default_flow_style=False)
+
+    

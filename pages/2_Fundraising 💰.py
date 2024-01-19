@@ -1,7 +1,7 @@
 import streamlit as st
-from PIL import Image
 import os, sys
-from UserInterface.helpers import header, returnToStart
+from UserInterface.plots import plot_fundraising
+from UserInterface.helpers import ui_base, returnToStart, header
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,14 +13,16 @@ sys.path.append(parent_dir)
 if 'authentication_status' in st.session_state:
     if st.session_state["authentication_status"]:
         header(parent_dir)
+        ui_base(parent_dir)
 
-        st.markdown("## About 🔎")
-        st.sidebar.markdown("## About 🔎")
+        st.sidebar.markdown("## Fundraising 💰")
 
-        st.markdown("[Open Source Github Repository](https://github.com/OutlierVentures/QTM-Interface)")
-        image = Image.open(parent_dir+'/images/Quantitative_Token_Model_Abstraction.jpeg')
-        st.image(image, caption='Quantitative Token Model Abstraction')
+        # main page
+        st.markdown("## Fundraising 💰")
 
+        if 'param_id' in st.session_state:
+            if st.session_state['param_id'] != "":
+                plot_fundraising(st.session_state['param_id'])
     else:
         returnToStart(parent_dir)
 else:
