@@ -4,22 +4,10 @@ cookie:
   name: some_cookie_name
 credentials:
   usernames:
-    jsmith:
-      email: jsmith@gmail.com
-      name: John Smith
-      password: $2b$12$V7bsVRB2Zq3KBiDHLRngeO5xOPsMDWoBThHlk.xjbVJdXaINte6ge
-    rbriggs:
-      email: rbriggs@gmail.com
-      name: Rebecca Briggs
-      password: $2b$12$lMbvWK7CvK3G7nt6k6W0AOzwytawknjq5Vf6UrVjubv3B48kx/EWu
-    testuser:
-      email: testttmail@mail.com
-      name: User 1
-      password: $2b$12$zaYQGmjv686PJoS6rZo2ye.HepLQPJInyissAcJJ79PZJd91MBQjS
-    testuser2:
-      email: testuser2@test.com
-      name: Test User 2
-      password: $2b$12$7v8T4F2qg8BSOOy9RI0WCe8N3WkiB4XbUgkDaaGNhtRVPIKHV0o/K
+    user:
+      email: test@user.com
+      name: Test User
+      password: $2b$12$pkOBfUsc1RSXQudmLC.UEuWe.9SmPERyF9B9.P4JnbRqPmGSLev6O
 preauthorized:
   emails:
   - melsby@gmail.com
