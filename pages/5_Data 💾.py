@@ -1,6 +1,6 @@
 import streamlit as st
 from UserInterface.plots import *
-from UserInterface.helpers import to_excel, ui_base, returnToStart
+from UserInterface.helpers import to_excel, ui_base, returnToStart, header
 
 # Get the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,6 +11,7 @@ sys.path.append(parent_dir)
 
 if 'authentication_status' in st.session_state:
     if st.session_state["authentication_status"]:
+        header(parent_dir)
         ui_base(parent_dir)
 
         st.sidebar.markdown("## Data 💾")
@@ -27,6 +28,6 @@ if 'authentication_status' in st.session_state:
                                         data=df_xlsx ,
                                         file_name= f"QTM_Results_{st.session_state['project_name']}.xlsx")
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()

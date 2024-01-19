@@ -1,5 +1,5 @@
 import streamlit as st
-from UserInterface.plots import plot_token_economy
+from UserInterface.plots import plot_token_economy, get_simulation_data
 import os, sys
 from UserInterface.helpers import ui_base, returnToStart, header
 
@@ -30,6 +30,6 @@ if 'authentication_status' in st.session_state:
                 else:
                     plot_token_economy(st.session_state['param_id'], sys_param['simulation_duration'].iloc[0])
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()

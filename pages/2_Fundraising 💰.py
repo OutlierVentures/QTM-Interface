@@ -24,6 +24,6 @@ if 'authentication_status' in st.session_state:
             if st.session_state['param_id'] != "":
                 plot_fundraising(st.session_state['param_id'])
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()

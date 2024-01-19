@@ -24,6 +24,6 @@ if 'authentication_status' in st.session_state:
                 max_months = plot_business(st.session_state['param_id'])
                 st.session_state['max_months'] = max_months
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()

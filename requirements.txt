@@ -17,7 +17,7 @@ cadCAD_tools==0.0.1.4
 tqdm==4.61.0
 diskcache==5.2.1
 pylint==2.8.3
-streamlit
+streamlit==1.27.2
 altair<5
 plotly==5.17.0
 pyxlsb

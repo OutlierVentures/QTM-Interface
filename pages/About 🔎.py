@@ -22,6 +22,6 @@ if 'authentication_status' in st.session_state:
         st.image(image, caption='Quantitative Token Model Abstraction')
 
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()

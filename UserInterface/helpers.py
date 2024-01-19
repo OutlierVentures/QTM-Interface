@@ -80,6 +80,10 @@ def ui_base(parent_dir, return_db_sorted=False):
     # get all existing project names
     try:
         db_sorted = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
+        # suppose that the 'usermail' field can contain multiple mail addresses, separated by a comma. Now we want to filter the database by the current usermail
+        db_sorted['usermail'] = db_sorted['usermail'].str.split(',')
+        db_sorted = db_sorted.explode('usermail')
+        db_sorted = db_sorted[db_sorted['usermail'] == st.session_state["authenticator"].credentials["usernames"][st.session_state["username"]]["email"]]
         project_names = db_sorted['project_name']
         project_names = project_names.to_list()
         project_names.append('')
@@ -103,30 +107,49 @@ def ui_base(parent_dir, return_db_sorted=False):
             st.sidebar.markdown(f"This is a valid parameter ID ✅")
     except:
         pass
+
+    if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
+        newMailAccess = st.sidebar.text_input('Share Dataset', "")
+        st.sidebar.button('Share Dataset', on_click=shareDataSet, args=(newMailAccess,))
     
     if return_db_sorted:
         return db_sorted
 
-def returnToStart(parent_dir):
-    st.write("You are not logged in. Please log in to access this page.")
-    st.write("You will be redirected to the login page in 3 seconds..")
-    time.sleep(3)
-    st.switch_page(f"{parent_dir}\Welcome.py")
+def returnToStart():
+    st.write("You are not logged in. Please log in on the Welcome page to access this page.")
+
+def shareDataSet(newMailAccess):
+    # add the new mail address to the list of mail addresses in the "usermail" column of the database by adding a comma behind the last entered one
+    conn = sqlite3.connect('simulationData.db')
+    cur = conn.cursor()
+    cur.execute(''' SELECT usermail FROM sys_param WHERE id = ? ''', (st.session_state['param_id'],))
+    usermail = cur.fetchone()[0]
+    if newMailAccess in usermail:
+        st.sidebar.warning(f'⚠️The dataset has already been shared with {newMailAccess}.')
+        return
+    if not '@' in newMailAccess:
+        st.sidebar.warning(f'⚠️Please enter a valid mail address to share the dataset.')
+        return
+    usermail = usermail + ',' + newMailAccess
+    cur.execute(''' UPDATE sys_param SET usermail = ? WHERE id = ? ''', (usermail, st.session_state['param_id']))
+    conn.commit()
+    conn.close()
+    st.sidebar.success(f'Dataset shared with {newMailAccess} ✅. The user needs to create an account with that mail address and log in to access the dataset.')
 
 def header(basePath):
-    hcol1, hcol2 = st.columns(2)
+    hcol1, hcol2 = st.columns([10,2])
     with hcol1:
         image = Image.open(f'{basePath}/images/ov_logo.jpg')
         st.image(image, width=125)
         st.title('Quantitative Token Model')
     with hcol2:
-        if st.session_state["authentication_status"]:
-            st.write(f'✅ *{st.session_state["name"]}*')
-            st.session_state["authenticator"].logout('Logout', 'main', key='unique_key')
+        if "authentication_status" in st.session_state:
+            if st.session_state["authentication_status"]:
+                st.session_state["authenticator"].logout('Logout', 'main', key='unique_key')
+                st.write(f'✅ *{st.session_state["name"]}*')
+                    
 
 def safeToYaml(config):
     # safe to yaml file
     with open('./config.yaml', 'w') as file:
         yaml.dump(config, file, default_flow_style=False)
-
-    

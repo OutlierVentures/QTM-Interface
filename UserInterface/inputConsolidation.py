@@ -104,6 +104,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     # Map new parameters to model input parameters
     new_params = {
+        'usermail': st.session_state["authenticator"].credentials["usernames"][st.session_state["username"]]["email"],
         'token_launch': token_launch,
         'launch_date': token_launch_date.strftime("%d.%m.%Y").split(" ")[0],
         'equity_external_shareholders_perc': bti_return_dict['equity_perc'],
@@ -207,7 +208,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'burn_per_month': ba_return_dict["burn_per_month"],
         'burn_bucket': ba_return_dict["burn_bucket"],
         'burn_start': ba_return_dict["burn_start"].strftime('%d.%m.%Y'),
-        'burn_end': ba_return_dict["burn_end"].strftime('%d.%m.%Y'),
+        'burn_end': ba_return_dict["burn_end"].strftime('%d.%m.%Y')
     }
 
     # add utility parameters to new_params

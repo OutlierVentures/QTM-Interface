@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit_authenticator as stauth
+import pandas as pd
 import yaml
 from yaml.loader import SafeLoader
 import os, sys
@@ -66,6 +67,7 @@ with st.expander('Login', expanded=False):
     elif st.session_state["authentication_status"] is None:
         st.warning('Please enter your username and password')
 
+# update user details section
 if st.session_state["authentication_status"]:
     with st.expander('Update User Details', expanded=False):        
         # update user details
@@ -83,6 +85,3 @@ if st.session_state["authentication_status"]:
                 safeToYaml(config)
         except Exception as e:
             st.error(e)
-
-
-

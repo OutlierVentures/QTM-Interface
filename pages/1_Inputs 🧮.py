@@ -165,6 +165,6 @@ if 'authentication_status' in st.session_state:
             st.session_state['parameter_button_clicked'] = False
 
     else:
-        returnToStart(parent_dir)
+        returnToStart()
 else:
-    returnToStart(parent_dir)
+    returnToStart()
