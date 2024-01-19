@@ -287,6 +287,7 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
     
     # Format the column names
     formatted_columns = [format_column_name(col) for col in [x] + y_series_updated]
+
     chart_data.columns = formatted_columns
     
     fig = px.line(chart_data, x=format_column_name(x), y=formatted_columns[1:], log_y=logy)
@@ -690,7 +691,7 @@ def plot_token_economy(param_id, max_months):
         with pcol62:
             log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
             max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_staking_apr'], 1, param_id, max_months
-                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr)
+                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr) 
             
     st.markdown('---')
     with st.expander("**Token Valuations**"):

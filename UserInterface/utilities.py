@@ -130,7 +130,10 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
                 if key == 'description':
                     st.write(val)
                 else:
-                    init_value = val['value']
+                    try:
+                        init_value = float(val['value'])
+                    except:
+                        init_value = val['value']
                     display_name = val['display_name']
                     description = val['description']
                     if 'options' in val:

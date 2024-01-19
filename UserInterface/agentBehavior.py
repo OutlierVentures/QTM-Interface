@@ -23,7 +23,7 @@ def agentBehaviorInput(sys_param, adoption_style, adoption_dict):
             random_seed = 1111.11
         elif agent_behavior == 'random':
             with col73:
-                random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
+                random_seed = st.number_input("Random Seed", label_visibility="visible", min_value=float(0.0), value=float(sys_param['random_seed'][0]) if 'random_seed' in sys_param and sys_param['random_seed'][0] != None else 1111.11, disabled=False, key="random_seed", help="The random seed for the random agent behavior. This will be used to reproduce the same random agent behavior.")
             avg_token_utility_removal = float(sys_param['avg_token_utility_removal'][0])*100
         avg_token_utility_allocation = avg_token_utility_allocation if agent_behavior =='static' else 60.0
         avg_token_selling_allocation = avg_token_selling_allocation if agent_behavior =='static' else 30.0
