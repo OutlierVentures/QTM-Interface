@@ -44,6 +44,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 ### V.2
 
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build a web-based UI to create another input option
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement user authentication and data set shareability between users
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs, SAFT+Ts and SAFTs
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add more dynamic agent (behavior) policies
@@ -65,8 +66,8 @@ Python 3.9 is recommended!
 
 ## Usage
 - Make sure you followed the previous installation section.
-- Navigate with your terminal to the `./UserInterface/` directory.
-- Run `streamlit run '.\Inputs 🧮.py'` within the previously installed environment.
+- Navigate with your terminal to the main project directory.
+- Run `streamlit run .\Welcome.py` within the previously installed and activated environment.
 
 ## New Module Implementation Procedure
 Create a function that combines all of these into a single file
