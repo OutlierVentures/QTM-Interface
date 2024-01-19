@@ -71,8 +71,8 @@ Python 3.9 is recommended!
 - Expand the Sign-Up expander on the Welcome landing page and create a new user account or use the test user credentials
 - Expand and login via the Login expander on the Welcome landing page by using your preferred account credentials.
 
-Test user login data
-Username: `user`
+Test user login data:\
+Username: `user`\
 Password: `1234`
 
 ## New Module Implementation Procedure
