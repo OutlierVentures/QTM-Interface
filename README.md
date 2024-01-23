@@ -83,3 +83,14 @@ Create a function that combines all of these into a single file
     3. The policy and state update functions
     4. Update state update block file
     5. Post-processing and plots to display it
+
+## Resources and Articles
+### Tool
+- [GitHub Repository](https://github.com/OutlierVentures/QTM-Interface)
+- [Whitepaper](https://github.com/OutlierVentures/QTM-Interface/blob/main/Documentation/QTM%20Whitepaper.md)
+- [Spreadsheet QTM](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing)
+- [User Story Map](https://whimsical.com/qtm-roadmap-FfdpxTyjN44zk1eMhpyEWJ)
+
+### Related Articles
+- [Quantitative Token Model: A data-driven approach to stay ahead of the game](https://outlierventures.io/article/quantitative-token-model-a-data-driven-approach-to-stay-ahead-of-the-game/)
+- [From Zero to Hero with Token Vesting + QTM case study](https://outlierventures.io/article/from-zero-to-hero-with-token-vesting/)
