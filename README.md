@@ -16,7 +16,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Development Roadmap
 
-### V.1
+### V.1 (Static Base Model)
 
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Initialize the project, create the development roadmap & README.md
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement interface to the QTM spreadsheet parameters
@@ -37,20 +37,26 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Improve the robustness of all functions
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Improve the robustness of all model input parameter
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Staging tests of the whole model
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Case studies & publishing first results in an article
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Case studies & publishing first results in an article
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Write the documentation for the QTM and radCAD integration
 
-### V.2
+### V.2 (Sophisticated Model)
 
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build a web-based UI to create another input option
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement user authentication and data set shareability between users
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build custom user plot capabilities
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Account for different revenue receiver buckets and track them
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add external rewards for stakers in diverse assets to mimic bribe markets (can be dependent on revenue received by a certain revenue bucket)
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs, SAFT+Ts and SAFTs
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add more dynamic agent (behavior) policies
-  - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Stochastic agents
-  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents I: Hard coded logics
-  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents II: LLM driven decision making
+  - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Intelligent agents I: Hard coded logics
+    - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Agents tend to stake tokens if reward APR is above target APR and remove tokens if it is below the target APR
+    - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add DAO voting caused staking demand based on revenue and business funds
+    - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add market buy behavior based on intrinsic protocol value, which is proportional to business funds and revenue projection
+    - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add market buy behavior based on market sentiment (Brownian Motion) and protocol reputation
+  - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents II: AI driven decision making
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
