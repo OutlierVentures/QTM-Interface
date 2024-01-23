@@ -44,7 +44,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build a web-based UI to create another input option
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement user authentication and data set shareability between users
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Build custom user plot capabilities
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build custom user plot capabilities
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Account for different revenue receiver buckets and track them
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add external rewards for stakers in diverse assets to mimic bribe markets (can be dependent on revenue received by a certain revenue bucket)
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs, SAFT+Ts and SAFTs
@@ -60,6 +60,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) LLM support agents
 
 ## Installation
 

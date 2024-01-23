@@ -122,22 +122,32 @@ def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_month
 
     st.plotly_chart(fig, use_container_width=True)
 
-def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns=[], x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
+def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns={}, scalingFactors={}, x_title=None, y_title=None, info_box=None, plot_title=None, logy=False):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+
+    # structure scalingFactors = {'col0': factor, 'col1': factor, 'col2': factor, ...}
+    if len(scalingFactors) > 0:
+        for key, factor in scalingFactors.items():
+            if key in df.columns:
+                df[key] = df[key].astype(float) * factor
 
     # structure calcColumns = {'col': {'sign': sign, 'firstCol': firstCol, 'secondCol': secondCol}}
     if len(calcColumns) > 0:
         for key, col in calcColumns.items():
+            # use column if 'fristCol' is str and use a series of number if type is int or float
+            firstCol = df[col['firstCol']].astype(float) if isinstance(col['firstCol'], str) else pd.Series(np.full(len(df), col['firstCol']))
+            secondCol = df[col['secondCol']].astype(float) if isinstance(col['secondCol'], str) else pd.Series(np.full(len(df), col['secondCol']))
             if col['sign'] == '+':
-                df[key] = df[col['firstCol']].astype(float) + df[col['secondCol']].astype(float)
+                df[key] = (firstCol + secondCol).astype(float) * scalingFactors[key] if key in scalingFactors else firstCol + secondCol
             elif col['sign'] == '-':
-                df[key] = df[col['firstCol']].astype(float) - df[col['secondCol']].astype(float)
+                df[key] = (firstCol - secondCol).astype(float) * scalingFactors[key] if key in scalingFactors else firstCol - secondCol
             elif col['sign'] == '*':
-                df[key] = df[col['firstCol']].astype(float) * df[col['secondCol']].astype(float)
+                df[key] = (firstCol * secondCol).astype(float) * scalingFactors[key] if key in scalingFactors else firstCol * secondCol
             elif col['sign'] == '/':
-                df[key] = df[col['firstCol']].astype(float) / df[col['secondCol']].astype(float)
-
+                df[key] = (firstCol / secondCol).astype(float) * scalingFactors[key] if key in scalingFactors else firstCol / secondCol
+    
+    
     # reduce df to max_months
     df = df[df['timestep'].astype(float) <= max_months]
 
@@ -721,3 +731,71 @@ def utility_pie_plot(utility_shares, utility_values):
 
     st.plotly_chart(fig, use_container_width=True)
 
+def plot_user_custom(param_id, max_months):
+    ##ANALYSIS TAB
+    # create custom user defined plot from data
+    log_scale_toggle_custom_user1 = st.toggle('Log Scale - User Custom', value=False)
+    toggle_crossover_calculation1 = st.toggle('Enable Crossover Data Calculations', value=False)
+    toggle_scaling = st.toggle('Enable Data Scaling', value=False)
+    df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
+    columns_names = [name for name in df.columns.sort_values()]
+    if not toggle_crossover_calculation1:
+        cucol11, cucol12, cucol13 = st.columns(3)
+    else:
+        cucol11, cucol12, cucol13, cucol14, cucol15 = st.columns(5)
+    with cucol11:
+        dataSet1 = st.selectbox('Select Data Set 1', columns_names, index=columns_names.index('timestep'), label_visibility='visible')
+        dataSet1_raw = dataSet1.replace(' ', '_').lower()
+        if toggle_scaling:
+            scaling_factor = st.number_input('Scaling Factor 1', value=1.0)
+        dataSet1_newName = st.text_input('Data Set 1 New Name', value=dataSet1_raw)
+    with cucol12:
+        dataSet2 = st.selectbox('Select Data Set 2', columns_names, index=columns_names.index('ua_product_users'), label_visibility='visible')
+        dataSet2_raw = dataSet2.replace(' ', '_').lower()
+        if toggle_scaling:
+            scaling_factor2 = st.number_input('Scaling Factor 2', value=1.0)
+        dataSet2_newName = st.text_input('Data Set 2 New Name', value=dataSet2_raw)
+    with cucol13:
+        if not toggle_crossover_calculation1:
+            dataSet3 = st.selectbox('Select Data Set 3', ['None']+columns_names, index=0, label_visibility='visible')
+            dataSet3_raw = dataSet3.replace(' ', '_').lower()
+            if toggle_scaling:
+                scaling_factor3 = st.number_input('Scaling Factor 3', value=1.0)
+            dataSet3_newName = st.text_input('Data Set 3 New Name', value=dataSet3_raw)
+        else:
+            cross_over_calc_sign = st.selectbox('Sign', ['+', '-', '*', '/'], index=0, label_visibility='visible')
+    if toggle_crossover_calculation1:
+        with cucol14:
+            dataSet3 = st.selectbox('Select Data Set 3', ['None']+columns_names, index=0, label_visibility='visible')
+            dataSet3_raw = dataSet3.replace(' ', '_').lower()
+            if toggle_scaling:
+                scaling_factor3 = st.number_input('Scaling Factor 3', value=1.0)
+            dataSet3_newName = st.text_input('Data Set 3 New Name', value=dataSet3_raw)
+        
+        with cucol15:
+            new_data_name = st.text_input('New Data Name', value='New Data')
+            if toggle_scaling:
+                new_data_scaling_factor = st.number_input(f'{new_data_name} Scaling Factor', value=1.0)
+    
+    if not toggle_crossover_calculation1:
+        max_months = plot_results_plotly(dataSet1_raw, [dataSet2_raw, dataSet3_raw] if dataSet3 != 'None' else [dataSet2_raw], 1, param_id, max_months, scalingFactors={} if not toggle_scaling else {
+            dataSet1_raw: scaling_factor, dataSet2_raw: scaling_factor2, dataSet3_raw: scaling_factor3}  if dataSet3 != 'None' else {dataSet1_raw: scaling_factor, dataSet2_raw: scaling_factor2},
+            plot_title="Custom Plot 1",
+            x_title=dataSet1_newName, y_title=dataSet2_newName, logy=log_scale_toggle_custom_user1)
+    else:
+        max_months = plot_results_plotly(dataSet1_raw, [new_data_name] if dataSet3 != 'None' else [dataSet2_raw], 1, param_id, max_months,
+                                         calcColumns={new_data_name: {'sign': cross_over_calc_sign, 'firstCol': dataSet2_raw, 'secondCol': dataSet3_raw}} if dataSet3 != 'None' else {},
+                                         scalingFactors={} if not toggle_scaling else {dataSet1_raw: scaling_factor, dataSet2_raw: scaling_factor2, dataSet3_raw: scaling_factor3,new_data_name: new_data_scaling_factor}
+                                                                                       if dataSet3 != 'None' else {dataSet1_raw: scaling_factor, dataSet2_raw: scaling_factor2},
+                                                                                       plot_title="Custom Plot 1",
+                                                                                       x_title=dataSet1_newName, y_title=new_data_name, logy=log_scale_toggle_custom_user1)
+
+def is_float(element: any) -> bool:
+    #If you expect None to be passed:
+    if element is None: 
+        return False
+    try:
+        float(element)
+        return True
+    except ValueError:
+        return False

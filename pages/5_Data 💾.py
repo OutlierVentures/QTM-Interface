@@ -27,6 +27,11 @@ if 'authentication_status' in st.session_state:
                 st.download_button(label='📥 Download Data as .xlsx',
                                         data=df_xlsx ,
                                         file_name= f"QTM_Results_{st.session_state['project_name']}.xlsx")
+        
+                # create user defined plots
+                st.markdown('---')
+                st.markdown("### Create Custom Plots")
+                plot_user_custom(st.session_state['param_id'], st.session_state['max_months'] if 'max_months' in st.session_state else int(max(df['timestep'].astype(float))))
     else:
         returnToStart()
 else:
