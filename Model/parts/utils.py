@@ -441,6 +441,21 @@ def initialize_user_adoption(sys_param):
     # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
     total_days = 3653
 
+    # revenue shares if provided by the UI
+    staker_rev_share = sys_param['staker_rev_share'][0]
+    if 'business_rev_share' in sys_param:
+        business_rev_share = sys_param['business_rev_share'][0]
+    else:
+        business_rev_share = 100 - staker_rev_share
+    if 'service_provider_rev_share' in sys_param:
+        service_provider_rev_share = sys_param['service_provider_rev_share'][0]
+    else:
+        service_provider_rev_share = 0
+    if 'incentivisation_rev_share' in sys_param:
+        incentivisation_rev_share = sys_param['incentivisation_rev_share'][0]
+    else:
+        incentivisation_rev_share = 0
+
     ## Product user adoption
     initial_product_users = sys_param['initial_product_users'][0]
     product_users_after_10y = sys_param['product_users_after_10y'][0]
@@ -470,7 +485,8 @@ def initialize_user_adoption(sys_param):
     'ua_product_users': product_users, # amount of product users
     'ua_token_holders': token_holders, # amount of token holders
     'ua_product_revenue':product_revenue, # product revenue
-    'ua_token_buys': token_buys # amount of effective token buys
+    'ua_token_buys': token_buys, # amount of effective token buys
+    'ua_business_revenue': product_revenue # business revenue
     }
 
     return user_adoption

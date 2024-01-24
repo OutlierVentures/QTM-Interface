@@ -53,6 +53,21 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
 
+    # revenue share splits
+    staker_rev_share = params['staker_rev_share']
+    if 'business_rev_share' in params:
+        business_rev_share = params['business_rev_share']
+    else:
+        business_rev_share = 100 - staker_rev_share
+    if 'service_provider_rev_share' in params:
+        service_provider_rev_share = params['service_provider_rev_share']
+    else:
+        service_provider_rev_share = 0
+    if 'incentivisation_rev_share' in params:
+        incentivisation_rev_share = params['incentivisation_rev_share']
+    else:
+        incentivisation_rev_share = 0
+
     # state variables
     current_month = prev_state['timestep']
     date = prev_state['date']
@@ -61,13 +76,13 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
 
     # policy logic
-    # expenditures
+    # fixed expenditures
     Expenditures = (salaries_per_month + license_costs_per_month
                             + other_monthly_costs)
     
-    # Ensure that revenue from royalties etc, is never negative
+    # fixed revenue streams - Ensure that revenue from royalties etc, is never negative
     Revenue_Streams = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
-
+    
     # buybacks
     buybacks = buyback_from_revenue_share
 
