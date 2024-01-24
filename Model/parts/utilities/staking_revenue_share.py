@@ -46,7 +46,7 @@ def staking_revenue_share_buyback_amount(params, substep, state_history, prev_st
     Policy function to calculate the amount of usd to be used for token buyback from the revenue share
     """
     # get parameters
-    revenue_share = params['staking_buyback_from_revenue_share'] # revenue share to be used for buyback
+    revenue_share = params['staker_rev_share'] # revenue share to be used for buyback
     staking_share = params['staking_share'] # share of utility tokens used for staking
 
     # get state variables

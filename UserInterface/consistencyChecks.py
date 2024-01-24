@@ -8,7 +8,7 @@ def consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_r
         (ba_return_dict["initial_cash_balance"] == 0 and (ba_return_dict["royalty_income_per_month"] + ba_return_dict["treasury_income_per_month"] + ba_return_dict["other_income_per_month"] + ua_return_dict["initial_product_users"] *
                                         [ua_return_dict["regular_product_revenue_per_user"] if ua_return_dict["adoption_style"] == 'Custom' or ua_return_dict["show_full_adoption_table"] else ua_return_dict["adoption_dict"][ua_return_dict["adoption_style"]]['regular_product_revenue_per_user']][0] -
                                         ba_return_dict["salaries_per_month"] - ba_return_dict["license_costs_per_month"] - ba_return_dict["other_monthly_costs"]) and not token_launch) or
-                                        ua_return_dict["rev_share_sum"] != 100.0):
+                                        ua_return_dict["rev_share_sum"] != 100.0 or ("Stake" not in ut_return_dict["utility_to_add"] and ua_return_dict["staker_rev_share"] > 0)):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -72,3 +72,6 @@ def consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_r
         
         if ua_return_dict["rev_share_sum"] != 100.0:
             st.error(f"The sum of the revenue share allocations ({ua_return_dict['rev_share_sum']}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+
+        if "Stake" not in ut_return_dict["utility_to_add"] and ua_return_dict["staker_rev_share"] > 0:
+            st.error("You have enabled revenue share for stakers but have not added the staking utility. Please add the staking utility to enable revenue share for stakers.", icon="⚠️")

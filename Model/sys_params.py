@@ -172,7 +172,7 @@ def get_sys_param(input_file, adjusted_params):
         'burning_share': [x for x in sys_param['burning_share']],
         'holding_share': [x for x in sys_param['holding_share']],
         'transfer_share': [x for x in sys_param['transfer_share']],
-        'staking_buyback_from_revenue_share': [x for x in sys_param['staking_buyback_from_revenue_share']],
+        'staker_rev_share': [x for x in sys_param['staker_rev_share']],
         'mint_burn_ratio' : [x for x in sys_param['mint_burn_ratio']],
         'liquidity_mining_apr': [x for x in sys_param['liquidity_mining_apr']],
         'liquidity_mining_payout_source': [x for x in sys_param['liquidity_mining_payout_source']],

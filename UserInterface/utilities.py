@@ -157,6 +157,9 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                 utility_shares['Undefined'] = [100 - utility_sum]
             st.error(f"The sum of the utility allocations ({round(utility_sum,2)}%) is not equal to 100%. Please adjust the utility shares!", icon="⚠️")
         
+        if "Stake" not in utility_to_add and ua_return_dict["staker_rev_share"] > 0:
+            st.error("You have enabled revenue share for stakers but have not added the staking utility. Please add the staking utility to enable revenue share for stakers.", icon="⚠️")
+
         # Display the utility pie chart
         st.markdown("---")
         st.write(f'**Utility shares: {round(utility_sum,2)}%**')
@@ -179,7 +182,8 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         "utility_values" : utility_values,
         "utility_parameter_choice" : utility_parameter_choice,
         "utility_shares" : utility_shares,
-        "utility_sum" : utility_sum
+        "utility_sum" : utility_sum,
+        "utility_to_add" : utility_to_add
     }
 
     return ut_return_dict
