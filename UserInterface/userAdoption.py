@@ -74,7 +74,9 @@ def userAdoptionInput(sys_param):
                 product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
                 st.write(f"Projected Product Users (10y): {int(np.ceil(product_users_after_10y)):+,}")
                 product_adoption_velocity = st.number_input('Product Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['product_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0], disabled=False, key="product_adoption_velocity", help="The velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.")
-                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue directly to the business funds.")
+                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue directly to the business funds.")                
+                
+                    
             with col72:
                 avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
                 token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
@@ -86,6 +88,21 @@ def userAdoptionInput(sys_param):
             product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
             avg_token_holder_growth_rate = adoption_dict[adoption_style]['avg_token_holder_growth_rate']
             token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
+        
+        # revenue share settings
+        col71a, col71b, col71c, col71d = st.columns(4)
+        with col71a:
+            business_rev_share = st.number_input('Business Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['business_rev_share'][0]) if 'business_rev_share' in sys_param else 100.0][0], disabled=False, key="business_rev_share", help="The share of revenue that will accrue to the business funds.")
+        with col71b:
+            staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 0.0][0], disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
+        with col71c:
+            service_provider_rev_share = st.number_input('Service Provider Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['service_provider_rev_share'][0]) if 'service_provider_rev_share' in sys_param else 0.0][0], disabled=False, key="service_provider_rev_share", help="The share of revenue that will accrue to service providers.")
+        with col71d:
+            incentivisation_rev_share = st.number_input('Incentivisation Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0][0], disabled=False, key="incentivisation_rev_share", help="The share of revenue that will be used to incentivise the ecosystem.")
+        rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
+        if rev_share_sum != 100.0:
+            st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
+
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]
@@ -107,7 +124,12 @@ def userAdoptionInput(sys_param):
         "token_holders_after_10y" : token_holders_after_10y,
         "token_adoption_velocity" : token_adoption_velocity,
         "regular_token_buy_per_user" : regular_token_buy_per_user,
-        "adoption_dict" : adoption_dict
+        "adoption_dict" : adoption_dict,
+        "business_rev_share" : business_rev_share,
+        "staker_rev_share" : staker_rev_share,
+        "service_provider_rev_share" : service_provider_rev_share,
+        "incentivisation_rev_share" : incentivisation_rev_share,
+        "rev_share_sum" : rev_share_sum
     }
 
     return ua_return_dict
