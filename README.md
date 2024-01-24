@@ -47,6 +47,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build custom user plot capabilities
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Account for different revenue receiver buckets and track them
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add external rewards for stakers in diverse assets to mimic bribe markets (can be dependent on revenue received by a certain revenue bucket)
+- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add input inconsistency icons to respective input section expander text
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs, SAFT+Ts and SAFTs
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures

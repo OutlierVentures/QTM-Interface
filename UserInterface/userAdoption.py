@@ -92,13 +92,22 @@ def userAdoptionInput(sys_param):
         # revenue share settings
         col71a, col71b, col71c, col71d = st.columns(4)
         with col71a:
-            business_rev_share = st.number_input('Business Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['business_rev_share'][0]) if 'business_rev_share' in sys_param else 100.0][0], disabled=False, key="business_rev_share", help="The share of revenue that will accrue to the business funds.")
+            business_rev_share = st.number_input('Business Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['business_rev_share'][0]) if 'business_rev_share' in sys_param else 75.0][0], disabled=False, key="business_rev_share", help="The share of revenue that will accrue to the business funds.")
         with col71b:
-            staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 0.0][0], disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
+            staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 25.0][0], disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
+            if staker_rev_share > 0.0:
+                staker_rev_share_buyback = st.checkbox('Buyback Tokens', value=[True if 'staker_rev_share_buyback' in sys_param else False][0], key="staker_rev_share_buyback", help="Check this box if the staker revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
+            else:
+                staker_rev_share_buyback = False
         with col71c:
             service_provider_rev_share = st.number_input('Service Provider Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['service_provider_rev_share'][0]) if 'service_provider_rev_share' in sys_param else 0.0][0], disabled=False, key="service_provider_rev_share", help="The share of revenue that will accrue to service providers.")
         with col71d:
             incentivisation_rev_share = st.number_input('Incentivisation Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0][0], disabled=False, key="incentivisation_rev_share", help="The share of revenue that will be used to incentivise the ecosystem.")
+            if incentivisation_rev_share > 0.0:
+                incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[True if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
+            else:
+                incentivisation_rev_share_buyback = False
+
         rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
         if rev_share_sum != 100.0:
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
@@ -129,7 +138,9 @@ def userAdoptionInput(sys_param):
         "staker_rev_share" : staker_rev_share,
         "service_provider_rev_share" : service_provider_rev_share,
         "incentivisation_rev_share" : incentivisation_rev_share,
-        "rev_share_sum" : rev_share_sum
+        "rev_share_sum" : rev_share_sum,
+        "staker_rev_share_buyback" : staker_rev_share_buyback,
+        "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
     }
 
     return ua_return_dict

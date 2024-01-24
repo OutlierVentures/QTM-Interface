@@ -153,13 +153,3 @@ def safeToYaml(config):
     # safe to yaml file
     with open('./config.yaml', 'w') as file:
         yaml.dump(config, file, default_flow_style=False)
-
-def is_float(element: any) -> bool:
-    #If you expect None to be passed:
-    if element is None: 
-        return False
-    try:
-        float(element)
-        return True
-    except ValueError:
-        return False

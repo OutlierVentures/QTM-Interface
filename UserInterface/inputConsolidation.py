@@ -88,7 +88,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # Utilities
     ##############################################
 
-    ut_return_dict = ut.utilitiesInput(sys_param, tav_return_dict, ab_return_dict)
+    ut_return_dict = ut.utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict)
 
 
     ##############################################
@@ -208,7 +208,12 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'burn_per_month': ba_return_dict["burn_per_month"],
         'burn_bucket': ba_return_dict["burn_bucket"],
         'burn_start': ba_return_dict["burn_start"].strftime('%d.%m.%Y'),
-        'burn_end': ba_return_dict["burn_end"].strftime('%d.%m.%Y')
+        'burn_end': ba_return_dict["burn_end"].strftime('%d.%m.%Y'),
+        'business_rev_share' : ua_return_dict["business_rev_share"],
+        'service_provider_rev_share' : ua_return_dict["service_provider_rev_share"],
+        'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
+        'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
+        'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
     }
 
     # add utility parameters to new_params

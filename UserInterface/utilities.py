@@ -1,7 +1,7 @@
 import streamlit as st
 from UserInterface.plots import *
 
-def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
+def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
     """
     This function creates the utilities section of the UI.
     """
@@ -16,10 +16,11 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
                     'display_name': 'Staking Alloc. / %',
                     'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked.'
                     },
-                'staking_buyback_from_revenue_share': {
-                    'value': sys_param['staking_buyback_from_revenue_share'][0],
-                    'display_name': 'Revenue Share Buyback / %',
-                    'description': 'The percentage of the revenue that is used for buying back and distribute tokens to stakers once the staking vesting bucket runs out of tokens.'
+                'staker_rev_share': {
+                    'value': sys_param['staker_rev_share'][0] if 'staker_rev_share' in sys_param else ua_return_dict["staker_rev_share"],
+                    'display_name': f'Revenue Share {"Buyback" if ua_return_dict["staker_rev_share_buyback"] else ""}/ %',
+                    'description': f'The percentage of the revenue that is {"used for buying back and distributing tokens to stakers once the staking vesting bucket runs out of tokens. You can switch to revenue share in diverse assets in the User Adoption input section above." if ua_return_dict["staker_rev_share_buyback"] else " distributed to stakers. You can switch to revenue share via bought back tokens in the User Adoption input section above."}',
+                    'disable' : True
                     },
                 'mint_burn_ratio': {
                     'value': sys_param['mint_burn_ratio'][0],
@@ -113,7 +114,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
         default_utilities = []
         for utility in utility_values:
             for key, val in utility_values[utility].items():
-                if '_share' in key and key != 'staking_buyback_from_revenue_share':
+                if '_share' in key and key != 'staker_rev_share':
                     if val['value'] > 0:
                         default_utilities.append(utility)
 
@@ -140,26 +141,21 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
                         options = val['options']
                         new_val = st.selectbox(display_name, options=options, index=options.index(init_value), help=description)
                     else:
-                        new_val = st.number_input(display_name, value=init_value, help=description)
+                        new_val = st.number_input(display_name, value=init_value, help=description, disabled=val['disable'] if 'disable' in val else False)
                     
                     utility_values[utility][key]['value'] = new_val
 
         # check utility sums
-        count_staking_utilities = 0
         for utility in utility_to_add:
             for key, val in utility_values[utility].items():    
-                if '_share' in key and key != 'staking_buyback_from_revenue_share':
+                if '_share' in key and key != 'staker_rev_share':
                     utility_sum += val['value']
                     utility_shares[utility] = [val['value']]
-            if 'Stake' in utility:
-                count_staking_utilities += 1
         
         if utility_sum != 100:
             if utility_sum < 100:
                 utility_shares['Undefined'] = [100 - utility_sum]
             st.error(f"The sum of the utility allocations ({round(utility_sum,2)}%) is not equal to 100%. Please adjust the utility shares!", icon="⚠️")
-        if count_staking_utilities > 1:
-            st.warning(f"Multiple staking utilities are defined. Please make sure if you really want to activate multiple different staking mechanisms at once.", icon="⚠️")
         
         # Display the utility pie chart
         st.markdown("---")
@@ -174,7 +170,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
                 if key == 'description':
                     pass
                 else:
-                    if utility not in utility_to_add and key != 'staking_buyback_from_revenue_share' and '_share' in key:
+                    if utility not in utility_to_add and key != 'staker_rev_share' and '_share' in key:
                         utility_parameter_choice[key] = 0
                     else:
                         utility_parameter_choice[key] = val['value']
@@ -183,8 +179,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict):
         "utility_values" : utility_values,
         "utility_parameter_choice" : utility_parameter_choice,
         "utility_shares" : utility_shares,
-        "utility_sum" : utility_sum,
-        "count_staking_utilities" : count_staking_utilities
+        "utility_sum" : utility_sum
     }
 
     return ut_return_dict
