@@ -493,7 +493,7 @@ def initialize_business_assumptions(sys_param, initial_user_adoption):
     product_revenue = initial_user_adoption['ua_product_revenue']
 
     # revenue shares if provided by the UI
-    staker_rev_share = sys_param['staker_rev_share'][0]
+    staker_rev_share = sys_param['staker_rev_share'][0] if sys_param['staking_vesting_token_allocation'][0] <= 0 else 0
     if 'business_rev_share' in sys_param:
         business_rev_share = sys_param['business_rev_share'][0]
     else:

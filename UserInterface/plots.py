@@ -158,7 +158,7 @@ def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns={},
     new_max_months = line_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
     return new_max_months
 
-def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
+def cum_plot_results_plotly(x, y_columns, run, param_id, vesting, x_title=None, y_title=None, info_box=None, plot_title=None):
 
     df = get_simulation_data('simulationData.db', 'simulation_data_'+param_id)
 
@@ -166,7 +166,7 @@ def vesting_cum_plot_results_plotly(x, y_columns, run, param_id, x_title=None, y
     #monte_carlo_plot_st(df,'timestep','timestep','seed_a_tokens_vested_cum',3)
 
     # example for line plots of different outputs in one figure
-    vesting_cum_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
+    cum_plot_plotly(df,x, y_columns, run, param_id, vesting, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title)
 
 
 
@@ -308,7 +308,7 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
 
     return len(chart_data)
 
-def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=None, info_box=None, plot_title=None):
+def cum_plot_plotly(df,x,y_series,run, param_id, vesting, x_title=None, y_title=None, info_box=None, plot_title=None):
     '''
     A function that generates a area plot from vesting series of data series in a frame in streamlit
     '''
@@ -324,21 +324,25 @@ def vesting_cum_plot_plotly(df,x,y_series,run, param_id, x_title=None, y_title=N
     chart_data.columns = formatted_columns
 
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
-    init_lp_token_alloc = sys_param_df[sys_param_df['id'] == param_id]['initial_lp_token_allocation']
-    
-    chart_data['Liquidity Pool'] = init_lp_token_alloc.to_list()*len(chart_data)
-    chart_data['Liquidity Pool'] = chart_data['Liquidity Pool'].astype(float)
+    if vesting:
+        init_lp_token_alloc = sys_param_df[sys_param_df['id'] == param_id]['initial_lp_token_allocation']
+        
+        chart_data['Liquidity Pool'] = init_lp_token_alloc.to_list()*len(chart_data)
+        chart_data['Liquidity Pool'] = chart_data['Liquidity Pool'].astype(float)
 
     
     plotly_colors = px.colors.qualitative.Plotly
     color_map = {}
-    for i, value in enumerate(chart_data[formatted_columns[1:]+['Liquidity Pool']]):
+
+    consideredCols = formatted_columns[1:]+['Liquidity Pool'] if vesting else formatted_columns[1:]
+
+    for i, value in enumerate(chart_data[consideredCols]):
         try:
             color_map[value] = plotly_colors[i]
         except:
             color_map[value] = plotly_colors[i-len(plotly_colors)]
 
-    fig = px.area(chart_data, x=formatted_columns[0], y=formatted_columns[1:]+['Liquidity Pool'], color_discrete_map=color_map)
+    fig = px.area(chart_data, x=formatted_columns[0], y=consideredCols, color_discrete_map=color_map)
 
     customize_plotly_figure(fig, x_title, y_title, info_box, plot_title)
 
@@ -425,7 +429,7 @@ def plot_fundraising(param_id):
     st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
 
     st.markdown('---')
-    vesting_cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['angel_a_tokens_vested_cum',
+    cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['angel_a_tokens_vested_cum',
                                                  'seed_a_tokens_vested_cum',
                                                  'presale_1_a_tokens_vested_cum',
                                                  'presale_2_a_tokens_vested_cum',
@@ -439,7 +443,7 @@ def plot_fundraising(param_id):
                                                  'foundation_a_tokens_vested_cum',
                                                  'incentivisation_a_tokens_vested_cum',
                                                  'staking_vesting_a_tokens_vested_cum',
-                                                 'te_airdrop_tokens_cum'], 1, param_id,
+                                                 'te_airdrop_tokens_cum'], 1, param_id, vesting=True,
                                                  plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
     
     st.markdown('---')
@@ -479,19 +483,42 @@ def plot_business(param_id):
     st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
-    max_months = sys_param['simulation_duration'].iloc[0]   
-    st.markdown('---')
-    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    max_months = sys_param['simulation_duration'].iloc[0]
     st.markdown('---')
     max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
     st.markdown('---')
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    st.markdown('---')
     pcol21, pcol22 = st.columns(2)
     with pcol21:
-        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_revenue'], 1, param_id, max_months, plot_title="Product Revenue", x_title="Months", y_title="Revenue per Month / USD")
+        show_cum_revenue_toggle = st.toggle('Show Cumulative Revenue', value=False)
+        if show_cum_revenue_toggle:
+            cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_business_revenue_cum_usd', 'ba_var_business_revenue_cum_usd',
+                                                                                                'ba_staker_revenue_cum_usd', 'ba_service_provider_revenue_cum_usd', 'ba_incentivisation_revenue_cum_usd'],
+                                                                                                1, param_id, vesting=False,
+                                                plot_title="Cumulative Product Revenue Distribution", x_title="Months", y_title="Cumulative revenue per Month / USD")
+        else:
+            cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_business_revenue_usd', 'ba_var_business_revenue_usd',
+                                                                                                        'ba_staker_revenue_usd', 'ba_service_provider_revenue_usd', 'ba_incentivisation_revenue_usd'],
+                                                                                                        1, param_id, vesting=False,
+                                                    plot_title="Product Revenue Distribution", x_title="Months", y_title="Revenue per Month / USD")
     with pcol22:
-        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_token_buys'], 1, param_id, max_months, plot_title="Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
+        show_cum_expenditures_toggle = st.toggle('Show Cumulative Expenditures', value=False)
+        if show_cum_expenditures_toggle:
+            cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_expenditures_cum_usd', 'ba_var_expenditures_cum_usd'],
+                                                                                                1, param_id, vesting=False,
+                                                plot_title="Cumulative Expenditures Distribution", x_title="Months", y_title="Cumulative revenue per Month / USD")
+        else:
+            cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_expenditures_usd', 'ba_var_expenditures_usd'],
+                                                                                                        1, param_id, vesting=False,
+                                                    plot_title="Expenditures Distribution", x_title="Months", y_title="Revenue per Month / USD")
+
     st.markdown('---')
-    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
+    pcol21a, pcol21b = st.columns(2)
+    with pcol21a:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_token_buys'], 1, param_id, max_months, plot_title="Market Token Buy Pressure", x_title="Months", y_title="Token Buy Pressure per Month / USD")
+    with pcol21b:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
     
     return max_months
 
