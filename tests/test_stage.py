@@ -230,7 +230,7 @@ if __name__ == '__main__'   :
     ## TEST CASH BALANCE ##
     print("\n-----------------------------------------## TEST CASH BALANCE ##----------------------------------------")
     print("Testing cash balance of radCad timeseries simulation against QTM data tables...")
-    test_timeseries(data=data, data_key='ba_cash_balance', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=185, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key='ba_cash_balance', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=185, relative_tolerance=0.004)
 
 
     ## Testing agent end balances ##

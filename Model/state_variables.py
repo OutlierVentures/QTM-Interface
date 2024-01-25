@@ -26,7 +26,7 @@ def get_initial_state(input_file, adjusted_params):
     initial_user_adoption = initialize_user_adoption(sys_param)
 
     # initialize the initial business assumptions
-    business_assumptions = initialize_business_assumptions(sys_param)
+    business_assumptions = initialize_business_assumptions(sys_param, initial_user_adoption)
 
     # initialize the initial standard utilities
     utilities = initialize_utilities(initial_stakeholders, sys_param)

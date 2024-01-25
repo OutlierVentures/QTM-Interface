@@ -33,13 +33,16 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
         the current time step.
 
     """
+    # state variables 1
+    current_month = prev_state['timestep']
 
     # parameters
+    token_launch = params['token_launch'] if 'token_launch' in params else True
     royalty_income_per_month = params['royalty_income_per_month']
     other_income_per_month = params['other_income_per_month']
     treasury_income_per_month = params['treasury_income_per_month']
-    one_time_payments_1 = params['one_time_payments_1']
-    one_time_payments_2 = params['one_time_payments_2']
+    one_time_payments_1 = params['one_time_payments_1'] if (token_launch and current_month == 1) else 0
+    one_time_payments_2 = params['one_time_payments_2'] if (token_launch and current_month == 1) else 0
     salaries_per_month = params['salaries_per_month']
     license_costs_per_month = params['license_costs_per_month']
     other_monthly_costs = params['other_monthly_costs']
@@ -48,7 +51,6 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     buyback_fixed_per_month = params['buyback_fixed_per_month']
     buyback_start = pd.to_datetime(params['buyback_start'], format='%d.%m.%Y')
     buyback_end = pd.to_datetime(params['buyback_end'], format='%d.%m.%Y')
-    token_launch = params['token_launch'] if 'token_launch' in params else True
 
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
@@ -69,46 +71,57 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
         incentivisation_rev_share = 0
 
     # state variables
-    current_month = prev_state['timestep']
     date = prev_state['date']
     prev_cash_balance = prev_state['business_assumptions']['ba_cash_balance']
     buyback_from_revenue_share = prev_state['utilities']['u_buyback_from_revenue_share_usd']
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
-
+    utilities = prev_state['utilities'].copy()
+    staking_vesting_bucket_tokens = utilities['u_staking_vesting_rewards'] # get the amount of tokens in the staking vesting bucket
+ 
     # policy logic
     # fixed expenditures
-    Expenditures = (salaries_per_month + license_costs_per_month
-                            + other_monthly_costs)
+    ## liquidity capital requirement
+    required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price if (token_launch and current_month == 1) else 0
+
+    fixed_business_expenditures = (salaries_per_month + license_costs_per_month
+                                   + other_monthly_costs + required_liquidity_pool_fund_allocation
+                                   + one_time_payments_1 + one_time_payments_2 )
     
     # fixed revenue streams - Ensure that revenue from royalties etc, is never negative
-    Revenue_Streams = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
+    fixed_business_revenue = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
     
-    # buybacks
-    buybacks = buyback_from_revenue_share
+    # variable revenues
+    ## split of variable revenue streams from product revenue
+    var_business_revenue = product_revenue * business_rev_share / 100 if staking_vesting_bucket_tokens <= 0 else product_revenue * (business_rev_share + staker_rev_share) / 100
+    var_staker_revenue = product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens <= 0 else 0.0
+    var_service_provider_revenue = product_revenue * service_provider_rev_share / 100
+    var_incentivisation_revenue = product_revenue * incentivisation_rev_share / 100
+
+    np.testing.assert_allclose(var_business_revenue + var_staker_revenue + var_service_provider_revenue + var_incentivisation_revenue, product_revenue, rtol=0.0001, err_msg=f'Revenue split is not correct: business_revenue({var_business_revenue}) + staker_revenue({var_staker_revenue}) + service_provider_revenue({var_service_provider_revenue}) + incentivisation_revenue({var_incentivisation_revenue}) != product_revenue({product_revenue})')
+
+    # business buybacks
+    business_buybacks = 0 # business buybacks are not included in the buyback_from_revenue_share variable as they are performed on top of the revenue share buybacks by the protocol/business
 
     if buyback_start <= date and buyback_end > date:
         if buyback_type == "Fixed":
-            buybacks += buyback_fixed_per_month
+            business_buybacks += buyback_fixed_per_month
 
         elif buyback_type == "Percentage":
-            buybacks += prev_cash_balance * buyback_perc_per_month / 100
+            business_buybacks += prev_cash_balance * buyback_perc_per_month / 100
             
         else:
             raise ValueError('The buyback type is not defined!')
 
-
-    # liquidity capital requirement
-    required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price if token_launch else 0
+    business_revenue = fixed_business_revenue + var_business_revenue
+    business_expenditures = fixed_business_expenditures + business_buybacks
 
     # calculate the cash flow for the month
-    if current_month == 1:
-        cash_flow = (- required_liquidity_pool_fund_allocation + Revenue_Streams +
-                      product_revenue - (Expenditures + one_time_payments_1 + one_time_payments_2 + buybacks))
+    cash_flow = business_revenue - business_expenditures
 
-    elif current_month > 1:
-        cash_flow = Revenue_Streams + product_revenue - (Expenditures + buybacks)
-
-    return {'cash_flow': cash_flow, 'buybacks': buybacks}
+    return {'cash_flow': cash_flow, 'fixed_business_revenue': fixed_business_revenue, 'var_business_revenue': var_business_revenue,
+            'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks,
+            'buybacks': business_buybacks + buyback_from_revenue_share, 'var_staker_revenue': var_staker_revenue,
+            'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue}
 
 
 # STATE UPDATE FUNCTIONS
@@ -132,10 +145,39 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
 
     # policy variables
     cash_flow = policy_input['cash_flow']
+    fixed_business_revenue = policy_input['fixed_business_revenue']
+    var_business_revenue = policy_input['var_business_revenue']
+    fixed_business_expenditures = policy_input['fixed_business_expenditures']
+    var_business_expenditures = policy_input['var_business_expenditures']
+    var_staker_revenue = policy_input['var_staker_revenue']
+    var_service_provider_revenue = policy_input['var_service_provider_revenue']
+    var_incentivisation_revenue = policy_input['var_incentivisation_revenue']
     buybacks = policy_input['buybacks']
 
     # update logic
-    updated_business_assumptions['ba_buybacks_usd'] = buybacks
+    updated_business_assumptions['ba_cash_flow'] = cash_flow
     updated_business_assumptions['ba_cash_balance'] += cash_flow
+
+    updated_business_assumptions['ba_buybacks_usd'] = buybacks
+    updated_business_assumptions['ba_buybacks_cum_usd'] += buybacks
+
+    updated_business_assumptions['ba_fix_expenditures_usd'] = fixed_business_expenditures
+    updated_business_assumptions['ba_fix_expenditures_cum_usd'] += fixed_business_expenditures
+    updated_business_assumptions['ba_var_expenditures_usd'] = var_business_expenditures
+    updated_business_assumptions['ba_var_expenditures_cum_usd'] += var_business_expenditures
+
+    updated_business_assumptions['ba_fix_business_revenue_usd'] = fixed_business_revenue
+    updated_business_assumptions['ba_fix_business_revenue_cum_usd'] += fixed_business_revenue
+    updated_business_assumptions['ba_var_business_revenue_usd'] = var_business_revenue
+    updated_business_assumptions['ba_var_business_revenue_cum_usd'] += var_business_revenue
+
+    updated_business_assumptions['ba_staker_revenue_usd'] = var_staker_revenue
+    updated_business_assumptions['ba_staker_revenue_cum_usd'] += var_staker_revenue
+
+    updated_business_assumptions['ba_service_provider_revenue_usd'] = var_service_provider_revenue
+    updated_business_assumptions['ba_service_provider_revenue_cum_usd'] += var_service_provider_revenue
+
+    updated_business_assumptions['ba_incentivisation_revenue_usd'] = var_incentivisation_revenue
+    updated_business_assumptions['ba_incentivisation_revenue_cum_usd'] += var_incentivisation_revenue
 
     return ('business_assumptions', updated_business_assumptions)

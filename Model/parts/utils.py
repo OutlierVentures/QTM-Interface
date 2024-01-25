@@ -441,21 +441,6 @@ def initialize_user_adoption(sys_param):
     # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
     total_days = 3653
 
-    # revenue shares if provided by the UI
-    staker_rev_share = sys_param['staker_rev_share'][0]
-    if 'business_rev_share' in sys_param:
-        business_rev_share = sys_param['business_rev_share'][0]
-    else:
-        business_rev_share = 100 - staker_rev_share
-    if 'service_provider_rev_share' in sys_param:
-        service_provider_rev_share = sys_param['service_provider_rev_share'][0]
-    else:
-        service_provider_rev_share = 0
-    if 'incentivisation_rev_share' in sys_param:
-        incentivisation_rev_share = sys_param['incentivisation_rev_share'][0]
-    else:
-        incentivisation_rev_share = 0
-
     ## Product user adoption
     initial_product_users = sys_param['initial_product_users'][0]
     product_users_after_10y = sys_param['product_users_after_10y'][0]
@@ -486,12 +471,11 @@ def initialize_user_adoption(sys_param):
     'ua_token_holders': token_holders, # amount of token holders
     'ua_product_revenue':product_revenue, # product revenue
     'ua_token_buys': token_buys, # amount of effective token buys
-    'ua_business_revenue': product_revenue # business revenue
     }
 
     return user_adoption
 
-def initialize_business_assumptions(sys_param):
+def initialize_business_assumptions(sys_param, initial_user_adoption):
     """
     Initialize the business assumptions metrics.
     """
@@ -504,10 +488,44 @@ def initialize_business_assumptions(sys_param):
         initial_capital = calculate_raised_capital(sys_param)
     else:
         initial_capital = sys_param['initial_cash_balance'][0]
+    
+
+    product_revenue = initial_user_adoption['ua_product_revenue']
+
+    # revenue shares if provided by the UI
+    staker_rev_share = sys_param['staker_rev_share'][0]
+    if 'business_rev_share' in sys_param:
+        business_rev_share = sys_param['business_rev_share'][0]
+    else:
+        business_rev_share = 100 - staker_rev_share
+    if 'service_provider_rev_share' in sys_param:
+        service_provider_rev_share = sys_param['service_provider_rev_share'][0]
+    else:
+        service_provider_rev_share = 0
+    if 'incentivisation_rev_share' in sys_param:
+        incentivisation_rev_share = sys_param['incentivisation_rev_share'][0]
+    else:
+        incentivisation_rev_share = 0
 
     business_assumptions = {
     'ba_cash_balance': initial_capital, ## cash balance of the company
-    'ba_buybacks_usd': 0 ## buybacks in USD per month
+    'ba_cash_flow': product_revenue, ## cash flow of the company
+    'ba_buybacks_usd': 0, ## buybacks in USD per month
+    'ba_buybacks_cum_usd': 0, ## buybacks in USD cumulatively
+    'ba_fix_expenditures_usd': 0, ## fixed expenditures in USD per month
+    'ba_fix_expenditures_cum_usd': 0, ## fixed expenditures in USD cumulatively
+    'ba_var_expenditures_usd': 0, ## fixed expenditures in USD per month
+    'ba_var_expenditures_cum_usd': 0, ## fixed expenditures in USD cumulatively
+    'ba_fix_business_revenue_usd': 0, # fixed business revenue
+    'ba_fix_business_revenue_cum_usd': 0, # fixed business revenue cumulatively
+    'ba_var_business_revenue_usd': product_revenue * (business_rev_share/100), # business revenue
+    'ba_var_business_revenue_cum_usd': product_revenue * (business_rev_share/100), # business revenue cumulatively
+    'ba_staker_revenue_usd': product_revenue * (staker_rev_share/100), # staker revenue
+    'ba_staker_revenue_cum_usd': product_revenue * (staker_rev_share/100), # staker revenue cumulatively
+    'ba_service_provider_revenue_usd': product_revenue * (service_provider_rev_share/100), # service provider revenue
+    'ba_service_provider_revenue_cum_usd': product_revenue * (service_provider_rev_share/100), # service provider revenue cumulatively
+    'ba_incentivisation_revenue_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue
+    'ba_incentivisation_revenue_cum_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue cumulatively
     }
 
     return business_assumptions
