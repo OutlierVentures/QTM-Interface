@@ -140,6 +140,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
     utilities = prev_state['utilities'].copy()
+    business_assumptions = prev_state['business_assumptions'].copy()
     lp = prev_state['liquidity_pool'].copy()
 
     # policy inputs
@@ -168,7 +169,10 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_holding_supply'] = held_supply
     updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
     updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
-    new_staking_apr = (utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100
+    
+    cash_staking_rewards = business_assumptions['ba_staker_revenue_usd'] if utilities['u_staking_revenue_share_rewards'] <= 0 else 0.0
+    new_staking_apr = ((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100
+                       + cash_staking_rewards*12 / (utilities['u_staking_allocation_cum'] * lp['lp_token_price']) * 100)
     updated_token_economy['te_staking_apr'] = new_staking_apr if not np.isnan(new_staking_apr) else 0.0
 
     return ('token_economy', updated_token_economy)
