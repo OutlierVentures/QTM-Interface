@@ -526,6 +526,9 @@ def initialize_business_assumptions(sys_param, initial_user_adoption):
     'ba_service_provider_revenue_cum_usd': product_revenue * (service_provider_rev_share/100), # service provider revenue cumulatively
     'ba_incentivisation_revenue_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue
     'ba_incentivisation_revenue_cum_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue cumulatively
+    'ba_buyback_from_revenue_share_incentivisation_usd': 0, # buyback from revenue share in USD for incentivisations
+    'ba_buyback_from_revenue_share_incentives' : 0, # buyback incentives from revenue share in tokens
+    'ba_business_buybacks_usd' : 0, # business buybacks in USD
     }
 
     return business_assumptions
@@ -639,3 +642,14 @@ def months_difference(date1, date2):
     month_diff = date2.month - date1.month
     total_months = year_diff * 12 + month_diff
     return total_months
+
+def calculate_buyback_share_tokens(buyback_share_amount_usd, buyback_all_amount_usd, lp_tokens_after_liquidity_addition, lp_tokens_after_buyback):
+    # calculate macro rewards from staking revenue share
+    bought_back_tokens = (lp_tokens_after_liquidity_addition - lp_tokens_after_buyback)
+    if buyback_all_amount_usd > 0:
+        buyback_share_tokens = bought_back_tokens * (buyback_share_amount_usd/buyback_all_amount_usd)
+    elif buyback_all_amount_usd == 0:
+        buyback_share_tokens = 0
+    else:
+        raise ValueError(f"Business buybacks in USD terms buyback_all_amount_usd({buyback_all_amount_usd}) must not be negative!")
+    return buyback_share_tokens

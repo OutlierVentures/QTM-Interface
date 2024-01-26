@@ -60,6 +60,11 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
         staker_rev_share_buyback = params['staker_rev_share_buyback'] # boolean if revenue share to be used for buying back the token to distribute tokens instead of revenue in diverse assets to stakers
     else:
         staker_rev_share_buyback = True
+    if 'incentivisation_rev_share_buyback' in params:
+        incentivisation_rev_share_buyback = params['incentivisation_rev_share_buyback'] # boolean if revenue share to be used for buying back the token to distribute tokens instead of revenue in diverse assets to stakers
+    else:
+        incentivisation_rev_share_buyback = False
+
 
     # revenue share splits
     staker_rev_share = params['staker_rev_share']
@@ -106,6 +111,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     # buybacks for staking vesting
     staker_rev_share_buyback_amount = var_staker_revenue if staker_rev_share_buyback else 0.0 # revenue share to be used for buybacks to distribute tokens instead of revenue in diverse assets to stakers
+
+    # buybacks for ecosystem incentivisation from revenue
+    incentivisation_rev_share_buyback_amount = var_incentivisation_revenue if incentivisation_rev_share_buyback else 0.0 # revenue share to be used for buybacks to distribute tokens instead of revenue in diverse assets as incentivisation into the economy
     
     # business buybacks
     business_buybacks = 0 # business buybacks are not included in the buyback_from_revenue_share variable as they are performed on top of the revenue share buybacks by the protocol/business
@@ -127,10 +135,10 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     cash_flow = business_revenue - business_expenditures
 
     return {'cash_flow': cash_flow, 'fixed_business_revenue': fixed_business_revenue, 'var_business_revenue': var_business_revenue,
-            'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks,
-            'buybacks': business_buybacks + staker_rev_share_buyback_amount, 'var_staker_revenue': var_staker_revenue,
+            'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks, 'business_buybacks_usd': business_buybacks,
+            'buybacks': business_buybacks + staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount, 'var_staker_revenue': var_staker_revenue,
             'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue,
-            'u_buyback_from_revenue_share_staking_usd': staker_rev_share_buyback_amount}
+            'u_buyback_from_revenue_share_staking_usd': staker_rev_share_buyback_amount, 'ba_buyback_from_revenue_share_incentivisation_usd': incentivisation_rev_share_buyback_amount}
 
 
 # STATE UPDATE FUNCTIONS
@@ -162,6 +170,8 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
     var_service_provider_revenue = policy_input['var_service_provider_revenue']
     var_incentivisation_revenue = policy_input['var_incentivisation_revenue']
     buybacks = policy_input['buybacks']
+    business_buybacks_usd = policy_input['business_buybacks_usd']
+    buyback_from_revenue_share_incentivisation_usd = policy_input['ba_buyback_from_revenue_share_incentivisation_usd']
 
     # update logic
     updated_business_assumptions['ba_cash_flow'] = cash_flow
@@ -188,6 +198,10 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
 
     updated_business_assumptions['ba_incentivisation_revenue_usd'] = var_incentivisation_revenue
     updated_business_assumptions['ba_incentivisation_revenue_cum_usd'] += var_incentivisation_revenue
+
+    updated_business_assumptions['ba_business_buybacks_usd'] = business_buybacks_usd
+
+    updated_business_assumptions['ba_buyback_from_revenue_share_incentivisation_usd'] = buyback_from_revenue_share_incentivisation_usd
 
     return ('business_assumptions', updated_business_assumptions)
 

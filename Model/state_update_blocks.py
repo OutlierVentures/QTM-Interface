@@ -6,6 +6,7 @@ from Model.parts.ecosystem.liquidity_pool import *
 from Model.parts.ecosystem.token_economy import *
 from Model.parts.business.user_adoption import *
 from Model.parts.business.business_assumptions import *
+from Model.parts.business.business_buybacks import *
 from Model.parts.agents_behavior.agent_meta_bucket_behavior import *
 from Model.parts.utilities.staking_mint_burn import *
 from Model.parts.utilities.staking_revenue_share import *
@@ -214,7 +215,26 @@ state_update_blocks = [
         },
     },
     {
-        # substep 21: ecosystem/token_economy.py
+        # substep 21: business/business_buybacks.py
+        'policies': {
+            'business_buyback': business_buyback,
+        },
+        'variables': {
+            'agents': update_agents_after_business_buyback
+        },
+    },
+    {
+        # substep 22: ecosystem/incentivisation.py
+        'policies': {
+            'incentivisation_revenue_share_buyback': incentivisation_revenue_share_buyback,
+        },
+        'variables': {
+            'agents': update_agents_after_incentivisation_revenue_share_buyback,
+            'business_assumptions': update_business_assumptions_after_incentivisation_revenue_share_buyback
+        },
+    },
+    {
+        # substep 23: ecosystem/token_economy.py
         'policies': {
             'token_economy_metrics': token_economy_metrics,
         },
