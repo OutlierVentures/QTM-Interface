@@ -86,7 +86,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     prev_cash_balance = prev_state['business_assumptions']['ba_cash_balance']
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
     utilities = prev_state['utilities'].copy()
+    token_economy = prev_state['token_economy'].copy()
     staking_vesting_bucket_tokens = utilities['u_staking_vesting_rewards'] # get the amount of tokens in the staking vesting bucket
+    incentivisation_vesting_bucket_tokens = token_economy['te_incentivised_tokens'] # get the amount of tokens that got vested from the incentivisation bucket
  
     # policy logic
     # fixed expenditures
@@ -102,10 +104,12 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     
     # variable revenues
     ## split of variable revenue streams from product revenue
-    var_business_revenue = product_revenue * business_rev_share / 100 if staking_vesting_bucket_tokens <= 0 else product_revenue * (business_rev_share + staker_rev_share) / 100
+    var_business_revenue = product_revenue * business_rev_share / 100
     var_staker_revenue = product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens <= 0 else 0.0
     var_service_provider_revenue = product_revenue * service_provider_rev_share / 100
-    var_incentivisation_revenue = product_revenue * incentivisation_rev_share / 100
+    var_incentivisation_revenue = product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens <= 0 else 0.0
+    var_business_revenue += product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens > 0 else 0.0
+    var_business_revenue += product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens > 0 else 0.0
 
     np.testing.assert_allclose(var_business_revenue + var_staker_revenue + var_service_provider_revenue + var_incentivisation_revenue, product_revenue, rtol=0.0001, err_msg=f'Revenue split is not correct: business_revenue({var_business_revenue}) + staker_revenue({var_staker_revenue}) + service_provider_revenue({var_service_provider_revenue}) + incentivisation_revenue({var_incentivisation_revenue}) != product_revenue({product_revenue})')
 

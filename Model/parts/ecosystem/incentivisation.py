@@ -153,6 +153,8 @@ def update_agents_after_incentivisation_revenue_share_buyback(params, substep, s
             # transfer incentivisation bought back tokens to incentivisation_receiver agents
             if updated_agents[agent]['a_name'].lower() == 'incentivisation_receivers':
                 updated_agents[agent]['a_tokens'] += incentivisation_buyback
+                updated_agents[agent]['a_tokens_incentivised'] += incentivisation_buyback
+                updated_agents[agent]['a_tokens_incentivised_cum'] += incentivisation_buyback
 
     return ('agents', updated_agents)
 
@@ -171,3 +173,28 @@ def update_business_assumptions_after_incentivisation_revenue_share_buyback(para
     updated_business_assumptions['ba_buyback_from_revenue_share_incentives'] = agent_incentives
 
     return ('business_assumptions', updated_business_assumptions)
+
+def update_token_economy_after_incentivisation_revenue_share(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update the token economy after incentivisation from revenue share.
+
+    State update function.
+
+    Returns: 
+        Tuple ('token_economy', updated_token_economy), where updated_agents is a dict 
+        that provides amounts of tokens that were distributed as incentivisation from
+        revenue share.
+    """
+    # get parameters
+
+    # get state variables
+    updated_token_economy = prev_state['token_economy'].copy()
+
+    # get policy input
+    agent_incentives = policy_input['incentivisation_buyback']
+
+    # update logic
+    updated_token_economy['te_incentivised_tokens'] += agent_incentives
+    updated_token_economy['te_incentivised_tokens_cum'] += agent_incentives
+
+    return ('token_economy', updated_token_economy)
