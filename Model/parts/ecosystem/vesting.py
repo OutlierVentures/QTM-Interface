@@ -49,7 +49,7 @@ def vest_tokens(params, substep, state_history, prev_state, **kwargs):
         if agent_vesting_duration <= 0 and agent_initial_vesting_perc <= 0:
             vesting_period_token_amount = 0
         elif agent_vesting_duration <= 0 and agent_initial_vesting_perc != 100:
-            print("ERROR: agent "+str(agent_type)+" vesting duration is 0 but initial vesting percentage is not 100%! It is "+str(agent_initial_vesting_perc)+"%. Setting vesting amount to 0.")
+            print("Warning: agent "+str(agent_type)+" vesting duration is 0 but initial vesting percentage is not 100%! It is "+str(agent_initial_vesting_perc)+"%. Setting vesting amount to 0.")
             vesting_period_token_amount = 0
         elif agent_vesting_duration <= 0:
             agent_vesting_duration = 0
