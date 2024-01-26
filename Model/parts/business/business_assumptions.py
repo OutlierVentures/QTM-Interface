@@ -26,11 +26,11 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     Reads a range of parameters (originally from QTM input tab 'cadCAD_inputs'), and
     the state of: cash balance, revenue streams. 
     Then calculates: expenditures, buyback, liquidity requirements, sum of raised capital,
-    and cash flow.
+    cash flow, and revenue splits
 
     Returns:
-        Returns dict that maps 'cash_flow' to 'buybacks' to their respective values for
-        the current time step.
+        cash flow, fixed and variable revenue streams,
+        fixed and variable expenditures, buybacks, and revenue splits.
 
     """
     # state variables 1
@@ -55,6 +55,12 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
 
+    # check if revenue share is used for buying back tokens
+    if 'staker_rev_share_buyback' in params:
+        staker_rev_share_buyback = params['staker_rev_share_buyback'] # boolean if revenue share to be used for buying back the token to distribute tokens instead of revenue in diverse assets to stakers
+    else:
+        staker_rev_share_buyback = True
+
     # revenue share splits
     staker_rev_share = params['staker_rev_share']
     if 'business_rev_share' in params:
@@ -73,7 +79,6 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     # state variables
     date = prev_state['date']
     prev_cash_balance = prev_state['business_assumptions']['ba_cash_balance']
-    buyback_from_revenue_share = prev_state['utilities']['u_buyback_from_revenue_share_usd']
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
     utilities = prev_state['utilities'].copy()
     staking_vesting_bucket_tokens = utilities['u_staking_vesting_rewards'] # get the amount of tokens in the staking vesting bucket
@@ -99,6 +104,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     np.testing.assert_allclose(var_business_revenue + var_staker_revenue + var_service_provider_revenue + var_incentivisation_revenue, product_revenue, rtol=0.0001, err_msg=f'Revenue split is not correct: business_revenue({var_business_revenue}) + staker_revenue({var_staker_revenue}) + service_provider_revenue({var_service_provider_revenue}) + incentivisation_revenue({var_incentivisation_revenue}) != product_revenue({product_revenue})')
 
+    # buybacks for staking vesting
+    staker_rev_share_buyback_amount = var_staker_revenue if staker_rev_share_buyback else 0.0 # revenue share to be used for buybacks to distribute tokens instead of revenue in diverse assets to stakers
+    
     # business buybacks
     business_buybacks = 0 # business buybacks are not included in the buyback_from_revenue_share variable as they are performed on top of the revenue share buybacks by the protocol/business
 
@@ -120,8 +128,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     return {'cash_flow': cash_flow, 'fixed_business_revenue': fixed_business_revenue, 'var_business_revenue': var_business_revenue,
             'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks,
-            'buybacks': business_buybacks + buyback_from_revenue_share, 'var_staker_revenue': var_staker_revenue,
-            'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue}
+            'buybacks': business_buybacks + staker_rev_share_buyback_amount, 'var_staker_revenue': var_staker_revenue,
+            'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue,
+            'u_buyback_from_revenue_share_usd': staker_rev_share_buyback_amount}
 
 
 # STATE UPDATE FUNCTIONS
@@ -141,7 +150,7 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
     # parameters
 
     # state variables
-    updated_business_assumptions = prev_state['business_assumptions']
+    updated_business_assumptions = prev_state['business_assumptions'].copy()
 
     # policy variables
     cash_flow = policy_input['cash_flow']
@@ -181,3 +190,22 @@ def update_business_assumptions(params, substep, state_history, prev_state, poli
     updated_business_assumptions['ba_incentivisation_revenue_cum_usd'] += var_incentivisation_revenue
 
     return ('business_assumptions', updated_business_assumptions)
+
+
+
+def update_buyback_amount_from_revenue_share(params, substep, state_history, prev_state, policy_input, **kwargs):
+    """
+    Function to update capital amount for token buybacks from the revenue share
+    """
+    # get parameters
+
+    # get state variables
+    updated_utilities = prev_state['utilities'].copy()
+
+    # get policy input
+    buyback_from_revenue_share_usd = policy_input['u_buyback_from_revenue_share_usd']
+
+    # update logic
+    updated_utilities['u_buyback_from_revenue_share_usd'] = buyback_from_revenue_share_usd
+
+    return ('utilities', updated_utilities)

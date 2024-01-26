@@ -53,10 +53,10 @@ if __name__ == '__main__'   :
     simulation_end_time = time.process_time()
 
     # post processing
-    data_tx1 = postprocessing(df, False, substep=15, category="all") # after adoption buy lp tx
-    data_tx2 = postprocessing(df, False, substep=18, category="all") # after vesting sell lp tx
-    data_tx3 = postprocessing(df, False, substep=19, category="all") # after liquidity addition lp tx
-    data_tx4 = postprocessing(df, False, substep=20, category="all") # after buyback lp tx
+    data_tx1 = postprocessing(df, False, substep=14, category="all") # after adoption buy lp tx
+    data_tx2 = postprocessing(df, False, substep=17, category="all") # after vesting sell lp tx
+    data_tx3 = postprocessing(df, False, substep=18, category="all") # after liquidity addition lp tx
+    data_tx4 = postprocessing(df, False, substep=19, category="all") # after buyback lp tx
     postprocessing_one_start_time = time.process_time()
     data = postprocessing(df, False, substep=df.substep.max(), category="all") # at the end of the timestep = last substep
     postprocessing_all_end_time = time.process_time()

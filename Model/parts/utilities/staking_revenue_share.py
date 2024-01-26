@@ -41,36 +41,6 @@ def staking_revenue_share_buyback(params, substep, state_history, prev_state, **
 
     return {'agents_staking_buyback_rewards': agents_staking_buyback_rewards, 'agent_utility_rewards_sum': agent_utility_rewards_sum, 'business_buyback': business_buyback}
 
-def staking_revenue_share_buyback_amount(params, substep, state_history, prev_state, **kwargs):
-    """
-    Policy function to calculate the amount of usd to be used for token buyback from the revenue share
-    """
-    # get parameters
-    # check if revenue share is used for buying back tokens
-    if 'staker_rev_share_buyback' in params:
-        staker_rev_share_buyback = params['staker_rev_share_buyback'] # boolean if revenue share to be used for buying back the token to distribute tokens instead of revenue in diverse assets to stakers
-    else:
-        staker_rev_share_buyback = True
-    
-    revenue_share = params['staker_rev_share'] if staker_rev_share_buyback else 0.0 # revenue share to be used for buyback
-    staking_share = params['staking_share'] # share of utility tokens used for staking
-
-    # get state variables
-    user_adoption = prev_state['user_adoption'].copy()
-    agents = prev_state['agents'].copy()
-    product_revenue = user_adoption['ua_product_revenue']
-
-    staking_vesting_bucket_tokens = [agents[agent]['a_tokens'] for agent in agents if agents[agent]['a_name'] == 'staking_vesting'][0] # get the amount of tokens in the staking vesting bucket
-
-    # policy logic
-    if float(revenue_share) > 0 and staking_vesting_bucket_tokens <= 0 and staking_share > 0:
-        buyback_amount = product_revenue * float(revenue_share) / 100
-    else:
-        buyback_amount = 0
-
-    return {'u_buyback_from_revenue_share_usd': buyback_amount}
-
-
 
 
 # STATE UPDATE FUNCTIONS
@@ -115,22 +85,5 @@ def update_utilities_after_staking_revenue_share_buyback(params, substep, state_
 
     # update logic
     updated_utilities['u_staking_revenue_share_rewards'] = agent_utility_rewards_sum
-
-    return ('utilities', updated_utilities)
-
-def update_buyback_amount_from_revenue_share(params, substep, state_history, prev_state, policy_input, **kwargs):
-    """
-    Function to update capital amount for token buybacks from the revenue share
-    """
-    # get parameters
-
-    # get state variables
-    updated_utilities = prev_state['utilities'].copy()
-
-    # get policy input
-    buyback_from_revenue_share_usd = policy_input['u_buyback_from_revenue_share_usd']
-
-    # update logic
-    updated_utilities['u_buyback_from_revenue_share_usd'] = buyback_from_revenue_share_usd
 
     return ('utilities', updated_utilities)
