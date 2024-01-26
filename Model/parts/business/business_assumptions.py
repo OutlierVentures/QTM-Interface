@@ -130,7 +130,7 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
             'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks,
             'buybacks': business_buybacks + staker_rev_share_buyback_amount, 'var_staker_revenue': var_staker_revenue,
             'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue,
-            'u_buyback_from_revenue_share_usd': staker_rev_share_buyback_amount}
+            'u_buyback_from_revenue_share_staking_usd': staker_rev_share_buyback_amount}
 
 
 # STATE UPDATE FUNCTIONS
@@ -203,9 +203,9 @@ def update_buyback_amount_from_revenue_share(params, substep, state_history, pre
     updated_utilities = prev_state['utilities'].copy()
 
     # get policy input
-    buyback_from_revenue_share_usd = policy_input['u_buyback_from_revenue_share_usd']
+    buyback_from_revenue_share_usd = policy_input['u_buyback_from_revenue_share_staking_usd']
 
     # update logic
-    updated_utilities['u_buyback_from_revenue_share_usd'] = buyback_from_revenue_share_usd
+    updated_utilities['u_buyback_from_revenue_share_staking_usd'] = buyback_from_revenue_share_usd
 
     return ('utilities', updated_utilities)

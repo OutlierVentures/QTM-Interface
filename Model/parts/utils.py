@@ -543,11 +543,11 @@ def initialize_utilities(initial_stakeholders, sys_param):
     'u_staking_allocation':0, # staking allocation per timestep
     'u_staking_allocation_cum':staked_tokens, # staking allocation cumulatively
     'u_staking_remove':0, # staking token removal
-    'u_buyback_from_revenue_share_usd': 0, # buyback from revenue share in USD
-    'u_staking_revenue_share_rewards':0, # revenue sharing rewards
-    'u_staking_vesting_rewards':0, # staking vesting rewards
-    'u_staking_minting_rewards':0, # staking minting rewards
-    'u_liquidity_mining_rewards': 0, # liquidity mining rewards
+    'u_buyback_from_revenue_share_staking_usd': 0, # buyback from revenue share in USD as reward for stakers
+    'u_staking_revenue_share_rewards':0, # revenue sharing rewards in tokens
+    'u_staking_vesting_rewards':0, # staking vesting rewards in tokens
+    'u_staking_minting_rewards':0, # staking minting rewards in tokens
+    'u_liquidity_mining_rewards': 0, # liquidity mining rewards in tokens
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
     'u_liquidity_mining_allocation_cum': liquidity_mining_tokens, # liquidity mining token allocation cumulatively
     'u_liquidity_mining_allocation_remove': 0, # liquidity mining token removal

@@ -10,7 +10,7 @@ def staking_revenue_share_buyback(params, substep, state_history, prev_state, **
     # rewards state variables
     lp_tokens_after_liquidity_addition  =  prev_state['liquidity_pool']['lp_tokens_after_liquidity_addition']
     lp_tokens_after_buyback = prev_state['liquidity_pool']['lp_tokens'] # Tokens after trx 4 (buybacks)
-    u_buyback_from_revenue_share_usd = prev_state['utilities']['u_buyback_from_revenue_share_usd']
+    u_buyback_from_revenue_share_staking_usd = prev_state['utilities']['u_buyback_from_revenue_share_staking_usd']
     ba_buybacks_usd =prev_state['business_assumptions']['ba_buybacks_usd']
 
     # policy logic
@@ -21,8 +21,8 @@ def staking_revenue_share_buyback(params, substep, state_history, prev_state, **
     # calculate macro rewards from staking revenue share
     bought_back_tokens = (lp_tokens_after_liquidity_addition - lp_tokens_after_buyback)
     if ba_buybacks_usd > 0:
-        agent_utility_rewards_sum = bought_back_tokens * (u_buyback_from_revenue_share_usd/ba_buybacks_usd)
-        business_buyback = bought_back_tokens * (1 - u_buyback_from_revenue_share_usd/ba_buybacks_usd)
+        agent_utility_rewards_sum = bought_back_tokens * (u_buyback_from_revenue_share_staking_usd/ba_buybacks_usd)
+        business_buyback = bought_back_tokens * (1 - u_buyback_from_revenue_share_staking_usd/ba_buybacks_usd)
     elif ba_buybacks_usd == 0:
         agent_utility_rewards_sum = 0
         business_buyback = 0

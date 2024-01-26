@@ -185,7 +185,7 @@ if __name__ == '__main__'   :
     ## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##
     print("\n----------------------------## TEST BUYBACK FROM REVENUE SHARE FOR STAKERS ##---------------------------")
     print("Testing token utility removal percentage of radCad timeseries simulation against QTM data tables...")
-    test_timeseries(data=data, data_key='u_buyback_from_revenue_share_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=129, relative_tolerance=0.003)
+    test_timeseries(data=data, data_key='u_buyback_from_revenue_share_staking_usd', data_row_multiplier=1, QTM_data_tables=QTM_data_tables, QTM_row=129, relative_tolerance=0.003)
 
     
     ## TEST SUM OF BUYBACKS ##
