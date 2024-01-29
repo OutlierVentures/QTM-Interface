@@ -6,8 +6,9 @@ credentials:
   usernames:
     user:
       email: test@user.com
+      logged_in: false
       name: Test User
-      password: $2b$12$pkOBfUsc1RSXQudmLC.UEuWe.9SmPERyF9B9.P4JnbRqPmGSLev6O
+      password: $2b$12$Q.5J0GgUz6f33oq.ddEvEOPjrStWbVnpdnMzePDzKu.8k9ZUwSbUC
 preauthorized:
   emails:
   - melsby@gmail.com
