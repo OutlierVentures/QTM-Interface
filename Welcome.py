@@ -38,11 +38,6 @@ with st.expander('Sign-Up', expanded=False):
 with st.expander('Login', expanded=False):
     name, authentication_status, username = st.session_state["authenticator"].login(fields=['username', 'password'])
 
-<<<<<<< HEAD
-    if authentication_status:
-        st.success(f'✅ Successfully signed in as *{name}*')
-    elif authentication_status is False:
-=======
     st.session_state["authenticator"].login(location='main', 
             max_concurrent_users=10, 
             fields={'Form name': 'Login', 'Username': 'Enter Username', 'Password': 'Enter Password', 'Login': 'Sign In'}
@@ -52,7 +47,6 @@ with st.expander('Login', expanded=False):
     if st.session_state["authentication_status"]:
         st.success(f'✅ Successfully signed in as *{st.session_state["name"]}*')
     elif st.session_state["authentication_status"] is False:
->>>>>>> 9168453023767a8dc8b97aab9c2539c668abce4c
         st.error('Username/password is incorrect')
         
         # Forgot password
