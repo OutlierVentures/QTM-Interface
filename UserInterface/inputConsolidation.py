@@ -214,6 +214,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
         'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
         'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
+        'user_adoption_target': ua_return_dict["user_adoption_target"],
     }
 
     # add utility parameters to new_params
