@@ -51,9 +51,24 @@ import requests
 from brownian_motion_generator import brownian_motion_generator as bmg
 
 # Helper Functions
-def coin_gecko_prices(coin, against='usd', days=1460, timesteps=60, runs=1):
+def coin_gecko_prices(sys_param, against='usd', timesteps=60, runs=1): 
     # Fetch market prices
-    url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={against}&days={days}'
+    coin = sys_param['token'][0]
+    # should add API request issues handling
+    start_date = sys_param['start date'][0]
+    end_date = sys_param['end date'][0]
+    
+    #start_date_obj = datetime.strptime(start_date_str, '%Y-%m-%d')
+    #end_date_obj = datetime.strptime(end_date_str, '%Y-%m-%d')
+    #start_date_unix = int(time.mktime(start_date_str.timetuple()))
+    #end_date_unix = int(time.mktime(end_date_str.timetuple()))
+    
+    #start_date = 1643556543
+    #end_date = 1675092543
+    # coin = sys_param['token'] # from input consolidation
+    # &from=1643556543&to=1675092543
+    # old url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={against}&days={days}'
+    url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
     r = requests.get(url)
     df = pd.DataFrame(r.json()['prices'], columns=['unix', f'{coin}_{against}'])
 
@@ -95,15 +110,6 @@ def coin_gecko_prices(coin, against='usd', days=1460, timesteps=60, runs=1):
     walks = pd.DataFrame(OU_procs_arr, columns=['run', f'{coin}_ln_return'])
     walks['run'] = walks['run'].astype(int) + 1
     walks['timestep'] = walks.groupby('run').cumcount() + 1
-
-    #Then turn this dataframe into a dictionary with keys of (run,timestep) to easily query the simulated return at a given run,timestep
-    #walks = walks.set_index(['run','timestep']).to_dict('index') 
-
-    # Convert dataframe into a dictionary for simulation
-    # simulation_data = walks.set_index(['run', 'timestep']).to_dict('index')
-
-    # Return a dictionary with both market data and simulation data
-    # return {'market': monthly_df, 'simulation': simulation_data}
 
     return {'market': walks} 
 

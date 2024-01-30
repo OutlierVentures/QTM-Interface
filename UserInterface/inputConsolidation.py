@@ -12,7 +12,7 @@ from . import businessAssumptions as ba
 from . import utilities as ut
 from . import tokenInMarketInitialization as timi
 from . import consistencyChecks as cc
-
+from . import marketSimulation as mkt
 
 def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     if 'param_id' in st.session_state:
@@ -76,6 +76,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     ab_return_dict = ab.agentBehaviorInput(sys_param, ua_return_dict["adoption_style"], ua_return_dict["adoption_dict"])
 
+    ##############################################
+    # Market Simulation
+    ##############################################
+
+    mkt_return_dict = mkt.marketSimulationInput()
 
     ##############################################
     # Business Assumptions
@@ -214,6 +219,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
         'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
         'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
+        'token' : mkt_return_dict["token"], # adding new parameter for market sentiment
+        'start date' : mkt_return_dict['sim_start'],
+        'end date': mkt_return_dict['sim_end'],
     }
 
     # add utility parameters to new_params
