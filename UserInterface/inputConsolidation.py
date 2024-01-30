@@ -67,7 +67,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # User Adoption
     ##############################################
 
-    ua_return_dict = ua.userAdoptionInput(sys_param)
+    ua_return_dict = ua.userAdoptionInput(sys_param, tav_return_dict)
 
 
     ##############################################

@@ -521,11 +521,22 @@ def plot_business(param_id):
         max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
     
     st.markdown('---')
-    # plot price/fee and price/business earning ratios
-    log_scale_toggle_pf = st.toggle('Log Scale - Price Ratios', value=False)
+    # plot price/revenue and price/earning ratios
+    log_scale_toggle_p_ratio = st.toggle('Log Scale - Price Ratios', value=True)
     max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_p_r_ratio','te_p_e_ratio'], 1, param_id, max_months,
-                    plot_title="Price / Revenue and Price / Earning Ratios", x_title="Months", y_title="Ratio", logy=log_scale_toggle_pf)
+                    plot_title="Price / Revenue and Price / Earning Ratios", x_title="Months", y_title="Ratio", logy=log_scale_toggle_p_ratio)
 
+    st.markdown('---')
+    # plot product user per incentivised usd
+    log_scale_toggle_pui = st.toggle('Log Scale - User and Incentivisaiton Ratio', value=True)
+    invert_ratio_toggle = st.toggle('Invert Ratio', value=False, help="Invert the ratio between incentivised usd and product users.")
+    if not invert_ratio_toggle:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_incentivised_usd_per_product_user'], 1, param_id, max_months,
+                        plot_title="Incentivised USD per Product User", x_title="Months", y_title="Incentivised USD / Product User", logy=log_scale_toggle_pui)
+    else:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_product_user_per_incentivised_usd'], 1, param_id, max_months,
+                        plot_title="Product User per Incentivised USD", x_title="Months", y_title="Product User / Incentivised USD", logy=log_scale_toggle_pui)
+    
     return max_months
 
 def plot_token_economy(param_id, max_months):

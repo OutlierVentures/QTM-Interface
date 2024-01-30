@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 
-def userAdoptionInput(sys_param):
+def userAdoptionInput(sys_param, tav_return_dict):
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
         # adoption style choice | user numbers | revenues
@@ -107,11 +107,16 @@ def userAdoptionInput(sys_param):
                 incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['incentivisation_rev_share_buyback'][0]) if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
             else:
                 incentivisation_rev_share_buyback = False
+            if incentivisation_rev_share > 0.0 or tav_return_dict['incentivisation_allocation'] > 0.0:
+                # add user adoption boost per incentivisation (in USD)
+                user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=1.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 100.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product user.")
+            else:
+                user_adoption_target = 1.0
 
         rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
         if rev_share_sum != 100.0:
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
-
+        
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]
@@ -141,6 +146,7 @@ def userAdoptionInput(sys_param):
         "rev_share_sum" : rev_share_sum,
         "staker_rev_share_buyback" : staker_rev_share_buyback,
         "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
+        "user_adoption_target": user_adoption_target
     }
 
     return ua_return_dict
