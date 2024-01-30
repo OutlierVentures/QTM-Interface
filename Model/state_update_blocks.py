@@ -230,7 +230,8 @@ state_update_blocks = [
         },
         'variables': {
             'agents': update_agents_after_incentivisation_revenue_share_buyback,
-            'business_assumptions': update_business_assumptions_after_incentivisation_revenue_share_buyback
+            'business_assumptions': update_business_assumptions_after_incentivisation_revenue_share_buyback,
+            'token_economy': update_token_economy_after_incentivisation_revenue_share
         },
     },
     {
