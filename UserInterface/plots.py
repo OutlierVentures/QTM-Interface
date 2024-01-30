@@ -743,9 +743,15 @@ def plot_token_economy(param_id, max_months):
                                                                                                                      1, param_id, max_months
                                 , plot_title="Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
         with pcol62:
-            log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
-            max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_staking_apr'], 1, param_id, max_months
-                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr) 
+            log_scale_toggle_usd_incentives = st.toggle('Log Scale - USD Incentives', value=True)
+            max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_bribe_rewards_for_stakers_usd', 'ba_staker_revenue_usd',
+                                                                                                                 'ba_service_provider_revenue_usd', 'ba_incentivisation_revenue_usd'],
+                                                                                                                    1, param_id, max_months
+                                            , plot_title="USD Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_usd_incentives)
+        
+        log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_staking_apr'], 1, param_id, max_months
+                                    , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr) 
             
     st.markdown('---')
     with st.expander("**Token Valuations**"):

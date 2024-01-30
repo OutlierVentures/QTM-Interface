@@ -26,6 +26,11 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                     'value': sys_param['mint_burn_ratio'][0],
                     'display_name': 'Mint / Burn Ratio',
                     'description': 'The ratio of minted tokens to burned tokens for staking rewards. The remaining tokens are distributed from the staking vesting bucket if an allocation exists.'
+                    },
+                'bribing_share': {
+                    'value': sys_param['bribing_share'][0] if 'bribing_share' in sys_param else 0.0,
+                    'display_name': 'Bribing to Stakers / %',
+                    'description': 'Bribing of stakers to vote for proposals as percentage of ecosystem incentivisation. Ecosystem applications might want to bribe stakers to vote for their proposals. The bribing share is NOT subtracted from any revenue, but comes on top of all value inflow into the economy. Nevertheless it depends on the incentivised ecosystem value and is paid in diverse assets.'
                     }
             },
             'Liquidity Mining': {
@@ -148,7 +153,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         # check utility sums
         for utility in utility_to_add:
             for key, val in utility_values[utility].items():    
-                if '_share' in key and key != 'staker_rev_share':
+                if '_share' in key and key != 'staker_rev_share' and key != 'bribing_share':
                     utility_sum += val['value']
                     utility_shares[utility] = [val['value']]
         
