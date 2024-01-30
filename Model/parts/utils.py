@@ -423,6 +423,8 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
         'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
         'te_airdrop_tokens_cum' : tokens_airdropped_cum, # tokens airdropped cumulatively
         'te_staking_apr': 0, # staking APR
+        'te_p_r_ratio': 0, # price to revenue ratio
+        'te_p_e_ratio': 0, # price to earnings ratio
     }
 
     return token_economy

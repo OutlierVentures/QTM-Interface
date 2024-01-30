@@ -512,7 +512,7 @@ def plot_business(param_id):
             cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_expenditures_usd', 'ba_var_expenditures_usd'],
                                                                                                         1, param_id, vesting=False,
                                                     plot_title="Expenditures Distribution", x_title="Months", y_title="Revenue per Month / USD")
-
+    
     st.markdown('---')
     pcol21a, pcol21b = st.columns(2)
     with pcol21a:
@@ -520,6 +520,12 @@ def plot_business(param_id):
     with pcol21b:
         max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
     
+    st.markdown('---')
+    # plot price/fee and price/business earning ratios
+    log_scale_toggle_pf = st.toggle('Log Scale - Price Ratios', value=False)
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_p_r_ratio','te_p_e_ratio'], 1, param_id, max_months,
+                    plot_title="Price / Revenue and Price / Earning Ratios", x_title="Months", y_title="Ratio", logy=log_scale_toggle_pf)
+
     return max_months
 
 def plot_token_economy(param_id, max_months):

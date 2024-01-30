@@ -142,6 +142,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     utilities = prev_state['utilities'].copy()
     business_assumptions = prev_state['business_assumptions'].copy()
     lp = prev_state['liquidity_pool'].copy()
+    user_adoption = prev_state['user_adoption'].copy()
 
     # policy inputs
     total_token_supply = policy_input['total_token_supply']
@@ -169,6 +170,8 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_holding_supply'] = held_supply
     updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
     updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_p_r_ratio'] = FDV_MC / ((business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue'])*12) if (business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue']) > 0 else 0.0
+    updated_token_economy['te_p_e_ratio'] = FDV_MC / (business_assumptions['ba_cash_flow']*12) if (business_assumptions['ba_cash_flow']) > 0 else 0.0
     
     cash_staking_rewards = business_assumptions['ba_staker_revenue_usd'] if utilities['u_staking_revenue_share_rewards'] <= 0 else 0.0
     new_staking_apr = ((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100
