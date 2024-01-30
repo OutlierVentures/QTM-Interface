@@ -73,14 +73,14 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     ## Calculating Token Buys
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']
     ##market_return = prev_state['update_return']
-    #current_month = prev_state['timestep']
-    #market_simu = prev_state['market']
-    #market_sim = market_simu['market']
-    #new_monthly_return = np.exp(market_sim[market_sim['timestep'] == current_month]['bitcoin_ln_return'].iloc[0])
+    current_month = prev_state['timestep']
+    market_simu = prev_state['market']
+    market_sim = market_simu['market']
+    new_monthly_return = np.exp(market_sim[market_sim['timestep'] == current_month]['bitcoin_ln_return'].iloc[0])
     if current_month == 1:
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:
-        token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user #*(1 + new_monthly_return)
+        token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user*(1 + new_monthly_return)
 
     return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
 
