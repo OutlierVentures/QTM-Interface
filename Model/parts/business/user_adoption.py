@@ -31,7 +31,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         revenue and token buys.
     
     """
-    # state variables
+    # state variables for all
     current_month = prev_state['timestep']
     current_date = prev_state['date']
     token_economy = prev_state['token_economy'].copy()
@@ -45,14 +45,16 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
     total_days = 3653
 
-    # parameters
     ## Product user adoption
+    # parameters
     initial_product_users = params['initial_product_users']
     product_users_after_10y = params['product_users_after_10y']
     product_adoption_velocity = params['product_adoption_velocity']
     one_time_product_revenue_per_user = params['one_time_product_revenue_per_user']
     regular_product_revenue_per_user = params['regular_product_revenue_per_user']
     user_adoption_target = params['user_adoption_target'] if 'user_adoption_target' in params else 0
+    
+    # state variables
     prev_product_users = prev_state['user_adoption']['ua_product_users']
 
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
@@ -73,17 +75,32 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     else:
         product_revenue = (product_users-prev_product_users)*one_time_product_revenue_per_user + product_users*regular_product_revenue_per_user
 
+    
     ## Token holder adoption
+    # parameters
     initial_token_holders = params['initial_token_holders']
     token_holders_after_10y = params['token_holders_after_10y']
     token_adoption_velocity = params['token_adoption_velocity']
     one_time_token_buy_per_user = params['one_time_token_buy_per_user']
     regular_token_buy_per_user = params['regular_token_buy_per_user']
+    agent_behavior = params['agent_behavior']
+    agent_staking_apr_target = params['agent_staking_apr_target']
+
+    # state variables
+    prev_token_holders = prev_state['user_adoption']['ua_token_holders']
 
     token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
 
+    # adjust token holders according to staking target
+    if agent_behavior == 'random':
+        last_month_day = (pd.to_datetime(current_date) - launchDate).days
+        token_holders_last_month_regular = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,last_month_day,total_days)
+        token_holders = (token_holders - token_holders_last_month_regular) + prev_token_holders
+        staking_apr_ratio = token_economy['te_staking_apr'] / agent_staking_apr_target
+
+        token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1)
+
     ## Calculating Token Buys
-    prev_token_holders = prev_state['user_adoption']['ua_token_holders']
     if current_month == 1:
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:
