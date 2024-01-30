@@ -109,7 +109,7 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 incentivisation_rev_share_buyback = False
             if incentivisation_rev_share > 0.0 or tav_return_dict['incentivisation_allocation'] > 0.0:
                 # add user adoption boost per incentivisation (in USD)
-                user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 100.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
+                user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 0.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
             else:
                 user_adoption_target = 1.0
 

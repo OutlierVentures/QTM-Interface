@@ -77,7 +77,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                     hold_prev = float(prev_agent_behavior['hold'])
                 
                 # determine utility and selling behavior
-                new_utility = utility_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1])) + (staking_apr - agent_staking_apr_target)/agent_staking_apr_target if current_month > 1 else utility_prev
+                new_utility = utility_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1])) + (np.sqrt((staking_apr)/agent_staking_apr_target)-1) if current_month > 1 else utility_prev
                 utility = np.min([np.max([0, new_utility]), 1])
                 selling = 1 - utility
                 remove = (1-utility) * random.uniform(0, 0.1)
