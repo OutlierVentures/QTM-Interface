@@ -410,9 +410,9 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
         else:
             dex_capital = 0.0
         
-        airdrop_date1 = datetime(airdrop_date1.year, airdrop_date1.month, airdrop_date1.day)
-        airdrop_date2 = datetime(airdrop_date2.year, airdrop_date2.month, airdrop_date2.day)
-        airdrop_date3 = datetime(airdrop_date3.year, airdrop_date3.month, airdrop_date3.day)
+        airdrop_date1 = datetime(airdrop_date1.year, airdrop_date1.month, airdrop_date1.day) if airdrop_toggle else datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y")
+        airdrop_date2 = datetime(airdrop_date2.year, airdrop_date2.month, airdrop_date2.day) if airdrop_toggle else datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y")
+        airdrop_date3 = datetime(airdrop_date3.year, airdrop_date3.month, airdrop_date3.day) if airdrop_toggle else datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y")
 
         if airdrop_toggle:
             if airdrop_date1 < token_launch_date:
@@ -422,19 +422,18 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
             if airdrop_date3 < token_launch_date:
                 st.error(f"The third airdrop date ({airdrop_date3.strftime('%d.%m.%Y')}) is before the launch date ({token_launch_date}). Please adjust the airdrop date!", icon="⚠️")
         
-                
         airdrop_dict = {
             'ad1': {
-                'date': [airdrop_date1.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date1'][0]][0],
-                'amount': [airdrop_amount1 if airdrop_toggle else sys_param['airdrop_amount1'][0]][0]
+                'date': airdrop_date1.strftime('%d.%m.%Y'),
+                'amount': [airdrop_amount1 if airdrop_toggle else 0][0]
             },
             'ad2': {
-                'date': [airdrop_date2.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date2'][0]][0],
-                'amount': [airdrop_amount2 if airdrop_toggle else sys_param['airdrop_amount2'][0]][0]
+                'date': airdrop_date2.strftime('%d.%m.%Y'),
+                'amount': [airdrop_amount2 if airdrop_toggle else 0][0]
             },
             'ad3': {
-                'date': [airdrop_date3.strftime('%d.%m.%Y') if airdrop_toggle else sys_param['airdrop_date3'][0]][0],
-                'amount': [airdrop_amount3 if airdrop_toggle else sys_param['airdrop_amount3'][0]][0]
+                'date': airdrop_date3.strftime('%d.%m.%Y'),
+                'amount': [airdrop_amount3 if airdrop_toggle else 0][0]
             }}
 
         # fill vesting_dict
@@ -574,9 +573,9 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
         "incentivisation_allocation" : incentivisation_allocation,
         "staking_vesting_allocation" : staking_vesting_allocation,
         "airdrop_allocation" : airdrop_allocation,
-        "airdrop_amount1" : airdrop_amount1,
-        "airdrop_amount2" : airdrop_amount2,
-        "airdrop_amount3" : airdrop_amount3,
+        "airdrop_amount1" : airdrop_dict['ad1']['amount'],
+        "airdrop_amount2" : airdrop_dict['ad2']['amount'],
+        "airdrop_amount3" : airdrop_dict['ad3']['amount'],
         "airdrop_date1" : airdrop_date1,
         "airdrop_date2" : airdrop_date2,
         "airdrop_date3" : airdrop_date3,
