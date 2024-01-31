@@ -24,4 +24,3 @@ pyxlsb
 xlsxwriter
 bcrypt==3.2.0
 streamlit-authenticator
-# brownian_motion_generator
