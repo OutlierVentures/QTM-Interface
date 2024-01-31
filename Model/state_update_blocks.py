@@ -28,15 +28,6 @@ state_update_blocks = [
             'date': update_date
         },
     },
- #   {
- #       # substep 1.5: ecosystem/token_economy.py
- #       'policies': {
- #           'new_monthly_return': generate_return
- #       },
- #       'variables': { 
- #           'new_return': update_return
- #       },
- #   },
     {
         # substep 2: ecosystem/vesting.py
         'policies': {

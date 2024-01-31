@@ -73,14 +73,14 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     ## Calculating Token Buys
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']
 
-    # Get Current timestep
-    current_month = prev_state['timestep']
+    # Get token to use for simulation from input parameters
     coin = params['token']
-    # Retrieve market simulation
-    market_simu = prev_state['market']
-    market_sim = market_simu['market']
+    
+    # Retrieve market simulation initialized at the beginning of the simulation
+    market_simu = prev_state['market']['market']
+
     # Compute monthly simulated return corresponding to current timestep 
-    new_monthly_return = np.exp(market_sim[market_sim['timestep'] == current_month][f'{coin}_ln_return'].iloc[0])
+    new_monthly_return = np.exp(market_simu[market_simu['timestep'] == current_month][f'{coin}_ln_return'].iloc[0])
     if current_month == 1:
         token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
     else:

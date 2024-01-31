@@ -41,34 +41,6 @@ def generate_date(params, substep, state_history, prev_state, **kwargs):
 
     return {'new_date': new_date}
 
-def generate_return(params, substep, state_history, prev_state, **kwargs): 
-    """
-    Generate the monthly simulated return for timestep.
-
-    Policy function.
-
-    Returns: 
-        A dict which points to the current monthly return to be considered.
-    """
-    # parameters
-    # initial_date = get_initial_date(params)
-    # market_simulation = coin_gecko_prices('bitcoin')
-    # state variables
-    current_month = prev_state['timestep']
-    # latest_market_price = market_simulation.tail(1)['bitcoin_usd'].values[0]
-    # market_sim = prev_state['market']
-    market_simu = prev_state['market']
-    market_sim = market_simu['market']
-    # market_sim = coin_gecko_prices('bitcoin')
-    # run = 1 #static for now
-    # new_monthly_return = np.exp(market_sim[(run, current_month)]['btc_ln_return'])
-    new_monthly_return = np.exp(market_sim[market_sim['timestep'] == current_month]['bitcoin_ln_return'].iloc[0])
-
-    # policy logic
-    # new_date = pd.to_datetime(initial_date)+pd.DateOffset(months=current_month)
-
-    return {'new_monthly_return': new_monthly_return}
-
 def token_economy_metrics(params, substep, state_history, prev_state, **kwargs):
     """
     Calculate the initial token economy metrics, such as MC, FDV MC, and circ. 
@@ -151,20 +123,6 @@ def update_date(params, substep, state_history, prev_state, policy_input, **kwar
     updated_date = policy_input['new_date']
 
     return ('date', updated_date)
-
-def update_return(params, substep, state_history, prev_state, policy_input, **kwargs):
-    """
-    Function to update the current date of the timestep.
-
-    State update function.
-
-    Returns:
-        Tuple ('date', updated_date).
-    """
-    # policy input / update logic
-    new_return = policy_input['new_monthly_return']
-
-    return ('new_return', new_return)
 
 def update_token_economy(params, substep, state_history, prev_state, policy_input, **kwargs):
     """
