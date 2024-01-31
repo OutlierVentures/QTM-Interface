@@ -17,7 +17,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                     'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked.'
                     },
                 'staker_rev_share': {
-                    'value': sys_param['staker_rev_share'][0] if 'staker_rev_share' in sys_param else ua_return_dict["staker_rev_share"],
+                    'value': ua_return_dict["staker_rev_share"],
                     'display_name': f'Revenue Share {"Buyback" if ua_return_dict["staker_rev_share_buyback"] else ""}/ %',
                     'description': f'The percentage of the revenue that is {"used for buying back and distributing tokens to stakers once the staking vesting bucket runs out of tokens. You can switch to revenue share in diverse assets in the User Adoption input section above." if ua_return_dict["staker_rev_share_buyback"] else " distributed to stakers. You can switch to revenue share via bought back tokens in the User Adoption input section above."}',
                     'disable' : True
@@ -146,7 +146,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                         options = val['options']
                         new_val = st.selectbox(display_name, options=options, index=options.index(init_value), help=description)
                     else:
-                        new_val = st.number_input(display_name, value=init_value, help=description, disabled=val['disable'] if 'disable' in val else False)
+                        new_val = st.number_input(display_name, value=init_value, min_value=0.0, help=description, disabled=val['disable'] if 'disable' in val else False)
                     
                     utility_values[utility][key]['value'] = new_val
 
