@@ -84,7 +84,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     one_time_token_buy_per_user = params['one_time_token_buy_per_user']
     regular_token_buy_per_user = params['regular_token_buy_per_user']
     agent_behavior = params['agent_behavior']
-    agent_staking_apr_target = params['agent_staking_apr_target']
+    agent_staking_apr_target = params['agent_staking_apr_target'] if 'agent_staking_apr_target' in params else 0
 
     # state variables
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']

@@ -53,6 +53,12 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             # get parameters
             random_seed = params['random_seed']
             agent_staking_apr_target = params['agent_staking_apr_target']
+            # individual utility allocations for more granular control in future random agent behavior versions
+            staking_share = params['staking_share']
+            liquidity_mining_share = params['liquidity_mining_share']
+            burning_share = params['burning_share']
+            holding_share = params['holding_share']
+            transfer_share = params['transfer_share']
 
             # get state variables
             agents = prev_state['agents'].copy()
@@ -77,8 +83,8 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                     hold_prev = float(prev_agent_behavior['hold'])
                 
                 # determine utility and selling behavior
-                new_utility = utility_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1])) + (np.sqrt((staking_apr)/agent_staking_apr_target)-1) if current_month > 1 else utility_prev
-                utility = np.min([np.max([0, new_utility]), 1])
+                new_utility = utility_prev + (np.sqrt((staking_apr)/agent_staking_apr_target)-1) * staking_share/100 if current_month > 1 else utility_prev
+                utility = np.min([np.max([0, new_utility * random.uniform(0.75,1.25)]), 1])
                 selling = 1 - utility
                 remove = (1-utility) * random.uniform(0, 0.1)
                 

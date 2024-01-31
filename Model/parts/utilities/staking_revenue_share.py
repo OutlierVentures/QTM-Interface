@@ -9,13 +9,11 @@ def staking_revenue_share_buyback(params, substep, state_history, prev_state, **
     agents = prev_state['agents'].copy()
     liquidity_pool = prev_state['liquidity_pool'].copy()
     utilities = prev_state['utilities'].copy()
-    business_assumptions = prev_state['business_assumptions'].copy()
 
     # rewards state variables
     lp_tokens_after_liquidity_addition  =  liquidity_pool['lp_tokens_after_liquidity_addition']
     lp_tokens_after_buyback = liquidity_pool['lp_tokens'] # Tokens after trx 4 (buybacks)
     u_buyback_from_revenue_share_staking_usd = utilities['u_buyback_from_revenue_share_staking_usd']
-    ba_buyback_from_revenue_share_incentivisation_usd = business_assumptions['ba_buyback_from_revenue_share_incentivisation_usd']
     ba_buybacks_usd =prev_state['business_assumptions']['ba_buybacks_usd']
 
     # policy logic
