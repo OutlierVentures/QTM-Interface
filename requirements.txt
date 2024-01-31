@@ -24,3 +24,11 @@ pyxlsb
 xlsxwriter
 bcrypt==3.2.0
 streamlit-authenticator
+# adding libraries for brownian motions
+sklearn
+typing; python_version >= '3.5'
+dataclasses; python_version < '3.7'
+numpy
+scipy
+statsmodels
+tqdm
