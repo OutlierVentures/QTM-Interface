@@ -54,6 +54,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
+    initial_total_supply = params['initial_total_supply']
+    initial_incentivisation_allocation = params['incentivisation_token_allocation'] * initial_total_supply
+    initial_staking_vesting_allocation = params['staking_vesting_token_allocation'] * initial_total_supply
 
     # check if revenue share is used for buying back tokens
     if 'staker_rev_share_buyback' in params:
@@ -85,10 +88,11 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     date = prev_state['date']
     prev_cash_balance = prev_state['business_assumptions']['ba_cash_balance']
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
-    utilities = prev_state['utilities'].copy()
-    token_economy = prev_state['token_economy'].copy()
-    staking_vesting_bucket_tokens = utilities['u_staking_vesting_rewards'] # get the amount of tokens in the staking vesting bucket
-    incentivisation_vesting_bucket_tokens = token_economy['te_incentivised_tokens'] # get the amount of tokens that got vested from the incentivisation bucket
+    agents = prev_state['agents'].copy()
+    staking_vesting_agent = agents[[agent for agent in agents if agents[agent]['a_name'].lower() == 'staking_vesting'][0]]
+    staking_vesting_bucket_tokens = initial_staking_vesting_allocation - staking_vesting_agent['a_tokens_vested_cum'] # calculate the amount of tokens in the staking vesting bucket
+    incentivisation_agent = agents[[agent for agent in agents if agents[agent]['a_name'].lower() == 'incentivisation'][0]]
+    incentivisation_vesting_bucket_tokens = initial_incentivisation_allocation - incentivisation_agent['a_tokens_vested_cum'] # calculate the amount of tokens in the incentivisation vesting bucket
  
     # policy logic
     # fixed expenditures
