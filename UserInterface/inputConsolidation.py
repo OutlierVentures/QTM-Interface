@@ -221,7 +221,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     new_params.update(ut_return_dict["utility_parameter_choice"])
 
     # add random seed to new_params
-    if ab_return_dict["agent_behavior"] == 'random':
+    if ab_return_dict["agent_behavior"] == 'simple':
         new_params['random_seed'] = ab_return_dict["random_seed"]
 
     # add in-market initialization parameters to new_params

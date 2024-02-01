@@ -96,11 +96,11 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         }
         
         # add staking target to utility values
-        if ab_return_dict["agent_behavior"] == 'random':
+        if ab_return_dict["agent_behavior"] == 'simple':
             utility_values['Stake'].update({'agent_staking_apr_target':{
                     'value': sys_param['agent_staking_apr_target'][0] if 'agent_staking_apr_target' in sys_param else 10.0,
                     'display_name': 'APR Target / %',
-                    'description': 'The agents target APR for staking rewards. Agents with random behavior will prioritize utility allocations over selling on average as long as the staking APR is above the APR target. Only applicable for random agent behavior!'
+                    'description': 'The agents target APR for staking rewards. Agents with simple behavior will prioritize utility allocations over selling on average as long as the staking APR is above the APR target. Only applicable for simple agent behavior!'
                     }})
         
         # remove utilities when not activated in the token allocation section

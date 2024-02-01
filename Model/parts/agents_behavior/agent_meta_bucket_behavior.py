@@ -45,10 +45,10 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
     """
 
     try:
-        if params['agent_behavior'] == 'random':
+        if params['agent_behavior'] == 'simple':
             """
-            Define the agent behavior for each agent type for the random agent behavior
-            Agent actions are based on pure randomnes.
+            Define the agent behavior for each agent type for the simple and random agent behavior
+            Agent actions are based on simple incentive and rewards reactions plus randomness .
             """
             # get parameters
             random_seed = params['random_seed']
