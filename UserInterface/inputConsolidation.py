@@ -252,7 +252,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         new_params.update({
             'market_investors_current_holdings': timi_return_dict["current_holdings"]['market_investors']*1e6,
             'market_investors_current_staked': timi_return_dict["current_staked"]['market_investors']*1e6,
-            'market_investors_vested_init': 0,
+            'market_investors_vested_init': timi_return_dict["current_holdings"]['market_investors']*1e6 + timi_return_dict["current_staked"]['market_investors']*1e6,
         })
         new_params['initial_cash_balance'] = ba_return_dict["initial_cash_balance"]*1e3
 
