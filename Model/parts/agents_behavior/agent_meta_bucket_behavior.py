@@ -76,29 +76,31 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 # agents previous timestep behavior
                 prev_agent_behavior = agents[agent]['a_actions']
                 if current_month == 1:
-                    utility_prev = random.uniform(0.5, 1)
-                    hold_prev = random.uniform(0.05, 0.15)
+                    utility_prev = 0.05
+                    hold_prev = 0.94
+                    sell_prev = 0.01
                 else:
                     utility_prev = float(prev_agent_behavior['utility'])
                     hold_prev = float(prev_agent_behavior['hold'])
+                    sell_prev = float(prev_agent_behavior['sell'])
                 
-                # determine utility and selling behavior
+                # determine utility and holding behavior
                 new_utility = utility_prev + (np.sqrt((staking_apr)/agent_staking_apr_target)-1) * staking_share/100 if current_month > 1 else utility_prev
                 utility = np.min([np.max([0, new_utility * random.uniform(0.75,1.25)]), 1])
-                selling = 1 - utility
+                holding = 1 - utility
                 remove = (1-utility) * random.uniform(0, 0.1)
                 
-                # include token holdings
+                # include token sells
                 random.seed(random_seed + current_month + i + random.uniform(0, 50))
-                holding = hold_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1]))
-                selling = selling - holding/2
-                utility = utility - holding/2
+                selling = sell_prev * (1 + np.min([random.uniform(-0.01, 0.01), 1]))
+                holding = holding - selling/2
+                utility = utility - selling/2
                 
-                if selling < 0:
-                    utility = utility + selling
-                    selling = 0
+                if holding < 0:
+                    utility = utility + holding
+                    holding = 0
                 if utility < 0:
-                    selling = selling + utility
+                    holding = holding + utility
                     utility = 0
                 
                 agent_behavior_dict[agent] = {

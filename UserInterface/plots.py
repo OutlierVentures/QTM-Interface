@@ -156,7 +156,7 @@ def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns={},
 
     # example for line plots of different outputs in one figure
     new_max_months = line_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
-    return new_max_months
+    return max_months if max_months < new_max_months else new_max_months
 
 def cum_plot_results_plotly(x, y_columns, run, param_id, vesting, x_title=None, y_title=None, info_box=None, plot_title=None):
 
@@ -267,31 +267,31 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
     if 'ba_cash_balance' in y_series_updated:
         chart_data = chart_data[(chart_data['ba_cash_balance'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
         if len(chart_data) < sys_param['simulation_duration'].iloc[0]:
-            st.warning(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data)-1} months, because the business ran out of funds.", icon="⚠️")
     
     if 'reserve_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])-1} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'community_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])} months, because the token economy community tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])-1} months, because the token economy community tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'foundation_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])-1} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'lp_tokens' in y_series_updated:
         if len(chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])-1} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'te_holding_supply' in y_series_updated:
         if len(chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])-1} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
         
     
@@ -486,9 +486,9 @@ def plot_business(param_id):
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
     max_months = sys_param['simulation_duration'].iloc[0]
     st.markdown('---')
-    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
-    st.markdown('---')
     max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    st.markdown('---')
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
     st.markdown('---')
     pcol21, pcol22 = st.columns(2)
     with pcol21:
@@ -540,11 +540,20 @@ def plot_business(param_id):
     
     return max_months
 
-def plot_token_economy(param_id, max_months):
+def plot_token_economy(param_id):
     ##ANALYSIS TAB
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
+    max_months = sys_param['simulation_duration'].iloc[0]
+
     st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
     # plot token protocol and economy supply buckets
     st.markdown('---')
+    if 'max_months' in st.session_state:
+        if st.session_state['max_months']<max_months:
+            st.warning(f"The simulation stopped after {st.session_state['max_months']-1} months, because the business ran out of funds.", icon="⚠️")
+            max_months = st.session_state['max_months']
+        
     with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
         log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
         max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',

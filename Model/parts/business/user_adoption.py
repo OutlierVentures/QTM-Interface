@@ -67,7 +67,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         product_users = (product_users - product_users_last_month_regular) + prev_product_users
         incentive_adoption_ratio = token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target
 
-        product_users = product_users + (product_users-prev_product_users) * (incentive_adoption_ratio - 1)
+        product_users = product_users + (product_users-prev_product_users) * (incentive_adoption_ratio - 1) if incentive_adoption_ratio > 0 else product_users
 
     ## Product Revenue
     if current_month == 1:
