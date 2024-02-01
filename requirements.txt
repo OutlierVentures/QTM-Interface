@@ -32,3 +32,4 @@ numpy
 scipy
 statsmodels
 tqdm
+scikit-learn
