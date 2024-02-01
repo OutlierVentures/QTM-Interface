@@ -443,7 +443,8 @@ def plot_fundraising(param_id):
                                                  'foundation_a_tokens_vested_cum',
                                                  'incentivisation_a_tokens_vested_cum',
                                                  'staking_vesting_a_tokens_vested_cum',
-                                                 'te_airdrop_tokens_cum'], 1, param_id, vesting=True,
+                                                 'te_airdrop_tokens_cum',
+                                                 'market_investors_a_tokens_vested_cum',], 1, param_id, vesting=True,
                                                  plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
     
     st.markdown('---')
