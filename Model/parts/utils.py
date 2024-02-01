@@ -386,7 +386,7 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
     
     initial_total_supply = sys_param['initial_total_supply'][0]
     tokens_holding_cum = sum([initial_stakeholders[agent]['a_tokens'] for agent in initial_stakeholders if initial_stakeholders[agent]['a_type'] != 'protocol_bucket'])
-    tokens_vested_cum = sum([initial_stakeholders[agent]['a_tokens_vested_cum'] for agent in initial_stakeholders])
+    tokens_vested_cum = sum([initial_stakeholders[agent]['a_tokens_vested_cum'] if initial_stakeholders[agent]['a_tokens_vested_cum']>0 else initial_stakeholders[agent]['a_tokens'] for agent in initial_stakeholders])
     tokens_airdropped_cum = sum([initial_stakeholders[agent]['a_tokens_airdropped_cum'] for agent in initial_stakeholders])
     tokens_incentivised_cum = sum([initial_stakeholders[agent]['a_tokens_incentivised_cum'] for agent in initial_stakeholders])
     lp_tokens = initial_liquidity_pool['lp_tokens']
