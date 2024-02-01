@@ -120,7 +120,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         for utility in utility_values:
             for key, val in utility_values[utility].items():
                 if '_share' in key and key != 'staker_rev_share':
-                    if val['value'] > 0:
+                    if val['value'] > 0 and utility not in default_utilities:
                         default_utilities.append(utility)
 
         # Let user add a utility from the dropdown
