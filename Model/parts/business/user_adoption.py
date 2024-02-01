@@ -56,7 +56,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     
     # state variables
     prev_product_users = prev_state['user_adoption']['ua_product_users']
-
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
 
     # adjust product users according to incentivisation target
@@ -94,11 +93,11 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     # adjust token holders according to staking target
     if agent_behavior == 'random':
         last_month_day = (pd.to_datetime(current_date) - launchDate).days
-        token_holders_last_month_regular = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,last_month_day,total_days)
+        token_holders_last_month_regular = calculate_user_adoption(initial_token_holders,token_holders_after_10y,product_adoption_velocity,last_month_day,total_days)
         token_holders = (token_holders - token_holders_last_month_regular) + prev_token_holders
         staking_apr_ratio = token_economy['te_staking_apr'] / agent_staking_apr_target
 
-        token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1)
+        token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1) if staking_apr_ratio > 0 else token_holders
 
     ## Calculating Token Buys
     if current_month == 1:

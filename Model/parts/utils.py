@@ -63,11 +63,12 @@ def convert_date(sys_param):
 
 def get_initial_date(sys_param):
     initial_date = pd.to_datetime(sys_param['launch_date'][0] if isinstance(sys_param['launch_date'], list) else sys_param['launch_date'], format='%d.%m.%Y')
-    if 'token_launch' in sys_param:
+    # use the following code if you want to use the token launch date as the initial date this would forward the user adoption accordingly.
+    """ if 'token_launch' in sys_param:
         token_launch = sys_param['token_launch'][0] if isinstance(sys_param['token_launch'], list) else sys_param['token_launch']
         if not token_launch:
             # set initial date to today's date
-            initial_date = pd.to_datetime('today')
+            initial_date = pd.to_datetime('today') """
     return initial_date
 
 def calculate_raised_capital(param):
@@ -457,7 +458,8 @@ def initialize_user_adoption(sys_param):
     regular_product_revenue_per_user = sys_param['regular_product_revenue_per_user'][0]
 
     # print all calculate_user_adoption inputs
-    product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
+    # product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days) # use this only for first day at token_launch
+    product_users = initial_product_users
     
     ## Product Revenue    
     product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
@@ -469,7 +471,8 @@ def initialize_user_adoption(sys_param):
     one_time_token_buy_per_user = sys_param['one_time_token_buy_per_user'][0]
     regular_token_buy_per_user = sys_param['regular_token_buy_per_user'][0]
 
-    token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
+    # token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days) # use this only for first day at token_launch
+    token_holders = initial_token_holders
 
     ## Calculating Token Buys
     token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
