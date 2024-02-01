@@ -5,20 +5,14 @@ def userAdoptionInput(sys_param, tav_return_dict):
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
         # adoption style choice | user numbers | revenues
-        col61, col62, col63 = st.columns(3)
+        col61, col62, col63 = st.columns([0.2,0.3,0.5])
         with col61:
             adoption_style_choices = ['Weak', 'Medium', 'Strong', 'Custom']
             adoption_style = st.radio('Adoption Assumption',tuple(adoption_style_choices), index=adoption_style_choices.index(sys_param['adoption_style'][0]) if 'adoption_style' in sys_param else 0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
             show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
         with col62:
-            product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no token holders, but only product users. 1 means the opposite and 0 means that there are as many product users as token holders.")
-            initial_users = st.number_input('Initial Users', label_visibility="visible", min_value=0, value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Weight.")
-            initial_product_users = initial_users * (1 - (product_token_ratio)) / 2
-            initial_token_holders = initial_users - initial_product_users
-
-        with col63:
-            st.write(f"Initial Token Holders: {int(np.ceil(initial_token_holders)):+,}")
-            st.write(f"Initial Product Users: {int(np.ceil(initial_product_users)):+,}")
+            initial_product_users = st.number_input('Initial Product Users', label_visibility="visible", min_value=0, value=int(sys_param['initial_product_users'][0]), disabled=False, key="initial_product_users", help="The initial product users generating revenue in diverse assets -> $.")
+            initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
 
         adoption_dict = {
             "Weak" : {
@@ -126,8 +120,6 @@ def userAdoptionInput(sys_param, tav_return_dict):
     ua_return_dict = {
         "adoption_style" : adoption_style,
         "show_full_adoption_table" : show_full_adoption_table,
-        "product_token_ratio" : product_token_ratio,
-        "initial_users" : initial_users,
         "initial_product_users" : initial_product_users,
         "initial_token_holders" : initial_token_holders,
         "avg_product_user_growth_rate" : avg_product_user_growth_rate,
