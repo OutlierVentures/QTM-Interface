@@ -32,6 +32,13 @@ def agentBehaviorInput(sys_param, adoption_style, adoption_dict):
         if meta_bucket_alloc_sum != 100 and agent_behavior == 'static':
             st.error(f"The sum of the average token allocations for utility, selling and holding ({avg_token_utility_allocation + avg_token_selling_allocation + avg_token_holding_allocation}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
     
+    # Dynamic Agent Selling Behavior Parameters. These are hardcoded for now to avoid too much complexity for the user, but might be implemented here in the future.
+    # The agent selling probability S depends on the change in token holders Tc as follows:
+    # S = 1 / (S_B**(Tc * S_e)) * S_0
+    S_B = 10
+    S_e = 5
+    S_0 = 0.03
+
     ab_return_dict = {
         "agent_behavior" : agent_behavior,
         "avg_token_utility_allocation" : avg_token_utility_allocation,
@@ -39,7 +46,10 @@ def agentBehaviorInput(sys_param, adoption_style, adoption_dict):
         "avg_token_holding_allocation" : avg_token_holding_allocation,
         "avg_token_utility_removal" : avg_token_utility_removal,
         "random_seed" : random_seed,
-        "meta_bucket_alloc_sum" : meta_bucket_alloc_sum
+        "meta_bucket_alloc_sum" : meta_bucket_alloc_sum,
+        "S_B" : S_B,
+        "S_e" : S_e,
+        "S_0" : S_0
     }
 
     return ab_return_dict

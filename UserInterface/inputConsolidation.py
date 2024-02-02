@@ -223,6 +223,9 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # add random seed to new_params
     if ab_return_dict["agent_behavior"] == 'simple':
         new_params['random_seed'] = ab_return_dict["random_seed"]
+        new_params['S_B'] = ab_return_dict["S_B"]
+        new_params['S_e'] = ab_return_dict["S_e"]
+        new_params['S_0'] = ab_return_dict["S_0"]
 
     # add in-market initialization parameters to new_params
     if not token_launch:

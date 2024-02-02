@@ -5,6 +5,7 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
     """
     # get parameters
     staking_share = params['staking_share']/100
+    agent_behavior = params['agent_behavior']
     
     # get state variables
     agents = prev_state['agents'].copy()
@@ -18,10 +19,13 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
     agents_staking_removal = {}
     agents_staking_vesting_rewards = {}
     staking_vesting_bucket_tokens = [agents[agent]['a_tokens'] for agent in agents if agents[agent]['a_name'] == 'staking_vesting'][0] # get the amount of tokens in the staking vesting bucket
+    max_staking_share = max([agents[agent]['a_actions']['St'] for agent in agents])
 
-    if staking_share > 0 or staking_vesting_bucket_tokens > 0:
+    if staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
         # calculate the staking vesting allocations per agent
         for agent in agents:
+            if agent_behavior == 'simple':
+                staking_share = agents[agent]['a_actions']['St']
             utility_removal_perc = agents[agent]['a_actions']['remove_tokens']
             utility_tokens = agents[agent]['a_utility_tokens'] + agents[agent]['a_utility_from_holding_tokens'] # get the new agent utility token allocations from vesting, airdrops, incentivisation, and holdings of previous timestep
             tokens_staked_cum = agents[agent]['a_tokens_staked_cum'] # get amount of staked tokens from last timestep
@@ -30,10 +34,10 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
             agents_staking_removal[agent] = tokens_staked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking utility for this timestep based on the tokens allocated in the previous timestep
             
             agent_utility_sum += agents_staking_allocations[agent] # sum up the total amount of tokens allocated to the staking utility for this timestep
-            agent_utility_removal_sum += agents_staking_removal[agent] # sum up the total amount of tokens removed from the staking utility for this timestep
+            agent_utility_removal_sum += agents_staking_removal[agent] # sum up the total amount of tokens removed from the staking utility for this timestep#
 
     # calculate the staking vesting rewards per agent
-    if staking_vesting_bucket_tokens > 0 or staking_share > 0 or staking_vesting_bucket_tokens > 0:
+    if staking_vesting_bucket_tokens > 0 or staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
         for agent in agents:
             if (utilities['u_staking_allocation_cum'] + agent_utility_sum - agent_utility_removal_sum) > 0:
                 agents_staking_vesting_rewards[agent] = staking_vesting_bucket_tokens * (

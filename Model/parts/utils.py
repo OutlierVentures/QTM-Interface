@@ -282,7 +282,7 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
 
     return lp_token_allocation
 
-def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_days):
+def calculate_user_adoption(initial_users,final_users,velocity,timestamp):
     """
     Take in user adoption data and calculate the amount of adoption.
 
@@ -293,12 +293,13 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
         final_users: ending amount of users
         velocity: speed of adoption on those users
         timstep: current timestep in days
-        total_days: length of full simulation.
     
     Returns:
         Number representing the user adoption.    
 
     """
+    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
+    total_days = 3653
 
     term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
     term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
@@ -458,7 +459,7 @@ def initialize_user_adoption(sys_param):
     regular_product_revenue_per_user = sys_param['regular_product_revenue_per_user'][0]
 
     # print all calculate_user_adoption inputs
-    # product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days) # use this only for first day at token_launch
+    # product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day) # use this only for first day at token_launch
     product_users = initial_product_users
     
     ## Product Revenue    
@@ -471,7 +472,7 @@ def initialize_user_adoption(sys_param):
     one_time_token_buy_per_user = sys_param['one_time_token_buy_per_user'][0]
     regular_token_buy_per_user = sys_param['regular_token_buy_per_user'][0]
 
-    # token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days) # use this only for first day at token_launch
+    # token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day) # use this only for first day at token_launch
     token_holders = initial_token_holders
 
     ## Calculating Token Buys

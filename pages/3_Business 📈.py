@@ -20,7 +20,7 @@ if 'authentication_status' in st.session_state:
         # main page
         st.markdown("## Business 📈")
         if 'param_id' in st.session_state:
-            if st.session_state['param_id'] != "":
+            if st.session_state['param_id'] != "":                
                 max_months = plot_business(st.session_state['param_id'])
                 st.session_state['max_months'] = max_months
     else:
