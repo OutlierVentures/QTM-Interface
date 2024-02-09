@@ -181,14 +181,13 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_incentivised_usd_per_product_user'] = (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) / user_adoption['ua_product_users'] if user_adoption['ua_product_users'] > 0 else 0.0
     
     cash_staking_rewards = business_assumptions['ba_staker_revenue_usd'] if utilities['u_staking_revenue_share_rewards'] <= 0 else 0.0
-    bribing_rewards_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 if bribing_share > 0 else 0.0
+    bribing_rewards_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 + business_assumptions['ba_incentivisation_revenue_usd'] * bribing_share/100 if (bribing_share > 0) else 0.0
     updated_token_economy['te_bribe_rewards_for_stakers_usd'] = bribing_rewards_usd
     updated_token_economy['te_bribe_rewards_for_stakers_usd_cum'] += bribing_rewards_usd
     token_staking_apr = (utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
     revenue_staking_apr = (cash_staking_rewards+bribing_rewards_usd)*12 / (utilities['u_staking_allocation_cum'] * lp['lp_token_price']) * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
     new_staking_apr = token_staking_apr + revenue_staking_apr
-    new_staking_apr = 500 if (utilities['u_staking_allocation_cum'] == 0 and (((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards']) > 0) or ((cash_staking_rewards+bribing_rewards_usd)>0))) else new_staking_apr
+    new_staking_apr = 100 if (utilities['u_staking_allocation_cum'] == 0 and (((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards']) > 0) or ((cash_staking_rewards+bribing_rewards_usd)>0))) else new_staking_apr
     updated_token_economy['te_staking_apr'] = new_staking_apr if not np.isnan(new_staking_apr) else 0.0
 
     return ('token_economy', updated_token_economy)
-

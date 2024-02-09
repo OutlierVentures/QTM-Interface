@@ -96,7 +96,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             S = S * random.uniform(0.9, 1.1)
 
             # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
-            St = (np.sqrt(staking_apr/agent_staking_apr_target)-1) * staking_share/100 if staking_apr > 0 else 0
+            St = (np.sqrt(staking_apr/agent_staking_apr_target)) * staking_share/100 if staking_apr > 0 else 0
             St = St if St > 0 else 0
 
             # calculate all individual utility allocations
@@ -111,6 +111,9 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 St = St + S
                 S = 0
                 U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
+            
+            # adjust St w.r.t. the sum of all individual utility allocations
+            St = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
 
             np.testing.assert_allclose(S+U+H, 1, rtol=0.001, err_msg=f"Agent meta bucket behavior does not sum up to 100% ({(S+U+H)*100.0}), S: {S}, U: {U}, H: {H}.")
 
@@ -120,7 +123,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
                 
-                remove = (1-U) * random.uniform(0, 0.1)
+                remove = (1-U) * random.uniform(0, 0.5)
                 
                 agent_behavior_dict[agent] = {
                     'sell': S,
@@ -133,7 +136,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 # consistency check for agent metabucket behavior
                 error_msg = f"Agent meta bucket behavior for agent {agent} does not sum up to 100% ({(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'])*100.0})."
                 np.testing.assert_allclose(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'], 1.0, rtol=0.0001, err_msg=error_msg)
-        
+
         elif params['agent_behavior'] == 'static':
             """
             Define the agent behavior for each agent type for the static 1:1 QTM behavior
