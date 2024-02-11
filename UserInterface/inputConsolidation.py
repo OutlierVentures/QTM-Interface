@@ -219,9 +219,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
         'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
         'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
-        'token' : mkt_return_dict["token"], # adding new parameter for market sentiment
+        'token' : mkt_return_dict["token"], 
         'start date' : mkt_return_dict['sim_start'],
         'end date': mkt_return_dict['sim_end'],
+        'market': mkt_return_dict['market'],
     }
 
     # add utility parameters to new_params
