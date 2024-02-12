@@ -76,6 +76,10 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             current_month = prev_state['timestep']
             current_date = prev_state['date']
 
+            # get utility allocation share from last timestep
+            if current_month > 1:
+                max_utility_alloc_prev = max([agents[agent]['a_actions']['utility'] for agent in agents])
+
             # find token holder change Tc
             prev_token_holders = prev_state['user_adoption']['ua_token_holders']
             current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days
@@ -96,8 +100,11 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             S = S * random.uniform(0.9, 1.1)
 
             # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
-            St = (np.sqrt(staking_apr/agent_staking_apr_target)) * staking_share/100 if staking_apr > 0 else 0
+            St = (np.sqrt(staking_apr/agent_staking_apr_target)-1) * staking_share/100 if staking_apr > 0 else 0
             St = St if St > 0 else 0
+            # add a damping term to the staking share to avoid extreme changes
+            St_diff = max_utility_alloc_prev - St if current_month > 1 else 0
+            St = St + St_diff * 0.75
 
             # calculate all individual utility allocations
             U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
@@ -123,8 +130,8 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
                 
-                remove = (1-U) * random.uniform(0, 0.5)
-                
+                remove = np.min([(1-U) * random.uniform(0.0, 0.1),1])
+           
                 agent_behavior_dict[agent] = {
                     'sell': S,
                     'hold': H,

@@ -31,7 +31,8 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
             tokens_staked_cum = agents[agent]['a_tokens_staked_cum'] # get amount of staked tokens from last timestep
             
             agents_staking_allocations[agent] = utility_tokens * staking_share # calculate the amount of tokens that shall be allocated to the staking utility from this timestep
-            agents_staking_removal[agent] = tokens_staked_cum * utility_removal_perc # calculate the amount of tokens that shall be removed from the staking utility for this timestep based on the tokens allocated in the previous timestep
+            remove_value = tokens_staked_cum * utility_removal_perc if agents[agent]['a_tokens_staked_cum'] + agents_staking_allocations[agent] - tokens_staked_cum * utility_removal_perc > 0 else agents[agent]['a_tokens_staked_cum'] + agents_staking_allocations[agent]
+            agents_staking_removal[agent] = remove_value # calculate the amount of tokens that shall be removed from the staking utility for this timestep based on the tokens allocated in the previous timestep
             
             agent_utility_sum += agents_staking_allocations[agent] # sum up the total amount of tokens allocated to the staking utility for this timestep
             agent_utility_removal_sum += agents_staking_removal[agent] # sum up the total amount of tokens removed from the staking utility for this timestep#
