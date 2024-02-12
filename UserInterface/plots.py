@@ -540,7 +540,7 @@ def plot_business(param_id):
     
     return max_months
 
-def plot_token_economy(param_id):
+def plot_agent_behavior(param_id):
     ##ANALYSIS TAB
     sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
     sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
@@ -553,15 +553,7 @@ def plot_token_economy(param_id):
         if st.session_state['max_months']<max_months:
             st.warning(f"The simulation stopped after {st.session_state['max_months']-1} months, because the business ran out of funds.", icon="⚠️")
             max_months = st.session_state['max_months']
-        
-    with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
-        log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
-        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
-                            'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
-                            'te_unvested_supply','te_circulating_supply','te_total_supply'], 1, param_id, max_months
-                            , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
-    
-    st.markdown('---')
+
     with st.expander("**Stakeholder Behavior**"):
         pcol31, pcol32 = st.columns(2)
         with pcol31:
@@ -635,7 +627,7 @@ def plot_token_economy(param_id):
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
     
-            # plot individual agent meta bucket behavior
+        # plot individual agent meta bucket behavior
         stakeholder_names, stakeholder_mapping = get_stakeholders()
         pcol31d, pcol32d = st.columns(2)
         with pcol31d:
@@ -727,6 +719,29 @@ def plot_token_economy(param_id):
                                                 , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
 
 
+
+
+def plot_token_economy(param_id):
+    ##ANALYSIS TAB
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
+    max_months = sys_param['simulation_duration'].iloc[0]
+
+    st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
+    # plot token protocol and economy supply buckets
+    st.markdown('---')
+    if 'max_months' in st.session_state:
+        if st.session_state['max_months']<max_months:
+            st.warning(f"The simulation stopped after {st.session_state['max_months']-1} months, because the business ran out of funds.", icon="⚠️")
+            max_months = st.session_state['max_months']
+        
+    with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
+        log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
+                            'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
+                            'te_unvested_supply','te_circulating_supply','te_total_supply'], 1, param_id, max_months
+                            , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
+    
     st.markdown('---')
     with st.expander("**Token Incentives**"):
         pcol61, pcol62 = st.columns(2)

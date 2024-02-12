@@ -54,11 +54,11 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
         st.write("**Buybacks and Burns**")
         col91, col92 = st.columns(2)
         with col91:
-            enable_protocol_buybacks = st.toggle('Enable Protocol Token Buybacks', value=float(sys_param['buyback_perc_per_month'][0]) > 0 or float(sys_param['buyback_fixed_per_month'][0]) > 0, help=" Enable the buyback of tokens to refill a protocol bucket.")
+            enable_protocol_buybacks = st.toggle('Enable Protocol Token Buybacks', value=float(sys_param['buyback_perc_per_month'][0]) > 0 or float(sys_param['buyback_fixed_per_month'][0]) > 0, help="Enable the buyback of tokens to refill a protocol bucket.")
             if enable_protocol_buybacks:
                 buyback_type = st.radio('Buyback Type',('Fixed', 'Percentage'), index=0, help='The buyback type determines the buyback behavior of the business. A fixed buyback means that the business buys back a fixed USD worth amount of tokens per month. A percentage buyback means that the business buys back a percentage USD worth amount of tokens per month, depending on the business funds.')
                 if buyback_type == 'Fixed':
-                    buyback_fixed_per_month = st.number_input('Buyback per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['buyback_fixed_per_month'][0])/1e3 if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_fixed_per_month", help="The fixed USD worth amount of tokens bought back by the business per month.")
+                    buyback_fixed_per_month = st.number_input('Buyback per month / $k', label_visibility="visible", value=[float(sys_param['buyback_fixed_per_month'][0])/1e3 if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_fixed_per_month", help="The fixed USD worth amount of tokens bought back by the business per month.")
                     buyback_perc_per_month = 0.0
                 elif buyback_type == 'Percentage':
                     buyback_perc_per_month = st.number_input('Buyback per month / %', label_visibility="visible", min_value=0.0, value=[float(sys_param['buyback_perc_per_month'][0]) if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_perc_per_month", help="The USD worth of tokens bought back by the business per month as percentage of the current business funds.")
