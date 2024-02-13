@@ -19,9 +19,9 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
     agents_staking_removal = {}
     agents_staking_vesting_rewards = {}
     staking_vesting_bucket_tokens = [agents[agent]['a_tokens'] for agent in agents if agents[agent]['a_name'] == 'staking_vesting'][0] # get the amount of tokens in the staking vesting bucket
-    max_staking_share = max([agents[agent]['a_actions']['St'] for agent in agents])
+    max_staking_share = max([agents[agent]['a_actions']['St'] for agent in agents]) if agent_behavior == 'simple' else staking_share
 
-    if staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
+    if staking_vesting_bucket_tokens > 0 or max_staking_share > 0 or staking_share > 0:
         # calculate the staking vesting allocations per agent
         for agent in agents:
             if agent_behavior == 'simple':
