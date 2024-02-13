@@ -100,7 +100,7 @@ def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_month
                                                              stakeholder1_raw+'_a_utility_from_holding_tokens', stakeholder1_raw+'_a_selling_from_holding_tokens', stakeholder1_raw+'_a_holding_from_holding_tokens']]
     
     # Format the column names
-    formatted_columns = [col + ' From Vesting' if ('timestep' if not st.session_state['date_conversion'] else 'date' not in col and 'From Holding' not in col) else col for col in formatted_columns ]
+    formatted_columns = [col + ' From Vesting' if 'From Holding' not in col else col for col in formatted_columns ]
     
     df.columns = formatted_columns
 
@@ -643,6 +643,7 @@ def plot_agent_behavior(param_id):
                 percentage_area1 = st.toggle('Percentage Area 1', value=False)
 
             area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+            
             max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', [f'{stakeholder1_raw}_a_tokens_vested_cum', f'{stakeholder1_raw}_a_tokens_airdropped_cum',
                                                           f'{stakeholder1_raw}_a_tokens_incentivised_cum', f'{stakeholder1_raw}_a_tokens_staking_buyback_rewards_cum',
                                                           f'{stakeholder1_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder1_raw}_a_tokens_staking_minting_rewards_cum',
