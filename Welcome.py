@@ -35,7 +35,7 @@ with st.expander('Sign-Up', expanded=False):
 # Login section
 with st.expander('Login', expanded=False):
 
-    st.session_state["authenticator"].login('Login', 'main')
+    st.session_state["authenticator"].login()
 
     if st.session_state["authentication_status"]:
         st.success(f'✅ Successfully signed in as *{st.session_state["name"]}*')
