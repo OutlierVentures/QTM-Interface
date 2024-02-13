@@ -4,8 +4,14 @@ cookie:
   name: some_cookie_name
 credentials:
   usernames:
+    admin:
+      email: achim.struve@outlierventures.io
+      logged_in: false
+      name: OV Admin
+      password: $2b$12$vFRGsaLPTPHA4vpLfdRwyel3NMCZd9TVnAXluv/Dbv0d1DFRUw3MK
     user:
       email: test@user.com
+      logged_in: false
       name: Test User
       password: $2b$12$pkOBfUsc1RSXQudmLC.UEuWe.9SmPERyF9B9.P4JnbRqPmGSLev6O
 preauthorized:

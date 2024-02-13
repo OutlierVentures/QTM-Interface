@@ -26,7 +26,7 @@ st.session_state["authenticator"] = stauth.Authenticate(
 # Sign-up section
 with st.expander('Sign-Up', expanded=False):
     try:
-        if st.session_state["authenticator"].register_user('Register to get access', preauthorization=False):
+        if st.session_state["authenticator"].register_user():
             st.success('User registered successfully')
             safeToYaml(config)
     except Exception as e:
@@ -72,7 +72,7 @@ if st.session_state["authentication_status"]:
     with st.expander('Update User Details', expanded=False):        
         # update user details
         try:
-            if st.session_state["authenticator"].update_user_details(st.session_state["username"], 'Update user details'):
+            if st.session_state["authenticator"].update_user_details(username=st.session_state["username"]):
                 st.success('Entries updated successfully')
                 safeToYaml(config)
         except Exception as e:
@@ -80,7 +80,7 @@ if st.session_state["authentication_status"]:
         
         # reset password
         try:
-            if st.session_state["authenticator"].reset_password(st.session_state["username"], 'Reset password'):
+            if st.session_state["authenticator"].reset_password(username=st.session_state["username"]):
                 st.success('Password modified successfully')
                 safeToYaml(config)
         except Exception as e:

@@ -83,7 +83,7 @@ def ui_base(parent_dir, return_db_sorted=False):
         # suppose that the 'usermail' field can contain multiple mail addresses, separated by a comma. Now we want to filter the database by the current usermail
         db_sorted['usermail'] = db_sorted['usermail'].str.split(',')
         db_sorted = db_sorted.explode('usermail')
-        db_sorted = db_sorted[db_sorted['usermail'] == st.session_state["authenticator"].credentials["usernames"][st.session_state["username"]]["email"]]
+        db_sorted = db_sorted[db_sorted['usermail'] == st.session_state["authenticator"].credentials["usernames"][st.session_state["username"]]["email"]] if st.session_state["username"] != 'admin' else db_sorted
         project_names = db_sorted['project_name']
         project_names = project_names.to_list()
         project_names.append('')
