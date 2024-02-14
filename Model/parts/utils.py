@@ -370,7 +370,8 @@ def initialize_dex_liquidity(sys_param):
         'lp_token_price_min': 0, # min price of LP token
         'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
         'lp_tokens_after_liquidity_addition':0, # Token after liquidity addition tx 3
-        'lp_tokens_after_buyback': 0 # tokens after buy back tx 4
+        'lp_tokens_after_buyback': 0, # tokens after buy back tx 4
+        'lp_sold_business_tokens': 0, # sold tokens by business
     }
 
     return liquidity_pool

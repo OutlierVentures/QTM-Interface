@@ -35,6 +35,8 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     """
     # state variables 1
     current_month = prev_state['timestep']
+    agents = prev_state['agents'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
 
     # parameters
     token_launch = params['token_launch'] if 'token_launch' in params else True
@@ -51,6 +53,7 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     buyback_fixed_per_month = params['buyback_fixed_per_month']
     buyback_start = pd.to_datetime(params['buyback_start'], format='%d.%m.%Y')
     buyback_end = pd.to_datetime(params['buyback_end'], format='%d.%m.%Y')
+    buyback_bucket = params['buyback_bucket']
 
     initial_lp_token_allocation = params['initial_lp_token_allocation']
     initial_token_price = params['initial_token_price']
@@ -135,6 +138,19 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
             
         else:
             raise ValueError('The buyback type is not defined!')
+        
+        # check if the business has enough cash to perform the buyback
+        business_buybacks = min(business_buybacks, prev_cash_balance)
+
+        # check if the business has enough tokens to sell in case of a negative business buyback
+        if business_buybacks < 0:
+            buyback_bucket_agent_tokens = [agents[agent]['a_tokens'] for agent in agents if agents[agent]['a_name'].lower() in buyback_bucket.lower()][0]
+            buyback_bucket_agent_tokens = buyback_bucket_agent_tokens if buyback_bucket_agent_tokens > 0 else 0
+            if buyback_bucket_agent_tokens * liquidity_pool['lp_token_price'] < np.abs(business_buybacks) and buyback_bucket_agent_tokens > 1:
+                business_buybacks = -buyback_bucket_agent_tokens * liquidity_pool['lp_token_price']
+            elif buyback_bucket_agent_tokens * liquidity_pool['lp_token_price'] < np.abs(business_buybacks) and buyback_bucket_agent_tokens <= 1:
+                business_buybacks = 0
+            var_business_revenue += -business_buybacks
 
     business_revenue = fixed_business_revenue + var_business_revenue - business_buybacks if business_buybacks < 0 else fixed_business_revenue + var_business_revenue
     business_expenditures = fixed_business_expenditures + business_buybacks if business_buybacks > 0 else fixed_business_expenditures
@@ -145,8 +161,10 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     # calculate buyback sum
     buybacks = business_buybacks + staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount if business_buybacks > 0 else staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount
 
+    var_business_expenditures = business_buybacks if business_buybacks >0 else 0
+
     return {'cash_flow': cash_flow, 'fixed_business_revenue': fixed_business_revenue, 'var_business_revenue': var_business_revenue,
-            'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks, 'business_buybacks_usd': business_buybacks,
+            'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': var_business_expenditures, 'business_buybacks_usd': business_buybacks,
             'buybacks': buybacks, 'var_staker_revenue': var_staker_revenue,
             'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue,
             'u_buyback_from_revenue_share_staking_usd': staker_rev_share_buyback_amount, 'ba_buyback_from_revenue_share_incentivisation_usd': incentivisation_rev_share_buyback_amount}
