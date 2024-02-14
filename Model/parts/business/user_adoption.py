@@ -43,8 +43,8 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days # let current day start from the start of the simulation for user adoption (disable this for testing)
 
     # Enable these for testing against the old QTM data
-    launchDate = get_initial_date(params) # enable this for testing
-    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days # enable this for testing
+    #launchDate = get_initial_date(params) # enable this for testing
+    #current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days # enable this for testing
 
     ## Product user adoption
     # parameters
