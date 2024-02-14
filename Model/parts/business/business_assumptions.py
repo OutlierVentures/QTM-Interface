@@ -136,15 +136,18 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
         else:
             raise ValueError('The buyback type is not defined!')
 
-    business_revenue = fixed_business_revenue + var_business_revenue
-    business_expenditures = fixed_business_expenditures + business_buybacks
+    business_revenue = fixed_business_revenue + var_business_revenue - business_buybacks if business_buybacks < 0 else fixed_business_revenue + var_business_revenue
+    business_expenditures = fixed_business_expenditures + business_buybacks if business_buybacks > 0 else fixed_business_expenditures
 
     # calculate the cash flow for the month
     cash_flow = business_revenue - business_expenditures
 
+    # calculate buyback sum
+    buybacks = business_buybacks + staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount if business_buybacks > 0 else staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount
+
     return {'cash_flow': cash_flow, 'fixed_business_revenue': fixed_business_revenue, 'var_business_revenue': var_business_revenue,
             'fixed_business_expenditures': fixed_business_expenditures, 'var_business_expenditures': business_buybacks, 'business_buybacks_usd': business_buybacks,
-            'buybacks': business_buybacks + staker_rev_share_buyback_amount + incentivisation_rev_share_buyback_amount, 'var_staker_revenue': var_staker_revenue,
+            'buybacks': buybacks, 'var_staker_revenue': var_staker_revenue,
             'var_service_provider_revenue': var_service_provider_revenue, 'var_incentivisation_revenue': var_incentivisation_revenue,
             'u_buyback_from_revenue_share_staking_usd': staker_rev_share_buyback_amount, 'ba_buyback_from_revenue_share_incentivisation_usd': incentivisation_rev_share_buyback_amount}
 

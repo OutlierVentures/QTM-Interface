@@ -536,8 +536,8 @@ def initialize_business_assumptions(sys_param, initial_user_adoption):
     'ba_staker_revenue_cum_usd': product_revenue * (staker_rev_share/100), # staker revenue cumulatively
     'ba_service_provider_revenue_usd': product_revenue * (service_provider_rev_share/100), # service provider revenue
     'ba_service_provider_revenue_cum_usd': product_revenue * (service_provider_rev_share/100), # service provider revenue cumulatively
-    'ba_incentivisation_revenue_usd': 0, # incentivisation revenue
-    'ba_incentivisation_revenue_cum_usd': 0, # incentivisation revenue cumulatively
+    'ba_incentivisation_revenue_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue
+    'ba_incentivisation_revenue_cum_usd': product_revenue * (incentivisation_rev_share/100), # incentivisation revenue cumulatively
     'ba_buyback_from_revenue_share_incentivisation_usd': 0, # buyback from revenue share in USD for incentivisations
     'ba_buyback_from_revenue_share_incentives' : 0, # buyback incentives from revenue share in tokens
     'ba_business_buybacks_usd' : 0, # business buybacks in USD
