@@ -61,7 +61,7 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
                     buyback_fixed_per_month = st.number_input('Buyback per month / $k', label_visibility="visible", value=[float(sys_param['buyback_fixed_per_month'][0])/1e3 if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_fixed_per_month", help="The fixed USD worth amount of tokens bought back by the business per month.")
                     buyback_perc_per_month = 0.0
                 elif buyback_type == 'Percentage':
-                    buyback_perc_per_month = st.number_input('Buyback per month / %', label_visibility="visible", min_value=0.0, value=[float(sys_param['buyback_perc_per_month'][0]) if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_perc_per_month", help="The USD worth of tokens bought back by the business per month as percentage of the current business funds.")
+                    buyback_perc_per_month = st.number_input('Buyback per month / %', label_visibility="visible", value=[float(sys_param['buyback_perc_per_month'][0]) if enable_protocol_buybacks else 0.0][0], disabled=False, key="buyback_perc_per_month", help="The USD worth of tokens bought back by the business per month as percentage of the current business funds.")
                     buyback_fixed_per_month = 0.0
                 
                 buyback_buckets = ['Reserve', 'Community', 'Foundation', 'Incentivisation', 'Staking Vesting']
