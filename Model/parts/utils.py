@@ -419,9 +419,9 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
         'te_minted_tokens_cum': 0, # tokens minted cumulatively
         'te_minted_tokens_usd': 0, # tokens minted in USD
         'te_incentivised_tokens' : 0, # tokens incentivised
+        'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
         'te_incentivised_tokens_usd' : 0, # tokens incentivised in USD
         'te_incentivised_tokens_usd_cum' : 0, # tokens incentivised in USD cumulatively
-        'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
         'te_airdrop_tokens' : 0, # tokens airdropped
         'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
         'te_airdrop_tokens_usd_cum' : 0, # tokens airdropped in USD cumulatively

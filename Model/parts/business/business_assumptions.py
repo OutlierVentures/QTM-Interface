@@ -90,9 +90,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     product_revenue = prev_state['user_adoption']['ua_product_revenue']
     agents = prev_state['agents'].copy()
     staking_vesting_agent = agents[[agent for agent in agents if agents[agent]['a_name'].lower() == 'staking_vesting'][0]]
-    staking_vesting_bucket_tokens = initial_staking_vesting_allocation - staking_vesting_agent['a_tokens_vested_cum'] # calculate the amount of tokens in the staking vesting bucket
+    staking_vesting_bucket_tokens = initial_staking_vesting_allocation - staking_vesting_agent['a_tokens_vested_cum'] + staking_vesting_agent['a_tokens_vested'] # calculate the amount of tokens in the staking vesting bucket
     incentivisation_agent = agents[[agent for agent in agents if agents[agent]['a_name'].lower() == 'incentivisation'][0]]
-    incentivisation_vesting_bucket_tokens = initial_incentivisation_allocation - incentivisation_agent['a_tokens_vested_cum'] # calculate the amount of tokens in the incentivisation vesting bucket
+    incentivisation_vesting_bucket_tokens = initial_incentivisation_allocation - incentivisation_agent['a_tokens_vested_cum'] + incentivisation_agent['a_tokens_vested'] # calculate the amount of tokens in the incentivisation vesting bucket
  
     # policy logic
     # fixed expenditures

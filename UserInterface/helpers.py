@@ -109,7 +109,7 @@ def ui_base(parent_dir, return_db_sorted=False):
         pass
 
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
-        newMailAccess = st.sidebar.text_input('Share Dataset', "")
+        newMailAccess = st.sidebar.text_input('Share Dataset with Email', "")
         st.sidebar.button('Share Dataset', on_click=shareDataSet, args=(newMailAccess,))
     
     if return_db_sorted:

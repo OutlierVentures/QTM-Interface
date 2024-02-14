@@ -35,13 +35,16 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_month = prev_state['timestep']
     current_date = prev_state['date']
     token_economy = prev_state['token_economy'].copy()
-    launchDate = pd.to_datetime(params['launch_date'], format='%d.%m.%Y')
-    if params['agent_behavior'] == 'simple':
+    agent_behavior = params['agent_behavior']
+    if agent_behavior == 'simple':
         random_seed = params['random_seed']
         random.seed(random_seed + current_month)
+    
+    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days # let current day start from the start of the simulation for user adoption (disable this for testing)
 
-    # current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days
-    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days # let current day start from the start of the simulation for user adoption
+    # Enable these for testing against the old QTM data
+    #launchDate = get_initial_date(params) # enable this for testing
+    #current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days # enable this for testing
 
     ## Product user adoption
     # parameters
@@ -57,7 +60,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day)
 
     # adjust product users according to incentivisation target
-    if user_adoption_target != 0:
+    if user_adoption_target != 0 and agent_behavior == 'simple':
         # calculate new product users based on incentivisation target
         last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
         product_users_last_month_regular = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,last_month_day)
@@ -80,7 +83,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     token_adoption_velocity = params['token_adoption_velocity']
     one_time_token_buy_per_user = params['one_time_token_buy_per_user']
     regular_token_buy_per_user = params['regular_token_buy_per_user']
-    agent_behavior = params['agent_behavior']
     agent_staking_apr_target = params['agent_staking_apr_target'] if 'agent_staking_apr_target' in params else 0
 
     # state variables
