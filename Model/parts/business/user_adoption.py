@@ -65,7 +65,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
         product_users_last_month_regular = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,last_month_day)
         product_users = (product_users - product_users_last_month_regular) + prev_product_users
-        incentive_adoption_ratio = token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target
+        incentive_adoption_ratio = (token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target)**1.25
 
         product_users = product_users + (product_users-prev_product_users) * (incentive_adoption_ratio - 1) if incentive_adoption_ratio > 0 else product_users
 
@@ -95,7 +95,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
         token_holders_last_month_regular = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,last_month_day)
         token_holders = (token_holders - token_holders_last_month_regular) + prev_token_holders
-        staking_apr_ratio = (token_economy['te_staking_apr'] / agent_staking_apr_target)**2
+        staking_apr_ratio = (token_economy['te_staking_apr'] / agent_staking_apr_target)**1.25 * (product_users / prev_product_users)
 
         token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1) if staking_apr_ratio > 0 else token_holders
 

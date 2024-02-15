@@ -488,7 +488,8 @@ def plot_business(param_id):
     st.markdown('---')
     max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
     st.markdown('---')
-    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
+    log_scale_toggle_user_adoption = st.toggle('Log Scale - User Adoption', value=True)
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count", logy=log_scale_toggle_user_adoption)
     st.markdown('---')
     pcol21, pcol22 = st.columns(2)
     with pcol21:
@@ -744,7 +745,7 @@ def plot_token_economy(param_id):
                             , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
     
     st.markdown('---')
-    with st.expander("**Token Incentives**"):
+    with st.expander("**Incentives**"):
         pcol61, pcol62 = st.columns(2)
         with pcol61:
             pcol61a, pcol62a = st.columns(2)
