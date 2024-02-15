@@ -30,7 +30,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                 'bribing_share': {
                     'value': sys_param['bribing_share'][0] if 'bribing_share' in sys_param else 0.0,
                     'display_name': 'Bribing to Stakers / %',
-                    'description': 'Bribing of stakers to vote for proposals as percentage of ecosystem incentivisation. Ecosystem applications might want to bribe stakers to vote for their proposals. The bribing share is NOT subtracted from any revenue, but comes on top of all value inflow into the economy. Nevertheless it depends on the incentivised ecosystem value and is paid in diverse assets.'
+                    'description': 'This value represents the share of monetary value that will be given to stakers in the form of bribes. These bribes are assumed to originate from two separate sources: 1) incentivisation: bribes correlate with the issued incentives as more value is available to be shared with voters. 2) protocol growth: bribes are assumed to correlate also with the overall protocol adoption and growth. Therefore this percentage value also represents the monetary value of the product revenue that will be used to bribe stakers for voting. Note that the value that is given out as bribes comes on top of all revenue streams defined in this model.'
                     }
             },
             'Liquidity Mining': {

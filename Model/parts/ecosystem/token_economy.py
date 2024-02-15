@@ -181,7 +181,13 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_incentivised_usd_per_product_user'] = (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) / user_adoption['ua_product_users'] if user_adoption['ua_product_users'] > 0 else 0.0
         
     # Bribing
-    bribing_rewards_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 + business_assumptions['ba_incentivisation_revenue_usd'] * bribing_share/100 if (bribing_share > 0) else 0.0
+    te_bribes_from_incentives_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 + business_assumptions['ba_incentivisation_revenue_usd'] * bribing_share/100 if (bribing_share > 0) else 0.0
+    te_bribes_from_protocol_growth_usd = user_adoption['ua_product_revenue'] * bribing_share/100 if (bribing_share > 0) else 0.0
+    bribing_rewards_usd = te_bribes_from_incentives_usd + te_bribes_from_protocol_growth_usd
+    updated_token_economy['te_bribes_from_incentives_usd'] = te_bribes_from_incentives_usd
+    updated_token_economy['te_bribes_from_incentives_usd_cum'] += te_bribes_from_incentives_usd
+    updated_token_economy['te_bribes_from_protocol_growth_usd'] = te_bribes_from_protocol_growth_usd
+    updated_token_economy['te_bribes_from_protocol_growth_usd_cum'] += te_bribes_from_protocol_growth_usd
     updated_token_economy['te_bribe_rewards_for_stakers_usd'] = bribing_rewards_usd
     updated_token_economy['te_bribe_rewards_for_stakers_usd_cum'] += bribing_rewards_usd
     

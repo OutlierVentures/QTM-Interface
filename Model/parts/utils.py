@@ -432,6 +432,10 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
         'te_p_e_ratio': 0, # price to earnings ratio
         'te_product_user_per_incentivised_usd': 0, # product users per incentivised token in USD
         'te_incentivised_usd_per_product_user': 0, # incentivised token in USD per product user
+        'te_bribes_from_incentives_usd': 0, # bribes as share of incentivisation in USD
+        'te_bribes_from_incentives_usd_cum': 0, # bribes as share of incentivisation in USD cumulatively
+        'te_bribes_from_protocol_growth_usd': 0, # bribes from protocol growth in USD
+        'te_bribes_from_protocol_growth_usd_cum': 0, # bribes from protocol growth in USD cumulatively
         'te_bribe_rewards_for_stakers_usd': 0, # bribe rewards for stakers in USD
         'te_bribe_rewards_for_stakers_usd_cum': 0, # bribe rewards for stakers in USD cumulatively
     }
