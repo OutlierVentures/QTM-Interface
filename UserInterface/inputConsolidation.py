@@ -67,7 +67,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # User Adoption
     ##############################################
 
-    ua_return_dict = ua.userAdoptionInput(sys_param)
+    ua_return_dict = ua.userAdoptionInput(sys_param, tav_return_dict)
 
 
     ##############################################
@@ -223,14 +223,19 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'start date' : mkt_return_dict['sim_start'],
         'end date': mkt_return_dict['sim_end'],
         'market': mkt_return_dict['market'],
+        'user_adoption_target': ua_return_dict["user_adoption_target"],
+
     }
 
     # add utility parameters to new_params
     new_params.update(ut_return_dict["utility_parameter_choice"])
 
     # add random seed to new_params
-    if ab_return_dict["agent_behavior"] == 'random':
+    if ab_return_dict["agent_behavior"] == 'simple':
         new_params['random_seed'] = ab_return_dict["random_seed"]
+        new_params['S_B'] = ab_return_dict["S_B"]
+        new_params['S_e'] = ab_return_dict["S_e"]
+        new_params['S_0'] = ab_return_dict["S_0"]
 
     # add in-market initialization parameters to new_params
     if not token_launch:
@@ -260,7 +265,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         new_params.update({
             'market_investors_current_holdings': timi_return_dict["current_holdings"]['market_investors']*1e6,
             'market_investors_current_staked': timi_return_dict["current_staked"]['market_investors']*1e6,
-            'market_investors_vested_init': 0,
+            'market_investors_vested_init': timi_return_dict["current_holdings"]['market_investors']*1e6 + timi_return_dict["current_staked"]['market_investors']*1e6,
         })
         new_params['initial_cash_balance'] = ba_return_dict["initial_cash_balance"]*1e3
 

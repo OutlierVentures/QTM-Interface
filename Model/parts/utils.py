@@ -128,6 +128,7 @@ def convert_date(sys_param):
 
 def get_initial_date(sys_param):
     initial_date = pd.to_datetime(sys_param['launch_date'][0] if isinstance(sys_param['launch_date'], list) else sys_param['launch_date'], format='%d.%m.%Y')
+    # use the following code if you want to use the token launch date as the initial date this would forward the user adoption accordingly.
     if 'token_launch' in sys_param:
         token_launch = sys_param['token_launch'][0] if isinstance(sys_param['token_launch'], list) else sys_param['token_launch']
         if not token_launch:
@@ -346,7 +347,7 @@ def calc_initial_lp_tokens(agent_token_allocations, sys_param):
 
     return lp_token_allocation
 
-def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_days):
+def calculate_user_adoption(initial_users,final_users,velocity,timestamp):
     """
     Take in user adoption data and calculate the amount of adoption.
 
@@ -357,12 +358,13 @@ def calculate_user_adoption(initial_users,final_users,velocity,timestamp,total_d
         final_users: ending amount of users
         velocity: speed of adoption on those users
         timstep: current timestep in days
-        total_days: length of full simulation.
     
     Returns:
         Number representing the user adoption.    
 
     """
+    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
+    total_days = 3653
 
     term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
     term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
@@ -433,7 +435,8 @@ def initialize_dex_liquidity(sys_param):
         'lp_token_price_min': 0, # min price of LP token
         'lp_tokens_after_adoption': 0, # tokens after adoption tx 1
         'lp_tokens_after_liquidity_addition':0, # Token after liquidity addition tx 3
-        'lp_tokens_after_buyback': 0 # tokens after buy back tx 4
+        'lp_tokens_after_buyback': 0, # tokens after buy back tx 4
+        'lp_sold_business_tokens': 0, # sold tokens by business
     }
 
     return liquidity_pool
@@ -451,7 +454,7 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
     
     initial_total_supply = sys_param['initial_total_supply'][0]
     tokens_holding_cum = sum([initial_stakeholders[agent]['a_tokens'] for agent in initial_stakeholders if initial_stakeholders[agent]['a_type'] != 'protocol_bucket'])
-    tokens_vested_cum = sum([initial_stakeholders[agent]['a_tokens_vested_cum'] for agent in initial_stakeholders])
+    tokens_vested_cum = sum([initial_stakeholders[agent]['a_tokens_vested_cum'] if initial_stakeholders[agent]['a_tokens_vested_cum']>0 else initial_stakeholders[agent]['a_tokens'] for agent in initial_stakeholders])
     tokens_airdropped_cum = sum([initial_stakeholders[agent]['a_tokens_airdropped_cum'] for agent in initial_stakeholders])
     tokens_incentivised_cum = sum([initial_stakeholders[agent]['a_tokens_incentivised_cum'] for agent in initial_stakeholders])
     lp_tokens = initial_liquidity_pool['lp_tokens']
@@ -482,12 +485,24 @@ def generate_initial_token_economy_metrics(initial_stakeholders, initial_liquidi
         'te_minted_tokens_cum': 0, # tokens minted cumulatively
         'te_minted_tokens_usd': 0, # tokens minted in USD
         'te_incentivised_tokens' : 0, # tokens incentivised
+        'te_incentivised_tokens_cum' : 0, # tokens incentivised cumulatively
         'te_incentivised_tokens_usd' : 0, # tokens incentivised in USD
-        'te_incentivised_tokens_cum' : tokens_incentivised_cum, # tokens incentivised cumulatively
+        'te_incentivised_tokens_usd_cum' : 0, # tokens incentivised in USD cumulatively
         'te_airdrop_tokens' : 0, # tokens airdropped
         'te_airdrop_tokens_usd' : 0, # tokens airdropped in USD
-        'te_airdrop_tokens_cum' : tokens_airdropped_cum, # tokens airdropped cumulatively
+        'te_airdrop_tokens_usd_cum' : 0, # tokens airdropped in USD cumulatively
+        'te_airdrop_tokens_cum' : 0, # tokens airdropped cumulatively
         'te_staking_apr': 0, # staking APR
+        'te_p_r_ratio': 0, # price to revenue ratio
+        'te_p_e_ratio': 0, # price to earnings ratio
+        'te_product_user_per_incentivised_usd': 0, # product users per incentivised token in USD
+        'te_incentivised_usd_per_product_user': 0, # incentivised token in USD per product user
+        'te_bribes_from_incentives_usd': 0, # bribes as share of incentivisation in USD
+        'te_bribes_from_incentives_usd_cum': 0, # bribes as share of incentivisation in USD cumulatively
+        'te_bribes_from_protocol_growth_usd': 0, # bribes from protocol growth in USD
+        'te_bribes_from_protocol_growth_usd_cum': 0, # bribes from protocol growth in USD cumulatively
+        'te_bribe_rewards_for_stakers_usd': 0, # bribe rewards for stakers in USD
+        'te_bribe_rewards_for_stakers_usd_cum': 0, # bribe rewards for stakers in USD cumulatively
     }
 
     return token_economy
@@ -514,7 +529,8 @@ def initialize_user_adoption(sys_param):
     regular_product_revenue_per_user = sys_param['regular_product_revenue_per_user'][0]
 
     # print all calculate_user_adoption inputs
-    product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day,total_days)
+    # product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day) # use this only for first day at token_launch
+    product_users = initial_product_users
     
     ## Product Revenue    
     product_revenue = product_users*(one_time_product_revenue_per_user+regular_product_revenue_per_user)
@@ -526,7 +542,8 @@ def initialize_user_adoption(sys_param):
     one_time_token_buy_per_user = sys_param['one_time_token_buy_per_user'][0]
     regular_token_buy_per_user = sys_param['regular_token_buy_per_user'][0]
 
-    token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day,total_days)
+    # token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day) # use this only for first day at token_launch
+    token_holders = initial_token_holders
 
     ## Calculating Token Buys
     token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders

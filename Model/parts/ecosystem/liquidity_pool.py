@@ -227,13 +227,24 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     business_assumptions = prev_state['business_assumptions'].copy()
 
     # policy variables
-    lp_tokens = liquidity_pool['lp_tokens']
-    lp_usdc = liquidity_pool['lp_usdc']
-    constant_product = liquidity_pool['lp_constant_product']
-    token_price = liquidity_pool['lp_token_price']
+    lp_tokens_init = liquidity_pool['lp_tokens']
+    lp_usdc_init = liquidity_pool['lp_usdc']
+    constant_product_init = liquidity_pool['lp_constant_product']
     buybacks_usd = business_assumptions['ba_buybacks_usd']
+    business_buybacks_usd = business_assumptions['ba_business_buybacks_usd']
 
     # policy logic
+    # calculate the business buyback separately from the general buybacks if it is negative, which implies a token sale by the business
+    if business_buybacks_usd < 0:
+        lp_tokens = lp_tokens_init - lp_tokens_init * (1 - (lp_usdc_init / (lp_usdc_init + business_buybacks_usd))**(usdc_lp_weight/token_lp_weight))
+        lp_usdc = lp_usdc_init + business_buybacks_usd
+        token_price = lp_usdc / lp_tokens
+        sold_business_tokens = lp_tokens - lp_tokens_init
+    else:
+        sold_business_tokens = 0
+        lp_tokens = lp_tokens_init
+        lp_usdc = lp_usdc_init
+
     # calculate the liquidity pool after buyback
     lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + buybacks_usd))**(usdc_lp_weight/token_lp_weight))
     lp_usdc = lp_usdc + buybacks_usd
@@ -242,11 +253,11 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     
     error_message = (
     f'The constant product is not allowed to change after adoption buys! '
-    f'Old constant product: {constant_product} New constant product: {lp_usdc * lp_tokens}')
+    f'Old constant product: {constant_product_init} New constant product: {lp_usdc * lp_tokens}')
     
-    np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
+    np.testing.assert_allclose(constant_product_init, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
     
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product, 'lp_token_price': token_price, 'tx': 4}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product_init, 'lp_token_price': token_price, 'tx': 4, 'sold_business_tokens': sold_business_tokens}
 
 
 # STATE UPDATE FUNCTIONS
@@ -325,6 +336,7 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     constant_product = policy_input['lp_constant_product']
     token_price = policy_input['lp_token_price']
     tx = policy_input['tx']
+    sold_business_tokens = policy_input['sold_business_tokens'] if tx == 4 else 0
     
     # prepare volatility calculation
     if policy_input['tx'] == 1:
@@ -350,5 +362,6 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
         updated_liquidity_pool['lp_tokens_after_liquidity_addition'] = lp_tokens
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_buyback'] = lp_tokens
-
+        updated_liquidity_pool['lp_sold_business_tokens'] = sold_business_tokens
+    
     return ('liquidity_pool', updated_liquidity_pool)

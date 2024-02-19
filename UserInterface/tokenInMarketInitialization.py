@@ -108,10 +108,8 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
                 st.write(f"**{stakeholder_allocations + lp_allocation_tokens:,.4f}m**")
                 st.write(f"**{required_circulating_supply:,.4f}m**")
                 
-            if (stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 > 100.005:
-                st.error(f"Initialized / Required Circulating Supply: {(stakeholder_allocations + lp_allocation_tokens)*1e6:,.0f} / {required_circulating_supply*1e6:,.0f}  |  {(stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100:,.4f}%. Double check if this allocation matches your intention!", icon="⚠️")
-            elif (stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 < 99.995:
-                st.error(f"Initialized / Required Circulating Supply: {(stakeholder_allocations + lp_allocation_tokens)*1e6:,.0f} / {required_circulating_supply*1e6:,.0f}  |  {(stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100:,.4f}%. Double check if this allocation matches your intention!", icon="⚠️")
+            if ((stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 > 100.005) or ((stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100 < 99.995):
+                st.error(f"Initialized / Required Circulating Supply: {(stakeholder_allocations + lp_allocation_tokens)*1e6:,.0f} / {required_circulating_supply*1e6:,.0f}  | Difference in Tokens: {(stakeholder_allocations + lp_allocation_tokens)-required_circulating_supply:,.4f}. The initialized supply does not match the circulating supply and diverges by {100-(stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100:,.4f}%.", icon="⚠️")
             else:
                 st.success(f"Initialized / Required Circulating Supply: {(stakeholder_allocations + lp_allocation_tokens)*1e6:,.0f} / {required_circulating_supply*1e6:,.0f}  |  {(stakeholder_allocations + lp_allocation_tokens)/required_circulating_supply*100:,.4f}%")
 
@@ -122,8 +120,8 @@ def tokenInMarketInitializationInput(token_launch_date, token_launch, bti_return
                         if current_holdings[stakeholder] + current_staked[stakeholder] > airdropped_supply_sum + remaining_airdrop_supply:
                             st.warning(f"The current airdrop receiver holdings ({round(current_holdings[stakeholder],2)}m) plus staked supply ({round(current_staked[stakeholder],2)}m) are greater than the overall airdrop allocation ({round(tav_return_dict['airdrop_allocation'],2)}m). Double check if this allocation matches your intention!", icon="⚠️")
                     else:
-                        if current_holdings[stakeholder] + current_staked[stakeholder] > tav_return_dict['vesting_dict'][stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation']:
-                            st.warning(f"The current holdings ({round(current_holdings[stakeholder],2)}m) plus staked supply ({round(current_staked[stakeholder],2)}m) are greater than the initial allocation ({round(tav_return_dict['vesting_dict'][stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation'],2)}m) for {stakeholder}. Double check if this allocation matches your intention!", icon="⚠️")
+                        if current_holdings[stakeholder] + current_staked[stakeholder] > tav_return_dict['vesting_dict'][stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation']/100*bti_return_dict["initial_supply"]:
+                            st.warning(f"The current holdings ({round(current_holdings[stakeholder],2)}m) plus staked supply ({round(current_staked[stakeholder],2)}m) are greater than the initial allocation ({round(tav_return_dict['vesting_dict'][stakeholder if stakeholder is not 'incentivisation_receivers' else 'incentivisation']['allocation']/100*bti_return_dict['initial_supply'],2)}m) for {stakeholder}. Double check if this allocation matches your intention!", icon="⚠️")
 
             if lp_allocation_tokens < 0:
                 st.error(f"The LP token allocation ({round(tav_return_dict['lp_allocation'],2)}m) is negative. Reduce stakeholder allocations!", icon="⚠️")

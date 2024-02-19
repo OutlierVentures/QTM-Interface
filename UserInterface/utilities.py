@@ -17,7 +17,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                     'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked.'
                     },
                 'staker_rev_share': {
-                    'value': sys_param['staker_rev_share'][0] if 'staker_rev_share' in sys_param else ua_return_dict["staker_rev_share"],
+                    'value': ua_return_dict["staker_rev_share"],
                     'display_name': f'Revenue Share {"Buyback" if ua_return_dict["staker_rev_share_buyback"] else ""}/ %',
                     'description': f'The percentage of the revenue that is {"used for buying back and distributing tokens to stakers once the staking vesting bucket runs out of tokens. You can switch to revenue share in diverse assets in the User Adoption input section above." if ua_return_dict["staker_rev_share_buyback"] else " distributed to stakers. You can switch to revenue share via bought back tokens in the User Adoption input section above."}',
                     'disable' : True
@@ -26,6 +26,11 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                     'value': sys_param['mint_burn_ratio'][0],
                     'display_name': 'Mint / Burn Ratio',
                     'description': 'The ratio of minted tokens to burned tokens for staking rewards. The remaining tokens are distributed from the staking vesting bucket if an allocation exists.'
+                    },
+                'bribing_share': {
+                    'value': sys_param['bribing_share'][0] if 'bribing_share' in sys_param else 0.0,
+                    'display_name': 'Bribing to Stakers / %',
+                    'description': 'This value represents the share of monetary value that will be given to stakers in the form of bribes. These bribes are assumed to originate from two separate sources: 1) incentivisation: bribes correlate with the issued incentives as more value is available to be shared with voters. 2) protocol growth: bribes are assumed to correlate also with the overall protocol adoption and growth. Therefore this percentage value also represents the monetary value of the product revenue that will be used to bribe stakers for voting. Note that the value that is given out as bribes comes on top of all revenue streams defined in this model.'
                     }
             },
             'Liquidity Mining': {
@@ -91,11 +96,11 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         }
         
         # add staking target to utility values
-        if ab_return_dict["agent_behavior"] == 'random':
+        if ab_return_dict["agent_behavior"] == 'simple':
             utility_values['Stake'].update({'agent_staking_apr_target':{
                     'value': sys_param['agent_staking_apr_target'][0] if 'agent_staking_apr_target' in sys_param else 10.0,
                     'display_name': 'APR Target / %',
-                    'description': 'The agents target APR for staking rewards. Agents with random behavior will prioritize utility allocations over selling on average as long as the staking APR is above the APR target. Only applicable for random agent behavior!'
+                    'description': 'The agents target APR for staking rewards. Agents with simple behavior will prioritize utility allocations over selling on average as long as the staking APR is above the APR target. Only applicable for simple agent behavior!'
                     }})
         
         # remove utilities when not activated in the token allocation section
@@ -115,7 +120,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
         for utility in utility_values:
             for key, val in utility_values[utility].items():
                 if '_share' in key and key != 'staker_rev_share':
-                    if val['value'] > 0:
+                    if val['value'] > 0 and utility not in default_utilities:
                         default_utilities.append(utility)
 
         # Let user add a utility from the dropdown
@@ -141,14 +146,14 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                         options = val['options']
                         new_val = st.selectbox(display_name, options=options, index=options.index(init_value), help=description)
                     else:
-                        new_val = st.number_input(display_name, value=init_value, help=description, disabled=val['disable'] if 'disable' in val else False)
+                        new_val = st.number_input(display_name, value=init_value, min_value=0.0, help=description, disabled=val['disable'] if 'disable' in val else False)
                     
                     utility_values[utility][key]['value'] = new_val
 
         # check utility sums
         for utility in utility_to_add:
             for key, val in utility_values[utility].items():    
-                if '_share' in key and key != 'staker_rev_share':
+                if '_share' in key and key != 'staker_rev_share' and key != 'bribing_share':
                     utility_sum += val['value']
                     utility_shares[utility] = [val['value']]
         

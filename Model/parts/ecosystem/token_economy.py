@@ -137,11 +137,15 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     Returns:
         Tuple ('token_economy', updated_token_economy).
     """
+    # parameters
+    bribing_share = params['bribing_share'] if 'bribing_share' in params else 0.0
+
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
     utilities = prev_state['utilities'].copy()
     business_assumptions = prev_state['business_assumptions'].copy()
     lp = prev_state['liquidity_pool'].copy()
+    user_adoption = prev_state['user_adoption'].copy()
 
     # policy inputs
     total_token_supply = policy_input['total_token_supply']
@@ -168,12 +172,31 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_remove_perc'] = remove_perc
     updated_token_economy['te_holding_supply'] = held_supply
     updated_token_economy['te_incentivised_tokens_usd'] = updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_incentivised_tokens_usd_cum'] += updated_token_economy['te_incentivised_tokens'] * lp['lp_token_price']
     updated_token_economy['te_airdrop_tokens_usd'] = updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_airdrop_tokens_usd_cum'] += updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
+    updated_token_economy['te_p_r_ratio'] = FDV_MC / ((business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue'])*12) if (business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue']) > 0 else 0.0
+    updated_token_economy['te_p_e_ratio'] = FDV_MC / (business_assumptions['ba_cash_flow']*12) if (business_assumptions['ba_cash_flow']) > 0 else 0.0
+    updated_token_economy['te_product_user_per_incentivised_usd'] = user_adoption['ua_product_users'] / (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) if (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) > 0 else 0.0
+    updated_token_economy['te_incentivised_usd_per_product_user'] = (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) / user_adoption['ua_product_users'] if user_adoption['ua_product_users'] > 0 else 0.0
+        
+    # Bribing
+    te_bribes_from_incentives_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 + business_assumptions['ba_incentivisation_revenue_usd'] * bribing_share/100 if (bribing_share > 0) else 0.0
+    te_bribes_from_protocol_growth_usd = user_adoption['ua_product_revenue'] * bribing_share/100 if (bribing_share > 0) else 0.0
+    bribing_rewards_usd = te_bribes_from_incentives_usd + te_bribes_from_protocol_growth_usd
+    updated_token_economy['te_bribes_from_incentives_usd'] = te_bribes_from_incentives_usd
+    updated_token_economy['te_bribes_from_incentives_usd_cum'] += te_bribes_from_incentives_usd
+    updated_token_economy['te_bribes_from_protocol_growth_usd'] = te_bribes_from_protocol_growth_usd
+    updated_token_economy['te_bribes_from_protocol_growth_usd_cum'] += te_bribes_from_protocol_growth_usd
+    updated_token_economy['te_bribe_rewards_for_stakers_usd'] = bribing_rewards_usd
+    updated_token_economy['te_bribe_rewards_for_stakers_usd_cum'] += bribing_rewards_usd
     
+    # Staking APR
     cash_staking_rewards = business_assumptions['ba_staker_revenue_usd'] if utilities['u_staking_revenue_share_rewards'] <= 0 else 0.0
-    new_staking_apr = ((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100
-                       + cash_staking_rewards*12 / (utilities['u_staking_allocation_cum'] * lp['lp_token_price']) * 100)
+    token_staking_apr = (utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
+    revenue_staking_apr = (cash_staking_rewards+bribing_rewards_usd)*12 / (utilities['u_staking_allocation_cum'] * lp['lp_token_price']) * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
+    new_staking_apr = token_staking_apr + revenue_staking_apr
+    new_staking_apr = 100 if (utilities['u_staking_allocation_cum'] == 0 and (((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards']) > 0) or ((cash_staking_rewards+bribing_rewards_usd)>0))) else new_staking_apr
     updated_token_economy['te_staking_apr'] = new_staking_apr if not np.isnan(new_staking_apr) else 0.0
 
     return ('token_economy', updated_token_economy)
-

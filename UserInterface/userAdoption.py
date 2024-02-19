@@ -1,24 +1,18 @@
 import streamlit as st
 import numpy as np
 
-def userAdoptionInput(sys_param):
+def userAdoptionInput(sys_param, tav_return_dict):
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
         # adoption style choice | user numbers | revenues
-        col61, col62, col63 = st.columns(3)
+        col61, col62, col63 = st.columns([0.2,0.3,0.5])
         with col61:
             adoption_style_choices = ['Weak', 'Medium', 'Strong', 'Custom']
             adoption_style = st.radio('Adoption Assumption',tuple(adoption_style_choices), index=adoption_style_choices.index(sys_param['adoption_style'][0]) if 'adoption_style' in sys_param else 0, help='The adoption style determines the scaling velocity for the product revenue and token demand. Moreover it influences the average agent sentiment in terms of selling and utility adoption behavior.')
             show_full_adoption_table = st.toggle('Show Full Table', value=False, help="Show the full adoption parameter set.")
         with col62:
-            product_token_ratio = st.slider('Product / Token Weight', min_value=-1.0, max_value=1.0, step=0.1, value=(-float(sys_param['initial_product_users'][0]) + float(sys_param['initial_token_holders'][0])), format="%.2f", help="The weight of product users to token holders. -1 means there are no token holders, but only product users. 1 means the opposite and 0 means that there are as many product users as token holders.")
-            initial_users = st.number_input('Initial Users', label_visibility="visible", min_value=0, value=int(sys_param['initial_product_users'][0]) + int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_users", help="Initial amount of users to be divided between product users and token holders according to the Product / Token Weight.")
-            initial_product_users = initial_users * (1 - (product_token_ratio)) / 2
-            initial_token_holders = initial_users - initial_product_users
-
-        with col63:
-            st.write(f"Initial Token Holders: {int(np.ceil(initial_token_holders)):+,}")
-            st.write(f"Initial Product Users: {int(np.ceil(initial_product_users)):+,}")
+            initial_product_users = st.number_input('Initial Product Users', label_visibility="visible", min_value=0, value=int(sys_param['initial_product_users'][0]), disabled=False, key="initial_product_users", help="The initial product users generating revenue in diverse assets -> $.")
+            initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=int(sys_param['initial_token_holders'][0]), disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
 
         adoption_dict = {
             "Weak" : {
@@ -74,7 +68,7 @@ def userAdoptionInput(sys_param):
                 product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
                 st.write(f"Projected Product Users (10y): {int(np.ceil(product_users_after_10y)):+,}")
                 product_adoption_velocity = st.number_input('Product Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['product_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0], disabled=False, key="product_adoption_velocity", help="The velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.")
-                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue directly to the business funds.")                
+                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
                 
                     
             with col72:
@@ -107,11 +101,16 @@ def userAdoptionInput(sys_param):
                 incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['incentivisation_rev_share_buyback'][0]) if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
             else:
                 incentivisation_rev_share_buyback = False
+            if incentivisation_rev_share > 0.0 or tav_return_dict['incentivisation_allocation'] > 0.0:
+                # add user adoption boost per incentivisation (in USD)
+                user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 0.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
+            else:
+                user_adoption_target = 1.0
 
         rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
         if rev_share_sum != 100.0:
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
-
+        
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]
@@ -121,8 +120,6 @@ def userAdoptionInput(sys_param):
     ua_return_dict = {
         "adoption_style" : adoption_style,
         "show_full_adoption_table" : show_full_adoption_table,
-        "product_token_ratio" : product_token_ratio,
-        "initial_users" : initial_users,
         "initial_product_users" : initial_product_users,
         "initial_token_holders" : initial_token_holders,
         "avg_product_user_growth_rate" : avg_product_user_growth_rate,
@@ -141,6 +138,7 @@ def userAdoptionInput(sys_param):
         "rev_share_sum" : rev_share_sum,
         "staker_rev_share_buyback" : staker_rev_share_buyback,
         "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
+        "user_adoption_target": user_adoption_target
     }
 
     return ua_return_dict

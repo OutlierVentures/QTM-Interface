@@ -28,7 +28,7 @@ st.session_state["authenticator"] = stauth.Authenticate(
 # Sign-up section
 with st.expander('Sign-Up', expanded=False):
     try:
-        if st.session_state["authenticator"].register_user(fields=['username', 'password', 'email']):
+        if st.session_state["authenticator"].register_user():
             st.success('User registered successfully')
             safeToYaml(config)
     except Exception as e:
@@ -36,14 +36,9 @@ with st.expander('Sign-Up', expanded=False):
 
 # Login section
 with st.expander('Login', expanded=False):
-    name, authentication_status, username = st.session_state["authenticator"].login(fields=['username', 'password'])
-
-    st.session_state["authenticator"].login(location='main', 
-            max_concurrent_users=10, 
-            fields={'Form name': 'Login', 'Username': 'Enter Username', 'Password': 'Enter Password', 'Login': 'Sign In'}
-            )
-
-
+  
+    st.session_state["authenticator"].login()
+    
     if st.session_state["authentication_status"]:
         st.success(f'✅ Successfully signed in as *{st.session_state["name"]}*')
     elif st.session_state["authentication_status"] is False:
@@ -79,7 +74,7 @@ if authentication_status:
     with st.expander('Update User Details', expanded=False):        
         # Update user details
         try:
-            if st.session_state["authenticator"].update_user_details(username, fields=['password', 'email']):
+            if st.session_state["authenticator"].update_user_details(username=st.session_state["username"]):
                 st.success('Entries updated successfully')
                 safeToYaml(config)
         except Exception as e:
@@ -87,7 +82,7 @@ if authentication_status:
         
         # Reset password
         try:
-            if st.session_state["authenticator"].reset_password(username, fields=['old_password', 'new_password']):
+            if st.session_state["authenticator"].reset_password(username=st.session_state["username"]):
                 st.success('Password modified successfully')
                 safeToYaml(config)
         except Exception as e:

@@ -20,7 +20,9 @@ def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_sup
                 show_full_fund_table = False
             if fundraising_style != 'Custom':
                 target_raise = st.number_input('Overall Capital Raise Target / $m', min_value=0.1, value=float(sys_param['raised_capital_sum'][0])/1e6, help="The overall capital raise target. This is the amount of money raised that will partially be used to seed the DEX liquidity and as a buffer for the financial runway.")
-                left_over_raise = target_raise - equity_investments - launch_valuation * (public_sale_supply/100)
+            else:
+                target_raise = float(sys_param['seed_raised'][0]/1e6) + float(sys_param['presale_1_raised'][0]/1e6) + float(sys_param['presale_2_raised'][0]/1e6) + float(sys_param['public_sale_raised'][0]/1e6) + equity_investments
+            left_over_raise = target_raise - equity_investments - launch_valuation * (public_sale_supply/100)
         with col23:
             if fundraising_style != 'Custom' and not show_full_fund_table:
                 seed_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0]
@@ -46,10 +48,10 @@ def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_sup
                 public_sale_raised = launch_valuation * (public_sale_supply/100)
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
             else:
-                seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float([valuation_weights["seed"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['seed_raised'][0]/1e6)][0]), help="The amount of money raised in the seed round.")
-                presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_1_raised'][0]/1e6)][0]), help="The amount of money raised in the first presale.")
-                presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['presale_2_raised'][0]/1e6)][0]), help="The amount of money raised in the second presale.")
-                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([launch_valuation * (public_sale_supply/100) if uploaded_file is None and fundraising_style != 'Custom' else float(sys_param['public_sale_raised'][0]/1e6)][0]), disabled=True, help="The amount of money raised in the public sale.")
+                seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float([valuation_weights["seed"]/valuation_weights_sum * left_over_raise if uploaded_file is None else float(sys_param['seed_raised'][0]/1e6)][0]), help="The amount of money raised in the seed round.")
+                presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise if uploaded_file is None else float(sys_param['presale_1_raised'][0]/1e6)][0]), help="The amount of money raised in the first presale.")
+                presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float([valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise if uploaded_file is None else float(sys_param['presale_2_raised'][0]/1e6)][0]), help="The amount of money raised in the second presale.")
+                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float([launch_valuation * (public_sale_supply/100) if uploaded_file is None else float(sys_param['public_sale_raised'][0]/1e6)][0]), disabled=True, help="The amount of money raised in the public sale.")
 
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
@@ -71,7 +73,7 @@ def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_sup
             with col21a:
                 plts.bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Raised / $': [equity_investments, seed_raised, presale_1_raised, presale_2_raised, public_sale_raised]}, 'Round', 'Raised / $', info_box=None, plot_title='Fundraising Round Raised Capital')
             with col22a:
-                plts.bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Valuation / $m': [equity_investments / (initial_supply * equity_perc/100), seed_valuation, presale_1_valuation, presale_2_valuation, launch_valuation]}, 'Round', 'Valuation / $m', info_box=None, plot_title='Fundraising Round Token Valuations')
+                plts.bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Valuation / $m': [equity_investments / (initial_supply * equity_perc/100) if equity_perc > 0 else 0, seed_valuation, presale_1_valuation, presale_2_valuation, launch_valuation]}, 'Round', 'Valuation / $m', info_box=None, plot_title='Fundraising Round Token Valuations')
             with col23a:
                 plts.bar_plot_plotly_from_variables({'Round': ['Angels', 'Seed', 'Presale 1', 'Presale 2', 'Public Sale'], 'Allocation / %': [equity_perc, seed_allocation, presale_1_allocation, presale_2_allocation, public_sale_allocation]}, 'Round', 'Allocation / %', info_box=None, plot_title='Fundraising Round Token Allocations')
         

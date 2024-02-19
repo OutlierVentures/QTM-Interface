@@ -1,5 +1,5 @@
 import streamlit as st
-from UserInterface.plots import plot_token_economy, get_simulation_data
+from UserInterface.plots import plot_agent_behavior
 import os, sys
 from UserInterface.helpers import ui_base, returnToStart, header
 
@@ -15,13 +15,13 @@ if 'authentication_status' in st.session_state:
         header(parent_dir)
         ui_base(parent_dir)
 
-        st.sidebar.markdown("## Token Economy 🪙")
+        st.sidebar.markdown("## Agent Behavior 🙂")
 
         # main page
-        st.markdown("## Token Economy 🪙")
+        st.markdown("## Agent Behavior 🙂")
         if 'param_id' in st.session_state:
             if st.session_state['param_id'] != "":
-                plot_token_economy(st.session_state['param_id'])
+                plot_agent_behavior(st.session_state['param_id'])
     else:
         returnToStart()
 else:

@@ -100,7 +100,7 @@ def area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_month
                                                              stakeholder1_raw+'_a_utility_from_holding_tokens', stakeholder1_raw+'_a_selling_from_holding_tokens', stakeholder1_raw+'_a_holding_from_holding_tokens']]
     
     # Format the column names
-    formatted_columns = [col + ' From Vesting' if ('timestep' if not st.session_state['date_conversion'] else 'date' not in col and 'From Holding' not in col) else col for col in formatted_columns ]
+    formatted_columns = [col + ' From Vesting' if 'From Holding' not in col else col for col in formatted_columns ]
     
     df.columns = formatted_columns
 
@@ -156,7 +156,7 @@ def plot_results_plotly(x, y_columns, run, param_id, max_months, calcColumns={},
 
     # example for line plots of different outputs in one figure
     new_max_months = line_plot_plotly(df,x, y_columns, run, param_id, x_title=x_title, y_title=y_title, info_box=info_box, plot_title=plot_title ,logy=logy)
-    return new_max_months
+    return max_months if max_months < new_max_months else new_max_months
 
 def cum_plot_results_plotly(x, y_columns, run, param_id, vesting, x_title=None, y_title=None, info_box=None, plot_title=None):
 
@@ -267,31 +267,31 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
     if 'ba_cash_balance' in y_series_updated:
         chart_data = chart_data[(chart_data['ba_cash_balance'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
         if len(chart_data) < sys_param['simulation_duration'].iloc[0]:
-            st.warning(f"The simulation stopped after {len(chart_data)} months, because the business ran out of funds.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data)-1} months, because the business ran out of funds.", icon="⚠️")
     
     if 'reserve_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])-1} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'community_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])} months, because the token economy community tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['community_a_tokens'] > 0])-1} months, because the token economy community tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['community_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'foundation_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['foundation_a_tokens'] > 0])-1} months, because the token economy foundation tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['foundation_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'lp_tokens' in y_series_updated:
         if len(chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['lp_tokens'] > 0])-1} months, because the token economy liquidity pool tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['lp_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
     
     if 'te_holding_supply' in y_series_updated:
         if len(chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
-            st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
+            st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])-1} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
         
     
@@ -443,7 +443,8 @@ def plot_fundraising(param_id):
                                                  'foundation_a_tokens_vested_cum',
                                                  'incentivisation_a_tokens_vested_cum',
                                                  'staking_vesting_a_tokens_vested_cum',
-                                                 'te_airdrop_tokens_cum'], 1, param_id, vesting=True,
+                                                 'te_airdrop_tokens_cum',
+                                                 'market_investors_a_tokens_vested_cum',], 1, param_id, vesting=True,
                                                  plot_title="Cumulative Token Vesting", x_title="Months", y_title="Tokens")
     
     st.markdown('---')
@@ -485,9 +486,10 @@ def plot_business(param_id):
     sys_param = sys_param_df[sys_param_df['id'] == param_id]
     max_months = sys_param['simulation_duration'].iloc[0]
     st.markdown('---')
-    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count")
-    st.markdown('---')
     max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_cash_balance'], 1, param_id, max_months, plot_title="Business Cash Balance", x_title="Months", y_title="USD")
+    st.markdown('---')
+    log_scale_toggle_user_adoption = st.toggle('Log Scale - User Adoption', value=True)
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ua_product_users','ua_token_holders'], 1, param_id, max_months, plot_title="User Adoption", x_title="Months", y_title="Count", logy=log_scale_toggle_user_adoption)
     st.markdown('---')
     pcol21, pcol22 = st.columns(2)
     with pcol21:
@@ -512,7 +514,7 @@ def plot_business(param_id):
             cum_plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_fix_expenditures_usd', 'ba_var_expenditures_usd'],
                                                                                                         1, param_id, vesting=False,
                                                     plot_title="Expenditures Distribution", x_title="Months", y_title="Revenue per Month / USD")
-
+    
     st.markdown('---')
     pcol21a, pcol21b = st.columns(2)
     with pcol21a:
@@ -520,21 +522,39 @@ def plot_business(param_id):
     with pcol21b:
         max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['ba_buybacks_usd'], 1, param_id, max_months, plot_title="Token Buybacks", x_title="Months", y_title="Buybacks / USD")
     
+    st.markdown('---')
+    # plot price/revenue and price/earning ratios
+    log_scale_toggle_p_ratio = st.toggle('Log Scale - Price Ratios', value=True)
+    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_p_r_ratio','te_p_e_ratio'], 1, param_id, max_months,
+                    plot_title="Price / Revenue and Price / Earning Ratios", x_title="Months", y_title="Ratio", logy=log_scale_toggle_p_ratio)
+
+    st.markdown('---')
+    # plot product user per incentivised usd
+    log_scale_toggle_pui = st.toggle('Log Scale - User and Incentivisaiton Ratio', value=True)
+    invert_ratio_toggle = st.toggle('Invert Ratio', value=False, help="Invert the ratio between incentivised usd and product users.")
+    if not invert_ratio_toggle:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_incentivised_usd_per_product_user'], 1, param_id, max_months,
+                        plot_title="Incentivised USD per Product User", x_title="Months", y_title="Incentivised USD / Product User", logy=log_scale_toggle_pui)
+    else:
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_product_user_per_incentivised_usd'], 1, param_id, max_months,
+                        plot_title="Product User per Incentivised USD", x_title="Months", y_title="Product User / Incentivised USD", logy=log_scale_toggle_pui)
+    
     return max_months
 
-def plot_token_economy(param_id, max_months):
+def plot_agent_behavior(param_id):
     ##ANALYSIS TAB
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
+    max_months = sys_param['simulation_duration'].iloc[0]
+
     st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
     # plot token protocol and economy supply buckets
     st.markdown('---')
-    with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
-        log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
-        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
-                            'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
-                            'te_unvested_supply','te_circulating_supply','te_total_supply'], 1, param_id, max_months
-                            , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
-    
-    st.markdown('---')
+    if 'max_months' in st.session_state:
+        if st.session_state['max_months']<max_months:
+            st.warning(f"The simulation stopped after {st.session_state['max_months']-1} months, because the business ran out of funds.", icon="⚠️")
+            max_months = st.session_state['max_months']
+
     with st.expander("**Stakeholder Behavior**"):
         pcol31, pcol32 = st.columns(2)
         with pcol31:
@@ -608,7 +628,7 @@ def plot_token_economy(param_id, max_months):
                                 'airdrop_receivers_a_holding_from_holding_tokens', 'incentivisation_receivers_a_holding_from_holding_tokens'], 1, param_id, max_months
                                 , plot_title="Meta Holding Allocations Tokens per Month From Holding", x_title="Months", y_title="Tokens", logy=log_scale_toggle_meta_alloc_holding_from_holding)
     
-            # plot individual agent meta bucket behavior
+        # plot individual agent meta bucket behavior
         stakeholder_names, stakeholder_mapping = get_stakeholders()
         pcol31d, pcol32d = st.columns(2)
         with pcol31d:
@@ -624,6 +644,7 @@ def plot_token_economy(param_id, max_months):
                 percentage_area1 = st.toggle('Percentage Area 1', value=False)
 
             area_plot_stakeholder_meta_allocations(param_id, stakeholder1_raw, max_months, percentage_area1)
+            
             max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', [f'{stakeholder1_raw}_a_tokens_vested_cum', f'{stakeholder1_raw}_a_tokens_airdropped_cum',
                                                           f'{stakeholder1_raw}_a_tokens_incentivised_cum', f'{stakeholder1_raw}_a_tokens_staking_buyback_rewards_cum',
                                                           f'{stakeholder1_raw}_a_tokens_staking_vesting_rewards_cum', f'{stakeholder1_raw}_a_tokens_staking_minting_rewards_cum',
@@ -670,19 +691,15 @@ def plot_token_economy(param_id, max_months):
                 toggle_usd_utility_alloc = st.toggle('Convert to USD - Utility Allocations', value=False)
             if toggle_usd_utility_alloc:
                 max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_allocation_usd',
-                                'u_liquidity_mining_allocation_usd','u_burning_allocation_usd','u_transfer_allocation_usd','te_incentivised_tokens_usd',
-                                'te_airdrop_tokens_usd'], 1, param_id, max_months
+                                'u_liquidity_mining_allocation_usd','u_burning_allocation_usd','u_transfer_allocation_usd'], 1, param_id, max_months
                                 , calcColumns= {'u_staking_allocation_usd': {'sign': '*', 'firstCol': 'u_staking_allocation', 'secondCol': 'lp_token_price'},
                                                 'u_liquidity_mining_allocation_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_allocation', 'secondCol': 'lp_token_price'},
                                                 'u_burning_allocation_usd': {'sign': '*', 'firstCol': 'u_burning_allocation', 'secondCol': 'lp_token_price'},
-                                                'u_transfer_allocation_usd': {'sign': '*', 'firstCol': 'u_transfer_allocation', 'secondCol': 'lp_token_price'},
-                                                'te_incentivised_tokens_usd': {'sign': '*', 'firstCol': 'te_incentivised_tokens', 'secondCol': 'lp_token_price'},
-                                                'te_airdrop_tokens_usd': {'sign': '*', 'firstCol': 'te_airdrop_tokens', 'secondCol': 'lp_token_price'}}
+                                                'u_transfer_allocation_usd': {'sign': '*', 'firstCol': 'u_transfer_allocation', 'secondCol': 'lp_token_price'}}
                                 , plot_title="Token Allocations By Utilities", x_title="Months", y_title="USD", logy=log_scale_toggle_utility_alloc)
             else:
                 max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_allocation',
-                                                'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation','te_incentivised_tokens',
-                                                'te_airdrop_tokens'], 1, param_id, max_months
+                                                'u_liquidity_mining_allocation','u_burning_allocation','u_transfer_allocation'], 1, param_id, max_months
                                                 , plot_title="Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc)
         with pcol52:
             pcol51b, pcol52b = st.columns(2)
@@ -692,22 +709,43 @@ def plot_token_economy(param_id, max_months):
                 toggle_usd_utility_alloc_cum = st.toggle('Convert to USD - Utility Allocations Cum.', value=False)
             if toggle_usd_utility_alloc_cum:
                 max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_allocation_usd_cum', 'u_liquidity_mining_allocation_usd_cum',
-                                'u_burning_allocation_usd_cum','u_transfer_allocation_usd_cum','te_incentivised_tokens_usd_cum','te_airdrop_tokens_usd_cum'], 1, param_id, max_months
+                                'u_burning_allocation_usd_cum','u_transfer_allocation_usd_cum'], 1, param_id, max_months
                                 , calcColumns= {'u_staking_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_staking_allocation_cum', 'secondCol': 'lp_token_price'},
                                                 'u_liquidity_mining_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_liquidity_mining_allocation_cum', 'secondCol': 'lp_token_price'},
                                                 'u_burning_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_burning_allocation_cum', 'secondCol': 'lp_token_price'},
-                                                'u_transfer_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_transfer_allocation_cum', 'secondCol': 'lp_token_price'},
-                                                'te_incentivised_tokens_usd_cum': {'sign': '*', 'firstCol': 'te_incentivised_tokens_cum', 'secondCol': 'lp_token_price'},
-                                                'te_airdrop_tokens_usd_cum': {'sign': '*', 'firstCol': 'te_airdrop_tokens_cum', 'secondCol': 'lp_token_price'}}
+                                                'u_transfer_allocation_usd_cum': {'sign': '*', 'firstCol': 'u_transfer_allocation_cum', 'secondCol': 'lp_token_price'}}
                                 , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="USD", logy=log_scale_toggle_utility_alloc_cum)
             else:
                 max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_allocation_cum', 'u_liquidity_mining_allocation_cum',
-                                                'u_burning_allocation_cum','u_transfer_allocation_cum','te_incentivised_tokens_cum','te_airdrop_tokens_cum'], 1, param_id, max_months
+                                                'u_burning_allocation_cum','u_transfer_allocation_cum'], 1, param_id, max_months
                                                 , plot_title="Cumulative Token Allocations By Utilities", x_title="Months", y_title="Tokens", logy=log_scale_toggle_utility_alloc_cum)
 
 
+
+
+def plot_token_economy(param_id):
+    ##ANALYSIS TAB
+    sys_param_df = get_simulation_data('simulationData.db', 'sys_param')
+    sys_param = sys_param_df[sys_param_df['id'] == st.session_state['param_id']]
+    max_months = sys_param['simulation_duration'].iloc[0]
+
+    st.session_state['date_conversion'] = st.toggle('Time in Dates', value=st.session_state['date_conversion'] if 'date_conversion' in st.session_state else False, help="Use dates as time axis instead of months after token launch.")
+    # plot token protocol and economy supply buckets
     st.markdown('---')
-    with st.expander("**Token Incentives**"):
+    if 'max_months' in st.session_state:
+        if st.session_state['max_months']<max_months:
+            st.warning(f"The simulation stopped after {st.session_state['max_months']-1} months, because the business ran out of funds.", icon="⚠️")
+            max_months = st.session_state['max_months']
+        
+    with st.expander("**Token Economy and Protocol Buckets**", expanded=True):
+        log_scale_toggle_buckets = st.toggle('Log Scale - Protocol Buckets', value=False)
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['reserve_a_tokens','community_a_tokens','foundation_a_tokens',
+                            'incentivisation_a_tokens','staking_vesting_a_tokens','lp_tokens','te_holding_supply',
+                            'te_unvested_supply','te_circulating_supply','te_total_supply'], 1, param_id, max_months
+                            , plot_title="Token Supply Buckets", x_title="Months", y_title="Tokens", logy=log_scale_toggle_buckets)
+    
+    st.markdown('---')
+    with st.expander("**Incentives**"):
         pcol61, pcol62 = st.columns(2)
         with pcol61:
             pcol61a, pcol62a = st.columns(2)
@@ -716,19 +754,32 @@ def plot_token_economy(param_id, max_months):
             with pcol62a:
                 toggle_usd_token_incentives = st.toggle('Convert to USD - Token Incentives', value=False)
             if toggle_usd_token_incentives:
-                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_usd', 'u_staking_vesting_rewards_usd', 'u_staking_minting_rewards_usd', 'u_liquidity_mining_rewards_usd'], 1, param_id, max_months
+                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_usd', 'u_staking_vesting_rewards_usd',
+                                                                                                                     'u_staking_minting_rewards_usd', 'u_liquidity_mining_rewards_usd', 'te_incentivised_tokens_usd',
+                                                                                                                     'te_airdrop_tokens_usd'],
+                                                                                                                     1, param_id, max_months
                                                 , calcColumns={'u_staking_revenue_share_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_revenue_share_rewards', 'secondCol': 'lp_token_price'},
                                                                 'u_staking_vesting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_vesting_rewards', 'secondCol': 'lp_token_price'},
                                                                 'u_staking_minting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_minting_rewards', 'secondCol': 'lp_token_price'},
                                                                 'u_liquidity_mining_rewards_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_rewards', 'secondCol': 'lp_token_price'}}
                                                 , plot_title="USD Token Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_token_incentives)
             else:
-                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards', 'u_staking_minting_rewards', 'u_liquidity_mining_rewards'], 1, param_id, max_months
+                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards',
+                                                                                                                     'u_staking_minting_rewards', 'u_liquidity_mining_rewards', 'te_incentivised_tokens',
+                                                                                                                     'te_airdrop_tokens'],
+                                                                                                                     1, param_id, max_months
                                 , plot_title="Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
         with pcol62:
-            log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
-            max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_staking_apr'], 1, param_id, max_months
-                                        , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr) 
+            log_scale_toggle_usd_incentives = st.toggle('Log Scale - USD Incentives', value=True)
+            max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_bribes_from_incentives_usd', 'te_bribes_from_protocol_growth_usd',
+                                                                                                                 'ba_staker_revenue_usd', 'ba_service_provider_revenue_usd',
+                                                                                                                 'ba_incentivisation_revenue_usd'],
+                                                                                                                    1, param_id, max_months
+                                            , plot_title="USD Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_usd_incentives)
+        
+        log_scale_toggle_staking_apr = st.toggle('Log Scale - Staking APR', value=True)
+        max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['te_staking_apr'], 1, param_id, max_months
+                                    , plot_title="Staking APR / %", x_title="Months", y_title="APR / %", logy=log_scale_toggle_staking_apr) 
             
     st.markdown('---')
     with st.expander("**Token Valuations**"):

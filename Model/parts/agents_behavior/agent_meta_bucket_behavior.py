@@ -21,6 +21,9 @@ Functions:
 """
 import random
 import numpy as np
+import pandas as pd
+
+from Model.parts.utils import calculate_user_adoption
 
 # POLICY FUNCTIONS
 def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_state, **kwargs):
@@ -45,67 +48,102 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
     """
 
     try:
-        if params['agent_behavior'] == 'random':
+        if params['agent_behavior'] == 'simple':
             """
-            Define the agent behavior for each agent type for the random agent behavior
-            Agent actions are based on pure randomnes.
+            Define the agent behavior for each agent type for the simple and random agent behavior
+            Agent actions are based on simple incentive and rewards reactions plus randomness .
             """
             # get parameters
             random_seed = params['random_seed']
             agent_staking_apr_target = params['agent_staking_apr_target']
+            # individual utility allocations for more granular control in future random agent behavior versions
+            staking_share = params['staking_share']
+            liquidity_mining_share = params['liquidity_mining_share']
+            burning_share = params['burning_share']
+            holding_share = params['holding_share']
+            transfer_share = params['transfer_share']
+            S_B = params['S_B']
+            S_e = params['S_e']
+            S_0 = params['S_0']
+            initial_token_holders = params['initial_token_holders']
+            token_holders_after_10y = params['token_holders_after_10y']
+            token_adoption_velocity = params['token_adoption_velocity']
 
             # get state variables
             agents = prev_state['agents'].copy()
             token_economy = prev_state['token_economy'].copy()
             staking_apr = token_economy['te_staking_apr']
             current_month = prev_state['timestep']
+            current_date = prev_state['date']
+
+            # get utility allocation share from last timestep
+            if current_month > 1:
+                max_utility_alloc_prev = max([agents[agent]['a_actions']['utility'] for agent in agents])
+
+            # find token holder change Tc
+            prev_token_holders = prev_state['user_adoption']['ua_token_holders']
+            current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days
+            token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
+            # adjust token holders according to staking target
+            last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
+            token_holders_last_month_regular = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,last_month_day)
+            token_holders = (token_holders - token_holders_last_month_regular) + prev_token_holders
+            staking_apr_ratio = token_economy['te_staking_apr'] / agent_staking_apr_target
+            token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1) if staking_apr_ratio > 0 else token_holders
+            
+            # calculate token holder change
+            Tc = (token_holders - prev_token_holders) / prev_token_holders
+
+            # calculate the meta bucket selling share
+            S = 1 / (S_B**(Tc * S_e)) * S_0
+            random.seed(random_seed + current_month)
+            S = S * random.uniform(0.9, 1.1)
+
+            # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
+            St = (np.sqrt(staking_apr/agent_staking_apr_target)-1) * staking_share/100 if staking_apr > 0 else 0
+            St = St if St > 0 else 0
+            # add a damping term to the staking share to avoid extreme changes
+            St_diff = max_utility_alloc_prev - St if current_month > 1 else 0
+            St = St + St_diff * 0.75
+
+            # calculate all individual utility allocations
+            U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
+
+            # calculate the holding share as meta token allocation as left over function of the selling and utility shares
+            H = 1 - S - U
+            if H < 0:
+                S = S + H
+                H = 0
+            if S < 0:
+                St = St + S
+                S = 0
+                U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
+            
+            # adjust St w.r.t. the sum of all individual utility allocations
+            St = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
+
+            np.testing.assert_allclose(S+U+H, 1, rtol=0.001, err_msg=f"Agent meta bucket behavior does not sum up to 100% ({(S+U+H)*100.0}), S: {S}, U: {U}, H: {H}.")
 
             # initialize agent behavior dictionary
             agent_behavior_dict = {}
 
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
-                random.seed(random_seed + current_month + i)
-
-                # agents previous timestep behavior
-                prev_agent_behavior = agents[agent]['a_actions']
-                if current_month == 1:
-                    utility_prev = random.uniform(0.5, 1)
-                    hold_prev = random.uniform(0.05, 0.15)
-                else:
-                    utility_prev = float(prev_agent_behavior['utility'])
-                    hold_prev = float(prev_agent_behavior['hold'])
                 
-                # determine utility and selling behavior
-                new_utility = utility_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1])) + (staking_apr - agent_staking_apr_target)/agent_staking_apr_target if current_month > 1 else utility_prev
-                utility = np.min([np.max([0, new_utility]), 1])
-                selling = 1 - utility
-                remove = (1-utility) * random.uniform(0, 0.1)
-                
-                # include token holdings
-                random.seed(random_seed + current_month + i + random.uniform(0, 50))
-                holding = hold_prev * (1 + np.min([random.uniform(-0.1, 0.1), 1]))
-                selling = selling - holding/2
-                utility = utility - holding/2
-                
-                if selling < 0:
-                    utility = utility + selling
-                    selling = 0
-                if utility < 0:
-                    selling = selling + utility
-                    utility = 0
-                
+                remove = np.min([(1-U) * random.uniform(0.0, 0.1),1])
+           
                 agent_behavior_dict[agent] = {
-                    'sell': selling,
-                    'hold': holding,
-                    'utility': utility,
+                    'sell': S,
+                    'hold': H,
+                    'utility': U,
                     'remove_tokens': remove,
+                    'St': St,
                 }
 
                 # consistency check for agent metabucket behavior
                 error_msg = f"Agent meta bucket behavior for agent {agent} does not sum up to 100% ({(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'])*100.0})."
                 np.testing.assert_allclose(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'], 1.0, rtol=0.0001, err_msg=error_msg)
-        
+
         elif params['agent_behavior'] == 'static':
             """
             Define the agent behavior for each agent type for the static 1:1 QTM behavior

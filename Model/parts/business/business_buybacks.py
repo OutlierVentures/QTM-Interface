@@ -16,7 +16,10 @@ def business_buyback(params, substep, state_history, prev_state, **kwargs):
     ba_buybacks_usd =prev_state['business_assumptions']['ba_buybacks_usd']
 
     # policy logic
-    buyback_share_tokens = calculate_buyback_share_tokens(ba_business_buybacks_usd, ba_buybacks_usd, lp_tokens_after_liquidity_addition, lp_tokens_after_buyback)
+    if ba_business_buybacks_usd >= 0:
+        buyback_share_tokens = calculate_buyback_share_tokens(ba_business_buybacks_usd, ba_buybacks_usd, lp_tokens_after_liquidity_addition, lp_tokens_after_buyback)
+    else:
+        buyback_share_tokens = -liquidity_pool['lp_sold_business_tokens']
 
     return {'business_buyback': buyback_share_tokens}
 
