@@ -31,6 +31,9 @@ def get_initial_state(input_file, adjusted_params):
     # initialize the initial standard utilities
     utilities = initialize_utilities(initial_stakeholders, sys_param)
 
+    # simulate the market series based on input parameters (to add)
+    market_simulation = coin_gecko_prices(sys_param) 
+    
     # compose the initial state
     initial_state = {
         'date': get_initial_date(sys_param),
@@ -39,7 +42,8 @@ def get_initial_state(input_file, adjusted_params):
         'token_economy': initial_token_economy,
         'user_adoption': initial_user_adoption,
         'business_assumptions': business_assumptions,
-        'utilities': utilities 
+        'utilities': utilities, 
+        'market': market_simulation
     }
 
     return initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim

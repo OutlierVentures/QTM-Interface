@@ -100,12 +100,28 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1) if staking_apr_ratio > 0 else token_holders
 
     ## Calculating Token Buys
-    if current_month == 1:
-        token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
-    else:
-        token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user
+    if ('market' in params and params['market'] == 0) or 'market' not in params:
+        if current_month == 1:
+            token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+        else:
+            token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user 
 
-    return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
+        return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
+    else:
+        # Get token to use for simulation from input parameters
+        coin = params['token']
+        
+        # Retrieve market simulation initialized at the beginning of the simulation
+        market_simu = prev_state['market']['market']
+
+        # Compute monthly simulated return corresponding to current timestep 
+        new_monthly_return = np.exp(market_simu[market_simu['timestep'] == current_month][f'{coin}_ln_return'].iloc[0])
+        if current_month == 1:
+            token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+        else:
+            token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user*(1 + new_monthly_return) # Simple %-wise buy pressure adjustment based on simulated market returns
+
+        return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
 
 
 
