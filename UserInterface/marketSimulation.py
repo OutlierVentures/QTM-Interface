@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 
 def marketSimulationInput():
-    with st.expander("**Market Simulation**", expanded=True):
+    with st.expander("**Market Simulation**", expanded=False):
         st.markdown("### Market Simulation")
         st.write("**Market Assumptions**")
         switch = st.toggle('Activate', help="Enable market simulation") 

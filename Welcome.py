@@ -66,11 +66,11 @@ with st.expander('Login', expanded=False):
         except Exception as e:
             st.error(e)
     
-    elif authentication_status is None:
+    elif st.session_state["authentication_status"] is None:
         st.warning('Please enter your username and password')
 
 # Update user details section
-if authentication_status:
+if st.session_state["authentication_status"]:
     with st.expander('Update User Details', expanded=False):        
         # Update user details
         try:
