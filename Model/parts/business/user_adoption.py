@@ -54,20 +54,22 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     one_time_product_revenue_per_user = params['one_time_product_revenue_per_user']
     regular_product_revenue_per_user = params['regular_product_revenue_per_user']
     user_adoption_target = params['user_adoption_target'] if 'user_adoption_target' in params else 0
+    avg_product_user_growth_rate = params['avg_product_user_growth_rate'] if 'avg_product_user_growth_rate' in params else 0
     
     # state variables
     prev_product_users = prev_state['user_adoption']['ua_product_users']
-    product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day)
 
     # adjust product users according to incentivisation target
     if user_adoption_target != 0 and agent_behavior == 'simple':
-        # calculate new product users based on incentivisation target
-        last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
-        product_users_last_month_regular = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,last_month_day)
-        product_users = (product_users - product_users_last_month_regular) + prev_product_users
-        incentive_adoption_ratio = (token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target)**1.25
+        # calculate new product users based on incentivisation target and regular product user growth
+        incentive_adoption_ratio = np.sqrt(token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target)
+        incentive_adoption_ratio = np.max([incentive_adoption_ratio, 0.95]) # limit the shrinkage of the user base by 5% per month
 
-        product_users = product_users + (product_users-prev_product_users) * (incentive_adoption_ratio - 1) if incentive_adoption_ratio > 0 else product_users
+        product_users = prev_product_users * (1 + ((avg_product_user_growth_rate / 100) + (incentive_adoption_ratio-1)))
+        product_users = np.min([product_users, prev_product_users*1.5]) # limit the token holder growth to 2x per month to avoid unrealistic growth
+
+    else:
+        product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day)
 
     ## Product Revenue
     if current_month == 1:
@@ -84,20 +86,20 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     one_time_token_buy_per_user = params['one_time_token_buy_per_user']
     regular_token_buy_per_user = params['regular_token_buy_per_user']
     agent_staking_apr_target = params['agent_staking_apr_target'] if 'agent_staking_apr_target' in params else 0
+    avg_token_holder_growth_rate = params['avg_token_holder_growth_rate'] if 'avg_token_holder_growth_rate' in params else 0
 
     # state variables
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']
 
-    token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
-
     # adjust token holders according to staking target
     if agent_behavior == 'simple':
-        last_month_day = (pd.to_datetime(current_date) - pd.to_datetime('today')).days
-        token_holders_last_month_regular = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,last_month_day)
-        token_holders = (token_holders - token_holders_last_month_regular) + prev_token_holders
-        staking_apr_ratio = (token_economy['te_staking_apr'] / agent_staking_apr_target)**1.25 * (product_users / prev_product_users)
+        staking_apr_ratio = np.sqrt(token_economy['te_staking_apr'] / agent_staking_apr_target)
+        staking_apr_ratio = np.max([staking_apr_ratio, 0.95]) # limit the shrinkage of the token holders by 5% per month
 
-        token_holders = token_holders + (token_holders-prev_token_holders) * (staking_apr_ratio - 1) if staking_apr_ratio > 0 else token_holders
+        token_holders = prev_token_holders * (1 + ((avg_token_holder_growth_rate / 100) + (staking_apr_ratio-1)))
+        token_holders = np.min([token_holders, prev_token_holders*1.5]) # limit the token holder growth to 2x per month to avoid unrealistic growth    
+    else:
+        token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
 
     ## Calculating Token Buys
     if ('market' in params and params['market'] == 0) or 'market' not in params:
