@@ -80,7 +80,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # Market Simulation
     ##############################################
 
-    mkt_return_dict = mkt.marketSimulationInput()
+    #mkt_return_dict = mkt.marketSimulationInput()
 
     ##############################################
     # Business Assumptions
@@ -219,10 +219,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
         'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
         'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
-        'token' : mkt_return_dict["token"], 
-        'start date' : mkt_return_dict['sim_start'],
-        'end date': mkt_return_dict['sim_end'],
-        'market': mkt_return_dict['market'],
+        #'token' : mkt_return_dict["token"], 
+        #'start date' : mkt_return_dict['sim_start'],
+        #'end date': mkt_return_dict['sim_end'],
+        #'market': mkt_return_dict['market'],
         'user_adoption_target': ua_return_dict["user_adoption_target"],
         'avg_product_user_growth_rate': ua_return_dict["avg_product_user_growth_rate"],
         'avg_token_holder_growth_rate': ua_return_dict["avg_token_holder_growth_rate"],

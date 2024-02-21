@@ -32,7 +32,7 @@ def get_initial_state(input_file, adjusted_params):
     utilities = initialize_utilities(initial_stakeholders, sys_param)
 
     # simulate the market series based on input parameters (to add)
-    market_simulation = coin_gecko_prices(sys_param) 
+    #market_simulation = coin_gecko_prices(sys_param) 
     
     # compose the initial state
     initial_state = {
@@ -43,7 +43,7 @@ def get_initial_state(input_file, adjusted_params):
         'user_adoption': initial_user_adoption,
         'business_assumptions': business_assumptions,
         'utilities': utilities, 
-        'market': market_simulation
+        #'market': market_simulation
     }
 
     return initial_state, sys_param, stakeholder_name_mapping, stakeholder_names, conn, cur, param_id, execute_sim
