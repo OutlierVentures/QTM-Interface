@@ -279,7 +279,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     col111, col112, col113, col114, col115 = st.columns(5)
     with col111:
-        simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 60, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
+        simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, max_value=120, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 60, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
         new_params.update({'simulation_duration': simulation_duration})
 
     return new_params
