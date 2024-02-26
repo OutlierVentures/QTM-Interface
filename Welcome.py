@@ -28,7 +28,7 @@ st.session_state["authenticator"] = stauth.Authenticate(
 # Sign-up section
 with st.expander('Sign-Up', expanded=False):
     try:
-        if st.session_state["authenticator"].register_user():
+        if st.session_state["authenticator"].register_user(preauthorization=False):
             st.success('User registered successfully')
             safeToYaml(config)
     except Exception as e:
