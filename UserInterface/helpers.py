@@ -12,6 +12,7 @@ import yaml
 
 from Model.parts.utils import *
 from UserInterface.plots import *
+from UserInterface.persist import persist, load_widget_state
 
 def delete_parameter_and_simulation_data(param_id):
     # delete current selected parameter set and simulation data from database
@@ -77,6 +78,7 @@ def to_excel(df):
     return processed_data
 
 def ui_base(return_db_sorted=False):
+    load_widget_state()
     # get all existing project names
     try:
         db_sorted_original = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
@@ -94,9 +96,13 @@ def ui_base(return_db_sorted=False):
     if 'project_name' not in st.session_state:
         st.session_state['project_name'] = ''
 
+
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
-        st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=[db_sorted['id'].to_list().index(st.session_state['param_id']) if st.session_state['param_id'] in db_sorted['id'].to_list() else len(project_names)-1][0])
-        st.session_state['param_id'] = st.sidebar.text_input('Parameter ID',[db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0] if st.session_state['project_name'] in db_sorted['project_name'].to_list() else ""][0])
+        pname = st.sidebar.selectbox('Project Name', tuple(project_names), key=persist('ProjectName'))
+        if st.sidebar.button('Select Project', key='select_project_button'):
+            st.session_state['project_name'] = pname
+            st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]
+            st.session_state['pdix'] = [db_sorted['id'].to_list().index(st.session_state['param_id']) if st.session_state['param_id'] in db_sorted['id'].to_list() else len(project_names)-1][0]
     else:
         st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1)
         st.session_state['param_id'] = st.sidebar.text_input('Parameter ID', "")
