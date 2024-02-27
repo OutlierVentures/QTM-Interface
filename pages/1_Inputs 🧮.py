@@ -122,8 +122,9 @@ if 'authentication_status' in st.session_state:
             if st.button('Run Simulation'+ status_msg):
                 st.session_state['button_clicked'] = True
         with bcol2:
-            if st.button('Show Parameter Sets'):
-                st.session_state['parameter_button_clicked'] = True
+            if st.session_state["username"] == 'admin':
+                if st.button('Show Parameter Sets'):
+                    st.session_state['parameter_button_clicked'] = True
             
         if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
             # compose adjusted parameters
