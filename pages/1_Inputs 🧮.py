@@ -23,7 +23,7 @@ input_file_base_path = parent_dir+'/data/'
 if 'authentication_status' in st.session_state:
     if st.session_state["authentication_status"]:
         header(parent_dir)
-        db_sorted = ui_base(parent_dir, return_db_sorted=True)
+        db_sorted = ui_base(return_db_sorted=True)
         try:
             # delete current selected parameter set and simulation data from database
             if 'delete_parameters_clicked' not in st.session_state:
@@ -156,7 +156,7 @@ if 'authentication_status' in st.session_state:
         if 'parameter_button_clicked' in st.session_state and st.session_state['parameter_button_clicked']:
             if len(db_sorted) > 0:
                 st.write(f"Parameter sets:")
-                df = get_simulation_data('simulationData.db', 'sys_param')
+                df = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
                 df.insert(0, "id", df.pop("id"))
                 df.insert(0, "project_name", df.pop("project_name"))
                 st.dataframe(df)
