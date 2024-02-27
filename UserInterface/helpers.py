@@ -98,14 +98,11 @@ def ui_base(return_db_sorted=False):
 
 
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
-        pname = st.sidebar.selectbox('Project Name', tuple(project_names), key=persist('ProjectName'))
-        if st.sidebar.button('Select Project', key='select_project_button'):
-            st.session_state['project_name'] = pname
-            st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]
-            st.session_state['pdix'] = [db_sorted['id'].to_list().index(st.session_state['param_id']) if st.session_state['param_id'] in db_sorted['id'].to_list() else len(project_names)-1][0]
+        st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), key=persist('ProjectName'))
+        st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]            
     else:
-        st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1)
-        st.session_state['param_id'] = st.sidebar.text_input('Parameter ID', "")
+        st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
+        st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]   
 
     try:
         if st.session_state['param_id'] not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
