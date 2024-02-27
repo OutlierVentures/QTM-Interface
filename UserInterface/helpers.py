@@ -87,7 +87,7 @@ def ui_base(return_db_sorted=False):
         db_sorted['usermail'] = db_sorted['usermail'].str.split(',')
         db_sorted = db_sorted.explode('usermail')
         db_sorted = db_sorted[db_sorted['usermail'] == st.session_state["authenticator"].credentials["usernames"][st.session_state["username"]]["email"]] if st.session_state["username"] != 'admin' else db_sorted
-        project_names = db_sorted['project_name']
+        project_names = db_sorted['project_name'] if st.session_state["username"] != 'admin' else db_sorted_original['project_name']
         project_names = project_names.to_list()
         project_names.append('')
     except:
