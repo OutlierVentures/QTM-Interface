@@ -142,14 +142,13 @@ if 'authentication_status' in st.session_state:
                 st.session_state['param_id'], execute_sim = simulation(input_file_path, adjusted_params, True)
             
             if execute_sim:
-                st.write(f"Simulation with id {st.session_state['param_id']} has finished based on these parameters:")
                 df = get_simulation_data('simulationData.db', 'sys_param')
                 df.insert(0, "id", df.pop("id"))
                 df.insert(0, "project_name", df.pop("project_name"))
-                st.dataframe(df)
-                st.success('Done!')
-                # write hint for user to switch to the next page
-                st.info("Go to the Fundraising 💰, Business 📈, Token Economy 🪙, or Data 💾 page in the navigation bar on the left side to see the respective simulation results!", icon="ℹ️")
+                st.success(f"Simulation for project {st.session_state['project_name']} has finished! ✅")
+                st.info(f"Refresh the page and select the project {st.session_state['project_name']} from the sidebar dropdown menu. Afterwards navigate to the Fundraising 💰, Business 📈, Token Economy 🪙, or Data 💾 page on the left side to see the respective simulation results!", icon="ℹ️")
+                if st.button('Refresh'):
+                    st.experimental_rerun()
 
             # Reset the session state variable after running the simulation
             st.session_state['button_clicked'] = False
