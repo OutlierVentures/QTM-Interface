@@ -99,7 +99,10 @@ def ui_base(return_db_sorted=False):
 
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
         st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), key=persist('ProjectName'))
-        st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]            
+        try:
+            st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]      
+        except:
+            st.session_state['param_id'] = ''
     else:
         st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
         st.session_state['param_id'] = ''
