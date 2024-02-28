@@ -102,7 +102,7 @@ def ui_base(return_db_sorted=False):
         st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]            
     else:
         st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
-        st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]   
+        st.session_state['param_id'] = ''
 
     try:
         if st.session_state['param_id'] not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
