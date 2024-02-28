@@ -177,9 +177,9 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     updated_token_economy['te_airdrop_tokens_usd_cum'] += updated_token_economy['te_airdrop_tokens'] * lp['lp_token_price']
     updated_token_economy['te_p_r_ratio'] = FDV_MC / ((business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue'])*12) if (business_assumptions['ba_fix_business_revenue_usd'] + user_adoption['ua_product_revenue']) > 0 else 0.0
     updated_token_economy['te_p_e_ratio'] = FDV_MC / (business_assumptions['ba_cash_flow']*12) if (business_assumptions['ba_cash_flow']) > 0 else 0.0
-    updated_token_economy['te_product_user_per_incentivised_usd'] = user_adoption['ua_product_users'] / (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) if (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) > 0 else 0.0
-    updated_token_economy['te_incentivised_usd_per_product_user'] = (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum']) / user_adoption['ua_product_users'] if user_adoption['ua_product_users'] > 0 else 0.0
-        
+    updated_token_economy['te_product_user_per_incentivised_usd'] = user_adoption['ua_product_users'] / (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum'] + business_assumptions['ba_incentivisation_revenue_cum_usd']) if (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum'] + business_assumptions['ba_incentivisation_revenue_cum_usd']) > 0 else 0.0
+    updated_token_economy['te_incentivised_usd_per_product_user'] = (updated_token_economy['te_incentivised_tokens_usd_cum'] + updated_token_economy['te_airdrop_tokens_usd_cum'] + business_assumptions['ba_incentivisation_revenue_cum_usd']) / user_adoption['ua_product_users'] if user_adoption['ua_product_users'] > 0 else 0.0
+
     # Bribing
     te_bribes_from_incentives_usd = updated_token_economy['te_incentivised_tokens_usd'] * bribing_share/100 + business_assumptions['ba_incentivisation_revenue_usd'] * bribing_share/100 if (bribing_share > 0) else 0.0
     te_bribes_from_protocol_growth_usd = user_adoption['ua_product_revenue'] * bribing_share/100 if (bribing_share > 0) else 0.0
