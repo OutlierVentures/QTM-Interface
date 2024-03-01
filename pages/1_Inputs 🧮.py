@@ -159,6 +159,7 @@ if 'authentication_status' in st.session_state:
                 df = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
                 df.insert(0, "id", df.pop("id"))
                 df.insert(0, "project_name", df.pop("project_name"))
+                df.reset_index(drop=True, inplace=True)
                 st.dataframe(df)
             else:
                 st.error(f"No parameter sets available!", icon="⚠️")
