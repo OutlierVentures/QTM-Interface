@@ -138,6 +138,8 @@ def shareDataSet(newMailAccess):
     cur = conn.cursor()
     cur.execute(''' SELECT usermail FROM sys_param WHERE id = ? ''', (st.session_state['param_id'],))
     usermail = cur.fetchone()[0]
+    st.sidebar.info(f"Current shared mail addresses of this dataset: {usermail}", icon="ℹ️")
+    st.sidebar.info(f"Try to add: {newMailAccess}", icon="ℹ️")
     if newMailAccess in usermail:
         st.sidebar.warning(f'⚠️The dataset has already been shared with {newMailAccess}.')
         return
