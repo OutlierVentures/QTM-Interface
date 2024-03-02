@@ -272,9 +272,12 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     cc.consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_return_dict, ut_return_dict, ba_return_dict, ua_return_dict, timi_return_dict, fr_return_dict)
 
+    # Initialize a variable to track whether the error condition is met
+    error_condition_met = False
+
+    # Define your columns and inputs
     col111, col112, col113, col114, col115 = st.columns(5)
     with col111:
-
         simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, max_value=120, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 60, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
         new_params.update({'simulation_duration': simulation_duration})
 
@@ -285,6 +288,13 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         # Calculate the difference in days
         timeframe = (end_date - start_date).days
         if simulation_duration >= timeframe and ua_return_dict['market'] == 1:
-            st.error("Error: Simulation duration must be smaller than the selected market simulation period in the Market Simulation section of User Adoption (current value: "+str(timeframe)+")")
-        else:
-            st.empty()  # Placeholder to clear previous error messages if condition is not met
+            # If condition is met, set the flag to True
+            error_condition_met = True
+
+    # Check the flag and display the error message if the condition was met
+    if error_condition_met:
+        st.error("Error: Simulation duration must be smaller than the selected market simulation period in the Market Simulation section of User Adoption (current market simulation period: "+str(timeframe)+")")
+    else:
+        st.empty()  # Placeholder to clear previous error messages if the condition is not met anymore
+
+    return new_params
