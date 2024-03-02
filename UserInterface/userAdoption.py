@@ -3,6 +3,11 @@ import numpy as np
 from datetime import datetime, timedelta
 import time
 
+#NEW IMPORTS
+from UserInterface.helpers import *
+from Model.parts.utils import *
+
+
 def userAdoptionInput(sys_param, tav_return_dict):
     with st.expander("**User Adoption**"):
         st.markdown("### User Adoption")
@@ -146,6 +151,17 @@ def userAdoptionInput(sys_param, tav_return_dict):
             end_date_unix = 0
             active = 0
         
+        if switch: # Insert Plot
+
+            # Assuming `result` is the dictionary returned by the `coin_gecko_prices` function
+            result = coin_gecko_prices_2(active, token_choice, start_date_unix, end_date_unix)
+
+            # Extract the DataFrame from the result
+            simulation_df = result['market']
+
+            # Plotting and displaying the figure in Streamlit
+            fig = plot_simulation_results(simulation_df, token_choice) 
+            st.plotly_chart(fig, use_container_width=True)
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]

@@ -877,3 +877,32 @@ def is_float(element: any) -> bool:
         return True
     except ValueError:
         return False
+
+def plot_simulation_results(simulation_df, coin, against='usd'):
+    """
+    Plots the simulated time series of logarithmic returns.
+
+    Parameters:
+    - simulation_df: DataFrame containing the simulation results.
+    - coin: The cryptocurrency token symbol.
+    - against: The currency against which the cryptocurrency prices are compared.
+    """
+    # Creating an empty figure
+    fig = go.Figure()
+
+    #print(simulation_df)
+    df_subset = simulation_df
+    
+    # Adding each run as a separate trace
+    for run in simulation_df['run'].unique():
+        df_subset = simulation_df[simulation_df['run'] == run]
+        fig.add_trace(go.Scatter(x=df_subset['timestep'], y=df_subset[f'{coin}_ln_return'],  # {coin}_{against}
+                                 mode='lines', name=f'Run {run}'))
+    
+    # Updating layout for readability
+    fig.update_layout(title=f'Simulated Log Returns of {coin.upper()} against {against.upper()}',
+                      xaxis_title='Timestep',
+                      yaxis_title='Log Returns',
+                      legend_title='Simulation Run')
+    
+    return fig

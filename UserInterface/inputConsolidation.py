@@ -272,6 +272,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     cc.consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_return_dict, ut_return_dict, ba_return_dict, ua_return_dict, timi_return_dict, fr_return_dict)
 
+
     # Initialize a variable to track whether the error condition is met
     error_condition_met = False
 
