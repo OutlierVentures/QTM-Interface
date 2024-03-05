@@ -128,7 +128,7 @@ if 'authentication_status' in st.session_state:
             
         if 'button_clicked' in st.session_state and st.session_state['button_clicked']:
             # compose adjusted parameters
-            new_params.update({'project_name':project_name})
+            new_params.update({'project_name': project_name})
             adjusted_params = new_params
 
             # Run the simulation.py script
