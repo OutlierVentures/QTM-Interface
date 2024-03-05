@@ -119,12 +119,12 @@ def userAdoptionInput(sys_param, tav_return_dict):
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
 
         st.markdown("### Market Simulation")
-        switch = st.toggle('Activate', help="Enable market simulation") 
+        switch = st.toggle('Activate', help="Enable market simulation. In this section you can select a market period that you want to replicate in your simulation. The selected timeframe is gonna be used to infer the parameters to simulate monthly log returns based on the number of timesteps that are gonna be selected for the simulation.") 
             
         if switch:
             # choose token to use as proxy for market sentiment
             token_choice_predefined = ['bitcoin', 'ethereum'] # extend list if needed
-            token_choice = st.radio('Token to simulate', tuple(token_choice_predefined), help="Pick the token you want to use for the simulatation.").lower()
+            token_choice = st.radio('Token to simulate', tuple(token_choice_predefined), help="Pick the token you want to use as market proxy for the simulation.").lower()
             
             # Checks
             today = datetime.today().date()
@@ -136,6 +136,11 @@ def userAdoptionInput(sys_param, tav_return_dict):
 
             if sim_start_date > sim_end_date:
                 st.error("Error: End date cannot be before start date. Please adjust your selection.")
+                switch = False
+
+            # Check if the difference is less than 4 months
+            elif sim_end_date-sim_start_date < timedelta(days = 120):
+                st.error("Error: The Brownian Motion estimator performs best with at least 4 months of data. Please select a longer timeframe.")
                 switch = False
 
             else:
@@ -153,15 +158,17 @@ def userAdoptionInput(sys_param, tav_return_dict):
         
         if switch: # Insert Plot
 
-            # Assuming `result` is the dictionary returned by the `coin_gecko_prices` function
-            result = coin_gecko_prices_2(active, token_choice, start_date_unix, end_date_unix)
+            # Displaying a message while the plot is loading
+            with st.spinner("Please wait while the simulation chart is loading..."):
+                # Assuming `result` is the dictionary returned by the `coin_gecko_prices` function
+                result = coin_gecko_prices_2(active, token_choice, start_date_unix, end_date_unix)
 
-            # Extract the DataFrame from the result
-            simulation_df = result['market']
+                # Extract the DataFrame from the result
+                simulation_df = result['market']
 
-            # Plotting and displaying the figure in Streamlit
-            fig = plot_simulation_results(simulation_df, token_choice) 
-            st.plotly_chart(fig, use_container_width=True)
+                # Plotting and displaying the figure in Streamlit
+                fig = plot_simulation_results(simulation_df, token_choice) 
+                st.plotly_chart(fig, use_container_width=True)
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]

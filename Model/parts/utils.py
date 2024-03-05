@@ -68,7 +68,7 @@ def coin_gecko_prices(sys_param, against='usd', timesteps=60, runs=1):
         
         # Fetch historical token prices from Coingecko API
         url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
-        # old url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={against}&days={days}'
+
         r = requests.get(url)
         df = pd.DataFrame(r.json()['prices'], columns=['unix', f'{coin}_{against}'])
 
@@ -85,7 +85,7 @@ def coin_gecko_prices(sys_param, against='usd', timesteps=60, runs=1):
 
         # Approximate the distribution parameters of each series
         # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
-        OU_params_btc = bmg.estimate_OU_params(monthly_df['bitcoin_ln_return'].values, distribution_type='custom')
+        OU_params_btc = bmg.estimate_OU_params(monthly_df[f'{coin}_ln_return'].values, distribution_type='custom')
 
         # OPTIONALLY: override the gamma (long term mean) of the expected distribution
         # For example if you wanted to ignore the historical trend in prices you could do so by setting price changes to 0 gamma

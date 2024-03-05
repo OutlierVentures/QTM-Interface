@@ -900,9 +900,9 @@ def plot_simulation_results(simulation_df, coin, against='usd'):
                                  mode='lines', name=f'Run {run}'))
     
     # Updating layout for readability
-    fig.update_layout(title=f'Simulated Log Returns of {coin.upper()} against {against.upper()}',
+    fig.update_layout(title=f'Simulated Market Behavior: Log Returns of {coin.upper()}/{against.upper()}',
                       xaxis_title='Timestep',
-                      yaxis_title='Log Returns',
+                      yaxis_title='Monthly Log Returns',
                       legend_title='Simulation Run')
     
     return fig

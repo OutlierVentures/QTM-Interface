@@ -173,71 +173,64 @@ def safeToYaml(config):
         yaml.dump(config, file, default_flow_style=False)
 
 
-def coin_gecko_prices_2(active_market, coin, start_date, end_date, against='usd', timesteps=60, runs=1): 
+def coin_gecko_prices_2(active_market, coin, start_date, end_date, against='usd', timesteps = 60, runs=1): 
 
     ### TO ADD: ###
     # - add check that enough data is queried from the API to use brownian motion estimation 
-    # - add default input parameters and error handling
-    # - add API request issues error handling
-
-    if active_market == 0:
-        # st.error('The market is currently inactive.')
-        return {'market': 0}
-    else:
         
-        # Fetch historical token prices from Coingecko API
-        url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
-        # old url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart?vs_currency={against}&days={days}'
-        r = requests.get(url)
+    # Fetch historical token prices from Coingecko API
+    url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
+    r = requests.get(url)
 
-        if r.status_code != 200:
-            st.error(f"Failed to fetch data from CoinGecko API. Status code: {r.status_code}")
-            return
+    # Check that API got fetched
+    if r.status_code != 200:
+        st.error(f"Failed to fetch data from CoinGecko API. Status code: {r.status_code}")
+        return
 
-        response_json = r.json()
-        if 'prices' not in response_json:
-            st.error("The API response is missing the 'prices' key.")
-            return
+    # Check that fetched json file has the wanted columns
+    r_json = r.json()
+    if 'prices' not in r_json:
+        st.error("The API response is missing the 'prices' key.")
+        return
 
-        df = pd.DataFrame(r.json()['prices'], columns=['unix', f'{coin}_{against}'])
+    # Convert fetched json file into a dataframe
+    df = pd.DataFrame(r_json['prices'], columns=['unix', f'{coin}_{against}'])
 
-        # Convert unix timestamp to datetime and set as index
-        df['date'] = pd.to_datetime(df['unix'], unit='ms')
-        df.set_index('date', inplace=True)
+    # Convert unix timestamp to datetime and set as index
+    df['date'] = pd.to_datetime(df['unix'], unit='ms')
+    df.set_index('date', inplace=True)
 
-        # Resample to get monthly prices
-        monthly_df = df.resample('M').last()
+    # Resample to get monthly prices
+    monthly_df = df.resample('M').last() 
 
-        # Calculate monthly log returns
-        monthly_df[f'{coin}_ln_return'] = np.log(monthly_df[f'{coin}_{against}'] / monthly_df[f'{coin}_{against}'].shift(1))
-        monthly_df = monthly_df.dropna(how='any')
+    # Calculate monthly log returns
+    monthly_df[f'{coin}_ln_return'] = np.log(monthly_df[f'{coin}_{against}'] / monthly_df[f'{coin}_{against}'].shift(1))
+    monthly_df = monthly_df.dropna(how='any')
 
-        # Approximate the distribution parameters of each series
-        # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
-        OU_params_btc = bmg.estimate_OU_params(monthly_df[f'{coin}_ln_return'].values, distribution_type='custom')
+    # Approximate the distribution parameters of each series
+    # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
+    OU_params_btc = bmg.estimate_OU_params(monthly_df[f'{coin}_ln_return'].values, distribution_type='custom')
 
-        # OPTIONALLY: override the gamma (long term mean) of the expected distribution
-        # For example if you wanted to ignore the historical trend in prices you could do so by setting price changes to 0 gamma
-        # OU_params_btc.gamma = 0
+    # OPTIONALLY: override the gamma (long term mean) of the expected distribution
+    # For example if you wanted to ignore the historical trend in prices you could do so by setting price changes to 0 gamma
+    # OU_params_btc.gamma = 0
 
-        OU_params = (
-            OU_params_btc,
-        )
+    OU_params = (
+        OU_params_btc,
+    )
 
-        correlations = monthly_df[
-            [f'{coin}_ln_return',
-            ]
-        ].corr().values[0]
+    correlations = monthly_df[
+        [f'{coin}_ln_return',
+        ]
+    ].corr().values[0]
 
-        OU_procs = bmg.simulate_corr_OU_procs(timesteps, OU_params, runs, rho=correlations)
-        OU_procs.shape
-        # Convert numpy array into a dataframe
-        # This is a placeholder, replace with actual array from simulation
-        OU_procs = np.random.randn(runs, timesteps)  # Placeholder, replace with actual simulation data
-        runs, timesteps = OU_procs.shape
-        OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
-        walks = pd.DataFrame(OU_procs_arr, columns=['run', f'{coin}_ln_return'])
-        walks['run'] = walks['run'].astype(int) + 1
-        walks['timestep'] = walks.groupby('run').cumcount() + 1
+    OU_procs = bmg.simulate_corr_OU_procs(timesteps, OU_params, runs, rho=correlations)
+    #st.text(f"Shape of OU_procs: {OU_procs.shape}")
 
-        return {'market': walks} 
+    runs, timesteps, data = OU_procs.shape
+    OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
+    walks = pd.DataFrame(OU_procs_arr, columns=['run', f'{coin}_ln_return'])
+    walks['run'] = walks['run'].astype(int) + 1
+    walks['timestep'] = walks.groupby('run').cumcount() + 1
+
+    return {'market': walks} 
