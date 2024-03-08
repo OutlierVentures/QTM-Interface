@@ -67,11 +67,14 @@ def update_utilities_after_staking_revenue_share_buyback(params, substep, state_
     """
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
 
     # get policy input
     agent_utility_rewards_sum = policy_input['agent_utility_rewards_sum']
 
     # update logic
     updated_utilities['u_staking_revenue_share_rewards'] = agent_utility_rewards_sum
+    updated_utilities['u_staking_revenue_share_rewards_cum'] += agent_utility_rewards_sum
+    updated_utilities['u_staking_revenue_share_rewards_cum_usd'] += agent_utility_rewards_sum * liquidity_pool['lp_token_price']
 
     return ('utilities', updated_utilities)

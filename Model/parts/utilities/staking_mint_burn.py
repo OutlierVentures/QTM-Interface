@@ -37,12 +37,15 @@ def update_utilties_after_staking_mint_burn(params, substep, state_history, prev
     """
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
 
     # get policy input
     new_tokens_minted = policy_input['new_tokens_minted']
 
     # update logic
     updated_utilities['u_staking_minting_rewards'] = new_tokens_minted
+    updated_utilities['u_staking_minting_rewards_cum'] += new_tokens_minted
+    updated_utilities['u_staking_minting_rewards_cum_usd'] += new_tokens_minted * liquidity_pool['lp_token_price']
     
     return ('utilities', updated_utilities)
 

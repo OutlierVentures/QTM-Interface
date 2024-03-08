@@ -59,6 +59,7 @@ def update_utilties_after_staking_vesting(params, substep, state_history, prev_s
     """
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
 
     # get policy input
     agent_utility_sum = policy_input['agent_utility_sum']
@@ -67,6 +68,8 @@ def update_utilties_after_staking_vesting(params, substep, state_history, prev_s
 
     # update logic
     updated_utilities['u_staking_vesting_rewards'] = agent_utility_rewards_sum
+    updated_utilities['u_staking_vesting_rewards_cum'] += agent_utility_rewards_sum
+    updated_utilities['u_staking_vesting_rewards_cum_usd'] += agent_utility_rewards_sum * liquidity_pool['lp_token_price']
     updated_utilities['u_staking_allocation'] = (agent_utility_sum)
     updated_utilities['u_staking_allocation_cum'] += (agent_utility_sum - agent_utility_removal_sum)
     updated_utilities['u_staking_remove'] = agent_utility_removal_sum

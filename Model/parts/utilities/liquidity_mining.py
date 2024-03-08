@@ -105,6 +105,7 @@ def update_utilties_after_liquidity_mining(params, substep, state_history, prev_
     """
     # get state variables
     updated_utilities = prev_state['utilities'].copy()
+    liquidity_pool = prev_state['liquidity_pool'].copy()
 
     # get policy input
     agent_utility_sum = policy_input['agent_utility_sum']
@@ -114,6 +115,8 @@ def update_utilties_after_liquidity_mining(params, substep, state_history, prev_
 
     # update logic
     updated_utilities['u_liquidity_mining_rewards'] = agent_utility_rewards_sum
+    updated_utilities['u_liquidity_mining_rewards_cum'] += agent_utility_rewards_sum
+    updated_utilities['u_liquidity_mining_rewards_cum_usd'] += agent_utility_rewards_sum * liquidity_pool['lp_token_price']
     updated_utilities['u_liquidity_mining_allocation'] = (agent_utility_sum)
     updated_utilities['u_liquidity_mining_allocation_cum'] = updated_utilities['u_liquidity_mining_allocation_cum'] * (1 + (IL_adjustment_factor - 1)) + agent_utility_sum - agent_utility_removal_sum
     updated_utilities['u_liquidity_mining_allocation_remove'] = agent_utility_removal_sum

@@ -748,27 +748,43 @@ def plot_token_economy(param_id):
     with st.expander("**Incentives**"):
         pcol61, pcol62 = st.columns(2)
         with pcol61:
-            pcol61a, pcol61b = st.columns(2)
+            pcol61a, pcol61b, pcol61c = st.columns(3)
             with pcol61a:
                 log_scale_toggle_token_incentives = st.toggle('Log Scale - Token Incentives', value=True)
             with pcol61b:
                 toggle_usd_token_incentives = st.toggle('Convert to USD - Token Incentives', value=False)
+            with pcol61c:
+                cumulative_toggle_token_incentives = st.toggle('Cumulative - Token Incentives', value=False)
             if toggle_usd_token_incentives:
-                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_usd', 'u_staking_vesting_rewards_usd',
-                                                                                                                    'u_staking_minting_rewards_usd', 'u_liquidity_mining_rewards_usd', 'te_incentivised_tokens_usd',
-                                                                                                                    'te_airdrop_tokens_usd'],
-                                                                                                                    1, param_id, max_months
-                                                , calcColumns={'u_staking_revenue_share_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_revenue_share_rewards', 'secondCol': 'lp_token_price'},
-                                                                'u_staking_vesting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_vesting_rewards', 'secondCol': 'lp_token_price'},
-                                                                'u_staking_minting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_minting_rewards', 'secondCol': 'lp_token_price'},
-                                                                'u_liquidity_mining_rewards_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_rewards', 'secondCol': 'lp_token_price'}}
-                                                , plot_title="USD Token Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_token_incentives)
+                if not cumulative_toggle_token_incentives:
+                    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_usd', 'u_staking_vesting_rewards_usd',
+                                                                                                                        'u_staking_minting_rewards_usd', 'u_liquidity_mining_rewards_usd', 'te_incentivised_tokens_usd',
+                                                                                                                        'te_airdrop_tokens_usd'],
+                                                                                                                        1, param_id, max_months
+                                                    , calcColumns={'u_staking_revenue_share_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_revenue_share_rewards', 'secondCol': 'lp_token_price'},
+                                                                    'u_staking_vesting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_vesting_rewards', 'secondCol': 'lp_token_price'},
+                                                                    'u_staking_minting_rewards_usd': {'sign': '*', 'firstCol': 'u_staking_minting_rewards', 'secondCol': 'lp_token_price'},
+                                                                    'u_liquidity_mining_rewards_usd': {'sign': '*', 'firstCol': 'u_liquidity_mining_rewards', 'secondCol': 'lp_token_price'}}
+                                                    , plot_title="USD Token Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_token_incentives)
+                else:
+                    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_cum_usd', 'u_staking_vesting_rewards_cum_usd',
+                                                                                                                        'u_staking_minting_rewards_cum_usd', 'u_liquidity_mining_rewards_cum_usd', 'te_incentivised_tokens_usd_cum',
+                                                                                                                        'te_airdrop_tokens_usd_cum'],
+                                                                                                                        1, param_id, max_months
+                                                    , plot_title="Cumulative USD Token Incentives", x_title="Months", y_title="USD", logy=log_scale_toggle_token_incentives)
             else:
-                max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards',
-                                                                                                                     'u_staking_minting_rewards', 'u_liquidity_mining_rewards', 'te_incentivised_tokens',
-                                                                                                                     'te_airdrop_tokens'],
-                                                                                                                     1, param_id, max_months
-                                , plot_title="Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
+                if not cumulative_toggle_token_incentives:
+                    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards', 'u_staking_vesting_rewards',
+                                                                                                                        'u_staking_minting_rewards', 'u_liquidity_mining_rewards', 'te_incentivised_tokens',
+                                                                                                                        'te_airdrop_tokens'],
+                                                                                                                        1, param_id, max_months
+                                    , plot_title="Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
+                else:
+                    max_months = plot_results_plotly('timestep' if not st.session_state['date_conversion'] else 'date', ['u_staking_revenue_share_rewards_cum', 'u_staking_vesting_rewards_cum',
+                                                                                                                        'u_staking_minting_rewards_cum', 'u_liquidity_mining_rewards_cum', 'te_incentivised_tokens_cum',
+                                                                                                                        'te_airdrop_tokens_cum'],
+                                                                                                                        1, param_id, max_months
+                                    , plot_title="Cumulative Token Incentives", x_title="Months", y_title="Tokens", logy=log_scale_toggle_token_incentives)
         with pcol62:
             pcol62a, pcol62b = st.columns(2)
             with pcol62a:

@@ -630,9 +630,17 @@ def initialize_utilities(initial_stakeholders, sys_param):
     'u_staking_remove':0, # staking token removal
     'u_buyback_from_revenue_share_staking_usd': 0, # buyback from revenue share in USD as reward for stakers
     'u_staking_revenue_share_rewards':0, # revenue sharing rewards in tokens
+    'u_staking_revenue_share_rewards_cum': 0, # revenue sharing rewards in tokens cumulatively
+    'u_staking_revenue_share_rewards_cum_usd': 0, # revenue sharing rewards in USD cumulatively
     'u_staking_vesting_rewards':0, # staking vesting rewards in tokens
+    'u_staking_vesting_rewards_cum':0, # staking vesting rewards in tokens cumulatively
+    'u_staking_vesting_rewards_cum_usd':0, # staking vesting rewards in USD cumulatively
     'u_staking_minting_rewards':0, # staking minting rewards in tokens
+    'u_staking_minting_rewards_cum':0, # staking minting rewards in tokens cumulatively
+    'u_staking_minting_rewards_cum_usd':0, # staking minting rewards in USD cumulatively
     'u_liquidity_mining_rewards': 0, # liquidity mining rewards in tokens
+    'u_liquidity_mining_rewards_cum': 0, # liquidity mining rewards in tokens cumulatively
+    'u_liquidity_mining_rewards_cum_usd': 0, # liquidity mining rewards in USD cumulatively
     'u_liquidity_mining_allocation': 0, # liquidity mining token allocation per timestep
     'u_liquidity_mining_allocation_cum': liquidity_mining_tokens, # liquidity mining token allocation cumulatively
     'u_liquidity_mining_allocation_remove': 0, # liquidity mining token removal
