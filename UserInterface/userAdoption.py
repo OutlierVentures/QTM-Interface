@@ -16,14 +16,14 @@ def userAdoptionInput(sys_param, tav_return_dict):
 
         adoption_dict = {
             "Weak" : {
-                "avg_product_user_growth_rate" : 2.0,
-                "avg_token_holder_growth_rate" : 2.0,
+                "avg_product_user_growth_rate" : 0.5,
+                "avg_token_holder_growth_rate" : 0.5,
                 "product_adoption_velocity" : 0.5,
                 "token_adoption_velocity" : 0.5,
                 "one_time_product_revenue_per_user" : 0.0,
-                "regular_product_revenue_per_user" : 8.0,
+                "regular_product_revenue_per_user" : 0.5,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 8.0,
+                "regular_token_buy_per_user" : 0.5,
                 "avg_token_utility_allocation" : 20.0,
                 "avg_token_selling_allocation" : 70.0,
                 "avg_token_holding_allocation" : 10.0,
@@ -31,14 +31,14 @@ def userAdoptionInput(sys_param, tav_return_dict):
 
             },
             "Medium" : {
-                "avg_product_user_growth_rate" : 4.0,
-                "avg_token_holder_growth_rate" : 4.0,
+                "avg_product_user_growth_rate" : 3.5,
+                "avg_token_holder_growth_rate" : 3.5,
                 "product_adoption_velocity" : 1.5,
                 "token_adoption_velocity" : 1.5,
                 "one_time_product_revenue_per_user" : 0.0,
-                "regular_product_revenue_per_user" : 10.0,
+                "regular_product_revenue_per_user" : 2.0,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 18.0,
+                "regular_token_buy_per_user" : 2.0,
                 "avg_token_utility_allocation" : 60.0,
                 "avg_token_selling_allocation" : 30.0,
                 "avg_token_holding_allocation" : 10.0,
@@ -46,14 +46,14 @@ def userAdoptionInput(sys_param, tav_return_dict):
 
             },
             "Strong" : {
-                "avg_product_user_growth_rate" : 5.0,
-                "avg_token_holder_growth_rate" : 5.0,
+                "avg_product_user_growth_rate" : 8.0,
+                "avg_token_holder_growth_rate" : 8.0,
                 "product_adoption_velocity" : 2.5,
                 "token_adoption_velocity" : 2.5,
                 "one_time_product_revenue_per_user" : 0.0,
-                "regular_product_revenue_per_user" : 12.5,
+                "regular_product_revenue_per_user" : 6.0,
                 "one_time_token_buy_per_user" : 0.0,
-                "regular_token_buy_per_user" : 25.0,
+                "regular_token_buy_per_user" : 6.0,
                 "avg_token_utility_allocation" : 75.0,
                 "avg_token_selling_allocation" : 20.0,
                 "avg_token_holding_allocation" : 5.0,
@@ -90,7 +90,7 @@ def userAdoptionInput(sys_param, tav_return_dict):
         with col71b:
             staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 25.0][0], disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
             if staker_rev_share > 0.0:
-                staker_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['staker_rev_share_buyback'][0]) if 'staker_rev_share_buyback' in sys_param else True][0], key="staker_rev_share_buyback", help="Check this box if the staker revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
+                staker_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['staker_rev_share_buyback'][0]) if 'staker_rev_share_buyback' in sys_param else False][0], key="staker_rev_share_buyback", help="Check this box if the staker revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
             else:
                 staker_rev_share_buyback = False
         with col71c:

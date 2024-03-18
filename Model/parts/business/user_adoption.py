@@ -97,7 +97,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
         staking_apr_ratio = np.max([staking_apr_ratio, 0.95]) # limit the shrinkage of the token holders by 5% per month
 
         token_holders = prev_token_holders * (1 + ((avg_token_holder_growth_rate / 100) + (staking_apr_ratio-1)))
-        token_holders = np.min([token_holders, prev_token_holders*1.5]) # limit the token holder growth to 2x per month to avoid unrealistic growth    
+        token_holders = np.min([token_holders, prev_token_holders*1.15]) # limit the token holder growth to 2x per month to avoid unrealistic growth    
     else:
         token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
 

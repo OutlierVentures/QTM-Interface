@@ -93,6 +93,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             
             # calculate token holder change
             Tc = (token_holders - prev_token_holders) / prev_token_holders
+            Tc = np.min([Tc, 0.5]) # limit the token holder growth to 100% per month to avoid unrealistic growth
 
             # calculate the meta bucket selling share
             S = 1 / (S_B**(Tc * S_e)) * S_0
