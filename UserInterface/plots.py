@@ -269,7 +269,7 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
         if len(chart_data) < sys_param['simulation_duration'].iloc[0]:
             st.warning(f"The simulation stopped after {len(chart_data)-1} months, because the business ran out of funds.", icon="⚠️")
     
-    if 'reserve_a_tokens' in y_series_updated:
+    """ if 'reserve_a_tokens' in y_series_updated:
         if len(chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
             st.warning(f"The simulation stopped after {len(chart_data[chart_data['reserve_a_tokens'] > 0])-1} months, because the token economy reserve tokens ran to 0.", icon="⚠️")
         chart_data = chart_data[(chart_data['reserve_a_tokens'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
@@ -292,7 +292,7 @@ def line_plot_plotly(df,x,y_series,run,param_id, x_title=None, y_title=None, inf
     if 'te_holding_supply' in y_series_updated:
         if len(chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]) < len(chart_data):
             st.warning(f"The simulation stopped after {len(chart_data[chart_data['te_holding_supply'] > 0])-1} months, because the token economy holding supply tokens ran to 0.", icon="⚠️")
-        chart_data = chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)]
+        chart_data = chart_data[(chart_data['te_holding_supply'] > 0) | (chart_data['timestep' if not st.session_state['date_conversion'] else 'date'] == 0)] """
         
     
     # Format the column names
