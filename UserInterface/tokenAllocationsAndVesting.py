@@ -170,8 +170,8 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                     "reserve" : 25.0,
                     "community" : 25.0,
                     "foundation" : 25.0,
-                    "incentivisation" : 5.0,
-                    "staking_vesting" : 5.0
+                    "incentivisation" : 0.0,
+                    "staking_vesting" : 0.0
                 }
             if vesting_style == 'Custom' or show_full_alloc_table:
                 st.write("Init. Vesting / %")
@@ -202,11 +202,11 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                 community_initial_vesting = st.number_input("community_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['community_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['community']][0], key="community_initial_vesting")
                 foundation_initial_vesting = st.number_input("foundation_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['foundation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['foundation']][0], key="foundation_initial_vesting")
                 if incentivisation_toggle:
-                    incentivisation_initial_vesting = st.number_input("incentivisation_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['incentivisation_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['incentivisation']][0], key="incentivisation_initial_vesting")
+                    incentivisation_initial_vesting = st.number_input("incentivisation_initial_vesting", label_visibility="collapsed", disabled=True, value=0.0, key="incentivisation_initial_vesting")
                 else:
                     incentivisation_initial_vesting = 0.0
                 if staking_vesting_toggle:
-                    staking_vesting_initial_vesting = st.number_input("staking_vesting_initial_vesting", label_visibility="collapsed", min_value=0.0, value=[sys_param['staking_vesting_initial_vesting'][0] if vesting_style == 'Custom' else init_vesting_dict['staking_vesting']][0], key="staking_vesting_initial_vesting")
+                    staking_vesting_initial_vesting = st.number_input("staking_vesting_initial_vesting", label_visibility="collapsed", disabled=True, value=0.0, key="staking_vesting_initial_vesting")
                 else:
                     staking_vesting_initial_vesting = 0.0
                 if airdrop_toggle:
