@@ -107,8 +107,8 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             St_diff = max_utility_alloc_prev - St if current_month > 1 else 0
             St = St + St_diff * 0.75
 
-            # calculate all individual utility allocations
-            U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
+            U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
+            St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share
 
             # calculate the holding share as meta token allocation as left over function of the selling and utility shares
             H = 1 - S - U
