@@ -102,7 +102,7 @@ def update_agents_after_staking_vesting(params, substep, state_history, prev_sta
             updated_agents[agent]['a_tokens'] += (agents_staking_vesting_rewards[agent] + agents_staking_removal[agent])
 
             # subtract tokens from payout source agent
-            if updated_agents[agent]['a_name'].lower() == "staking_vesting":
+            if updated_agents[agent]['a_name'].lower() == "staking_vesting" and sum(agents_staking_vesting_rewards.values()) > 0:
                 updated_agents[agent]['a_tokens'] -= staking_vesting_bucket_tokens
 
     return ('agents', updated_agents)
