@@ -93,7 +93,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             
             # calculate token holder change
             Tc = (token_holders - prev_token_holders) / prev_token_holders
-            Tc = np.min([Tc, 0.5]) # limit the token holder growth to 100% per month to avoid unrealistic growth
+            Tc = np.min([Tc, 0.5]) # limit the token holder growth to 50% per month to avoid unrealistic growth
 
             # calculate the meta bucket selling share
             S = 1 / (S_B**(Tc * S_e)) * S_0
@@ -101,7 +101,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             S = S * random.uniform(0.9, 1.1)
 
             # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
-            St = (np.sqrt(staking_apr/agent_staking_apr_target)-1) * staking_share/100 if staking_apr > 0 else 0
+            St = ((staking_apr/agent_staking_apr_target)**3-1) * staking_share/100 if staking_apr > 0 else 0
             St = St if St > 0 else 0
             # add a damping term to the staking share to avoid extreme changes
             St_diff = max_utility_alloc_prev - St if current_month > 1 else 0

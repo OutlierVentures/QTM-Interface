@@ -37,7 +37,7 @@ def agentBehaviorInput(sys_param, adoption_style, adoption_dict):
     # S = 1 / (S_B**(Tc * S_e)) * S_0
     S_B = 10
     S_e = 5
-    S_0 = 0.03
+    S_0 = 0.12
 
     ab_return_dict = {
         "agent_behavior" : agent_behavior,
