@@ -69,7 +69,7 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
                     buyback_buckets.pop(buyback_buckets.index('Incentivisation'))
                 if not staking_vesting_toggle:
                     buyback_buckets.pop(buyback_buckets.index('Staking Vesting'))
-                buyback_bucket = st.radio('Buyback Bucket',tuple(buyback_buckets), index=0, help='The buyback bucket determines the destination of the bought back tokens.')
+                buyback_bucket = st.radio('Buyback Bucket',tuple(buyback_buckets), index=buyback_buckets.index(sys_param['buyback_bucket'][0]), help='The buyback bucket determines the destination of the bought back tokens.')
                 buyback_start = st.date_input("Buybacks Start", min_value=token_launch_date, value=datetime.strptime(sys_param['buyback_start'][0], "%d.%m.%Y"), help="The date when monthly buybacks should start.")
                 buyback_end = st.date_input("Buybacks End", min_value=buyback_start, value=datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%Y") if datetime(buyback_start.year, buyback_start.month, buyback_start.day) <= datetime.strptime(sys_param['buyback_end'][0], "%d.%m.%Y") else datetime(buyback_start.year, buyback_start.month, buyback_start.day), help="The date when monthly buybacks should end.")
 
