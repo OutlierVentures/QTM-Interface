@@ -23,6 +23,12 @@ def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_sup
             else:
                 target_raise = float(sys_param['seed_raised'][0]/1e6) + float(sys_param['presale_1_raised'][0]/1e6) + float(sys_param['presale_2_raised'][0]/1e6) + float(sys_param['public_sale_raised'][0]/1e6) + equity_investments
             left_over_raise = target_raise - equity_investments - launch_valuation * (public_sale_supply/100)
+            
+            # If the target raise is less than the equity investments and public sale raise, then the left over raise is 0 and the target_raise should be increased accordingly
+            if left_over_raise < 0:
+                target_raise += abs(left_over_raise)
+                left_over_raise = 0
+        
         with col23:
             if fundraising_style != 'Custom' and not show_full_fund_table:
                 seed_valuation = np.linspace(launch_valuation/fundraising_style_map[fundraising_style], launch_valuation, 4)[0]
