@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale_1_raised, presale_2_raised, public_sale_raised, raised_funds, launch_valuation, seed_valuation, presale_1_valuation, presale_2_valuation, initial_supply, token_launch_date, token_launch):
     """
@@ -114,9 +115,9 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                 airdrop_amount1 = sys_param['airdrop_amount1'][0]
                 airdrop_amount2 = sys_param['airdrop_amount2'][0]
                 airdrop_amount3 = sys_param['airdrop_amount3'][0]
-                airdrop_date1 = datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y")
-                airdrop_date2 = datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y")
-                airdrop_date3 = datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y")
+                airdrop_date1 = datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y") > token_launch_date else token_launch_date
+                airdrop_date2 = datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y") > token_launch_date else token_launch_date + relativedelta(months=6)
+                airdrop_date3 = datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y") > token_launch_date else token_launch_date + relativedelta(months=12)
                 lp_allocation = (100 - equity_allocation_new - seed_allocation - presale_1_allocation
                                 - presale_2_allocation - public_sale_allocation - team_allocation - ov_advisor_allocation
                                 - strategic_partners_allocation - reserve_allocation - community_allocation
@@ -210,7 +211,7 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                 else:
                     staking_vesting_initial_vesting = 0.0
                 if airdrop_toggle:
-                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y"), help="The date of the first airdrop.")
+                    airdrop_date1 = st.date_input("Airdrop Date 1", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date1'][0], "%d.%m.%Y") > token_launch_date else token_launch_date, help="The date of the first airdrop.")
                     airdrop_amount1 = st.number_input("Amount 1 / %", min_value=0.0, value=sys_param['airdrop_amount1'][0], help="The share of tokens distributed from the airdrop allocation in the first airdrop.")
 
         with col44:
@@ -299,7 +300,7 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                 else:
                     staking_vesting_cliff = 0.0
                 if airdrop_toggle:
-                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y"), help="The date of the second airdrop.")
+                    airdrop_date2 = st.date_input("Airdrop Date 2", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date2'][0], "%d.%m.%Y") > token_launch_date else token_launch_date + relativedelta(months=6), help="The date of the second airdrop.")
                     airdrop_amount2 = st.number_input("Amount 2 / %", min_value=0.0, value=sys_param['airdrop_amount2'][0], help="The share of tokens distributed from the airdrop allocation in the second airdrop.")
     
         with col45:
@@ -388,7 +389,7 @@ def tokenAllocationsAndVestingInput(sys_param, equity_perc, seed_raised, presale
                 else:
                     staking_vesting_duration = 0.0
                 if airdrop_toggle:
-                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y"), help="The date of the third airdrop.")
+                    airdrop_date3 = st.date_input("Airdrop Date 3", min_value=token_launch_date, value=datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y") if datetime.strptime(sys_param['airdrop_date3'][0], "%d.%m.%Y") > token_launch_date else token_launch_date + relativedelta(months=12), help="The date of the third airdrop.")
                     airdrop_amount3 = st.number_input("Amount 3 / %", min_value=0.0, value=sys_param['airdrop_amount3'][0], help="The share of tokens distributed from the airdrop allocation in the third airdrop.")
 
         if token_launch:
