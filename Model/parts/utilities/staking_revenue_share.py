@@ -15,12 +15,16 @@ def staking_revenue_share_buyback(params, substep, state_history, prev_state, **
     lp_tokens_after_buyback = liquidity_pool['lp_tokens'] # Tokens after trx 4 (buybacks)
     u_buyback_from_revenue_share_staking_usd = utilities['u_buyback_from_revenue_share_staking_usd']
     ba_buybacks_usd =prev_state['business_assumptions']['ba_buybacks_usd']
+    lp_sold_business_tokens = liquidity_pool['lp_sold_business_tokens']
+    lp_tokens_after_business_sell = liquidity_pool['lp_tokens_after_business_sell']
+
+    lp_tokens_init = lp_tokens_after_liquidity_addition if lp_sold_business_tokens == 0 else lp_tokens_after_business_sell
 
     # policy logic
     # initialize policy logic variables
     agents_staking_buyback_rewards = {}
 
-    buyback_share_tokens = calculate_buyback_share_tokens(u_buyback_from_revenue_share_staking_usd, ba_buybacks_usd, lp_tokens_after_liquidity_addition, lp_tokens_after_buyback)
+    buyback_share_tokens = calculate_buyback_share_tokens(u_buyback_from_revenue_share_staking_usd, ba_buybacks_usd, lp_tokens_init, lp_tokens_after_buyback)
 
     # allocate staking rewards for agents
     if buyback_share_tokens > 0:

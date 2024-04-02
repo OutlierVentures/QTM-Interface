@@ -151,7 +151,7 @@ def liquidity_pool_tx2_after_vesting_sell(params, substep, state_history, prev_s
     token_price = lp_usdc / lp_tokens
 
     error_message = (
-    f'The constant product is not allowed to change after adoption buys! '
+    f'The constant product is not allowed to change after vesting! '
     f'Old constant product: {constant_product} New constant product: {lp_usdc * lp_tokens}')
     
     np.testing.assert_allclose(constant_product, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
@@ -244,6 +244,8 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
         sold_business_tokens = 0
         lp_tokens = lp_tokens_init
         lp_usdc = lp_usdc_init
+    
+    lp_tokens_after_business_sell = lp_tokens
 
     # calculate the liquidity pool after buyback
     lp_tokens = lp_tokens - lp_tokens * (1 - (lp_usdc / (lp_usdc + buybacks_usd))**(usdc_lp_weight/token_lp_weight))
@@ -252,12 +254,12 @@ def liquidity_pool_tx4_after_buyback(params, substep, state_history, prev_state,
     token_price = lp_usdc / lp_tokens
     
     error_message = (
-    f'The constant product is not allowed to change after adoption buys! '
+    f'The constant product is not allowed to change after buybacks! '
     f'Old constant product: {constant_product_init} New constant product: {lp_usdc * lp_tokens}')
     
     np.testing.assert_allclose(constant_product_init, lp_usdc * lp_tokens, rtol=0.001, err_msg=error_message)
     
-    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product_init, 'lp_token_price': token_price, 'tx': 4, 'sold_business_tokens': sold_business_tokens}
+    return {'lp_tokens': lp_tokens, 'lp_usdc': lp_usdc, 'lp_constant_product': constant_product_init, 'lp_token_price': token_price, 'tx': 4, 'sold_business_tokens': sold_business_tokens, 'lp_tokens_after_business_sell': lp_tokens_after_business_sell}
 
 
 # STATE UPDATE FUNCTIONS
@@ -337,6 +339,7 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     token_price = policy_input['lp_token_price']
     tx = policy_input['tx']
     sold_business_tokens = policy_input['sold_business_tokens'] if tx == 4 else 0
+    lp_tokens_after_business_sell = policy_input['lp_tokens_after_business_sell'] if tx == 4 else 0
     
     # prepare volatility calculation
     if policy_input['tx'] == 1:
@@ -363,5 +366,6 @@ def update_liquidity_pool_after_transaction(params, substep, state_history, prev
     elif tx == 4:
         updated_liquidity_pool['lp_tokens_after_buyback'] = lp_tokens
         updated_liquidity_pool['lp_sold_business_tokens'] = sold_business_tokens
+        updated_liquidity_pool['lp_tokens_after_business_sell'] = lp_tokens_after_business_sell
     
     return ('liquidity_pool', updated_liquidity_pool)
