@@ -107,6 +107,9 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             St_diff = max_utility_alloc_prev - St if current_month > 1 else 0
             St = St + St_diff * 0.75
 
+            # scale the S selling w.r.t. the staking adoption
+            S = S + (1 - np.min([St,1])) if St > 0 else S
+
             U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
             St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share
 

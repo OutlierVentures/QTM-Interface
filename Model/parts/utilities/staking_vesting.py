@@ -38,7 +38,7 @@ def staking_vesting_allocation(params, substep, state_history, prev_state, **kwa
             agent_utility_removal_sum += agents_staking_removal[agent] # sum up the total amount of tokens removed from the staking utility for this timestep#
 
     # calculate the staking vesting rewards per agent
-    if staking_vesting_bucket_tokens > 0 or staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
+    if staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
         for agent in agents:
             if (utilities['u_staking_allocation_cum'] + agent_utility_sum - agent_utility_removal_sum) > 0:
                 agents_staking_vesting_rewards[agent] = staking_vesting_bucket_tokens * (
@@ -82,6 +82,10 @@ def update_agents_after_staking_vesting(params, substep, state_history, prev_sta
     """
     Function to update the utilities after apr
     """
+    # get parameters
+    staking_share = params['staking_share']/100
+    agent_behavior = params['agent_behavior']
+
     # get state variables
     updated_agents = prev_state['agents'].copy()
 
@@ -90,9 +94,10 @@ def update_agents_after_staking_vesting(params, substep, state_history, prev_sta
     agents_staking_removal = policy_input['agents_staking_removal']
     agents_staking_vesting_rewards = policy_input['agents_staking_vesting_rewards']
     staking_vesting_bucket_tokens = policy_input['staking_vesting_bucket_tokens']
+    max_staking_share = max([updated_agents[agent]['a_actions']['St'] for agent in updated_agents]) if agent_behavior == 'simple' else staking_share
 
     # update logic
-    if agents_staking_allocations != {} or agents_staking_vesting_rewards != {}:
+    if staking_vesting_bucket_tokens > 0 or max_staking_share > 0:
         for agent in updated_agents:
             updated_agents[agent]['a_tokens_staked'] = (agents_staking_allocations[agent])
             updated_agents[agent]['a_tokens_staked_cum'] += (agents_staking_allocations[agent] - agents_staking_removal[agent])
