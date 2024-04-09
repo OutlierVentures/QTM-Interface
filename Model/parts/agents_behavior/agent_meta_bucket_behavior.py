@@ -78,7 +78,11 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
 
             # get utility allocation share from last timestep
             if current_month > 1:
-                max_utility_alloc_prev = max([agents[agent]['a_actions']['utility'] for agent in agents])
+                prev_utility = max([agents[agent]['a_actions']['utility'] for agent in agents])
+                prev_sell = max([agents[agent]['a_actions']['sell'] for agent in agents])
+            else:
+                prev_utility = 0
+                prev_sell = 0
 
             # find token holder change Tc
             prev_token_holders = prev_state['user_adoption']['ua_token_holders']
@@ -95,20 +99,22 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             Tc = (token_holders - prev_token_holders) / prev_token_holders
             Tc = np.min([Tc, 0.5]) # limit the token holder growth to 50% per month to avoid unrealistic growth
 
-            # calculate the meta bucket selling share
+            # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
+            St_error = (staking_apr - agent_staking_apr_target)/50 if staking_apr > 0 else 0
+            St = St_error if (prev_utility <= 0) else prev_utility + St_error
+            # damping the staking share to avoid too high fluctuations
+            St = prev_utility * 0.5 + St * 0.5 if prev_utility > 0 else St
+            St = St * random.uniform(0.95, 1.05) if St > 0 else 0
+            St = np.min([St, 0.25])
+            St = np.max([St, 0.0])
+            
+            # calculate the meta bucket selling share, based on the token holder change and the staking APR
             S = 1 / (S_B**(Tc * S_e)) * S_0
             random.seed(random_seed + current_month)
             S = S * random.uniform(0.9, 1.1)
-
-            # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
-            St = ((staking_apr/agent_staking_apr_target)**3-1) * staking_share/100 if staking_apr > 0 else 0
-            St = St if St > 0 else 0
-            # add a damping term to the staking share to avoid extreme changes
-            St_diff = max_utility_alloc_prev - St if current_month > 1 else 0
-            St = St + St_diff * 0.75
-
             # scale the S selling w.r.t. the staking adoption
-            S = S + (1 - np.min([St,1])) if St > 0 else S
+            #S = S + (1 - np.min([St,1])) if St > 0 else S
+            S = S * random.uniform(0.2, 0.4) if S > 0 else 0
 
             U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
             St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share
@@ -124,7 +130,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
             
             # adjust St w.r.t. the sum of all individual utility allocations
-            St = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
+            St_norm = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
 
             np.testing.assert_allclose(S+U+H, 1, rtol=0.001, err_msg=f"Agent meta bucket behavior does not sum up to 100% ({(S+U+H)*100.0}), S: {S}, U: {U}, H: {H}.")
 
@@ -133,15 +139,18 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
 
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
-                
-                remove = np.min([(1-U) * random.uniform(0.0, 0.1),1])
+                prev_remove = agents[agent]['a_actions']['remove_tokens'] if current_month > 1 else 0
+                random.seed(random_seed + current_month + i)
+                remove_error = (staking_apr - agent_staking_apr_target)
+                remove = 0 if (prev_utility <= 0) else prev_remove - remove_error
+                remove = np.min([np.max([remove * random.uniform(0.95, 1.05), 0]), 0.5])
            
                 agent_behavior_dict[agent] = {
                     'sell': S,
                     'hold': H,
                     'utility': U,
                     'remove_tokens': remove,
-                    'St': St,
+                    'St': St_norm,
                 }
 
                 # consistency check for agent metabucket behavior
