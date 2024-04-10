@@ -23,7 +23,7 @@ import random
 import numpy as np
 import pandas as pd
 
-from Model.parts.utils import calculate_user_adoption
+from Model.parts.utils import calculate_user_adoption, get_pid_controller_signal
 
 # POLICY FUNCTIONS
 def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_state, **kwargs):
@@ -73,17 +73,11 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             agents = prev_state['agents'].copy()
             token_economy = prev_state['token_economy'].copy()
             staking_apr = token_economy['te_staking_apr']
+            staking_apr_m1 = state_history[-2][-1]['token_economy']['te_staking_apr'] if len(state_history) > 2 else 0
             current_month = prev_state['timestep']
             current_date = prev_state['date']
 
-            # get utility allocation share from last timestep
-            if current_month > 1:
-                prev_utility = max([agents[agent]['a_actions']['utility'] for agent in agents])
-                prev_sell = max([agents[agent]['a_actions']['sell'] for agent in agents])
-            else:
-                prev_utility = 0
-                prev_sell = 0
-
+            # calculate token holder metrics
             # find token holder change Tc
             prev_token_holders = prev_state['user_adoption']['ua_token_holders']
             current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days
@@ -99,64 +93,122 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
             Tc = (token_holders - prev_token_holders) / prev_token_holders
             Tc = np.min([Tc, 0.5]) # limit the token holder growth to 50% per month to avoid unrealistic growth
 
-            # calculate the staking share as meta token allocation as function of the current staking APR and assigned staking_share, which serves as a weight
-            St_error = (staking_apr - agent_staking_apr_target)/50 if staking_apr > 0 else 0
-            St = St_error if (prev_utility <= 0) else prev_utility + St_error
-            # damping the staking share to avoid too high fluctuations
-            St = prev_utility * 0.5 + St * 0.5 if prev_utility > 0 else St
-            St = St * random.uniform(0.95, 1.05) if St > 0 else 0
-            St = np.min([St, 0.25])
-            St = np.max([St, 0.0])
+
+
+            ### Individual Agent Behavior ###
             
-            # calculate the meta bucket selling share, based on the token holder change and the staking APR
-            S = 1 / (S_B**(Tc * S_e)) * S_0
-            random.seed(random_seed + current_month)
-            S = S * random.uniform(0.9, 1.1)
-            # scale the S selling w.r.t. the staking adoption
-            #S = S + (1 - np.min([St,1])) if St > 0 else S
-            S = S * random.uniform(0.2, 0.4) if S > 0 else 0
-
-            U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
-            St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share
-
-            # calculate the holding share as meta token allocation as left over function of the selling and utility shares
-            H = 1 - S - U
-            if H < 0:
-                S = S + H
-                H = 0
-            if S < 0:
-                St = St + S
-                S = 0
-                U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
-            
-            # adjust St w.r.t. the sum of all individual utility allocations
-            St_norm = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
-
-            np.testing.assert_allclose(S+U+H, 1, rtol=0.001, err_msg=f"Agent meta bucket behavior does not sum up to 100% ({(S+U+H)*100.0}), S: {S}, U: {U}, H: {H}.")
-
             # initialize agent behavior dictionary
             agent_behavior_dict = {}
-
             # populate agent behavior dictionary
             for i, agent in enumerate(agents):
-                prev_remove = agents[agent]['a_actions']['remove_tokens'] if current_month > 1 else 0
-                random.seed(random_seed + current_month + i)
-                remove_error = (staking_apr - agent_staking_apr_target)
-                remove = 0 if (prev_utility <= 0) else prev_remove - remove_error
-                remove = np.min([np.max([remove * random.uniform(0.95, 1.05), 0]), 0.5])
+                # get metrics from the previous timestep for this agent
+                if current_month > 1:
+                    prev_utility = agents[agent]['a_actions']['utility']
+                    prev_sell = agents[agent]['a_actions']['sell']
+                    prev_St_error_sum = agents[agent]['a_actions']['St_error_sum']
+                    prev_St_error = agents[agent]['a_actions']['St_error']
+                    prev_remove_error_sum = agents[agent]['a_actions']['remove_tokens_error_sum']
+                    prev_remove_error = agents[agent]['a_actions']['remove_tokens_error']
+                    prev_remove = agents[agent]['a_actions']['remove_tokens'] if current_month > 1 else 0
+                else:
+                    prev_utility = 0
+                    prev_sell = 0
+                    prev_St_error_sum = 0
+                    prev_St_error = 0
+                    prev_remove_error_sum = 0
+                    prev_remove_error = 0
+                    prev_remove = 0
+
+                ## Staking Behavior Controller ##
+                # calculate the staking share for this agent, based on the staking APR for this agent
+                St_error = (staking_apr/agent_staking_apr_target-1)**2 * np.sign(staking_apr/agent_staking_apr_target-1) if staking_apr > 0 else 0
+                if staking_apr_m1>0 and staking_apr>0:
+                    if i == 0 and ((staking_apr_m1/staking_apr)>100 or (staking_apr_m1/staking_apr)<0.01):
+                        print(f"{prev_state['timestep']}: Reset St integral, staking_apr_m1: {staking_apr_m1}, staking_apr: {staking_apr}")
+                    prev_St_error_sum = 0 if ((staking_apr_m1/staking_apr)>100 or (staking_apr_m1/staking_apr)<0.01) else prev_St_error_sum # reset the integral part of the PID controller if the error changes too much
+                # calculate the PID controller signal for the staking share
+                # set the PID controller parameters
+                Kp_St = 0.8
+                Ki_St = 0.0
+                Kd_St = 0.1
+                # scale the PID controller signal w.r.t. the agent_staking_apr_target
+                Kp_St = Kp_St * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Kp_St
+                Ki_St = Ki_St * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Ki_St
+                Kd_St = Kd_St * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Kd_St
+                # calculate the PID controller signal
+                St_signal = get_pid_controller_signal(Kp=Kp_St, Ki=Ki_St, Kd=Kd_St, error=St_error, integral=prev_St_error_sum, previous_error=prev_St_error, dt=1)
+                St = St_signal if (prev_utility <= 0) else prev_utility + St_signal
+                St = np.min([np.max([St, 0.0]), 1])
+                
+                
+                ## Selling Behavior ##
+                # calculate the meta bucket selling share, based on the token holder change for this agent
+                #S = 1 / (S_B**(Tc * S_e)) * S_0
+                #random.seed(random_seed + current_month)
+                #S = S * random.uniform(0.9, 1.1)
+                S = (1- St) * 0.05
+                #S = prev_sell * 0.5 + S * 0.5 if prev_sell > 0 else S
+                # scale the S selling w.r.t. the staking adoption
+                #S = S + (1 - np.min([St,1])) if St > 0 else S
+                #S = S * random.uniform(0.3, 0.5) if S > 0 else 0
+
+                U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
+                St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share
+                # adjust St w.r.t. the sum of all individual utility allocations
+                St_norm = 1 - (liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100)
+
+                
+                ## Staking Removal Behavior ##
+                # calculate the removal share for this agent, based on the staking APR for this agent
+                remove_error = agent_staking_apr_target/staking_apr-1 if staking_apr > 0 else 0
+                if staking_apr_m1>0 and staking_apr>0:
+                    if i == 0 and ((staking_apr_m1/staking_apr)>100 or (staking_apr_m1/staking_apr)<0.01):
+                        print(f"{prev_state['timestep']}: Reset remove integral, staking_apr_m1: {staking_apr_m1}, staking_apr: {staking_apr}")
+                    prev_remove_error_sum = 0 if ((staking_apr_m1/staking_apr)>100 or (staking_apr_m1/staking_apr)<0.01) else prev_remove_error_sum # reset the integral part of the PID controller if the error changes too much
+                # calculate the PID controller signal for the removal share
+                # set the PID controller parameters
+                Kp_remove = 0.2
+                Ki_remove = 0.0
+                Kd_remove = 0.1
+                # scale the PID controller signal w.r.t. the agent_staking_apr_target
+                Kp_remove = Kp_remove * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Kp_remove
+                Ki_remove = Ki_remove * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Ki_remove
+                Kd_remove = Kd_remove * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Kd_remove
+                remove_signal = get_pid_controller_signal(Kp=Kp_remove, Ki=Ki_remove, Kd=Kd_remove, error=remove_error, integral=prev_remove_error_sum, previous_error=prev_remove_error, dt=1)
+                remove = remove_signal if (current_month > 1) else prev_remove + remove_signal
+                remove = np.min([np.max([remove, 0.0]), 0.9])
+
+
+                ## Meta Bucket Behavior Adjustments ##
+                # calculate the holding share as meta token allocation as left over function of the selling and utility shares
+                H = 1 - S - U
+                if H < 0:
+                    S = S + H
+                    H = 0
+                if S < 0:
+                    St = St + S
+                    S = 0
+                    U = St + liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100
+
+                np.testing.assert_allclose(S+U+H, 1, rtol=0.001, err_msg=f"Agent meta bucket behavior does not sum up to 100% ({(S+U+H)*100.0}), S: {S}, U: {U}, H: {H}.")
            
+                # populate agent behavior dictionary
                 agent_behavior_dict[agent] = {
                     'sell': S,
                     'hold': H,
                     'utility': U,
                     'remove_tokens': remove,
                     'St': St_norm,
+                    'St_error': St_error,
+                    'St_error_sum': prev_St_error_sum + St_error,
+                    'remove_tokens_error': remove_error,
+                    'remove_tokens_error_sum': prev_remove_error_sum + remove_error,
                 }
 
                 # consistency check for agent metabucket behavior
                 error_msg = f"Agent meta bucket behavior for agent {agent} does not sum up to 100% ({(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'])*100.0})."
                 np.testing.assert_allclose(agent_behavior_dict[agent]['sell'] + agent_behavior_dict[agent]['hold'] + agent_behavior_dict[agent]['utility'], 1.0, rtol=0.0001, err_msg=error_msg)
-
+        
         elif params['agent_behavior'] == 'static':
             """
             Define the agent behavior for each agent type for the static 1:1 QTM behavior

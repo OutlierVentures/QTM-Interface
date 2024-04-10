@@ -139,6 +139,7 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     """
     # parameters
     bribing_share = params['bribing_share'] if 'bribing_share' in params else 0.0
+    agent_staking_apr_target = params['agent_staking_apr_target']
 
     # get state variables
     updated_token_economy = prev_state['token_economy'].copy()
@@ -196,7 +197,8 @@ def update_token_economy(params, substep, state_history, prev_state, policy_inpu
     token_staking_apr = (utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards'])*12 / utilities['u_staking_allocation_cum'] * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
     revenue_staking_apr = (cash_staking_rewards+bribing_rewards_usd)*12 / (utilities['u_staking_allocation_cum'] * lp['lp_token_price']) * 100 if utilities['u_staking_allocation_cum'] > 0 else 0.0
     new_staking_apr = token_staking_apr + revenue_staking_apr
-    new_staking_apr = 100 if (utilities['u_staking_allocation_cum'] == 0 and (((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards']) > 0) or ((cash_staking_rewards+bribing_rewards_usd)>0))) else new_staking_apr
+    new_staking_apr = agent_staking_apr_target*5 if (utilities['u_staking_allocation_cum']/total_token_supply <= 0.00001 and (((utilities['u_staking_revenue_share_rewards'] + utilities['u_staking_vesting_rewards'] + utilities['u_staking_minting_rewards']) > 0) or ((cash_staking_rewards+bribing_rewards_usd)>0))) else new_staking_apr
+    # print all metrics responsible for new_staking_apr
     updated_token_economy['te_staking_apr'] = new_staking_apr if not np.isnan(new_staking_apr) else 0.0
 
     return ('token_economy', updated_token_economy)
