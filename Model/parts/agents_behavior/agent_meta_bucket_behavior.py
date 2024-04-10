@@ -142,15 +142,9 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 
                 
                 ## Selling Behavior ##
-                # calculate the meta bucket selling share, based on the token holder change for this agent
-                #S = 1 / (S_B**(Tc * S_e)) * S_0
-                #random.seed(random_seed + current_month)
-                #S = S * random.uniform(0.9, 1.1)
+                # Calculate the selling behavior for this agent based on the staking share
                 S = (1- St) * 0.05
-                #S = prev_sell * 0.5 + S * 0.5 if prev_sell > 0 else S
-                # scale the S selling w.r.t. the staking adoption
-                #S = S + (1 - np.min([St,1])) if St > 0 else S
-                #S = S * random.uniform(0.3, 0.5) if S > 0 else 0
+
 
                 U = St if St > 0 else liquidity_mining_share/100 + burning_share/100 + transfer_share/100 + holding_share/100 # calculate the overall utility share as being dependent on the staking share if no other utility got defined
                 St = St - liquidity_mining_share/100 - burning_share/100 - transfer_share/100 - holding_share/100 # subtract the other utility shares from the staking share to account for them in the overall utility share

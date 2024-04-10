@@ -79,7 +79,7 @@ def to_excel(df):
 
 def ui_base(return_db_sorted=False):
     load_widget_state()
-    # get all existing project names
+    # get all existing scenario names
     try:
         db_sorted_original = get_simulation_data('simulationData.db', 'sys_param').sort_values('project_name', ascending=True)
         # suppose that the 'usermail' field can contain multiple mail addresses, separated by a comma. Now we want to filter the database by the current usermail
@@ -99,7 +99,7 @@ def ui_base(return_db_sorted=False):
 
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
         try:
-            st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), key=persist('ProjectName'))
+            st.session_state['project_name'] = st.sidebar.selectbox('Scenario Name', tuple(project_names), key=persist('ProjectName'))
         except:
             st.sidebar.info("Please refresh the page and login again to get access to the project menu.", icon="ℹ️")
         try:
@@ -108,7 +108,7 @@ def ui_base(return_db_sorted=False):
             st.session_state['param_id'] = ''
     else:
         try:
-            st.session_state['project_name'] = st.sidebar.selectbox('Project Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
+            st.session_state['project_name'] = st.sidebar.selectbox('Scenario Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
         except:
             st.sidebar.info("Please refresh the page and login again to get access to the project menu.", icon="ℹ️")
         
