@@ -101,14 +101,29 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     # state variables
     prev_token_holders = prev_state['user_adoption']['ua_token_holders']
+    prev_token_holders_m1 = state_history[-2][-1]['user_adoption']['ua_token_holders'] if len(state_history) > 2 else 0
+    te_staking_apr = token_economy['te_staking_apr']
+    te_staking_apr_m1 = state_history[-2][-1]['token_economy']['te_staking_apr'] if len(state_history) > 2 else 0
+
 
     # adjust token holders according to staking target
     if agent_behavior == 'simple':
-        staking_apr_ratio = np.sqrt(token_economy['te_staking_apr'] / agent_staking_apr_target)
-        staking_apr_ratio = np.max([staking_apr_ratio, 0.5]) # limit the shrinkage of the token holders by 50% per month
+        """         # PID Controller for token holder growth
+        # get previous error
+        prev_staking_apr_error = (te_staking_apr_m1 / agent_staking_apr_target-1)**2 * np.sign(te_staking_apr_m1 / agent_staking_apr_target-1)
+        # Calculate the new error
+        staking_apr_error = (te_staking_apr / agent_staking_apr_target-1)**2 * np.sign(te_staking_apr / agent_staking_apr_target-1)
+        Kp_staking_apr=prev_token_holders*10
+        Ki_staking_apr=0.0
+        Kd_staking_apr=prev_token_holders*5
+        staking_apr_signal = get_pid_controller_signal(Kp=Kp_staking_apr, Ki=Ki_staking_apr, Kd=Kd_staking_apr, error=staking_apr_error, integral=0, previous_error=prev_staking_apr_error, dt=1)
+        prev_token_holder_increase = prev_token_holders - prev_token_holders_m1 if (current_month > 1) else 0
+        token_holder_increase = 0 if (current_month <= 2) else prev_token_holder_increase + staking_apr_signal
+        token_holder_increase = np.min([token_holder_increase,prev_token_holders*1.25]) # limit the token holder growth to 0 to avoid negative growth and to 25% to prevent unrealistic growth
+        token_holders = prev_token_holders + token_holder_increase if prev_token_holders >= initial_token_holders*0.1 else initial_token_holders*0.1
+        token_holders = np.max([token_holders, prev_token_holders*0.9, initial_token_holders*0.1]) # limit the token holder decrease to 10% per month and to overall 10% of the initial token holder amount to avoid unrealistic decrease """
+        token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
 
-        token_holders = prev_token_holders * (1 + ((avg_token_holder_growth_rate / 100) + (staking_apr_ratio-1)*0.1)) # 10% of the staking APR target is added to the growth rate
-        token_holders = np.min([token_holders, prev_token_holders*1.15]) # limit the token holder growth to 15% per month to avoid unrealistic growth
     else:
         token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
 
