@@ -58,15 +58,26 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     
     # state variables
     prev_product_users = prev_state['user_adoption']['ua_product_users']
+    prev_product_users_m1 = state_history[-2][-1]['user_adoption']['ua_product_users'] if len(state_history) > 2 else 0
+    te_incentivised_usd_per_product_user = token_economy['te_incentivised_usd_per_product_user']
+    te_incentivised_usd_per_product_user_m1 = state_history[-2][-1]['token_economy']['te_incentivised_usd_per_product_user'] if len(state_history) > 2 else 0
 
     # adjust product users according to incentivisation target
     if user_adoption_target != 0 and agent_behavior == 'simple':
-        # calculate new product users based on incentivisation target and regular product user growth
-        incentive_adoption_ratio = np.sqrt(token_economy['te_incentivised_usd_per_product_user'] / user_adoption_target)
-        incentive_adoption_ratio = np.max([incentive_adoption_ratio, 0.95]) # limit the shrinkage of the user base by 5% per month
-
-        product_users = prev_product_users * (1 + ((avg_product_user_growth_rate / 100) + (incentive_adoption_ratio-1)))
-        product_users = np.min([product_users, prev_product_users*1.5]) # limit the token holder growth to 2x per month to avoid unrealistic growth
+        # PID Controller for user adoption
+        # get previous error
+        prev_te_incentivised_usd_per_product_user_error = (te_incentivised_usd_per_product_user_m1 / user_adoption_target-1)**2 * np.sign(te_incentivised_usd_per_product_user_m1 / user_adoption_target-1)
+        # Calculate the new error
+        product_user_error = (te_incentivised_usd_per_product_user / user_adoption_target-1)**2 * np.sign(te_incentivised_usd_per_product_user / user_adoption_target-1)
+        Kp_product_user=prev_product_users*10
+        Ki_product_user=0.0
+        Kd_product_user=prev_product_users*5
+        product_user_signal = get_pid_controller_signal(Kp=Kp_product_user, Ki=Ki_product_user, Kd=Kd_product_user, error=product_user_error, integral=0, previous_error=prev_te_incentivised_usd_per_product_user_error, dt=1)
+        prev_product_user_increase = prev_product_users - prev_product_users_m1 if (current_month > 1) else 0
+        product_user_increase = 0 if (current_month <= 2) else prev_product_user_increase + product_user_signal
+        product_user_increase = np.min([product_user_increase,prev_product_users*1.25]) # limit the product user growth to 0 to avoid negative growth and to 25% to prevent unrealistic growth
+        product_users = prev_product_users + product_user_increase if prev_product_users >= initial_product_users*0.1 else initial_product_users*0.1
+        product_users = np.max([product_users, prev_product_users*0.9, initial_product_users*0.1]) # limit the product user decrease to 10% per month and to overall 10% of the initial product user amount to avoid unrealistic decrease
 
     else:
         product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day)
