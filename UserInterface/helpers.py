@@ -114,15 +114,19 @@ def ui_base(return_db_sorted=False):
                 if 'rename_scenario_button_clicked' in st.session_state and st.session_state['rename_scenario_button_clicked']:
                     new_project_name = st.sidebar.text_input('New Scenario Name', st.session_state['project_name'])
                     if st.sidebar.button('Save'):
-                        conn = sqlite3.connect('simulationData.db')
-                        cur = conn.cursor()
-                        cur.execute(''' UPDATE sys_param SET project_name = ? WHERE id = ? ''', (new_project_name, st.session_state['param_id']))
-                        conn.commit()
-                        conn.close()
-                        st.session_state['project_name'] = new_project_name
-                        st.session_state['rename_scenario_button_clicked'] = False
-                        st.sidebar.success(f'Scenario name changed to {new_project_name} ✅.')
-                        st.experimental_rerun()
+                        # check if the new project name is already in the database
+                        if new_project_name in project_names:
+                            st.sidebar.warning(f'⚠️The scenario name {new_project_name} already exists.')
+                        else:
+                            conn = sqlite3.connect('simulationData.db')
+                            cur = conn.cursor()
+                            cur.execute(''' UPDATE sys_param SET project_name = ? WHERE id = ? ''', (new_project_name, st.session_state['param_id']))
+                            conn.commit()
+                            conn.close()
+                            st.session_state['project_name'] = new_project_name
+                            st.session_state['rename_scenario_button_clicked'] = False
+                            st.sidebar.success(f'Scenario name changed to {new_project_name} ✅.')
+                            st.experimental_rerun()
         except:
             pass
     else:

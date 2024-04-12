@@ -28,7 +28,7 @@ if 'authentication_status' in st.session_state:
             # delete current selected parameter set and simulation data from database
             if 'delete_parameters_clicked' not in st.session_state:
                 st.session_state['delete_parameters_clicked'] = False
-            if st.sidebar.button('Delete Parameter Set'):
+            if st.sidebar.button('Delete Scenario'):
                 st.session_state['delete_parameters_clicked'] = True
             if 'delete_parameters_clicked' in st.session_state:
                 if st.session_state['delete_parameters_clicked']:
@@ -38,7 +38,7 @@ if 'authentication_status' in st.session_state:
                         st.session_state['project_name'] = ""
                         st.session_state['delete_parameters_clicked'] = False
                         st.cache_data.clear()
-                        st.sidebar.success('Parameter set and simulation data deleted successfully ✅')
+                        st.sidebar.success('Scenario data deleted successfully ✅')
                     else:
                         st.sidebar.error(f"Please enter a valid parameter ID to delete the parameter set.", icon="⚠️")
                 else:
@@ -66,9 +66,9 @@ if 'authentication_status' in st.session_state:
         col01, col02 = st.columns(2)
         with col01:
             if 'project_name' in st.session_state:
-                project_name = st.text_input('Project Name', st.session_state['project_name'])
+                project_name = st.text_input('Scenario Name', st.session_state['project_name'])
             else:
-                project_name = st.text_input('Project Name', "")
+                project_name = st.text_input('Scenario Name', "")
             st.session_state['project_name'] = project_name
 
         with col02:
