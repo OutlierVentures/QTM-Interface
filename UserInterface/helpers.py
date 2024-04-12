@@ -106,6 +106,25 @@ def ui_base(return_db_sorted=False):
             st.session_state['param_id'] = db_sorted[db_sorted['project_name']==st.session_state['project_name']]['id'].iloc[0]      
         except:
             st.session_state['param_id'] = ''
+        try:
+            # add button to open up a rename field to rename the current project
+            if st.session_state['project_name'] != '':
+                if st.sidebar.button('Rename Scenario'):
+                    st.session_state['rename_scenario_button_clicked'] = True
+                if 'rename_scenario_button_clicked' in st.session_state and st.session_state['rename_scenario_button_clicked']:
+                    new_project_name = st.sidebar.text_input('New Scenario Name', st.session_state['project_name'])
+                    if st.sidebar.button('Save'):
+                        conn = sqlite3.connect('simulationData.db')
+                        cur = conn.cursor()
+                        cur.execute(''' UPDATE sys_param SET project_name = ? WHERE id = ? ''', (new_project_name, st.session_state['param_id']))
+                        conn.commit()
+                        conn.close()
+                        st.session_state['project_name'] = new_project_name
+                        st.session_state['rename_scenario_button_clicked'] = False
+                        st.sidebar.success(f'Scenario name changed to {new_project_name} ✅.')
+                        st.experimental_rerun()
+        except:
+            pass
     else:
         try:
             st.session_state['project_name'] = st.sidebar.selectbox('Scenario Name', tuple(project_names), index=len(project_names)-1, key=persist('ProjectName'))
@@ -113,14 +132,6 @@ def ui_base(return_db_sorted=False):
             st.sidebar.info("Please refresh the page and login again to get access to the project menu.", icon="ℹ️")
         
         st.session_state['param_id'] = ''
-
-    try:
-        if st.session_state['param_id'] not in get_simulation_data('simulationData.db', 'sys_param')['id'].to_list():
-            st.sidebar.markdown(f"Parameter ID: {st.session_state['param_id']} does not exist. Please enter a valid parameter ID or run the simulation with your parameter set to get a parameter ID.")
-        else:
-            st.sidebar.markdown(f"This is a valid parameter ID ✅")
-    except:
-        pass
 
     if 'project_name' in st.session_state and 'param_id' in st.session_state and len(db_sorted) > 0:
         newMailAccess = st.sidebar.text_input('Share Dataset with Email', "")
