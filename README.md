@@ -2,6 +2,11 @@
 
 ! This repository is a work in progress !
 
+## Disclaimer
+MUST READ:
+The Quantitative Token Model (“QTM”) and accompanying information provided on this document has been prepared  by Outlier Ventures (“OV”) for educational and general information purposes only. No undertaking, warrant or other assurance is given, and none should be implied, as to, and no reliance should be placed on the accuracy, adequacy, validity, reliability, fairness or completeness of any information in the QTM or the document. The QTM and information should not be considered a recommendation by OV or any of its directors, officers, employees, agents or advisers in connection with your token model. The information contained in the QTM  has been prepared purely for informational purposes. In all cases persons should conduct their own investigation and analysis of the data in the QTM. Under no circumstances shall OV have any liability for any loss or damage of any kind incurred as a result of the use of, or reliance on, the QTM. The use of the information contained in the QTM is solely at the user’s own risk.
+
+
 ## Background
 
 The [Quantitative Token Model (QTM)](https://outlierventures.io/quantitative-token-model-a-data-driven-approach-to-stay-ahead-of-the-game/) is an [open source spreadsheet model](https://drive.google.com/drive/folders/1eSgm4NA1Izx9qhXd6sdveUKF5VFHY6py?usp=sharing) developed by [Outlier Ventures](https://outlierventures.io/). It's purpose is to forecast key metrics of different token economies on a higher level by abstracting a set of often leveraged token utilities. It should be used for educational purposes only and not to derive any financial advise. The market making for the token is approximated by a DEX liquidity pool with [constant product relationship](https://balancer.fi/whitepaper.pdf). To understand the usage of the tool please refer to the [User Story Map](https://whimsical.com/qtm-roadmap-FfdpxTyjN44zk1eMhpyEWJ)
