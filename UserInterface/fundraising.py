@@ -47,17 +47,17 @@ def fundraisingInput(sys_param, equity_investments, equity_perc, public_sale_sup
                 "presale_2" : presale_2_valuation / launch_valuation
             }
             valuation_weights_sum = sum(valuation_weights.values())
+            public_sale_raised = launch_valuation * (public_sale_supply/100)
             if fundraising_style != 'Custom' and not show_full_fund_table:
                 seed_raised = float(valuation_weights["seed"]/valuation_weights_sum * left_over_raise)
                 presale_1_raised = float(valuation_weights["presale_1"]/valuation_weights_sum * left_over_raise)
                 presale_2_raised = float(valuation_weights["presale_2"]/valuation_weights_sum * left_over_raise)
-                public_sale_raised = launch_valuation * (public_sale_supply/100)
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
             else:
                 seed_raised = st.number_input('Seed Raises / $m', min_value=0.0, value=float(sys_param['seed_raised'][0]/1e6), help="The amount of money raised in the seed round.")
                 presale_1_raised = st.number_input('Presale 1 Raises / $m', min_value=0.0, value=float(sys_param['presale_1_raised'][0]/1e6), help="The amount of money raised in the first presale.")
                 presale_2_raised = st.number_input('Presale 2 Raises / $m', min_value=0.0, value=float(sys_param['presale_2_raised'][0]/1e6), help="The amount of money raised in the second presale.")
-                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float(sys_param['public_sale_raised'][0]/1e6), disabled=True, help="The amount of money raised in the public sale.")
+                public_sale_raised = st.number_input('Public Sale Raises / $m', min_value=0.0, value=float(public_sale_raised), disabled=True, help="The amount of money raised in the public sale.")
 
                 raised_funds = equity_investments + seed_raised + presale_1_raised + presale_2_raised + public_sale_raised
                 if fundraising_style == 'Custom' or show_full_fund_table:
