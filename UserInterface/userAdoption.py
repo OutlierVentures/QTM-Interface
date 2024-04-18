@@ -101,11 +101,11 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['incentivisation_rev_share_buyback'][0]) if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
             else:
                 incentivisation_rev_share_buyback = False
-            if incentivisation_rev_share > 0.0 or tav_return_dict['incentivisation_allocation'] > 0.0:
+            if incentivisation_rev_share > 0.0 or tav_return_dict['incentivisation_allocation'] or tav_return_dict['airdrop_allocation'] > 0.0:
                 # add user adoption boost per incentivisation (in USD)
                 user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
             else:
-                user_adoption_target = 1.0
+                user_adoption_target = 0.0
 
         rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
         if rev_share_sum != 100.0:

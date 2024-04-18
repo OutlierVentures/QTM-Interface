@@ -54,7 +54,6 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     one_time_product_revenue_per_user = params['one_time_product_revenue_per_user']
     regular_product_revenue_per_user = params['regular_product_revenue_per_user']
     user_adoption_target = params['user_adoption_target'] if 'user_adoption_target' in params else 0
-    avg_product_user_growth_rate = params['avg_product_user_growth_rate'] if 'avg_product_user_growth_rate' in params else 0
     
     # state variables
     prev_product_users = prev_state['user_adoption']['ua_product_users']

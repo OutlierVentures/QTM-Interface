@@ -114,9 +114,9 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     var_business_revenue = product_revenue * business_rev_share / 100
     var_staker_revenue = product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens <= 0 else 0.0
     var_service_provider_revenue = product_revenue * service_provider_rev_share / 100
-    var_incentivisation_revenue = product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens <= 0 else 0.0
-    var_business_revenue += product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens > 0 else 0.0
-    var_business_revenue += product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens > 0 else 0.0
+    var_incentivisation_revenue = product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens <= initial_total_supply*0.000001 else 0.0
+    var_business_revenue += product_revenue * staker_rev_share / 100 if staking_vesting_bucket_tokens > initial_total_supply*0.000001 else 0.0
+    var_business_revenue += product_revenue * incentivisation_rev_share / 100 if incentivisation_vesting_bucket_tokens > initial_total_supply*0.000001 else 0.0
 
     np.testing.assert_allclose(var_business_revenue + var_staker_revenue + var_service_provider_revenue + var_incentivisation_revenue, product_revenue, rtol=0.0001, err_msg=f'Revenue split is not correct: business_revenue({var_business_revenue}) + staker_revenue({var_staker_revenue}) + service_provider_revenue({var_service_provider_revenue}) + incentivisation_revenue({var_incentivisation_revenue}) != product_revenue({product_revenue})')
 
