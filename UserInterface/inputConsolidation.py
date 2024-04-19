@@ -12,7 +12,7 @@ from . import businessAssumptions as ba
 from . import utilities as ut
 from . import tokenInMarketInitialization as timi
 from . import consistencyChecks as cc
-from . import marketSimulation as mkt
+
 
 def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     if 'param_id' in st.session_state:
@@ -76,11 +76,6 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     ab_return_dict = ab.agentBehaviorInput(sys_param, ua_return_dict["adoption_style"], ua_return_dict["adoption_dict"])
 
-    ##############################################
-    # Market Simulation
-    ##############################################
-
-    #mkt_return_dict = mkt.marketSimulationInput()
 
     ##############################################
     # Business Assumptions
@@ -219,10 +214,10 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
         'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
         'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
-        #'token' : mkt_return_dict["token"], 
-        #'start date' : mkt_return_dict['sim_start'],
-        #'end date': mkt_return_dict['sim_end'],
-        #'market': mkt_return_dict['market'],
+        'token' : ua_return_dict["token"], 
+        'start date' : ua_return_dict['sim_start'],
+        'end date': ua_return_dict['sim_end'],
+        'market': ua_return_dict['market'],
         'user_adoption_target': ua_return_dict["user_adoption_target"],
         'avg_product_user_growth_rate': ua_return_dict["avg_product_user_growth_rate"],
         'avg_token_holder_growth_rate': ua_return_dict["avg_token_holder_growth_rate"],
@@ -277,9 +272,30 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
 
     cc.consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_return_dict, ut_return_dict, ba_return_dict, ua_return_dict, timi_return_dict, fr_return_dict)
 
+
+    # Initialize a variable to track whether the error condition is met
+    error_condition_met = False
+
+    # Define your columns and inputs
     col111, col112, col113, col114, col115 = st.columns(5)
     with col111:
         simulation_duration = st.number_input('Simulation Duration / Months', label_visibility="visible", min_value=1, max_value=120, value=int(sys_param['simulation_duration'][0]) if 'simulation_duration' in sys_param else 84, disabled=False, key="simulation_duration", help="The duration of the simulation in months. Note that longer simulation times require more computation time.")
         new_params.update({'simulation_duration': simulation_duration})
+
+        # Convert Unix timestamps to datetime objects
+        start_date = datetime.fromtimestamp(ua_return_dict['sim_start'])
+        end_date = datetime.fromtimestamp(ua_return_dict['sim_end'])
+
+        # Calculate the difference in days
+        timeframe = (end_date - start_date).days
+        if simulation_duration >= timeframe and ua_return_dict['market'] == 1:
+            # If condition is met, set the flag to True
+            error_condition_met = True
+
+    # Check the flag and display the error message if the condition was met
+    if error_condition_met:
+        st.error("Error: Simulation duration must be smaller than the selected market simulation period in the Market Simulation section of User Adoption (current market simulation period: "+str(timeframe)+")")
+    else:
+        st.empty()  # Placeholder to clear previous error messages if the condition is not met anymore
 
     return new_params
