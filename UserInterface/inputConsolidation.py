@@ -156,7 +156,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'strategic_partners_allocation': tav_return_dict['strategic_partners_allocation'],
         'strategic_partners_initial_vesting': tav_return_dict['strategic_partners_initial_vesting'],
         'strategic_partners_cliff': tav_return_dict['strategic_partners_cliff'],
-        'strategic_partners_vesting_duration': tav_return_dict['strategic_partners_duration'],
+        'strategic_partner_vesting_duration': tav_return_dict['strategic_partners_duration'],
         'reserve_allocation': tav_return_dict['reserve_allocation'],
         'reserve_initial_vesting': tav_return_dict['reserve_initial_vesting'],
         'reserve_cliff': tav_return_dict['reserve_cliff'],
