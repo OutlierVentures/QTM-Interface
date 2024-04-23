@@ -36,12 +36,15 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     current_date = prev_state['date']
     token_economy = prev_state['token_economy'].copy()
     agent_behavior = params['agent_behavior']
+    token_launch = params['token_launch'] if 'token_launch' in params else True
+    token_launch_date = params['launch_date']
     if agent_behavior == 'simple':
         random_seed = params['random_seed']
         random.seed(random_seed + current_month)
     
-    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days # let current day start from the start of the simulation for user adoption (disable this for testing)
-
+    # let current day start from the start of the simulation for user adoption (disable this for testing)
+    current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime('today')).days if not token_launch else (pd.to_datetime(current_date)+pd.DateOffset(months=1) - pd.to_datetime(token_launch_date)).days
+    
     # Enable these for testing against the old QTM data
     #launchDate = get_initial_date(params) # enable this for testing
     #current_day = (pd.to_datetime(current_date)+pd.DateOffset(months=1) - launchDate).days # enable this for testing
@@ -80,6 +83,7 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
 
     else:
         product_users = calculate_user_adoption(initial_product_users,product_users_after_10y,product_adoption_velocity,current_day)
+        # print product user calculation related metrics
 
     ## Product Revenue
     if current_month == 1:
