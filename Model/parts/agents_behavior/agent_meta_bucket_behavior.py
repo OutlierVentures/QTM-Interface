@@ -170,7 +170,7 @@ def generate_agent_meta_bucket_behavior(params, substep, state_history, prev_sta
                 Kd_remove = Kd_remove * agent_staking_apr_target/20 if agent_staking_apr_target < 20 else Kd_remove
                 remove_signal = get_pid_controller_signal(Kp=Kp_remove, Ki=Ki_remove, Kd=Kd_remove, error=remove_error, integral=prev_remove_error_sum, previous_error=prev_remove_error, dt=1)
                 remove = remove_signal if (current_month > 1) else prev_remove + remove_signal
-                remove = np.min([np.max([remove, 0.0]), 0.9])
+                remove = np.min([np.max([remove, 0.0]), 0.25])
 
 
                 ## Meta Bucket Behavior Adjustments ##
