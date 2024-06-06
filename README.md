@@ -50,19 +50,22 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build a web-based UI to create another input option
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Implement user authentication and data set shareability between users
 - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Build custom user plot capabilities
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Account for different revenue receiver buckets and track them
-- ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add external rewards for stakers in diverse assets to mimic bribe markets (can be dependent on revenue received by a certain revenue bucket)
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Account for different revenue receiver buckets and track them
+- ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Add external rewards for stakers in diverse assets to mimic bribe markets (can be dependent on revenue received by a certain revenue bucket)
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add input inconsistency icons to respective input section expander text
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs, SAFT+Ts and SAFTs
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement different KPI-driven controller designs based on incentive priorities/optimizations
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Update fundraising module to more complex scenarios, including SAFTs and SAFT+Ts
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Develop risk analysis procedures
 - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add more dynamic agent (behavior) policies
   - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Intelligent agents I: Hard coded logics
     - ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Agents tend to stake tokens if reward APR is above target APR and remove tokens if it is below the target APR
     - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add DAO voting caused staking demand based on revenue and business funds
     - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add market buy behavior based on intrinsic protocol value, which is proportional to business funds and revenue projection
-    - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add market buy behavior based on market sentiment (Brownian Motion) and protocol reputation
+    - ![#c5f015](https://placehold.co/15x15/FFF266/FFF266.png) Add market buy behavior based on market sentiment (Brownian Motion) and protocol reputation
+    - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Define individual agent optimization goals (agents perform KPI based decision making)
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Intelligent agents II: AI driven decision making
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add alternative token price prediction models
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add product to token holder growth correlation
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Improve UX -> Reduce confusion on parameters and streamline the user experience (potentially reduce complexity)
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
