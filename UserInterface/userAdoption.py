@@ -118,57 +118,65 @@ def userAdoptionInput(sys_param, tav_return_dict):
         if rev_share_sum != 100.0:
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
 
-        st.markdown("### Market Simulation")
-        switch = st.toggle('Activate', help="Enable market simulation. In this section you can select a market period that you want to replicate in your simulation. The selected timeframe is gonna be used to infer the parameters to simulate monthly log returns based on the number of timesteps that are gonna be selected for the simulation.") 
-            
+        st.markdown("#### Market Simulation")
+        switch = st.toggle('Activate', value = False, help="This section allows you to make your Token Adoption (i.e. how many people buy your token) dependent on simulated market returns. In its current specification, the amount of users buying the token of the economy will increase/decrease based on the simulated market returns. E.g. If the market shows positive returns, token purchases increase correspondingly, and viceversa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation is performed using Brownian Motions.") 
+        
         if switch:
-            # choose token to use as proxy for market sentiment
-            token_choice_predefined = ['bitcoin', 'ethereum'] # extend list if needed
-            token_choice = st.radio('Token to simulate', tuple(token_choice_predefined), help="Pick the token you want to use as market proxy for the simulation.").lower()
+            # Choose token to use as proxy for market sentiment
+            token_choice_predefined = ['bitcoin', 'ethereum']
+            token_choice = st.radio("###### Select Token", tuple(token_choice_predefined))
             
             # Checks
             today = datetime.today().date()
             default_start_date = today - timedelta(days=365)
+            
+            # Define the start and end date inputs with restrictions
+            sim_start_date = st.date_input(
+                "Start Date",
+                value=default_start_date,
+                max_value=today,  
+                help="Select the start date for the simulation. The start date must be at least 180 days before the end date to provide sufficient data for the simulation."
+            )
 
-            # collect info on the simulation period
-            sim_start_date = st.date_input("Start Date", value=default_start_date, max_value=today, help="The Start and End Dates define the historical market conditions you want to replicate. E.g. If you want to replicate a Bull Run scenario you can select Start Date = 01-01-2021 & End Date = 31-12-2021.") 
-            sim_end_date = st.date_input("End Date", value=today, max_value=today, help="The Start and End Dates define the historical market conditions you want to replicate. E.g. If you want to replicate a Bull Run scenario you can select Start Date = 01-01-2021 & End Date = 31-12-2021.")
+            sim_end_date = st.date_input(
+                "End Date",
+                value=today,
+                min_value=sim_start_date,  
+                max_value=today,
+                help="Select the end date for the simulation. The end date must be at least 180 days after the start date to provide sufficient data for the simulation."
+            )
 
-            if sim_start_date > sim_end_date:
-                st.error("Error: End date cannot be before start date. Please adjust your selection.")
-                switch = False
+            # Button to trigger the simulation
+            simulate_button = st.button("Simulate Returns")
 
-            # Check if the difference is less than 4 months
-            elif sim_end_date-sim_start_date < timedelta(days = 120):
-                st.error("Error: The Brownian Motion estimator performs best with at least 4 months of data. Please select a longer timeframe.")
-                switch = False
+            # Initialize variables with a default value
+            start_date_unix = int(time.mktime(sim_start_date.timetuple()))
+            end_date_unix = int(time.mktime(sim_end_date.timetuple()))
+            active = 1
 
-            else:
-            # Convert datetime objects to Unix timestamps
-                start_date_unix = int(time.mktime(sim_start_date.timetuple()))
-                end_date_unix = int(time.mktime(sim_end_date.timetuple()))
+            if simulate_button:
+                # Check if the dates meet the conditions
+                if sim_start_date > sim_end_date - timedelta(days=180):
+                    st.warning("The selected date range is too small to run the simulation. Please adjust the dates to include at least 6 MONTHS of historical price data.", icon="⚠️")
 
-                active = 1
+                else:
+                    # Display spinner and perform computations only if conditions are met
+                    with st.spinner("Please wait while the simulation chart is loading..."):
+
+                        # Fetch and simulate market returns
+                        result = simulate_market_returns(token_choice, start_date_unix, end_date_unix)
+                        simulation_df = result['market']
+
+                        # Plotting and displaying the figure in Streamlit
+                        fig = plot_simulation_results(simulation_df, token_choice) 
+                        st.plotly_chart(fig, use_container_width=True)
 
         else:
             token_choice = 0
             start_date_unix = 0
             end_date_unix = 0
-            active = 0
+            active = 0 
         
-        if switch: # Insert Plot
-
-            # Displaying a message while the plot is loading
-            with st.spinner("Please wait while the simulation chart is loading..."):
-                # Assuming `result` is the dictionary returned by the `coin_gecko_prices` function
-                result = coin_gecko_prices_2(active, token_choice, start_date_unix, end_date_unix)
-
-                # Extract the DataFrame from the result
-                simulation_df = result['market']
-
-                # Plotting and displaying the figure in Streamlit
-                fig = plot_simulation_results(simulation_df, token_choice) 
-                st.plotly_chart(fig, use_container_width=True)
     
     product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
     token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]

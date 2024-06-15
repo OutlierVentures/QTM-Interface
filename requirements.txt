@@ -23,7 +23,7 @@ pyxlsb
 xlsxwriter
 bcrypt==3.2.0
 streamlit-authenticator==0.3.1
-# adding libraries for brownian motions
+# adding libraries for return simulation
 typing; python_version >= '3.5'
 dataclasses; python_version < '3.7'
 numpy
@@ -31,3 +31,4 @@ scipy
 statsmodels
 tqdm
 scikit-learn
+yfinance

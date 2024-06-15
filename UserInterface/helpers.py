@@ -10,7 +10,7 @@ from PIL import Image
 import time
 import yaml
 from brownian_motion_generator import brownian_motion_generator as bmg
-import requests
+import yfinance as yf
 
 from Model.parts.utils import *
 from UserInterface.plots import *
@@ -190,63 +190,43 @@ def safeToYaml(config):
         yaml.dump(config, file, default_flow_style=False)
 
 
-def coin_gecko_prices_2(active_market, coin, start_date, end_date, against='usd', timesteps = 60, runs=1): 
+def simulate_market_returns(coin, start_date, end_date, runs=1): 
 
-    ### TO ADD: ###
-    # - add check that enough data is queried from the API to use brownian motion estimation 
-        
-    # Fetch historical token prices from Coingecko API
-    url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
-    r = requests.get(url)
+    # Map input string to compatible token symbol for the data fetching
+    coin_mapping = {'bitcoin': 'BTC', 'ethereum': 'ETH'}
 
-    # Check that API got fetched
-    if r.status_code != 200:
-        st.error(f"Failed to fetch data from CoinGecko API. Status code: {r.status_code}")
-        return
+    # Convert the input coin string to the corresponding API symbol
+    coin = coin_mapping.get(coin.lower())
 
-    # Check that fetched json file has the wanted columns
-    r_json = r.json()
-    if 'prices' not in r_json:
-        st.error("The API response is missing the 'prices' key.")
-        return
+    # Retrieve selected timestep in main UI page
+    timesteps = st.session_state.get('simulation_duration') 
 
-    # Convert fetched json file into a dataframe
-    df = pd.DataFrame(r_json['prices'], columns=['unix', f'{coin}_{against}'])
+    # Fetch asset price data using the yfinance library
+    ticker = yf.Ticker(f'{coin}-USD') 
+    data = ticker.history(start=start_date, end=end_date, interval="1mo")["Close"]
+    
+    # Check if data is empty
+    if data.empty:
+        print("Failed to fetch data or no data available for the given range and asset.")
+        return 
 
-    # Convert unix timestamp to datetime and set as index
-    df['date'] = pd.to_datetime(df['unix'], unit='ms')
-    df.set_index('date', inplace=True)
+    # Convert Series to DataFrame and rename column for easier manipulation
+    df = data.to_frame(name='Close Price')
 
-    # Resample to get monthly prices
-    monthly_df = df.resample('M').last() 
-
-    # Calculate monthly log returns
-    monthly_df[f'{coin}_ln_return'] = np.log(monthly_df[f'{coin}_{against}'] / monthly_df[f'{coin}_{against}'].shift(1))
-    monthly_df = monthly_df.dropna(how='any')
+    # Calculate monthly log returns for better mathematical operations 
+    df['Log returns'] = np.log(df['Close Price'] / df['Close Price'].shift(1))
+    df = df.dropna(how='any')
 
     # Approximate the distribution parameters of each series
     # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
-    OU_params_btc = bmg.estimate_OU_params(monthly_df[f'{coin}_ln_return'].values, distribution_type='custom')
+    OU_params = bmg.estimate_OU_params(df['Log returns'].values, distribution_type='custom')
 
-    # OPTIONALLY: override the gamma (long term mean) of the expected distribution
-    # For example if you wanted to ignore the historical trend in prices you could do so by setting price changes to 0 gamma
-    # OU_params_btc.gamma = 0
+    # Since only one process and one run, we don't need a tuple for parameters or correlations
+    OU_procs = bmg.simulate_corr_OU_procs(timesteps, (OU_params,), runs, rho=None)
 
-    OU_params = (
-        OU_params_btc,
-    )
-
-    correlations = monthly_df[
-        [f'{coin}_ln_return',
-        ]
-    ].corr().values[0]
-
-    OU_procs = bmg.simulate_corr_OU_procs(timesteps, OU_params, runs, rho=correlations)
-    #st.text(f"Shape of OU_procs: {OU_procs.shape}")
-
-    runs, timesteps, data = OU_procs.shape
+    # runs, timesteps, data = OU_procs.shape
     OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
-    walks = pd.DataFrame(OU_procs_arr, columns=['run', f'{coin}_ln_return'])
+    walks = pd.DataFrame(OU_procs_arr, columns=['run', 'Log returns'])
     walks['run'] = walks['run'].astype(int) + 1
     walks['timestep'] = walks.groupby('run').cumcount() + 1
 
