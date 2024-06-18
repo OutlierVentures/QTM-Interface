@@ -66,6 +66,7 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add alternative token price prediction models
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add product to token holder growth correlation
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Improve UX -> Reduce confusion on parameters and streamline the user experience (potentially reduce complexity)
+- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add Metcalfe's law to product user growth model
 - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Parameter Optimization
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Implement and test parameter sweep capabilities
   - ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) Add advanced optimization procedures
