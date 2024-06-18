@@ -32,3 +32,4 @@ statsmodels
 tqdm
 scikit-learn
 yfinance==0.2.40
+cadcad==0.5.0 # requirement for yfinance
