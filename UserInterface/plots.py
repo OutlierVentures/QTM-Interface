@@ -935,7 +935,7 @@ def plot_simulation_results(simulation_df, coin):
     coin_symbols = {
     'bitcoin': 'BTC',
     'ethereum': 'ETH',
-    # Add more mappings as needed
+    # Add more mappings when new tokens are added
     }
 
     coin_symbol = coin_symbols.get(coin.lower())

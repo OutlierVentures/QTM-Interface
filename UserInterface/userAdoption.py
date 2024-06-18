@@ -119,7 +119,7 @@ def userAdoptionInput(sys_param, tav_return_dict):
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
 
         st.markdown("#### Market Simulation")
-        switch = st.toggle('Activate', value = False, help="This section allows you to make your Token Adoption (i.e. how many people buy your token) dependent on simulated market returns. In its current specification, the amount of users buying the token of the economy will increase/decrease based on the simulated market returns. E.g. If the market shows positive returns, token purchases increase correspondingly, and viceversa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation is performed using Brownian Motions.") 
+        switch = st.toggle('Activate', value = False, help="This section allows you to link Token Adoption (i.e. how many people buy your token) to simulated market returns. In its current configuration, the number of users purchasing the token will increase or decrease based on these simulated returns. For example, if the market shows positive returns, token purchases will increase accordingly, and vice versa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation utilizes Brownian Motion.") 
         
         if switch:
             # Choose token to use as proxy for market sentiment
@@ -130,12 +130,12 @@ def userAdoptionInput(sys_param, tav_return_dict):
             today = datetime.today().date()
             default_start_date = today - timedelta(days=365)
             
-            # Define the start and end date inputs with restrictions
+            # Define the start and end date inputs 
             sim_start_date = st.date_input(
                 "Start Date",
                 value=default_start_date,
                 max_value=today,  
-                help="Select the start date for the simulation. The start date must be at least 180 days before the end date to provide sufficient data for the simulation."
+                help="Select the start date for the simulation. This start date should be at least 180 days before the end date to ensure sufficient data for inferring the parameters used to simulate market returns."
             )
 
             sim_end_date = st.date_input(
@@ -143,7 +143,7 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 value=today,
                 min_value=sim_start_date,  
                 max_value=today,
-                help="Select the end date for the simulation. The end date must be at least 180 days after the start date to provide sufficient data for the simulation."
+                help="Select the end date for the simulation. The end date must be at least 180 days after the start date to ensure sufficient data for inferring the parameters used to simulate market returns."
             )
 
             # Button to trigger the simulation
@@ -157,7 +157,7 @@ def userAdoptionInput(sys_param, tav_return_dict):
             if simulate_button:
                 # Check if the dates meet the conditions
                 if sim_start_date > sim_end_date - timedelta(days=180):
-                    st.warning("The selected date range is too small to run the simulation. Please adjust the dates to include at least 6 MONTHS of historical price data.", icon="⚠️")
+                    st.warning("To run the simulation, please adjust the dates to include at least 6 months of historical price data. The selected date range is currently too short.", icon="⚠️")
 
                 else:
                     # Display spinner and perform computations only if conditions are met

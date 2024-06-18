@@ -33,7 +33,7 @@ Functions:
 
     convert_to_json:
 
-    coin_gecko_prices:
+    simulate_market_returns2:
 """
 
 import numpy as np
@@ -700,7 +700,7 @@ def get_pid_controller_signal(Kp, Ki, Kd, error, integral, previous_error, dt):
 
 def simulate_market_returns2(sys_param, runs=1): 
 
-    # Check that market simulation was activated
+    # Check that market simulation was activated in streamlit UI
     if sys_param['market'][0] == 0:
         return {'market': 0}
     else:
@@ -712,7 +712,7 @@ def simulate_market_returns2(sys_param, runs=1):
         # Get input parameters
         start_date = sys_param['start date'][0]
         end_date = sys_param['end date'][0]
-        timesteps = sys_param['simulation_duration'][0]
+        timesteps = sys_param['simulation_duration'][0] 
 
         # Fetch asset price data using the yfinance library
         ticker = yf.Ticker(f'{coin}-USD') 
