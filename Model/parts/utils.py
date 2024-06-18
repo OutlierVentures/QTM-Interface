@@ -42,7 +42,7 @@ import uuid
 import random
 import sys
 import os
-from datetime import datetime, timedelta #added timedelta for new API test
+from datetime import datetime
 from typing import *
 import pandas as pd
 import json
