@@ -33,7 +33,7 @@ Functions:
 
     convert_to_json:
 
-    coin_gecko_prices:
+    simulate_market_returns2:
 """
 
 import numpy as np
@@ -47,71 +47,8 @@ from typing import *
 import pandas as pd
 import json
 import sqlite3
-import requests
+import yfinance as yf
 from brownian_motion_generator import brownian_motion_generator as bmg
-
-# Helper Functions
-def coin_gecko_prices(sys_param, against='usd', timesteps=60, runs=1): 
-
-    ### TO ADD: ###
-    # - add check that enough data is queried from the API to use brownian motion estimation 
-    # - add default input parameters and error handling
-    # - add API request issues error handling
-
-    if sys_param['market'][0] == 0:
-        return {'market': 0}
-    else:
-        # Get input parameters
-        coin = sys_param['token'][0]
-        start_date = sys_param['start date'][0]
-        end_date = sys_param['end date'][0]
-        
-        # Fetch historical token prices from Coingecko API
-        url = f'https://api.coingecko.com/api/v3/coins/{coin}/market_chart/range?vs_currency={against}&from={start_date}&to={end_date}' 
-
-        r = requests.get(url)
-        df = pd.DataFrame(r.json()['prices'], columns=['unix', f'{coin}_{against}'])
-
-        # Convert unix timestamp to datetime and set as index
-        df['date'] = pd.to_datetime(df['unix'], unit='ms')
-        df.set_index('date', inplace=True)
-
-        # Resample to get monthly prices
-        monthly_df = df.resample('M').last()
-
-        # Calculate monthly log returns
-        monthly_df[f'{coin}_ln_return'] = np.log(monthly_df[f'{coin}_{against}'] / monthly_df[f'{coin}_{against}'].shift(1))
-        monthly_df = monthly_df.dropna(how='any')
-
-        # Approximate the distribution parameters of each series
-        # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
-        OU_params_btc = bmg.estimate_OU_params(monthly_df[f'{coin}_ln_return'].values, distribution_type='custom')
-
-        # OPTIONALLY: override the gamma (long term mean) of the expected distribution
-        # For example if you wanted to ignore the historical trend in prices you could do so by setting price changes to 0 gamma
-        # OU_params_btc.gamma = 0
-
-        OU_params = (
-            OU_params_btc,
-        )
-
-        correlations = monthly_df[
-            ['bitcoin_ln_return',
-            ]
-        ].corr().values[0]
-
-        OU_procs = bmg.simulate_corr_OU_procs(timesteps, OU_params, runs, rho=correlations)
-        OU_procs.shape
-        # Convert numpy array into a dataframe
-        # This is a placeholder, replace with actual array from simulation
-        OU_procs = np.random.randn(runs, timesteps)  # Placeholder, replace with actual simulation data
-        runs, timesteps = OU_procs.shape
-        OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
-        walks = pd.DataFrame(OU_procs_arr, columns=['run', f'{coin}_ln_return'])
-        walks['run'] = walks['run'].astype(int) + 1
-        walks['timestep'] = walks.groupby('run').cumcount() + 1
-
-        return {'market': walks} 
 
 def convert_date(sys_param):
     if type(sys_param['launch_date'][0]) == datetime:
@@ -760,3 +697,45 @@ def get_pid_controller_signal(Kp, Ki, Kd, error, integral, previous_error, dt):
     signal = proportional + integral_term + derivative_term
 
     return signal
+
+def simulate_market_returns2(sys_param, runs=1): 
+
+    # Check that market simulation was activated in streamlit UI
+    if sys_param['market'][0] == 0:
+        return {'market': 0}
+    else:
+        # Map selected token to corresponding symbol
+        coin_mapping = {'bitcoin': 'BTC', 'ethereum': 'ETH'}
+        coin = sys_param['token'][0]
+        coin = coin_mapping.get(coin.lower(), coin)  
+        
+        # Get input parameters
+        start_date = sys_param['start date'][0]
+        end_date = sys_param['end date'][0]
+        timesteps = sys_param['simulation_duration'][0] 
+
+        # Fetch asset price data using the yfinance library
+        ticker = yf.Ticker(f'{coin}-USD') 
+        data = ticker.history(start=start_date, end=end_date, interval="1mo")["Close"]
+
+        # Convert Series to DataFrame and rename column for easier manipulation
+        df = data.to_frame(name='Close Price')
+
+        # Calculate monthly log returns for better mathematical operations 
+        df['Log returns'] = np.log(df['Close Price'] / df['Close Price'].shift(1))
+        df = df.dropna(how='any')
+
+        # Approximate the distribution parameters of each series
+        # Here we will use a custom distribution for each: other options include 'normal' or 'laplace'
+        OU_params = bmg.estimate_OU_params(df['Log returns'].values, distribution_type='custom')
+
+        # Since only one process and one run, we don't need a tuple for parameters or correlations
+        OU_procs = bmg.simulate_corr_OU_procs(timesteps, (OU_params,), runs, rho=None)
+
+        runs, timesteps, data = OU_procs.shape
+        OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
+        walks = pd.DataFrame(OU_procs_arr, columns=['run', 'Log returns'])
+        walks['run'] = walks['run'].astype(int) + 1
+        walks['timestep'] = walks.groupby('run').cumcount() + 1
+
+        return {'market': walks} 

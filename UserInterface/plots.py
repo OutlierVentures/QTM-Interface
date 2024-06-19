@@ -905,31 +905,46 @@ def is_float(element: any) -> bool:
     except ValueError:
         return False
 
-def plot_simulation_results(simulation_df, coin, against='usd'):
+def plot_simulation_results(simulation_df, coin):
     """
-    Plots the simulated time series of logarithmic returns.
+    Plots the simulated time series of monthly logarithmic returns for a given cryptocurrency. 
+
+    In the plot the y-axis is omitting 'logarithmic' to not confuse the end user. 
+    While there is not a substantial difference between logaritmic and aritmetic returns, the former allows for better mathematical handling.
 
     Parameters:
-    - simulation_df: DataFrame containing the simulation results.
-    - coin: The cryptocurrency token symbol.
-    - against: The currency against which the cryptocurrency prices are compared.
+    - simulation_df (DataFrame): A pandas DataFrame containing the simulation results. 
+    - coin (str): The cryptocurrency token symbol (e.g., 'bitcoin' for Bitcoin, 'ethereum' for Ethereum) used in the simulation. 
+                  The symbol is used for labeling the plot.
+
+    Returns:
+    - fig (go.Figure): A Plotly graph object figure containing the plot of the simulation results.
     """
+
     # Creating an empty figure
     fig = go.Figure()
-
-    #print(simulation_df)
     df_subset = simulation_df
     
     # Adding each run as a separate trace
     for run in simulation_df['run'].unique():
         df_subset = simulation_df[simulation_df['run'] == run]
-        fig.add_trace(go.Scatter(x=df_subset['timestep'], y=df_subset[f'{coin}_ln_return'],  # {coin}_{against}
+        fig.add_trace(go.Scatter(x=df_subset['timestep'], y=df_subset['Log returns'],  
                                  mode='lines', name=f'Run {run}'))
     
+    # Map coin to symbol for better readability
+    coin_symbols = {
+    'bitcoin': 'BTC',
+    'ethereum': 'ETH',
+    # Add more mappings when new tokens are added
+    }
+
+    coin_symbol = coin_symbols.get(coin.lower())
+    
     # Updating layout for readability
-    fig.update_layout(title=f'Simulated Market Behavior: Log Returns of {coin.upper()}/{against.upper()}',
+    fig.update_layout(title= f'Simulated Market Behavior: {coin_symbol.upper()}/USD',
                       xaxis_title='Timestep',
-                      yaxis_title='Monthly Log Returns',
+                      yaxis_title='Simulated Monthly Returns',
+                      yaxis_tickformat='.0%',
                       legend_title='Simulation Run')
     
     return fig

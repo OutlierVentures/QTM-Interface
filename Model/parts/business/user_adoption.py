@@ -130,29 +130,26 @@ def user_adoption_metrics(params, substep, state_history, prev_state, **kwargs):
     else:
         token_holders = calculate_user_adoption(initial_token_holders,token_holders_after_10y,token_adoption_velocity,current_day)
 
-    ## Calculating Token Buys
+    # Calculating Token Buys
     if ('market' in params and params['market'] == 0) or 'market' not in params:
         if current_month == 1:
-            token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+            token_buys = (one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
         else:
-            token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user 
+            token_buys = ((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user 
 
         return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
     else:
-        # Get token to use for simulation from input parameters
-        coin = params['token']
-        
         # Retrieve market simulation initialized at the beginning of the simulation
         market_simu = prev_state['market']['market']
 
         # Compute monthly simulated return corresponding to current timestep 
-        new_monthly_return = np.exp(market_simu[market_simu['timestep'] == current_month][f'{coin}_ln_return'].iloc[0])
+        new_monthly_return = np.exp(market_simu[market_simu['timestep'] == current_month]['Log returns'].iloc[0]) - 1 # Exponential -1 to offset the simulated log return
         if current_month == 1:
-            token_buys =(one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
+            token_buys = (one_time_token_buy_per_user+regular_token_buy_per_user)*token_holders
         else:
-            token_buys =((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user*(1 + new_monthly_return) # Simple %-wise buy pressure adjustment based on simulated market returns
+            token_buys = (((token_holders-prev_token_holders)*one_time_token_buy_per_user)+token_holders*regular_token_buy_per_user)*(1 + new_monthly_return) # Simple %-wise buy pressure adjustment based on simulated market returns
 
-        return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys':token_buys}
+        return {'ua_product_users': product_users, 'ua_token_holders': token_holders,'ua_product_revenue': product_revenue,'ua_token_buys': token_buys}
 
 
 
