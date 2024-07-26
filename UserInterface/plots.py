@@ -948,3 +948,4 @@ def plot_simulation_results(simulation_df, coin):
                       legend_title='Simulation Run')
     
     return fig
+

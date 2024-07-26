@@ -231,3 +231,31 @@ def simulate_market_returns(coin, start_date, end_date, runs=1):
     walks['timestep'] = walks.groupby('run').cumcount() + 1
 
     return {'market': walks} 
+
+
+def calculate_market_based_token_adoption(initial_users,final_users,velocity,timestamp):
+    """
+    Take in user adoption data and calculate the amount of adoption.
+
+    Can be used for token adoption and product users.
+  
+    Args:
+        initial_users: starting amount of users
+        final_users: ending amount of users
+        velocity: speed of adoption on those users
+        timstep: current timestep in days
+    
+    Returns:
+        Number representing the user adoption.    
+
+    """
+    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
+    total_days = 3653
+
+    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
+    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
+    term3 = initial_users * (timestamp / total_days)
+    term4 = final_users - (term1 - term2 - term3)
+    result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
+    
+    return result
