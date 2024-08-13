@@ -10,45 +10,55 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
     with st.expander("**Business Assumptions**"):
         st.markdown("### Business Assumptions")
         # income | expenditures | buybacks | burns
-        st.write("**Financial Streams**")
-        col81, col82, col83 = st.columns(3)
-        with col81:
-            show_full_business_table = st.toggle('Use Full Custom Table', value=False, help="Show the full financial stream parameter set. Note that all income streams from the table will be added on top of the adoption product revenue.")
-            if not show_full_business_table:
-                income = st.number_input('Additional income per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['royalty_income_per_month'][0] + sys_param['other_income_per_month'][0] + sys_param['treasury_income_per_month'][0])/1e3, disabled=False, key="income", help="The monthly income for the business on top of the product revenue, defined in the user adoption section.")
-                expenditures = st.number_input('Expenditures per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['salaries_per_month'][0] + sys_param['license_costs_per_month'][0] + sys_param['other_monthly_costs'][0] + (sys_param['one_time_payments_1'][0]+ sys_param['one_time_payments_2'][0])/120)/1e3, disabled=False, key="expenditures", help="The monthly expenditures for the business.")
-            else:
-                income = 0.0
-                expenditures = 0.0
-        if show_full_business_table:
-            with col82:
-                st.write("**Income**")
-                royalty_income_per_month = st.number_input('Royalty income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['royalty_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="royalty_income_per_month", help="The monthly royalty income for the business.")
-                treasury_income_per_month = st.number_input('Treasury income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['treasury_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="treasury_income_per_month", help="The monthly income for the business from treasury investments yields.")
-                other_income_per_month = st.number_input('Other income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['other_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="other_income_per_month", help="The monthly income for the business from other sources.")
-            with col83:
-                st.write("**Expenditures**")
-                one_time_payments_1 = st.number_input('One-time payments / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['one_time_payments_1'][0] + sys_param['one_time_payments_2'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="one_time_payments_1", help="The one-time payments for the business at launch (e.g. any back payment of liabilities or treasury investments).")
-                salaries_per_month = st.number_input('Salaries per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['salaries_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="salaries_per_month", help="The monthly salaries paid by the business.")
-                license_costs_per_month = st.number_input('License costs per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['license_costs_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="license_costs_per_month", help="The monthly license costs paid by the business.")
-                other_monthly_costs = st.number_input('Other monthly costs / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['other_monthly_costs'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="other_monthly_costs", help="The monthly costs paid by the business for other purposes.")
-        else:
-            royalty_income_per_month = [float(sys_param['royalty_income_per_month'][0])/1e3 if income == 0.0 else 0.0][0]
-            treasury_income_per_month = [float(sys_param['treasury_income_per_month'][0])/1e3 if income == 0.0 else 0.0][0]
-            other_income_per_month = [float(sys_param['other_income_per_month'][0])/1e3 if income == 0.0 else income][0]
-            one_time_payments_1 = [float(sys_param['one_time_payments_1'][0] + sys_param['one_time_payments_2'][0])/1e3 if expenditures == 0.0 else 0.0][0]
-            salaries_per_month = [float(sys_param['salaries_per_month'][0])/1e3 if expenditures == 0.0 else 0.0][0]
-            license_costs_per_month = [float(sys_param['license_costs_per_month'][0])/1e3 if expenditures == 0.0 else 0.0][0]
-            other_monthly_costs = [float(sys_param['other_monthly_costs'][0])/1e3 if expenditures == 0.0 else expenditures][0]
         
-        if not token_launch:
-            months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
-            projected_cash_balance = raised_funds*1e3 - one_time_payments_1 + (royalty_income_per_month + treasury_income_per_month + other_income_per_month - salaries_per_month - license_costs_per_month - other_monthly_costs) * months_since_launch
-            initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
-            if initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * (regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']) - salaries_per_month - license_costs_per_month - other_monthly_costs) < 0:
-                st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
-        else:
-            initial_cash_balance = 0.0
+        # st.write("**Financial Streams**")
+        # col81, col82, col83 = st.columns(3)
+        # with col81:
+        #     show_full_business_table = st.toggle('Use Full Custom Table', value=False, help="Show the full financial stream parameter set. Note that all income streams from the table will be added on top of the adoption product revenue.")
+        #     if not show_full_business_table:
+        #         income = st.number_input('Additional income per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['royalty_income_per_month'][0] + sys_param['other_income_per_month'][0] + sys_param['treasury_income_per_month'][0])/1e3, disabled=False, key="income", help="The monthly income for the business on top of the product revenue, defined in the user adoption section.")
+        #         expenditures = st.number_input('Expenditures per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['salaries_per_month'][0] + sys_param['license_costs_per_month'][0] + sys_param['other_monthly_costs'][0] + (sys_param['one_time_payments_1'][0]+ sys_param['one_time_payments_2'][0])/120)/1e3, disabled=False, key="expenditures", help="The monthly expenditures for the business.")
+        #     else:
+        #         income = 0.0
+        #         expenditures = 0.0
+        # if show_full_business_table:
+        #     with col82:
+        #         st.write("**Income**")
+        #         royalty_income_per_month = st.number_input('Royalty income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['royalty_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="royalty_income_per_month", help="The monthly royalty income for the business.")
+        #         treasury_income_per_month = st.number_input('Treasury income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['treasury_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="treasury_income_per_month", help="The monthly income for the business from treasury investments yields.")
+        #         other_income_per_month = st.number_input('Other income per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['other_income_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="other_income_per_month", help="The monthly income for the business from other sources.")
+        #     with col83:
+        #         st.write("**Expenditures**")
+        #         one_time_payments_1 = st.number_input('One-time payments / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['one_time_payments_1'][0] + sys_param['one_time_payments_2'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="one_time_payments_1", help="The one-time payments for the business at launch (e.g. any back payment of liabilities or treasury investments).")
+        #         salaries_per_month = st.number_input('Salaries per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['salaries_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="salaries_per_month", help="The monthly salaries paid by the business.")
+        #         license_costs_per_month = st.number_input('License costs per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['license_costs_per_month'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="license_costs_per_month", help="The monthly license costs paid by the business.")
+        #         other_monthly_costs = st.number_input('Other monthly costs / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['other_monthly_costs'][0])/1e3 if show_full_business_table else 0.0][0], disabled=False, key="other_monthly_costs", help="The monthly costs paid by the business for other purposes.")
+        # else:
+        #     royalty_income_per_month = [float(sys_param['royalty_income_per_month'][0])/1e3 if income == 0.0 else 0.0][0]
+        #     treasury_income_per_month = [float(sys_param['treasury_income_per_month'][0])/1e3 if income == 0.0 else 0.0][0]
+        #     other_income_per_month = [float(sys_param['other_income_per_month'][0])/1e3 if income == 0.0 else income][0]
+        #     one_time_payments_1 = [float(sys_param['one_time_payments_1'][0] + sys_param['one_time_payments_2'][0])/1e3 if expenditures == 0.0 else 0.0][0]
+        #     salaries_per_month = [float(sys_param['salaries_per_month'][0])/1e3 if expenditures == 0.0 else 0.0][0]
+        #     license_costs_per_month = [float(sys_param['license_costs_per_month'][0])/1e3 if expenditures == 0.0 else 0.0][0]
+        #     other_monthly_costs = [float(sys_param['other_monthly_costs'][0])/1e3 if expenditures == 0.0 else expenditures][0]
+        
+        # if not token_launch:
+        #     months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
+        #     projected_cash_balance = raised_funds*1e3 - one_time_payments_1 + (royalty_income_per_month + treasury_income_per_month + other_income_per_month - salaries_per_month - license_costs_per_month - other_monthly_costs) * months_since_launch
+        #     initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
+        #     if initial_cash_balance == 0 and (royalty_income_per_month + treasury_income_per_month + other_income_per_month + initial_product_users * (regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']) - salaries_per_month - license_costs_per_month - other_monthly_costs) < 0:
+        #         st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
+        # else:
+        #     initial_cash_balance = 0.0
+
+        col81, col82 = st.columns(2)
+        with col81:
+            st.write("**Income**")
+            income = st.number_input('Additional fixed income per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['royalty_income_per_month'][0] + sys_param['other_income_per_month'][0] + sys_param['treasury_income_per_month'][0])/1e3, disabled=False, key="income", help="The monthly income for the business on top of the product revenue, defined in the user adoption section.")
+
+        with col82:
+            st.write("**Expenditures**")
+            expenditures = st.number_input('Fixed expenditures per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['salaries_per_month'][0] + sys_param['license_costs_per_month'][0] + sys_param['other_monthly_costs'][0] + (sys_param['one_time_payments_1'][0]+ sys_param['one_time_payments_2'][0])/120)/1e3, disabled=False, key="expenditures", help="The monthly expenditures for the business.")
 
 
         st.write("**Buybacks and Burns**")
@@ -119,14 +129,14 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
     ba_return_dict = {
         "income" : income,
         "expenditures" : expenditures,
-        "royalty_income_per_month" : royalty_income_per_month,
-        "treasury_income_per_month" : treasury_income_per_month,
-        "other_income_per_month" : other_income_per_month,
-        "one_time_payments_1" : one_time_payments_1,
-        "salaries_per_month" : salaries_per_month,
-        "license_costs_per_month" : license_costs_per_month,
-        "other_monthly_costs" : other_monthly_costs,
-        "initial_cash_balance" : initial_cash_balance,
+        # "royalty_income_per_month" : royalty_income_per_month,
+        # "treasury_income_per_month" : treasury_income_per_month,
+        # "other_income_per_month" : other_income_per_month,
+        # "one_time_payments_1" : one_time_payments_1,
+        # "salaries_per_month" : salaries_per_month,
+        # "license_costs_per_month" : license_costs_per_month,
+        # "other_monthly_costs" : other_monthly_costs,
+        # "initial_cash_balance" : initial_cash_balance,
         "enable_protocol_buybacks" : enable_protocol_buybacks,
         "buyback_type" : buyback_type,
         "buyback_perc_per_month" : buyback_perc_per_month,
@@ -139,7 +149,7 @@ def businessAssumptionsInput(sys_param, adoption_dict, token_launch_date, raised
         "burn_bucket" : burn_bucket,
         "burn_start" : burn_start,
         "burn_end" : burn_end,
-        "show_full_business_table" : show_full_business_table
+        # "show_full_business_table" : show_full_business_table
     }
 
     return ba_return_dict

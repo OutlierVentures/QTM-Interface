@@ -949,3 +949,86 @@ def plot_simulation_results(simulation_df, coin):
     
     return fig
 
+def plot_user_adoption_and_revenue(user_adoption_series, revenue_series):
+    """
+    Plots the user adoption and revenue series over time.
+
+    Parameters:
+    - user_adoption_series (list): A list containing the user adoption values for each timestep.
+    - revenue_series (list): A list containing the revenue values for each timestep.
+
+    Returns:
+    - fig (go.Figure): A Plotly graph object figure containing the plot of the user adoption and revenue series.
+    """
+    # Find the maximum value to set the same range for both y-axes
+    min_value = min(min(user_adoption_series), min(revenue_series))
+    max_value = max(max(user_adoption_series), max(revenue_series))
+
+    # Calculate the step size for ticks
+    step_size = round((max_value - min_value) / 10)
+    
+    # Create tick values ensuring they are integers
+    tickvals = list(range(int(min_value), int(max_value) + step_size, step_size))
+
+    # Create an empty figure
+    fig = go.Figure()
+    
+    # Add the user adoption series as a trace
+    fig.add_trace(go.Scatter(x=list(range(len(user_adoption_series))), y=user_adoption_series,
+                             mode='lines', name='User Adoption'))
+    
+    # Add the revenue series as a trace
+    fig.add_trace(go.Scatter(x=list(range(len(revenue_series))), y=revenue_series,
+                             mode='lines', name='Revenue', yaxis='y2'))
+    
+    # Updating layout for readability
+    fig.update_layout(
+        title='User Adoption and Revenue Over Time',
+        xaxis=dict(title='Timestep (months)'),
+        yaxis=dict(title='Number of Users', tickmode = 'array', tickvals=tickvals, range=[min_value, max_value],),
+        yaxis2=dict(title='Revenue ($)', overlaying='y', side='right', tickmode = 'array', tickvals=tickvals, tickformat='$', range=[min_value, max_value],),
+        legend=dict(title='Legend', x=0, y=1, xanchor='left', yanchor='top'),
+    )
+    return fig
+
+def plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_series):
+    """
+    Plots the user adoption and revenue series over time.
+
+    Parameters:
+    - user_adoption_series (list): A list containing the user adoption values for each timestep.
+    - revenue_series (list): A list containing the revenue values for each timestep.
+
+    Returns:
+    - fig (go.Figure): A Plotly graph object figure containing the plot of the user adoption and revenue series.
+    """
+    # Find the maximum value to set the same range for both y-axes
+    min_value = min(min(token_adoption_series), min(buy_pressure_series))
+    max_value = max(max(token_adoption_series), max(buy_pressure_series))
+
+    # Calculate the step size for ticks
+    step_size = round((max_value - min_value) / 10)
+    
+    # Create tick values ensuring they are integers
+    tickvals = list(range(int(min_value), int(max_value) + step_size, step_size))
+
+    # Create an empty figure
+    fig = go.Figure()
+    
+    # Add the user adoption series as a trace
+    fig.add_trace(go.Scatter(x=list(range(len(token_adoption_series))), y=token_adoption_series,
+                             mode='lines', name='Token Adoption'))
+    
+    # Add the revenue series as a trace
+    fig.add_trace(go.Scatter(x=list(range(len(buy_pressure_series))), y=buy_pressure_series,
+                             mode='lines', name='Buy Pressure', yaxis='y2'))
+    
+    # Updating layout for readability
+    fig.update_layout(
+        title='Token Adoption and Buy Pressure Over Time',
+        xaxis=dict(title='Timestep (months)'),
+        yaxis=dict(title='Number of Token Holders', tickmode = 'array', tickvals=tickvals, range=[min_value, max_value],),
+        yaxis2=dict(title='Buy Pressure ($)', overlaying='y', side='right', tickmode = 'array', tickvals=tickvals, tickformat='$', range=[min_value, max_value],),
+        legend=dict(title='Legend', x=0, y=1, xanchor='left', yanchor='top'),
+    )
+    return fig

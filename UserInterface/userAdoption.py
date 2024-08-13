@@ -94,26 +94,35 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 st.write(f"**Product Adoption**")
                 initial_product_users = st.number_input('Initial Product Users', label_visibility="visible", min_value=0, value=[int(sys_param['initial_product_users'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_product_users']][0], disabled=False, key="initial_product_users", help="The initial product users generating revenue in diverse assets -> $.")
                 avg_product_user_growth_rate = st.number_input('Avg. Product Users Growth Rate / %', label_visibility="visible", min_value=0.0, value=0.0 if incentive_ua else [((float(sys_param['product_users_after_10y'][0]) / float(sys_param['initial_product_users'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_product_user_growth_rate']][0], disabled=incentive_ua, key="product_users_growth_rate", help="The average monthly growth rate of product users.")
+                # Token velocity selector
+                product_velocity_options = [0.5, 1.5, 2.5]
+                # Determine the default selection based on sys_param
+                default_velocity = [float(product_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0]
+                # Find the index of this value in the options list
+                default_index = product_velocity_options.index(default_velocity)
+                # Token velocity radio button
+                product_adoption_velocity = st.radio(
+                    'Product Adoption Velocity',
+                    options=product_velocity_options,
+                    index= default_index,
+                    help="Select the velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.",
+                    horizontal=True
+                )
+
                 if not incentive_ua:
                     product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
                     st.write(f"*Projected Product Users (10y): {int(np.ceil(product_users_after_10y)):+,}*")
+                    regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    with st.spinner("Please wait while the adoption chart is loading..."):
+                        user_adoption_series, revenue_series = calculate_user_adoption_series(initial_product_users, product_users_after_10y, product_adoption_velocity, regular_product_revenue_per_user) 
+                        product_chart = plot_user_adoption_and_revenue(user_adoption_series, revenue_series)
+                        st.plotly_chart(product_chart, use_container_width=True)
                 else:
                     st.write("*Projected Product Users (10y): N/A*")
                     product_users_after_10y = 0
-                # product_adoption_velocity = st.number_input('Product Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['product_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0], disabled=False, key="product_adoption_velocity", help="The velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.")
-                product_adoption_velocity = 1.0 # Hard coded adoption velocity
-                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    # Display the above chart with only revenues and a message: "adoption growth is now based on incentives"
 
-            with col72:
-                st.write(f"**Token Adoption**")
-                initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=[int(sys_param['initial_token_holders'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_token_holders']][0], disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
-                avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
-                token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
-                st.write(f"*Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}*")
-                # token_adoption_velocity = st.number_input('Token Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['token_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0], disabled=False, key="token_adoption_velocity", help="The velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.")
-                token_adoption_velocity = 1.0  # Hard coded adoption velocity
-                regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
-        
             with col74:
                 switch = st.toggle('Market-based Token Adoption', value = False, help="This section allows you to link Token Adoption (i.e. how many people buy your token) to simulated market returns. In its current configuration, the number of users purchasing the token will increase or decrease based on these simulated returns. For example, if the market shows positive returns, token purchases will increase accordingly, and vice versa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation utilizes Brownian Motion.") 
                 if switch:
@@ -168,11 +177,41 @@ def userAdoptionInput(sys_param, tav_return_dict):
                                 fig = plot_simulation_results(simulation_df, token_choice) 
                                 st.plotly_chart(fig, use_container_width=True)
 
+                                # Plotting new token adoption and Buy Pressure
+                                ### Insert Code ###
+
                 else:
                     token_choice = 0
                     start_date_unix = 0
                     end_date_unix = 0
                     active = 0 
+
+            with col72:
+                st.write(f"**Token Adoption**")
+                initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=[int(sys_param['initial_token_holders'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_token_holders']][0], disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
+                avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
+                # Token velocity selector
+                token_velocity_options = [0.5, 1.5, 2.5]
+                # Determine the default selection based on sys_param
+                default_velocity = [float(token_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0]
+                # Find the index of this value in the options list
+                default_index = token_velocity_options.index(default_velocity)
+                # Token velocity radio button
+                token_adoption_velocity = st.radio(
+                    'Token Adoption Velocity',
+                    options=token_velocity_options,
+                    index=default_index,
+                    help="Select the velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.",
+                    horizontal=True
+                )
+                
+                token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
+                st.write(f"*Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}*")
+                regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
+                with st.spinner("Please wait while the token adoption chart is loading..."):
+                    token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
+                    token_chart = plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_series)
+                    st.plotly_chart(token_chart, use_container_width=True)
         
         else:
             initial_product_users = adoption_dict[adoption_style]['initial_product_users']
@@ -219,6 +258,11 @@ def userAdoptionInput(sys_param, tav_return_dict):
         if rev_share_sum != 100.0:
             st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
 
+    # Check if really needed 
+    product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
+    token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]
+    regular_product_revenue_per_user = [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0]
+    regular_token_buy_per_user = [regular_token_buy_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_token_buy_per_user']][0]
 
     ua_return_dict = {
         "adoption_style" : adoption_style,
