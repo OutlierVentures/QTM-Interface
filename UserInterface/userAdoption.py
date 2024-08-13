@@ -78,15 +78,13 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 incentive_ua = st.toggle('Incentive-based Product Adoption', value = False, help="This feature allows you to link your *Product Users Growth Rate* to the incentives you provide in your economy. You can think of the *Incentive USD per User Target* set below as your customer acquisition cost for new users. As long as the USD incentives per user are higher than this value, your user adoption increases, and vice versa.") 
                 if incentive_ua:
                     st.warning("⚠️ This is an advanced feature. When activated, the *Product User Growth Rate* will depend on incentive target defined below and the above fixed growth rate no longer applies.")
-    
                     # incentivisation_rev_share = float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0
-                    if tav_return_dict['incentivisation_allocation'] > 0.0 or tav_return_dict['airdrop_allocation'] > 0.0: # incentivisation_rev_share > 0.0 or
+                    if tav_return_dict['incentivisation_allocation'] > 0.0 or tav_return_dict['airdrop_allocation'] > 0.0: # incentivisation_rev_share > 0.0 condition cannot be checked as defined in subsequent section, thus warning message instead of error message.
                         # add user adoption boost per incentivisation (in USD)
                         user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
                     else:
-                        st.warning("⚠️ Some incentivization is needed to use this feature. Please make sure you selected one of the following:\n1. Token allocation for incentivization\n2. Token allocation for airdrops\n3. Incentivization Revenue Share (see Rev. Share section below)")
+                        st.warning("⚠️ Some incentivization is needed to use this feature. Please make sure you selected one of the following:\n1. Token allocation for incentivization\n2. Token allocation for airdrops\n3. Incentivization Revenue Share (see Rev. Share in Business Assumptions section below)")
                         user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
-
                 else:
                     user_adoption_target = [float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0]
 
@@ -231,38 +229,6 @@ def userAdoptionInput(sys_param, tav_return_dict):
             active = 0 
             incentive_ua = False
 
-        st.write("#### Revenue Share")
-
-        # revenue share settings
-        col71a, col71b, col71c, col71d = st.columns(4)
-        with col71a:
-            business_rev_share = st.number_input('Business Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['business_rev_share'][0]) if 'business_rev_share' in sys_param else 75.0][0], disabled=False, key="business_rev_share", help="The share of revenue that will accrue to the business funds.")
-        with col71b:
-            staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 25.0][0],  disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
-            if staker_rev_share > 0.0:
-                staker_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['staker_rev_share_buyback'][0]) if 'staker_rev_share_buyback' in sys_param else False][0], key="staker_rev_share_buyback", help="Check this box if the staker revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
-            else:
-                staker_rev_share_buyback = False
-        with col71c:
-            service_provider_rev_share = st.number_input('Service Provider Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['service_provider_rev_share'][0]) if 'service_provider_rev_share' in sys_param else 0.0][0], disabled=False, key="service_provider_rev_share", help="The share of revenue that will accrue to service providers.")
-        with col71d:
-            incentivisation_rev_share = st.number_input('Incentivisation Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0][0], disabled=False, key="incentivisation_rev_share", help="The share of revenue that will be used to incentivise the ecosystem.")
-            if incentivisation_rev_share > 0.0:
-                incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['incentivisation_rev_share_buyback'][0]) if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
-            else:
-                incentivisation_rev_share_buyback = False
-            if  incentive_ua and user_adoption_target > 0.0 and incentivisation_rev_share == 0.0 and tav_return_dict['incentivisation_allocation'] == 0.0 and tav_return_dict['airdrop_allocation'] == 0.0: # use ua_return_dict['user_adoption_target'] when moving across sections
-                st.error(f"You're currently using an *Incentive-based User Adoption* but you didn't allocate any tokens for incentivization purposes. Please increase the *Incentivization Rev. Share %* or assign some tokens for *Incentivization Vesting* or *Airdrops* in the Token Allocation & Vesting section.", icon="⚠️")
-
-        rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
-        if rev_share_sum != 100.0:
-            st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
-
-    # Check if really needed 
-    product_adoption_velocity = [product_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['product_adoption_velocity']][0]
-    token_adoption_velocity = [token_adoption_velocity if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['token_adoption_velocity']][0]
-    regular_product_revenue_per_user = [regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0]
-    regular_token_buy_per_user = [regular_token_buy_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_token_buy_per_user']][0]
 
     ua_return_dict = {
         "adoption_style" : adoption_style,
@@ -278,18 +244,12 @@ def userAdoptionInput(sys_param, tav_return_dict):
         "token_adoption_velocity" : token_adoption_velocity,
         "regular_token_buy_per_user" : regular_token_buy_per_user,
         "adoption_dict" : adoption_dict,
-        "business_rev_share" : business_rev_share,
-        "staker_rev_share" : staker_rev_share,
-        "service_provider_rev_share" : service_provider_rev_share,
-        "incentivisation_rev_share" : incentivisation_rev_share,
-        "rev_share_sum" : rev_share_sum,
-        "staker_rev_share_buyback" : staker_rev_share_buyback,
-        "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
         "user_adoption_target": user_adoption_target,
         "token": token_choice,
         "sim_start": start_date_unix,
         "sim_end": end_date_unix,
-        "market": active
+        "market": active,
+        "incentive_ua": incentive_ua
     }
 
     return ua_return_dict

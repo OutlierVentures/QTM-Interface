@@ -81,14 +81,14 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # Business Assumptions
     ##############################################
 
-    ba_return_dict = ba.businessAssumptionsInput(sys_param, ua_return_dict["adoption_dict"], token_launch_date, fr_return_dict["raised_funds"], token_launch, tav_return_dict["incentivisation_toggle"], tav_return_dict["staking_vesting_toggle"], ua_return_dict["adoption_style"], ua_return_dict["regular_product_revenue_per_user"], ua_return_dict["initial_product_users"], ua_return_dict["show_full_adoption_table"])
+    ba_return_dict = ba.businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, tav_return_dict["incentivisation_toggle"], tav_return_dict["staking_vesting_toggle"])
 
 
     ##############################################
     # Utilities
     ##############################################
 
-    ut_return_dict = ut.utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict)
+    ut_return_dict = ut.utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ba_return_dict)
 
 
     ##############################################
@@ -209,11 +209,11 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         'burn_bucket': ba_return_dict["burn_bucket"],
         'burn_start': ba_return_dict["burn_start"].strftime('%d.%m.%Y'),
         'burn_end': ba_return_dict["burn_end"].strftime('%d.%m.%Y'),
-        'business_rev_share' : ua_return_dict["business_rev_share"],
-        'service_provider_rev_share' : ua_return_dict["service_provider_rev_share"],
-        'incentivisation_rev_share' : ua_return_dict["incentivisation_rev_share"],
-        'staker_rev_share_buyback' : ua_return_dict["staker_rev_share_buyback"],
-        'incentivisation_rev_share_buyback' : ua_return_dict["incentivisation_rev_share_buyback"],
+        'business_rev_share' : ba_return_dict["business_rev_share"],
+        'service_provider_rev_share' : ba_return_dict["service_provider_rev_share"],
+        'incentivisation_rev_share' : ba_return_dict["incentivisation_rev_share"],
+        'staker_rev_share_buyback' : ba_return_dict["staker_rev_share_buyback"],
+        'incentivisation_rev_share_buyback' : ba_return_dict["incentivisation_rev_share_buyback"],
         'token' : ua_return_dict["token"], 
         'start date' : ua_return_dict['sim_start'],
         'end date': ua_return_dict['sim_end'],
