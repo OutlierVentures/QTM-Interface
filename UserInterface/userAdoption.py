@@ -121,6 +121,33 @@ def userAdoptionInput(sys_param, tav_return_dict):
                     regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
                     # Display the above chart with only revenues and a message: "adoption growth is now based on incentives"
 
+            with col72:
+                st.write(f"**Token Adoption**")
+                initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=[int(sys_param['initial_token_holders'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_token_holders']][0], disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
+                avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
+                # Token velocity selector
+                token_velocity_options = [0.5, 1.5, 2.5]
+                # Determine the default selection based on sys_param
+                default_velocity = [float(token_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0]
+                # Find the index of this value in the options list
+                default_index = token_velocity_options.index(default_velocity)
+                # Token velocity radio button
+                token_adoption_velocity = st.radio(
+                    'Token Adoption Velocity',
+                    options=token_velocity_options,
+                    index=default_index,
+                    help="Select the velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.",
+                    horizontal=True
+                )
+                
+                token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
+                st.write(f"*Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}*")
+                regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
+                with st.spinner("Please wait while the token adoption chart is loading..."):
+                    token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
+                    token_chart = plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_series)
+                    st.plotly_chart(token_chart, use_container_width=True)
+
             with col74:
                 switch = st.toggle('Market-based Token Adoption', value = False, help="This section allows you to link Token Adoption (i.e. how many people buy your token) to simulated market returns. In its current configuration, the number of users purchasing the token will increase or decrease based on these simulated returns. For example, if the market shows positive returns, token purchases will increase accordingly, and vice versa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation utilizes Brownian Motion.") 
                 if switch:
@@ -176,40 +203,63 @@ def userAdoptionInput(sys_param, tav_return_dict):
                                 st.plotly_chart(fig, use_container_width=True)
 
                                 # Plotting new token adoption and Buy Pressure
-                                ### Insert Code ###
+                                market_returns = simulation_df['Log returns'].values
+                                token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
+                                adjusted_token_adoption_series = token_adoption_series[:len(market_returns)] * (1 + market_returns)
+                                # Truncate the buy pressure series and other related data to match the adjusted series
+                                truncated_buy_pressure_series = buy_pressure_series[:len(adjusted_token_adoption_series)]
+                                # Truncate the buy pressure series and other related data to match the adjusted series
+                                truncated_token_adoption_series = token_adoption_series[:len(adjusted_token_adoption_series)]
+
+                                # # Plot the adjusted token adoption and buy pressure
+                                # token_chart = plot_token_adoption_and_buy_pressure(adjusted_token_adoption_series, buy_pressure_series)
+                                # st.plotly_chart(token_chart, use_container_width=True)
+                                # Create a plotly figure
+                                fig = go.Figure()
+
+                                # Add old (non-adjusted) token adoption series
+                                fig.add_trace(go.Scatter(x=np.arange(len(truncated_token_adoption_series)), 
+                                                        y=token_adoption_series, 
+                                                        mode='lines', 
+                                                        name='Normal Token Adoption'))
+
+                                # Add adjusted token adoption series
+                                fig.add_trace(go.Scatter(x=np.arange(len(adjusted_token_adoption_series)), 
+                                                        y=adjusted_token_adoption_series, 
+                                                        mode='lines', 
+                                                        name='Market-Based Token Adoption'))
+
+                                # Add buy pressure series
+                                fig.add_trace(go.Scatter(x=np.arange(len(truncated_buy_pressure_series)), 
+                                                        y=truncated_buy_pressure_series, 
+                                                        mode='lines', 
+                                                        name='Buy Pressure'))
+
+                                # Update layout to set titles and labels
+                                fig.update_layout(
+                                    title='Market Based Token Adoption and Buy Pressure Over Time',
+                                    xaxis_title='Timestep (months)',
+                                    yaxis_title='Number of Token Holders',
+                                    yaxis2=dict(title='Buy Pressure ($)', overlaying='y', side='right'),
+                                    legend=dict(
+                                        x=0,
+                                        y=1,
+                                        xanchor = 'left',
+                                        yanchor = 'top',
+                                        bgcolor='rgba(0,0,0,0)',
+                                        bordercolor='rgba(0,0,0,0)'
+                                    )
+                                )
+
+                                # Display the chart
+                                st.plotly_chart(fig, use_container_width=True)
+
 
                 else:
                     token_choice = 0
                     start_date_unix = 0
                     end_date_unix = 0
                     active = 0 
-
-            with col72:
-                st.write(f"**Token Adoption**")
-                initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=[int(sys_param['initial_token_holders'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_token_holders']][0], disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
-                avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
-                # Token velocity selector
-                token_velocity_options = [0.5, 1.5, 2.5]
-                # Determine the default selection based on sys_param
-                default_velocity = [float(token_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0]
-                # Find the index of this value in the options list
-                default_index = token_velocity_options.index(default_velocity)
-                # Token velocity radio button
-                token_adoption_velocity = st.radio(
-                    'Token Adoption Velocity',
-                    options=token_velocity_options,
-                    index=default_index,
-                    help="Select the velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.",
-                    horizontal=True
-                )
-                
-                token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
-                st.write(f"*Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}*")
-                regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
-                with st.spinner("Please wait while the token adoption chart is loading..."):
-                    token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
-                    token_chart = plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_series)
-                    st.plotly_chart(token_chart, use_container_width=True)
         
         else:
             initial_product_users = adoption_dict[adoption_style]['initial_product_users']

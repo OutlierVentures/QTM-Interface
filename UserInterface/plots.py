@@ -1017,7 +1017,7 @@ def plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_ser
     
     # Add the user adoption series as a trace
     fig.add_trace(go.Scatter(x=list(range(len(token_adoption_series))), y=token_adoption_series,
-                             mode='lines', name='Token Adoption'))
+                             mode='lines', name='Token Holders'))
     
     # Add the revenue series as a trace
     fig.add_trace(go.Scatter(x=list(range(len(buy_pressure_series))), y=buy_pressure_series,

@@ -7,7 +7,7 @@ def agentBehaviorInput(sys_param, adoption_style, adoption_dict):
     with st.expander("**Agent Behavior**"):
         st.markdown("### Agent Behavior")
         agent_behavior_choices = ['Static', 'Simple']
-        agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index(sys_param['agent_behavior'][0].capitalize()), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Random**: Token holders and their adoption react to staking APRs; Product users get attracted by incentives; A little random noise gets added to the agents decisions.").lower()
+        agent_behavior = st.radio('Agent Meta Bucket Behavior',tuple(agent_behavior_choices), index=agent_behavior_choices.index(sys_param['agent_behavior'][0].capitalize()), help="Pick the agent behavior model. **Static**:  Every agent will use tokens for selling, utility, and holding always at the same rate throughout the whole simulation. **Simple**: Token holders and their adoption react to staking APRs; Product users get attracted by incentives; A little random noise gets added to the agents decisions.").lower()
         col73, col74, col75 = st.columns(3)
         if agent_behavior == 'static':
             st.write("**Meta Bucket Allocations**")
