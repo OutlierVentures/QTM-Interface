@@ -13,10 +13,12 @@ def consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_r
     if (tav_return_dict['lp_allocation'] < 0 or (ab_return_dict["meta_bucket_alloc_sum"] != 100 and ab_return_dict["agent_behavior"] == 'static') or (tav_return_dict["dex_capital"] > fr_return_dict["raised_funds"] and token_launch) or ut_return_dict["utility_sum"] != 100 or
         (min(tav_return_dict['airdrop_date1'], tav_return_dict['airdrop_date2'], tav_return_dict['airdrop_date3']) < token_launch_date and tav_return_dict['airdrop_toggle']) or
         (ba_return_dict["buyback_start"] < token_launch_date and ba_return_dict["enable_protocol_buybacks"]) or (ba_return_dict["burn_start"] < token_launch_date and ba_return_dict["enable_protocol_burning"]) or
-        (ba_return_dict["initial_cash_balance"] == 0 and (ba_return_dict["royalty_income_per_month"] + ba_return_dict["treasury_income_per_month"] + ba_return_dict["other_income_per_month"] + ua_return_dict["initial_product_users"] *
-                                        [ua_return_dict["regular_product_revenue_per_user"] if ua_return_dict["adoption_style"] == 'Custom' or ua_return_dict["show_full_adoption_table"] else ua_return_dict["adoption_dict"][ua_return_dict["adoption_style"]]['regular_product_revenue_per_user']][0] -
-                                        ba_return_dict["salaries_per_month"] - ba_return_dict["license_costs_per_month"] - ba_return_dict["other_monthly_costs"]) and not token_launch) or
-                                        ua_return_dict["rev_share_sum"] != 100.0 or ("Stake" not in ut_return_dict["utility_to_add"] and ua_return_dict["staker_rev_share"] > 0)):
+        # Insert difference between Income - Expenditure check. 
+        
+        #(ba_return_dict["initial_cash_balance"] == 0 and (ba_return_dict["royalty_income_per_month"] + ba_return_dict["treasury_income_per_month"] + ba_return_dict["other_income_per_month"] + ua_return_dict["initial_product_users"] *
+                                        # [ua_return_dict["regular_product_revenue_per_user"] if ua_return_dict["adoption_style"] == 'Custom' or ua_return_dict["show_full_adoption_table"] else ua_return_dict["adoption_dict"][ua_return_dict["adoption_style"]]['regular_product_revenue_per_user']][0] -
+                                        # ba_return_dict["salaries_per_month"] - ba_return_dict["license_costs_per_month"] - ba_return_dict["other_monthly_costs"]) and not token_launch) or
+                                        ba_return_dict["rev_share_sum"] != 100.0 or ("Stake" not in ut_return_dict["utility_to_add"] and ba_return_dict["staker_rev_share"] > 0)):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
@@ -78,8 +80,8 @@ def consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_r
         if ut_return_dict["utility_sum"] != 100:
             st.error(f"The sum of the utility allocations ({ut_return_dict['utility_sum']}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
         
-        if ua_return_dict["rev_share_sum"] != 100.0:
-            st.error(f"The sum of the revenue share allocations ({ua_return_dict['rev_share_sum']}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
+        if ba_return_dict["rev_share_sum"] != 100.0:
+            st.error(f"The sum of the revenue share allocations ({ba_return_dict['rev_share_sum']}%) is not equal to 100%. Please adjust the values!", icon="⚠️")
 
-        if "Stake" not in ut_return_dict["utility_to_add"] and ua_return_dict["staker_rev_share"] > 0:
+        if "Stake" not in ut_return_dict["utility_to_add"] and ba_return_dict["staker_rev_share"] > 0:
             st.error("You have enabled revenue share for stakers but have not added the staking utility. Please add the staking utility to enable revenue share for stakers.", icon="⚠️")

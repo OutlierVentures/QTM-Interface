@@ -1,7 +1,7 @@
 import streamlit as st
 from UserInterface.plots import *
 
-def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
+def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ba_return_dict):
     """
     This function creates the utilities section of the UI.
     """
@@ -17,9 +17,9 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                     'description': 'The percentage of the meta utility bucket allocated supply per timestep that is staked.'
                     },
                 'staker_rev_share': {
-                    'value': ua_return_dict["staker_rev_share"],
-                    'display_name': f'Revenue Share {"Buyback" if ua_return_dict["staker_rev_share_buyback"] else ""}/ %',
-                    'description': f'The percentage of the revenue that is {"used for buying back and distributing tokens to stakers once the staking vesting bucket runs out of tokens. You can switch to revenue share in diverse assets in the User Adoption input section above." if ua_return_dict["staker_rev_share_buyback"] else " distributed to stakers. You can switch to revenue share via bought back tokens in the User Adoption input section above."}',
+                    'value': ba_return_dict["staker_rev_share"],
+                    'display_name': f'Revenue Share {"Buyback" if ba_return_dict["staker_rev_share_buyback"] else ""}/ %',
+                    'description': f'The percentage of the revenue that is {"used for buying back and distributing tokens to stakers once the staking vesting bucket runs out of tokens. You can switch to revenue share in diverse assets in the User Adoption input section above." if ba_return_dict["staker_rev_share_buyback"] else " distributed to stakers. You can switch to revenue share via bought back tokens in the User Adoption input section above."}',
                     'disable' : True
                     },
                 'mint_burn_ratio': {
@@ -162,7 +162,7 @@ def utilitiesInput(sys_param, tav_return_dict, ab_return_dict, ua_return_dict):
                 utility_shares['Undefined'] = [100 - utility_sum]
             st.error(f"The sum of the utility allocations ({round(utility_sum,2)}%) is not equal to 100%. Please adjust the utility shares!", icon="⚠️")
         
-        if "Stake" not in utility_to_add and ua_return_dict["staker_rev_share"] > 0:
+        if "Stake" not in utility_to_add and ba_return_dict["staker_rev_share"] > 0:
             st.error("You have enabled revenue share for stakers but have not added the staking utility. Please add the staking utility to enable revenue share for stakers.", icon="⚠️")
 
         # Display the utility pie chart

@@ -78,15 +78,13 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 incentive_ua = st.toggle('Incentive-based Product Adoption', value = False, help="This feature allows you to link your *Product Users Growth Rate* to the incentives you provide in your economy. You can think of the *Incentive USD per User Target* set below as your customer acquisition cost for new users. As long as the USD incentives per user are higher than this value, your user adoption increases, and vice versa.") 
                 if incentive_ua:
                     st.warning("⚠️ This is an advanced feature. When activated, the *Product User Growth Rate* will depend on incentive target defined below and the above fixed growth rate no longer applies.")
-    
                     # incentivisation_rev_share = float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0
-                    if tav_return_dict['incentivisation_allocation'] > 0.0 or tav_return_dict['airdrop_allocation'] > 0.0: # incentivisation_rev_share > 0.0 or
+                    if tav_return_dict['incentivisation_allocation'] > 0.0 or tav_return_dict['airdrop_allocation'] > 0.0: # incentivisation_rev_share > 0.0 condition cannot be checked as defined in subsequent section, thus warning message instead of error message.
                         # add user adoption boost per incentivisation (in USD)
                         user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
                     else:
-                        st.warning("⚠️ Some incentivization is needed to use this feature. Please make sure you selected one of the following:\n1. Token allocation for incentivization\n2. Token allocation for airdrops\n3. Incentivization Revenue Share (see Rev. Share section below)")
+                        st.warning("⚠️ Some incentivization is needed to use this feature. Please make sure you selected one of the following:\n1. Token allocation for incentivization\n2. Token allocation for airdrops\n3. Incentivization Revenue Share (see Rev. Share in Business Assumptions section below)")
                         user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
-
                 else:
                     user_adoption_target = [float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0]
 
@@ -94,26 +92,62 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 st.write(f"**Product Adoption**")
                 initial_product_users = st.number_input('Initial Product Users', label_visibility="visible", min_value=0, value=[int(sys_param['initial_product_users'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_product_users']][0], disabled=False, key="initial_product_users", help="The initial product users generating revenue in diverse assets -> $.")
                 avg_product_user_growth_rate = st.number_input('Avg. Product Users Growth Rate / %', label_visibility="visible", min_value=0.0, value=0.0 if incentive_ua else [((float(sys_param['product_users_after_10y'][0]) / float(sys_param['initial_product_users'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_product_user_growth_rate']][0], disabled=incentive_ua, key="product_users_growth_rate", help="The average monthly growth rate of product users.")
+                # Token velocity selector
+                product_velocity_options = [0.5, 1.5, 2.5]
+                # Determine the default selection based on sys_param
+                default_velocity = [float(product_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0]
+                # Find the index of this value in the options list
+                default_index = product_velocity_options.index(default_velocity)
+                # Token velocity radio button
+                product_adoption_velocity = st.radio(
+                    'Product Adoption Velocity',
+                    options=product_velocity_options,
+                    index= default_index,
+                    help="Select the velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.",
+                    horizontal=True
+                )
+
                 if not incentive_ua:
                     product_users_after_10y = initial_product_users * (1 + avg_product_user_growth_rate/100)**120
                     st.write(f"*Projected Product Users (10y): {int(np.ceil(product_users_after_10y)):+,}*")
+                    regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    with st.spinner("Please wait while the adoption chart is loading..."):
+                        user_adoption_series, revenue_series = calculate_user_adoption_series(initial_product_users, product_users_after_10y, product_adoption_velocity, regular_product_revenue_per_user) 
+                        product_chart = plot_user_adoption_and_revenue(user_adoption_series, revenue_series)
+                        st.plotly_chart(product_chart, use_container_width=True)
                 else:
                     st.write("*Projected Product Users (10y): N/A*")
                     product_users_after_10y = 0
-                # product_adoption_velocity = st.number_input('Product Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['product_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0], disabled=False, key="product_adoption_velocity", help="The velocity of product adoption. The higher the velocity, the faster the product adoption in the early years towards market saturation.")
-                product_adoption_velocity = 1.0 # Hard coded adoption velocity
-                regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    regular_product_revenue_per_user = st.number_input('Regular Product Revenue / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_product_revenue_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_product_revenue_per_user']][0], disabled=False, key="regular_product_revenue_per_user", help="The average regular monthly product revenue per user. This will accrue to the different revenue share buckets.")                
+                    # Display the above chart with only revenues and a message: "adoption growth is now based on incentives"
 
             with col72:
                 st.write(f"**Token Adoption**")
                 initial_token_holders = st.number_input('Initial Token Holders', label_visibility="visible", min_value=0, value=[int(sys_param['initial_token_holders'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['initial_token_holders']][0], disabled=False, key="initial_token_holders", help="Initial token holders that regularly buy tokens from the DEX liquidity pool.")
                 avg_token_holder_growth_rate = st.number_input('Avg. Token Holder Growth Rate / %', label_visibility="visible", min_value=0.0, value=[((float(sys_param['token_holders_after_10y'][0]) / float(sys_param['initial_token_holders'][0]))**(1/120.0)-1)*100 if adoption_style == 'Custom' else adoption_dict[adoption_style]['avg_token_holder_growth_rate']][0], disabled=False, key="avg_token_holder_growth_rate", help="The average monthly growth rate of token holders.")
+                # Token velocity selector
+                token_velocity_options = [0.5, 1.5, 2.5]
+                # Determine the default selection based on sys_param
+                default_velocity = [float(token_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0]
+                # Find the index of this value in the options list
+                default_index = token_velocity_options.index(default_velocity)
+                # Token velocity radio button
+                token_adoption_velocity = st.radio(
+                    'Token Adoption Velocity',
+                    options=token_velocity_options,
+                    index=default_index,
+                    help="Select the velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.",
+                    horizontal=True
+                )
+                
                 token_holders_after_10y = initial_token_holders * (1 + avg_token_holder_growth_rate/100)**120
                 st.write(f"*Projected Token Holders (10y): {int(np.ceil(token_holders_after_10y)):+,}*")
-                # token_adoption_velocity = st.number_input('Token Adoption Velocity', label_visibility="visible", min_value=0.1, value=[float(sys_param['token_adoption_velocity'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0], disabled=False, key="token_adoption_velocity", help="The velocity of token adoption. The higher the velocity, the faster the token adoption in the early years towards market saturation.")
-                token_adoption_velocity = 1.0  # Hard coded adoption velocity
                 regular_token_buy_per_user = st.number_input('Regular Token Buy / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['regular_token_buy_per_user'][0]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['regular_token_buy_per_user']][0], disabled=False, key="regular_token_buy_per_user", help="The average regular monthly token buy per token holder. This will accrue directly to the token via buys from the DEX liquidity pool.")
-        
+                with st.spinner("Please wait while the token adoption chart is loading..."):
+                    token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
+                    token_chart = plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_series)
+                    st.plotly_chart(token_chart, use_container_width=True)
+
             with col74:
                 switch = st.toggle('Market-based Token Adoption', value = False, help="This section allows you to link Token Adoption (i.e. how many people buy your token) to simulated market returns. In its current configuration, the number of users purchasing the token will increase or decrease based on these simulated returns. For example, if the market shows positive returns, token purchases will increase accordingly, and vice versa. You can select the token you want to use to represent the market in your simulation (i.e. market beta). The simulation utilizes Brownian Motion.") 
                 if switch:
@@ -168,6 +202,59 @@ def userAdoptionInput(sys_param, tav_return_dict):
                                 fig = plot_simulation_results(simulation_df, token_choice) 
                                 st.plotly_chart(fig, use_container_width=True)
 
+                                # Plotting new token adoption and Buy Pressure
+                                market_returns = simulation_df['Log returns'].values
+                                token_adoption_series, buy_pressure_series = calculate_token_adoption_series(initial_token_holders, token_holders_after_10y, token_adoption_velocity, regular_token_buy_per_user)
+                                adjusted_token_adoption_series = token_adoption_series[:len(market_returns)] * (1 + market_returns)
+                                # Truncate the buy pressure series and other related data to match the adjusted series
+                                truncated_buy_pressure_series = buy_pressure_series[:len(adjusted_token_adoption_series)]
+                                # Truncate the buy pressure series and other related data to match the adjusted series
+                                truncated_token_adoption_series = token_adoption_series[:len(adjusted_token_adoption_series)]
+
+                                # # Plot the adjusted token adoption and buy pressure
+                                # token_chart = plot_token_adoption_and_buy_pressure(adjusted_token_adoption_series, buy_pressure_series)
+                                # st.plotly_chart(token_chart, use_container_width=True)
+                                # Create a plotly figure
+                                fig = go.Figure()
+
+                                # Add old (non-adjusted) token adoption series
+                                fig.add_trace(go.Scatter(x=np.arange(len(truncated_token_adoption_series)), 
+                                                        y=token_adoption_series, 
+                                                        mode='lines', 
+                                                        name='Normal Token Adoption'))
+
+                                # Add adjusted token adoption series
+                                fig.add_trace(go.Scatter(x=np.arange(len(adjusted_token_adoption_series)), 
+                                                        y=adjusted_token_adoption_series, 
+                                                        mode='lines', 
+                                                        name='Market-Based Token Adoption'))
+
+                                # Add buy pressure series
+                                fig.add_trace(go.Scatter(x=np.arange(len(truncated_buy_pressure_series)), 
+                                                        y=truncated_buy_pressure_series, 
+                                                        mode='lines', 
+                                                        name='Buy Pressure'))
+
+                                # Update layout to set titles and labels
+                                fig.update_layout(
+                                    title='Market Based Token Adoption and Buy Pressure Over Time',
+                                    xaxis_title='Timestep (months)',
+                                    yaxis_title='Number of Token Holders',
+                                    yaxis2=dict(title='Buy Pressure ($)', overlaying='y', side='right'),
+                                    legend=dict(
+                                        x=0,
+                                        y=1,
+                                        xanchor = 'left',
+                                        yanchor = 'top',
+                                        bgcolor='rgba(0,0,0,0)',
+                                        bordercolor='rgba(0,0,0,0)'
+                                    )
+                                )
+
+                                # Display the chart
+                                st.plotly_chart(fig, use_container_width=True)
+
+
                 else:
                     token_choice = 0
                     start_date_unix = 0
@@ -192,33 +279,6 @@ def userAdoptionInput(sys_param, tav_return_dict):
             active = 0 
             incentive_ua = False
 
-        st.write("#### Revenue Share")
-
-        # revenue share settings
-        col71a, col71b, col71c, col71d = st.columns(4)
-        with col71a:
-            business_rev_share = st.number_input('Business Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['business_rev_share'][0]) if 'business_rev_share' in sys_param else 75.0][0], disabled=False, key="business_rev_share", help="The share of revenue that will accrue to the business funds.")
-        with col71b:
-            staker_rev_share = st.number_input('Staker Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['staker_rev_share'][0]) if 'staker_rev_share' in sys_param else 25.0][0],  disabled=False, key="staker_rev_share", help="The share of revenue that will accrue to token stakers. This requires staking to be one of the token utilities.")
-            if staker_rev_share > 0.0:
-                staker_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['staker_rev_share_buyback'][0]) if 'staker_rev_share_buyback' in sys_param else False][0], key="staker_rev_share_buyback", help="Check this box if the staker revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
-            else:
-                staker_rev_share_buyback = False
-        with col71c:
-            service_provider_rev_share = st.number_input('Service Provider Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['service_provider_rev_share'][0]) if 'service_provider_rev_share' in sys_param else 0.0][0], disabled=False, key="service_provider_rev_share", help="The share of revenue that will accrue to service providers.")
-        with col71d:
-            incentivisation_rev_share = st.number_input('Incentivisation Revenue Share / %', label_visibility="visible", min_value=0.0, max_value=100.0, value=[float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0][0], disabled=False, key="incentivisation_rev_share", help="The share of revenue that will be used to incentivise the ecosystem.")
-            if incentivisation_rev_share > 0.0:
-                incentivisation_rev_share_buyback = st.checkbox('Buyback Tokens', value=[float(sys_param['incentivisation_rev_share_buyback'][0]) if 'incentivisation_rev_share_buyback' in sys_param else False][0], key="incentivisation_rev_share_buyback", help="Check this box if the incentivisation revenue share should be used to buy back tokens from the market (DEX liquidity pool) and distribute them instead of the revenue in diverse assets. Diverse assets are any assets that will be collected as revenue and depend on the product. They can be any assets apart from the token itself.")
-            else:
-                incentivisation_rev_share_buyback = False
-            if  incentive_ua and user_adoption_target > 0.0 and incentivisation_rev_share == 0.0 and tav_return_dict['incentivisation_allocation'] == 0.0 and tav_return_dict['airdrop_allocation'] == 0.0: # use ua_return_dict['user_adoption_target'] when moving across sections
-                st.error(f"You're currently using an *Incentive-based User Adoption* but you didn't allocate any tokens for incentivization purposes. Please increase the *Incentivization Rev. Share %* or assign some tokens for *Incentivization Vesting* or *Airdrops* in the Token Allocation & Vesting section.", icon="⚠️")
-
-        rev_share_sum = business_rev_share + staker_rev_share + service_provider_rev_share + incentivisation_rev_share
-        if rev_share_sum != 100.0:
-            st.error(f"The revenue shares must sum up to 100%. Currently they sum up to {rev_share_sum}%.", icon="⚠️")
-
 
     ua_return_dict = {
         "adoption_style" : adoption_style,
@@ -234,18 +294,12 @@ def userAdoptionInput(sys_param, tav_return_dict):
         "token_adoption_velocity" : token_adoption_velocity,
         "regular_token_buy_per_user" : regular_token_buy_per_user,
         "adoption_dict" : adoption_dict,
-        "business_rev_share" : business_rev_share,
-        "staker_rev_share" : staker_rev_share,
-        "service_provider_rev_share" : service_provider_rev_share,
-        "incentivisation_rev_share" : incentivisation_rev_share,
-        "rev_share_sum" : rev_share_sum,
-        "staker_rev_share_buyback" : staker_rev_share_buyback,
-        "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
         "user_adoption_target": user_adoption_target,
         "token": token_choice,
         "sim_start": start_date_unix,
         "sim_end": end_date_unix,
-        "market": active
+        "market": active,
+        "incentive_ua": incentive_ua
     }
 
     return ua_return_dict

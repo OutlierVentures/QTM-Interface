@@ -224,7 +224,7 @@ def simulate_market_returns(coin, start_date, end_date, runs=1):
     # Since only one process and one run, we don't need a tuple for parameters or correlations
     OU_procs = bmg.simulate_corr_OU_procs(timesteps, (OU_params,), runs, rho=None)
 
-    # runs, timesteps, data = OU_procs.shape
+    runs, timesteps, data = OU_procs.shape
     OU_procs_arr = np.column_stack((np.repeat(np.arange(runs), timesteps), OU_procs.reshape(runs * timesteps, -1)))
     walks = pd.DataFrame(OU_procs_arr, columns=['run', 'Log returns'])
     walks['run'] = walks['run'].astype(int) + 1
@@ -233,29 +233,126 @@ def simulate_market_returns(coin, start_date, end_date, runs=1):
     return {'market': walks} 
 
 
-def calculate_market_based_token_adoption(initial_users,final_users,velocity,timestamp):
+# Formula to use to show the user adoption chart in input UI
+def calculate_user_adoption_series(initial_users, final_users, velocity, regular_product_revenue):
     """
-    Take in user adoption data and calculate the amount of adoption.
+    Calculate the number of adopters for each timestep and return the series.
 
-    Can be used for token adoption and product users.
-  
     Args:
-        initial_users: starting amount of users
-        final_users: ending amount of users
-        velocity: speed of adoption on those users
-        timstep: current timestep in days
-    
+        initial_users (int): Starting number of users.
+        final_users (int): Ending number of users.
+        velocity (float): Speed of adoption.
+        regular_product_revenue (float): recurring revenue from each user.
+
     Returns:
-        Number representing the user adoption.    
-
+        list: Series of user adoption values for each timestep including number of users and recurring revenue.
     """
-    # This is what is shown in the model as a constant as the user adoption numbers refer to 10 years (product_users_after_10y & token_holers_after_10y)
-    total_days = 3653
+    # Total number of timesteps (months) for 10 years
+    total_timesteps = 10 * 12  # 10 years * 12 months per year
 
-    term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestamp - 1825 / velocity)))) * final_users + initial_users
-    term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - 1825 / velocity)))) * final_users
-    term3 = initial_users * (timestamp / total_days)
-    term4 = final_users - (term1 - term2 - term3)
-    result = term1 - term2 - term3 + (term4 * (timestamp / total_days))
+    # Initialize list to store user adoption values
+    user_adoption_series = []
+    revenue_series = []
+
+    # Calculate user adoption for each timestep and append to list
+    for timestep in range(total_timesteps + 1):
+        midpoint = total_timesteps / 2
+
+        term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestep - midpoint / velocity)))) * final_users + initial_users
+        term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - midpoint / velocity)))) * final_users
+        term3 = initial_users * (timestep / total_timesteps)
+        term4 = final_users - (term1 - term2 - term3)
+        result = term1 - term2 - term3 + (term4 * (timestep / total_timesteps))
+        
+        user_adoption_series.append(result)
+        revenue = result * regular_product_revenue
+        revenue_series.append(revenue)
     
-    return result
+    return user_adoption_series, revenue_series
+
+
+# Formula to use to show the user adoption chart in input UI
+def calculate_token_adoption_series(initial_users, final_users, velocity, regular_token_buy):
+    """
+    Calculate the number of adopters for each timestep and return the series.
+
+    Args:
+        initial_users (int): Starting number of token holders.
+        final_users (int): Ending number of token holders.
+        velocity (float): Speed of token adoption.
+        regular_token_buy (float): recurring token buy from each user.
+
+    Returns:
+        list: Series of user adoption values for each timestep including number of users and recurring revenue.
+    """
+    # Total number of timesteps (months) for 10 years
+    total_timesteps = 10 * 12  # 10 years * 12 months per year
+
+    # Initialize list to store user adoption values
+    token_adoption_series = []
+    buy_pressure_series = []
+
+    # Calculate user adoption for each timestep and append to list
+    for timestep in range(total_timesteps + 1):
+        midpoint = total_timesteps / 2
+
+        term1 = (1 / (1 + math.exp(-velocity * 0.002 * (timestep - midpoint / velocity)))) * final_users + initial_users
+        term2 = (1 / (1 + math.exp(-velocity * 0.002 * (0 - midpoint / velocity)))) * final_users
+        term3 = initial_users * (timestep / total_timesteps)
+        term4 = final_users - (term1 - term2 - term3)
+        result = term1 - term2 - term3 + (term4 * (timestep / total_timesteps))
+        
+        token_adoption_series.append(result)
+        buy_pressure = result * regular_token_buy
+        buy_pressure_series.append(buy_pressure)
+    
+    return token_adoption_series, buy_pressure_series
+
+
+# # Formula to use to compute the market-based token adoption chart in input UI
+# # Formula to use to show the user adoption chart in input UI
+# def calculate_market_based_token_adoption(initial_token_holders, token_holder_growth, regular_token_buys, velocity, timesteps):
+#     """
+#     Calculate the number of people buying tokens based on the input parameters.
+
+#     Args:
+#         initial_token_holders (int): Initial number of token holders.
+#         token_holder_growth (float): Token holder growth rate in percentage.
+#         regular_token_buys (float): Regular token buys per user.
+#         velocity (float): Speed of adoption.
+#         total_days (int): Total number of days in the simulation.
+
+#     Returns:
+#         dict: A dictionary with keys 'ua_token_holders' and 'ua_token_buys' containing the series of token holders and token buys for each timestep.
+#     """
+#     # Convert growth rate from percentage to decimal
+#     token_holder_growth = token_holder_growth / 100
+    
+#     # Initialize series lists
+#     token_holders_series = []
+#     token_buys_series = []
+
+#     # Initialize token holders
+#     token_holders = initial_token_holders
+
+#     for timestep in range(1, timesteps + 1):
+#             # Calculate new token holders based on growth rate
+#             new_token_holders = int(token_holders * (1 + token_holder_growth))
+            
+#             # Calculate token buys for the day
+#             token_buys = (new_token_holders - token_holders) * regular_token_buys
+            
+#             # Append current values to the series
+#             token_holders_series.append(new_token_holders)
+#             token_buys_series.append(token_buys)
+            
+#             # Update token holders for the next day
+#             token_holders = new_token_holders
+            
+#     # Create the returns dictionary
+#     returns = {
+#         'ua_token_holders': token_holders_series,
+#         'ua_token_buys': token_buys_series
+#     }
+
+#     return returns
