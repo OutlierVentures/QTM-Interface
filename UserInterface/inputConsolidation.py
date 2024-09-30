@@ -81,7 +81,7 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
     # Business Assumptions
     ##############################################
 
-    ba_return_dict = ba.businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, tav_return_dict["incentivisation_toggle"], tav_return_dict["staking_vesting_toggle"])
+    ba_return_dict = ba.businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, tav_return_dict["incentivisation_toggle"], tav_return_dict["staking_vesting_toggle"], fr_return_dict["raised_funds"])
 
 
     ##############################################
@@ -200,6 +200,8 @@ def model_ui_inputs(input_file_path, uploaded_file, parameter_list, col01):
         # 'salaries_per_month': ba_return_dict["salaries_per_month"]*1e3,
         # 'license_costs_per_month': ba_return_dict["license_costs_per_month"]*1e3,
         # 'other_monthly_costs': ba_return_dict["other_monthly_costs"]*1e3,
+        'income': ba_return_dict["income"]*1e3,
+        'expenditures': ba_return_dict["expenditures"]*1e3,
         'buyback_perc_per_month': ba_return_dict["buyback_perc_per_month"],
         'buyback_fixed_per_month': ba_return_dict["buyback_fixed_per_month"]*1e3,
         'buyback_bucket': ba_return_dict["buyback_bucket"],

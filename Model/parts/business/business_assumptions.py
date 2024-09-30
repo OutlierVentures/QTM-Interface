@@ -40,14 +40,16 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
 
     # parameters
     token_launch = params['token_launch'] if 'token_launch' in params else True
-    royalty_income_per_month = params['royalty_income_per_month']
-    other_income_per_month = params['other_income_per_month']
-    treasury_income_per_month = params['treasury_income_per_month']
-    one_time_payments_1 = params['one_time_payments_1'] if (token_launch and current_month == 1) else 0
-    one_time_payments_2 = params['one_time_payments_2'] if (token_launch and current_month == 1) else 0
-    salaries_per_month = params['salaries_per_month']
-    license_costs_per_month = params['license_costs_per_month']
-    other_monthly_costs = params['other_monthly_costs']
+    # royalty_income_per_month = params['royalty_income_per_month']
+    # other_income_per_month = params['other_income_per_month']
+    # treasury_income_per_month = params['treasury_income_per_month']
+    # one_time_payments_1 = params['one_time_payments_1'] if (token_launch and current_month == 1) else 0
+    # one_time_payments_2 = params['one_time_payments_2'] if (token_launch and current_month == 1) else 0
+    # salaries_per_month = params['salaries_per_month']
+    # license_costs_per_month = params['license_costs_per_month']
+    # other_monthly_costs = params['other_monthly_costs']
+    income = params['income']
+    expenditures = params['expenditures']
     buyback_type = params['buyback_type']
     buyback_perc_per_month = params['buyback_perc_per_month']
     buyback_fixed_per_month = params['buyback_fixed_per_month']
@@ -102,12 +104,12 @@ def business_assumption_metrics(params, substep, state_history, prev_state, **kw
     ## liquidity capital requirement
     required_liquidity_pool_fund_allocation = initial_lp_token_allocation * initial_token_price if (token_launch and current_month == 1) else 0
 
-    fixed_business_expenditures = (salaries_per_month + license_costs_per_month
-                                   + other_monthly_costs + required_liquidity_pool_fund_allocation
-                                   + one_time_payments_1 + one_time_payments_2 )
+    fixed_business_expenditures = expenditures + required_liquidity_pool_fund_allocation # (salaries_per_month + license_costs_per_month
+                                   # + other_monthly_costs + required_liquidity_pool_fund_allocation
+                                   # + one_time_payments_1 + one_time_payments_2 )
     
     # fixed revenue streams - Ensure that revenue from royalties etc, is never negative
-    fixed_business_revenue = max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
+    fixed_business_revenue = income # max(royalty_income_per_month + other_income_per_month + treasury_income_per_month, 0)
     
     # variable revenues
     ## split of variable revenue streams from product revenue

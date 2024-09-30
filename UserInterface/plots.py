@@ -960,6 +960,7 @@ def plot_user_adoption_and_revenue(user_adoption_series, revenue_series):
     Returns:
     - fig (go.Figure): A Plotly graph object figure containing the plot of the user adoption and revenue series.
     """
+    
     # Find the maximum value to set the same range for both y-axes
     min_value = min(min(user_adoption_series), min(revenue_series))
     max_value = max(max(user_adoption_series), max(revenue_series))
