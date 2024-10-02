@@ -960,7 +960,6 @@ def plot_user_adoption_and_revenue(user_adoption_series, revenue_series):
     Returns:
     - fig (go.Figure): A Plotly graph object figure containing the plot of the user adoption and revenue series.
     """
-    
     # Find the maximum value to set the same range for both y-axes
     min_value = min(min(user_adoption_series), min(revenue_series))
     max_value = max(max(user_adoption_series), max(revenue_series))
@@ -971,15 +970,25 @@ def plot_user_adoption_and_revenue(user_adoption_series, revenue_series):
     # Create tick values ensuring they are integers
     tickvals = list(range(int(min_value), int(max_value) + step_size, step_size))
 
+    # Total number of days in the series
+    total_days = len(user_adoption_series)
+
+    # Calculate indices that correspond to the end of each month (every 30 days)
+    monthly_indices = list(range(0, total_days, 30))
+
+    # Select values from the series at the calculated monthly intervals
+    monthly_user_adoption = [user_adoption_series[i] for i in monthly_indices]
+    monthly_revenue = [revenue_series[i] for i in monthly_indices]
+
     # Create an empty figure
     fig = go.Figure()
     
     # Add the user adoption series as a trace
-    fig.add_trace(go.Scatter(x=list(range(len(user_adoption_series))), y=user_adoption_series,
+    fig.add_trace(go.Scatter(x=list(range(len(monthly_user_adoption))), y=monthly_user_adoption,
                              mode='lines', name='User Adoption'))
     
     # Add the revenue series as a trace
-    fig.add_trace(go.Scatter(x=list(range(len(revenue_series))), y=revenue_series,
+    fig.add_trace(go.Scatter(x=list(range(len(monthly_revenue))), y=monthly_revenue,
                              mode='lines', name='Revenue', yaxis='y2'))
     
     # Updating layout for readability
@@ -1013,15 +1022,25 @@ def plot_token_adoption_and_buy_pressure(token_adoption_series, buy_pressure_ser
     # Create tick values ensuring they are integers
     tickvals = list(range(int(min_value), int(max_value) + step_size, step_size))
 
+    # Total number of days in the series
+    total_days = len(token_adoption_series)
+
+    # Calculate indices that correspond to the end of each month (every 30 days)
+    monthly_indices = list(range(0, total_days, 30))
+
+    # Select values from the series at the calculated monthly intervals
+    monthly_token_adoption = [token_adoption_series[i] for i in monthly_indices]
+    monthly_pressure = [buy_pressure_series[i] for i in monthly_indices]
+
     # Create an empty figure
     fig = go.Figure()
     
     # Add the user adoption series as a trace
-    fig.add_trace(go.Scatter(x=list(range(len(token_adoption_series))), y=token_adoption_series,
+    fig.add_trace(go.Scatter(x=list(range(len(monthly_token_adoption))), y=monthly_token_adoption,
                              mode='lines', name='Token Holders'))
     
     # Add the revenue series as a trace
-    fig.add_trace(go.Scatter(x=list(range(len(buy_pressure_series))), y=buy_pressure_series,
+    fig.add_trace(go.Scatter(x=list(range(len(monthly_pressure))), y=monthly_pressure,
                              mode='lines', name='Buy Pressure', yaxis='y2'))
     
     # Updating layout for readability
