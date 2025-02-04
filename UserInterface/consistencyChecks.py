@@ -15,7 +15,10 @@ def consistencyChecksInfo(token_launch, token_launch_date, tav_return_dict, ab_r
         (tav_return_dict["dex_capital"] > fr_return_dict["raised_funds"] and token_launch) or 
         ut_return_dict["utility_sum"] != 100 or
         (min(tav_return_dict['airdrop_date1'], tav_return_dict['airdrop_date2'], tav_return_dict['airdrop_date3']) < token_launch_date and tav_return_dict['airdrop_toggle']) or
-
+        (ba_return_dict["buyback_start"] < token_launch_date and ba_return_dict["enable_protocol_buybacks"]) or 
+        (ba_return_dict["burn_start"] < token_launch_date and ba_return_dict["enable_protocol_burning"]) or
+        ba_return_dict["rev_share_sum"] != 100.0 or 
+        ("Stake" not in ut_return_dict["utility_to_add"] and ba_return_dict["staker_rev_share"] > 0)):
         st.session_state['execute_inputs'] = False
     else:
         st.session_state['execute_inputs'] = True
