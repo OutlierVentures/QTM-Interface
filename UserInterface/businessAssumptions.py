@@ -60,15 +60,22 @@ def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_l
             st.write("**Expenditures**")
             expenditures = st.number_input('Fixed expenditures per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['expenditures'][0])/1e3 if 'expenditures' in sys_param else 0.0][0], disabled=False, key="expenditures", help="The monthly expenditures for the business.")
 
-        # ## Initial Cash Balance
-        # if token_launch_date > datetime.today():
-        #     months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
-        #     projected_cash_balance = raised_funds*1e3 - (income - expenditures) * months_since_launch # here we omit variables revenues.
-        #     initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
-        #     if initial_cash_balance == 0 and (income + initial_product_users * (regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']) - expenditures) < 0:
-        #         st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
-        # else:
-        #     initial_cash_balance = 0.0
+        # Calculate initial cash balance
+        if token_launch_date > datetime.today():
+            months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
+            projected_cash_balance = raised_funds * 1e3 - (income - expenditures) * months_since_launch
+            initial_cash_balance = st.number_input(
+                'Financial Reserves / $k',
+                label_visibility="visible",
+                min_value=0.0,
+                value=float(sys_param['initial_cash_balance'][0]) / 1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0,
+                format="%.5f",
+                disabled=False,
+                key="initial_cash_balance",
+                help="The financial reserves of the business today. The financial reserves determine the runway of the business."
+            )
+        else:
+            initial_cash_balance = 0.0
 
         st.write("#### Revenue Share")
         # revenue share settings
@@ -168,6 +175,7 @@ def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_l
     ba_return_dict = {
         "income" : income,
         "expenditures" : expenditures,
+        "initial_cash_balance": initial_cash_balance,
         # "royalty_income_per_month" : royalty_income_per_month,
         # "treasury_income_per_month" : treasury_income_per_month,
         # "other_income_per_month" : other_income_per_month,
@@ -175,7 +183,6 @@ def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_l
         # "salaries_per_month" : salaries_per_month,
         # "license_costs_per_month" : license_costs_per_month,
         # "other_monthly_costs" : other_monthly_costs,
-        # "initial_cash_balance" : initial_cash_balance,
         "business_rev_share" : business_rev_share,
         "staker_rev_share" : staker_rev_share,
         "service_provider_rev_share" : service_provider_rev_share,
