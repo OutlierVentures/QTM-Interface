@@ -77,11 +77,9 @@ def calculate_raised_capital(param):
     """
     Calculate the overall raised capital from the initial investors.
     """
-
     raised_capital = 0
     # calculate the raised capital for all investors in sys_param where "_raised" is in the key
     raised_capital = sum([param[key][0] if ("_raised" in key) and isinstance(param[key], list) else param[key] if ("_raised" in key) else 0 for key in param])
-
     return raised_capital
 
 # Initialization
@@ -503,14 +501,9 @@ def initialize_business_assumptions(sys_param, initial_user_adoption):
     else:
         token_launch = True
     
-    if token_launch:
-        initial_capital = calculate_raised_capital(sys_param)
-    else:
-        initial_capital = sys_param['initial_cash_balance'][0]
-    
-
+    initial_capital = calculate_raised_capital(sys_param)
     product_revenue = initial_user_adoption['ua_product_revenue']
-
+    
     # revenue shares if provided by the UI
     staker_rev_share = sys_param['staker_rev_share'][0] if sys_param['staking_vesting_token_allocation'][0] <= 0 else 0
     if 'business_rev_share' in sys_param:
