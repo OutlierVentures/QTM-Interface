@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-from Model.parts.utils import months_difference, calculate_raised_capital
+from Model.parts.utils import months_difference
 from datetime import datetime
 
 def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, incentivisation_toggle, staking_vesting_toggle, raised_funds):
@@ -166,27 +166,36 @@ def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_l
     burn_end = burn_end if enable_protocol_burning else token_launch_date
 
     ba_return_dict = {
-        "income": income,
-        "expenditures": expenditures,
-        "business_rev_share": business_rev_share,
-        "staker_rev_share": staker_rev_share,
-        "service_provider_rev_share": service_provider_rev_share,
-        "incentivisation_rev_share": incentivisation_rev_share,
-        "rev_share_sum": rev_share_sum,
-        "staker_rev_share_buyback": staker_rev_share_buyback,
-        "incentivisation_rev_share_buyback": incentivisation_rev_share_buyback,
-        "enable_protocol_buybacks": enable_protocol_buybacks,
-        "buyback_type": buyback_type,
-        "buyback_perc_per_month": buyback_perc_per_month,
-        "buyback_fixed_per_month": buyback_fixed_per_month,
-        "buyback_bucket": buyback_bucket,
-        "buyback_start": buyback_start,
-        "buyback_end": buyback_end,
-        "enable_protocol_burning": enable_protocol_burning,
-        "burn_per_month": burn_per_month,
-        "burn_bucket": burn_bucket,
-        "burn_start": burn_start,
-        "burn_end": burn_end,
+        "income" : income,
+        "expenditures" : expenditures,
+        # "royalty_income_per_month" : royalty_income_per_month,
+        # "treasury_income_per_month" : treasury_income_per_month,
+        # "other_income_per_month" : other_income_per_month,
+        # "one_time_payments_1" : one_time_payments_1,
+        # "salaries_per_month" : salaries_per_month,
+        # "license_costs_per_month" : license_costs_per_month,
+        # "other_monthly_costs" : other_monthly_costs,
+        # "initial_cash_balance" : initial_cash_balance,
+        "business_rev_share" : business_rev_share,
+        "staker_rev_share" : staker_rev_share,
+        "service_provider_rev_share" : service_provider_rev_share,
+        "incentivisation_rev_share" : incentivisation_rev_share,
+        "rev_share_sum" : rev_share_sum,
+        "staker_rev_share_buyback" : staker_rev_share_buyback,
+        "incentivisation_rev_share_buyback" : incentivisation_rev_share_buyback,
+        "enable_protocol_buybacks" : enable_protocol_buybacks,
+        "buyback_type" : buyback_type,
+        "buyback_perc_per_month" : buyback_perc_per_month,
+        "buyback_fixed_per_month" : buyback_fixed_per_month,
+        "buyback_bucket" : buyback_bucket,
+        "buyback_start" : buyback_start,
+        "buyback_end" : buyback_end,
+        "enable_protocol_burning" : enable_protocol_burning,
+        "burn_per_month" : burn_per_month,
+        "burn_bucket" : burn_bucket,
+        "burn_start" : burn_start,
+        "burn_end" : burn_end,
+        # "show_full_business_table" : show_full_business_table
     }
 
     return ba_return_dict
