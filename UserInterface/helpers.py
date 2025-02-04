@@ -248,7 +248,7 @@ def calculate_user_adoption_series(initial_users, final_users, velocity, regular
         list: Series of user adoption values for each timestep including number of users and recurring revenue.
     """
     # Total number of timesteps (months) for 10 years
-    total_timesteps = 10 * 12  # 10 years * 12 months per year
+    total_timesteps = 3653  # 10 years * 12 months per year
 
     # Initialize list to store user adoption values
     user_adoption_series = []
@@ -286,7 +286,7 @@ def calculate_token_adoption_series(initial_users, final_users, velocity, regula
         list: Series of user adoption values for each timestep including number of users and recurring revenue.
     """
     # Total number of timesteps (months) for 10 years
-    total_timesteps = 10 * 12  # 10 years * 12 months per year
+    total_timesteps = 3653  # 10 years * 12 months per year
 
     # Initialize list to store user adoption values
     token_adoption_series = []

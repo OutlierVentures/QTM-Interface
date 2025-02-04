@@ -3,7 +3,7 @@ import numpy as np
 from Model.parts.utils import months_difference, calculate_raised_capital
 from datetime import datetime
 
-def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, incentivisation_toggle, staking_vesting_toggle):
+def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_launch_date, incentivisation_toggle, staking_vesting_toggle, raised_funds):
     """
     This function creates the business assumptions section of the UI.
     """
@@ -53,12 +53,22 @@ def businessAssumptionsInput(sys_param, ua_return_dict, tav_return_dict, token_l
 
         col81, col82 = st.columns(2)
         with col81:
-            st.write("**Income**")
-            income = st.number_input('Additional fixed income per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['royalty_income_per_month'][0] + sys_param['other_income_per_month'][0] + sys_param['treasury_income_per_month'][0])/1e3, disabled=False, key="income", help="The monthly income for the business on top of the product revenue, defined in the user adoption section.")
+            st.write("**Revenue**")
+            income = st.number_input('Additional fixed revenue per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['income'][0])/1e3 if 'income' in sys_param else 0.0][0], disabled=False, key="income", help="The monthly income for the business on top of the product revenue, which is defined in the user adoption section.")
 
         with col82:
             st.write("**Expenditures**")
-            expenditures = st.number_input('Fixed expenditures per month / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['salaries_per_month'][0] + sys_param['license_costs_per_month'][0] + sys_param['other_monthly_costs'][0] + (sys_param['one_time_payments_1'][0]+ sys_param['one_time_payments_2'][0])/120)/1e3, disabled=False, key="expenditures", help="The monthly expenditures for the business.")
+            expenditures = st.number_input('Fixed expenditures per month / $k', label_visibility="visible", min_value=0.0, value=[float(sys_param['expenditures'][0])/1e3 if 'expenditures' in sys_param else 0.0][0], disabled=False, key="expenditures", help="The monthly expenditures for the business.")
+
+        # ## Initial Cash Balance
+        # if token_launch_date > datetime.today():
+        #     months_since_launch = np.abs(int(months_difference(token_launch_date, datetime.today())))
+        #     projected_cash_balance = raised_funds*1e3 - (income - expenditures) * months_since_launch # here we omit variables revenues.
+        #     initial_cash_balance = st.number_input('Financial Reserves / $k', label_visibility="visible", min_value=0.0, value=float(sys_param['initial_cash_balance'][0])/1e3 if 'initial_cash_balance' in sys_param else projected_cash_balance if projected_cash_balance > 0 else 0.0, format="%.5f", disabled=False, key="initial_cash_balance", help="The financial reserves of the business today. The financial reserves determine the runway of the business.")
+        #     if initial_cash_balance == 0 and (income + initial_product_users * (regular_product_revenue_per_user if adoption_style == 'Custom' or show_full_adoption_table else adoption_dict[adoption_style]['regular_product_revenue_per_user']) - expenditures) < 0:
+        #         st.error(f"The financial reserves are 0 and the monthly expenditures are greater than the revenues. Increase the initial cash reserves to achieve a proper financial runway!", icon="⚠️")
+        # else:
+        #     initial_cash_balance = 0.0
 
         st.write("#### Revenue Share")
         # revenue share settings

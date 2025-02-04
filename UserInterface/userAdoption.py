@@ -81,12 +81,12 @@ def userAdoptionInput(sys_param, tav_return_dict):
                     # incentivisation_rev_share = float(sys_param['incentivisation_rev_share'][0]) if 'incentivisation_rev_share' in sys_param else 0.0
                     if tav_return_dict['incentivisation_allocation'] > 0.0 or tav_return_dict['airdrop_allocation'] > 0.0: # incentivisation_rev_share > 0.0 condition cannot be checked as defined in subsequent section, thus warning message instead of error message.
                         # add user adoption boost per incentivisation (in USD)
-                        user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
+                        user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 0.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
                     else:
                         st.warning("⚠️ Some incentivization is needed to use this feature. Please make sure you selected one of the following:\n1. Token allocation for incentivization\n2. Token allocation for airdrops\n3. Incentivization Revenue Share (see Rev. Share in Business Assumptions section below)")
-                        user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
+                        user_adoption_target = st.number_input('Incentive USD per User Target / $', label_visibility="visible", min_value=0.0, value=[float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 0.0][0], disabled=False, key="user_adoption_target", help="Target incentivisation to onboard one more product users. A value of 0 disables this feature!")
                 else:
-                    user_adoption_target = [float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 550.0][0]
+                    user_adoption_target = [float(sys_param['user_adoption_target'][0]) if 'user_adoption_target' in sys_param else 0.0][0]
 
             with col71:
                 st.write(f"**Product Adoption**")
@@ -95,8 +95,20 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 # Token velocity selector
                 product_velocity_options = [0.5, 1.5, 2.5]
                 # Determine the default selection based on sys_param
-                default_velocity = [float(product_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0]
-                # Find the index of this value in the options list
+                # Check if 'product_adoption_velocity' is in sys_param and is in the options list
+                if 'product_adoption_velocity' in sys_param and float(sys_param['product_adoption_velocity'][0]) in product_velocity_options:
+                    default_velocity = float(sys_param['product_adoption_velocity'][0])
+                elif adoption_style == 'Custom':
+                    default_velocity = product_velocity_options[1]
+                else:
+                    default_velocity = adoption_dict[adoption_style]['product_adoption_velocity']
+                    
+                # # Determine the default selection based on sys_param
+                # # default_velocity = [product_velocity_options[1] if adoption_style == 'Custom' else adoption_dict[adoption_style]['product_adoption_velocity']][0]
+                # st.write("sys_param['product_adoption_velocity']:", sys_param.get('product_adoption_velocity'))
+                # default_velocity = float(sys_param['product_adoption_velocity'][0]) if 'product_adoption_velocity' in sys_param else product_velocity_options[1]
+                # st.write(default_velocity)
+                # # Find the index of this value in the options list
                 default_index = product_velocity_options.index(default_velocity)
                 # Token velocity radio button
                 product_adoption_velocity = st.radio(
@@ -128,7 +140,13 @@ def userAdoptionInput(sys_param, tav_return_dict):
                 # Token velocity selector
                 token_velocity_options = [0.5, 1.5, 2.5]
                 # Determine the default selection based on sys_param
-                default_velocity = [float(token_velocity_options[1]) if adoption_style == 'Custom' else adoption_dict[adoption_style]['token_adoption_velocity']][0]
+                # Check if 'product_adoption_velocity' is in sys_param and is in the options list
+                if 'token_adoption_velocity' in sys_param and float(sys_param['token_adoption_velocity'][0]) in token_velocity_options:
+                    default_velocity = float(sys_param['token_adoption_velocity'][0])
+                elif adoption_style == 'Custom':
+                    default_velocity = token_velocity_options[1]
+                else:
+                    default_velocity = adoption_dict[adoption_style]['token_adoption_velocity'] 
                 # Find the index of this value in the options list
                 default_index = token_velocity_options.index(default_velocity)
                 # Token velocity radio button
