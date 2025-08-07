@@ -1,0 +1,95 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qtm-interface"
+version = "1.0.0"
+description = "Quantitative Token Model radCAD Integration - A token economics simulation framework"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Outlier Ventures", email = "info@outlierventures.io"}
+]
+keywords = ["token economics", "radcad", "simulation", "blockchain", "defi"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Office/Business :: Financial",
+]
+
+dependencies = [
+    "radcad==0.8.4",
+    "matplotlib==3.3.4",
+    "stochastic==0.6.0",
+    "ipykernel==5.5.3",
+    "ipython-autotime==0.3.1",
+    "ipywidgets==7.6.3",
+    "notebook==6.4.1",
+    "psutil==5.8.0",
+    "kaleido==0.2.1",
+    "nbconvert==5.6.1",
+    "flask==2.0.0",
+    "gunicorn==20.1.0",
+    "cadCAD_tools==0.0.1.4",
+    "diskcache==5.2.1",
+    "streamlit==1.27.2",
+    "altair<5",
+    "plotly==5.17.0",
+    "pyxlsb",
+    "xlsxwriter",
+    "bcrypt==3.2.0",
+    "streamlit-authenticator==0.3.1",
+    "typing-extensions==4.12.1; python_version >= '3.5'",
+    "dataclasses; python_version < '3.7'",
+    "numpy",
+    "scipy",
+    "statsmodels",
+    "tqdm",
+    "scikit-learn",
+    "yfinance==0.2.40",
+    "tornado==6.4",
+    "prompt-toolkit==3.0.46",
+    "tenacity==8.3.0",
+    "urllib3==2.2.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==6.2.2",
+    "black==20.8b1",
+    "pylint==2.8.3",
+    "pdoc3==0.9.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/OutlierVentures/QTM-Interface"
+Documentation = "https://github.com/OutlierVentures/QTM-Interface/blob/main/Documentation/QTM%20Whitepaper.md"
+Repository = "https://github.com/OutlierVentures/QTM-Interface.git"
+Issues = "https://github.com/OutlierVentures/QTM-Interface/issues"
+
+[project.scripts]
+qtm-run = "streamlit:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["Model*", "UserInterface*", "pages*", "data*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.pylint.messages_control]
+disable = ["missing-docstring", "invalid-name"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v"

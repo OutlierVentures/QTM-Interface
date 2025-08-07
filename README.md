@@ -74,17 +74,38 @@ The goal of the QTM radCAD integration is to extend and to improve the static hi
 
 ## Installation
 
-Python 3.9 is recommended!
+Python 3.9 or higher is recommended!
+
+### Using uv (Recommended)
+
+- Clone this repository to your local machine by `git clone https://github.com/OutlierVentures/QTM-Interface.git`
+- Navigate to the project directory: `cd QTM-Interface`
+- Install [uv](https://docs.astral.sh/uv/) if you haven't already: `pip install uv`
+- Install all dependencies and create a virtual environment: `uv sync`
+
+### Using pip (Alternative)
 
 - Clone this repository to your local machine by `git clone https://github.com/OutlierVentures/QTM-Interface.git`
 - Create a new Python environment in the projects directory by `python -m venv venv`
-- Activate the new environment by `venv/bin/activate`
+- Activate the new environment by `venv/bin/activate` (Linux/Mac) or `venv\Scripts\activate` (Windows)
 - Install all required packages by `pip install -r requirements.txt`
 
 ## Usage
+
+### Using uv (Recommended)
+
 - Make sure you followed the previous installation section.
 - Navigate with your terminal to the main project directory.
-- Run `streamlit run .\Welcome.py` within the previously installed and activated environment.
+- Run the application: `uv run streamlit run Welcome.py`
+- Expand the Sign-Up expander on the Welcome landing page and create a new user account or use the test user credentials
+- Expand and login via the Login expander on the Welcome landing page by using your preferred account credentials.
+
+### Using pip (Alternative)
+
+- Make sure you followed the previous installation section.
+- Navigate with your terminal to the main project directory.
+- Activate your virtual environment: `venv/bin/activate` (Linux/Mac) or `venv\Scripts\activate` (Windows)
+- Run the application: `streamlit run Welcome.py`
 - Expand the Sign-Up expander on the Welcome landing page and create a new user account or use the test user credentials
 - Expand and login via the Login expander on the Welcome landing page by using your preferred account credentials.
 
